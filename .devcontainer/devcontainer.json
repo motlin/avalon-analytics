@@ -12,7 +12,7 @@
 
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
   // Might need to set our ports for 80.
-  "forwardPorts": [5713, 5713]
+  "forwardPorts": [5713, 5713],
   // Configure tool-specific properties.
   // "customizations": {},
 

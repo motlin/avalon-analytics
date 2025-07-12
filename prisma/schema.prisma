@@ -37,7 +37,21 @@ model Credential {
   credentialId  String   @unique // WebAuthn credential identifier
   publicKey     Bytes
   counter       Int      @default(0)
-  
+
   @@index([credentialId])
   @@index([userId])
+}
+
+model GameIngestionState {
+  id                   Int      @id @default(1)
+  lastIngestedGameTime DateTime @default("1970-01-01T00:00:00Z")
+  updatedAt            DateTime @updatedAt
+}
+
+model RawGameData {
+  firebaseKey String @id
+  gameJson    Json
+  createdAt   DateTime @default(now())
+
+  @@index([createdAt])
 }
