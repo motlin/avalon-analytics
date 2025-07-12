@@ -60,4 +60,4 @@ format-ci: install-ci
     npm run ci:format
 
 # Run install, build, test, lint, and pre-commit hooks in sequence
-precommit: lint-fix format hooks build test
+precommit: lint format hooks build test
