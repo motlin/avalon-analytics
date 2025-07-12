@@ -42,13 +42,13 @@ Copy the database ID provided and paste it into your project's `wrangler.jsonc` 
 
 ```jsonc
 {
-  "d1_databases": [
-    {
-      "binding": "DB",
-      "database_name": "my-project-db",
-      "database_id": "your-database-id",
-    },
-  ],
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "my-project-db",
+			"database_id": "your-database-id",
+		},
+	],
 }
 ```
 

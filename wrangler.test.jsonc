@@ -1,0 +1,16 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "avalon-analytics-test",
+  "compatibility_date": "2025-05-07",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "avalon-analytics-test",
+      "database_id": "test",
+      "migrations_dir": "./migrations"
+    }
+  ]
+}

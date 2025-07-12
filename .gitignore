@@ -35,6 +35,9 @@ dist
 # Optional eslint cache
 .eslintcache
 
+# ESLint CI reports
+eslint_report.json
+
 # Optional stylelint cache
 .stylelintcache
 
