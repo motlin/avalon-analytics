@@ -1,4 +1,5 @@
 import type {RequestInfo} from 'rwsdk/worker';
+import {Breadcrumb} from '../../components/Breadcrumb';
 import type {Game} from '../../models/game';
 import {getFirestoreRestService} from '../../services/firestore-rest';
 
@@ -19,6 +20,12 @@ export async function GamesList({}: RequestInfo) {
 
 	return (
 		<div>
+			<Breadcrumb
+				items={[
+					{label: 'Home', href: '/'},
+					{label: 'All Games'},
+				]}
+			/>
 			<h1>Games List</h1>
 			{games.length === 0 ? (
 				<p>No games found</p>

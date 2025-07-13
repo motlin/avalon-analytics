@@ -1,4 +1,5 @@
 import type {RequestInfo} from 'rwsdk/worker';
+import {Breadcrumb} from '../../components/Breadcrumb';
 import {GameOutcomeComponent} from '../../components/GameOutcome';
 import {MissionComponent} from '../../components/Mission';
 import {MissionResultComponent} from '../../components/MissionResult';
@@ -29,6 +30,13 @@ export async function GameDetail({params}: RequestInfo) {
 
 	return (
 		<div style={{padding: '1rem'}}>
+			<Breadcrumb
+				items={[
+					{label: 'Home', href: '/'},
+					{label: 'All Games', href: '/games'},
+					{label: `Game ${game.timeCreated.toLocaleDateString()} ${game.timeCreated.toLocaleTimeString()}`},
+				]}
+			/>
 			<div
 				style={{
 					border: '1px solid #ccc',
