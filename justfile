@@ -36,6 +36,7 @@ test: install
 
 # `npm run test:run`
 test-ci: install-ci
+    npm run generate
     npm run test:run
 
 # `uv tool run pre-commit run --all-files`
@@ -61,6 +62,7 @@ format-ci: install-ci
 
 # `npm run ci:typecheck`
 typecheck-ci: install-ci
+    npm run generate
     npm run ci:typecheck
 
 # Run install, build, test, lint, and pre-commit hooks in sequence

@@ -11,7 +11,10 @@ interface BreadcrumbProps {
 
 export function Breadcrumb({items}: BreadcrumbProps): ReactNode {
 	return (
-		<nav aria-label="Breadcrumb" style={{marginBottom: '1rem'}}>
+		<nav
+			aria-label="Breadcrumb"
+			style={{marginBottom: '1rem'}}
+		>
 			<ol
 				style={{
 					display: 'flex',
@@ -23,7 +26,10 @@ export function Breadcrumb({items}: BreadcrumbProps): ReactNode {
 				}}
 			>
 				{items.map((item, index) => (
-					<li key={index} style={{display: 'flex', alignItems: 'center'}}>
+					<li
+						key={index}
+						style={{display: 'flex', alignItems: 'center'}}
+					>
 						{index > 0 && (
 							<span
 								style={{

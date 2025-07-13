@@ -20,12 +20,7 @@ export async function GamesList({}: RequestInfo) {
 
 	return (
 		<div>
-			<Breadcrumb
-				items={[
-					{label: 'Home', href: '/'},
-					{label: 'All Games'},
-				]}
-			/>
+			<Breadcrumb items={[{label: 'Home', href: '/'}, {label: 'All Games'}]} />
 			<h1>Games List</h1>
 			{games.length === 0 ? (
 				<p>No games found</p>
