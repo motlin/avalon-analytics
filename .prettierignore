@@ -16,3 +16,6 @@ build
 package.json
 package-lock.json
 pnpm-lock.yaml
+
+# Ignore generated files
+worker-configuration.d.ts
