@@ -10,13 +10,17 @@ install:
 install-ci:
     pnpm install --frozen-lockfile
 
-# `npm run route:generate`
-route-generate: install
-    npm run route:generate
+# `npm run generate`
+generate: install
+    npm run generate
 
-# `npm run route:generate`
-route-generate-ci: install-ci
-    npm run route:generate
+# `npm run generate`
+generate-ci: install-ci
+    npm run generate
+
+# Clean build artifacts and caches
+clean:
+    rm -rf dist .wrangler node_modules/.vite node_modules/.cache
 
 # `npm run dev`
 dev: install
@@ -35,8 +39,7 @@ test: install
     npm run test:run
 
 # `npm run test:run`
-test-ci: install-ci
-    npm run generate
+test-ci: install-ci generate-ci
     npm run test:run
 
 # `uv tool run pre-commit run --all-files`
@@ -61,8 +64,7 @@ format-ci: install-ci
     npm run ci:format
 
 # `npm run ci:typecheck`
-typecheck-ci: install-ci
-    npm run generate
+typecheck-ci: install-ci generate-ci
     npm run ci:typecheck
 
 # Run install, build, test, lint, and pre-commit hooks in sequence
