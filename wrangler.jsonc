@@ -22,7 +22,8 @@
     ]
   },
   "vars": {
-    "WEBAUTHN_APP_NAME": "avalon-analytics"
+    "WEBAUTHN_APP_NAME": "avalon-analytics",
+    "WEBAUTHN_RP_ID": ""
   },
   "migrations": [
     {
