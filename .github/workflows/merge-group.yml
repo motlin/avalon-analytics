@@ -108,9 +108,30 @@ jobs:
 
             - run: just test-ci
 
+    check-generated:
+        name: Check generated files
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: jdx/mise-action@v2
+
+            - name: Get pnpm store directory
+              run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+            - uses: actions/cache@v4
+              with:
+                  path: ${{ env.STORE_PATH }}
+                  key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+                  restore-keys: |
+                      ${{ runner.os }}-pnpm-store-
+
+            - run: pnpm install --frozen-lockfile
+            - run: npm run generate
+            - run: git diff --exit-code
+
     all-checks:
         name: All checks
-        needs: [lint, format, typecheck, build, test]
+        needs: [lint, format, typecheck, build, test, check-generated]
         runs-on: ubuntu-latest
         steps:
             - name: All checks passed
