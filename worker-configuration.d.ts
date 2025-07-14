@@ -3,8 +3,8 @@
 // Runtime types generated with workerd@1.20250705.0 2025-05-07 nodejs_compat
 declare namespace Cloudflare {
 	interface Env {
-		WEBAUTHN_APP_NAME: 'avalon-analytics';
-		WEBAUTHN_RP_ID: '';
+		WEBAUTHN_APP_NAME: "avalon-analytics";
+		WEBAUTHN_RP_ID: "";
 		AUTH_SECRET_KEY: string;
 		FIREBASE_API_KEY: string;
 		FIREBASE_AUTH_DOMAIN: string;
@@ -13,7 +13,7 @@ declare namespace Cloudflare {
 		FIREBASE_STORAGE_BUCKET: string;
 		FIREBASE_MESSAGING_SENDER_ID: string;
 		FIREBASE_APP_ID: string;
-		SESSION_DURABLE_OBJECT: DurableObjectNamespace<import('./src/worker').SessionDurableObject>;
+		SESSION_DURABLE_OBJECT: DurableObjectNamespace<import("./src/worker").SessionDurableObject>;
 		DB: D1Database;
 		ASSETS: Fetcher;
 	}
@@ -23,22 +23,7 @@ type StringifyValues<EnvType extends Record<string, unknown>> = {
 	[Binding in keyof EnvType]: EnvType[Binding] extends string ? EnvType[Binding] : string;
 };
 declare namespace NodeJS {
-	interface ProcessEnv
-		extends StringifyValues<
-			Pick<
-				Cloudflare.Env,
-				| 'WEBAUTHN_APP_NAME'
-				| 'WEBAUTHN_RP_ID'
-				| 'AUTH_SECRET_KEY'
-				| 'FIREBASE_API_KEY'
-				| 'FIREBASE_AUTH_DOMAIN'
-				| 'FIREBASE_DATABASE_URL'
-				| 'FIREBASE_PROJECT_ID'
-				| 'FIREBASE_STORAGE_BUCKET'
-				| 'FIREBASE_MESSAGING_SENDER_ID'
-				| 'FIREBASE_APP_ID'
-			>
-		> {}
+	interface ProcessEnv extends StringifyValues<Pick<Cloudflare.Env, "WEBAUTHN_APP_NAME" | "WEBAUTHN_RP_ID" | "AUTH_SECRET_KEY" | "FIREBASE_API_KEY" | "FIREBASE_AUTH_DOMAIN" | "FIREBASE_DATABASE_URL" | "FIREBASE_PROJECT_ID" | "FIREBASE_STORAGE_BUCKET" | "FIREBASE_MESSAGING_SENDER_ID" | "FIREBASE_APP_ID">> {}
 }
 
 // Begin runtime types
