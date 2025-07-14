@@ -39,7 +39,7 @@ test: install
     npm run test:run
 
 # `npm run test:run`
-test-ci: install-ci generate-ci
+test-ci: generate-ci
     npm run test:run
 
 # `uv tool run pre-commit run --all-files`
