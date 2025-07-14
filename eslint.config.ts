@@ -5,7 +5,7 @@ import type {Linter} from 'eslint';
 import globals from 'globals';
 
 const config: Linter.Config[] = [
-	{ignores: ['dist/**/*', 'generated/**/*', 'node_modules/**/*', '.wrangler/**/*']},
+	{ignores: ['dist/**/*', 'generated/**/*', 'node_modules/**/*', '.wrangler/**/*', 'worker-configuration.d.ts']},
 	{
 		files: ['**/*.{js,mjs,cjs}'],
 		languageOptions: {
