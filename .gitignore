@@ -69,3 +69,6 @@ coverage
 .wrangler
 
 generated/
+
+*storybook.log
+storybook-static
