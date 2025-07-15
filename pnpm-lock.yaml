@@ -100,8 +100,8 @@ importers:
         specifier: ^5.8.3
         version: 5.8.3
       vibe-rules:
-        specifier: ^0.2.31
-        version: 0.2.57
+        specifier: ^0.3.50
+        version: 0.3.50
       vite:
         specifier: ^7.0.4
         version: 7.0.4(@types/node@22.16.2)(jiti@2.4.2)(terser@5.43.1)
@@ -3319,6 +3319,10 @@ packages:
 
   vibe-rules@0.2.57:
     resolution: {integrity: sha512-CVGXHyKRvDeC3S6SywxTcNGuckmSjwB+2q/v8eDSmwDBTlz0ziRqm49eI5ELLy4djKq6DdCSYvV4EGcwzsHRog==}
+    hasBin: true
+
+  vibe-rules@0.3.50:
+    resolution: {integrity: sha512-2EQFQfPx3veSYfT1OZiAiAsSrHS0oJhbgS6CQ6SBxUVXhLJTsuzHHgOVPoxBdngBm8JBlUIifIeZKva4MdbqQQ==}
     hasBin: true
 
   vite-node@3.2.4:
@@ -6918,6 +6922,14 @@ snapshots:
   urlpattern-polyfill@10.0.0: {}
 
   vibe-rules@0.2.57:
+    dependencies:
+      chalk: 4.1.2
+      commander: 11.1.0
+      fs-extra: 11.3.0
+      import-meta-resolve: 4.1.0
+      zod: 3.25.76
+
+  vibe-rules@0.3.50:
     dependencies:
       chalk: 4.1.2
       commander: 11.1.0
