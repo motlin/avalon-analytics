@@ -2,6 +2,7 @@ import type {RequestInfo} from 'rwsdk/worker';
 import {Breadcrumb} from '../../components/Breadcrumb';
 import type {Game} from '../../models/game';
 import {getFirestoreRestService} from '../../services/firestore-rest';
+import {gameIngestionService} from '../../services/game-ingestion';
 
 export async function GamesList({}: RequestInfo) {
 	let games: Game[] = [];
@@ -10,6 +11,8 @@ export async function GamesList({}: RequestInfo) {
 	try {
 		const firestoreRestService = getFirestoreRestService();
 		games = await firestoreRestService.getGameLogs(20);
+
+		await gameIngestionService.ingestGamesIfNeeded(games);
 	} catch (err) {
 		error = err instanceof Error ? err.message : 'Failed to load games';
 	}
