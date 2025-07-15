@@ -31,7 +31,7 @@
 		"test:run": "vitest run"
 	},
 	"dependencies": {
-		"@prisma/adapter-d1": "~6.8.2",
+		"@prisma/adapter-d1": "~6.11.1",
 		"@prisma/client": "~6.8.2",
 		"@simplewebauthn/browser": "^13.1.0",
 		"@simplewebauthn/server": "^13.1.1",
