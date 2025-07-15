@@ -27,7 +27,8 @@ export async function GamesList({}: RequestInfo) {
 			) : (
 				<ul>
 					{games.map((game) => {
-						const winner = game.outcome?.winner || 'In Progress';
+						const winner =
+							game.outcome?.state === 'GOOD_WIN' ? 'GOOD' : game.outcome?.state ? 'EVIL' : 'In Progress';
 						const playerCount = Object.keys(game.players).length;
 						const date = game.timeCreated.toLocaleDateString();
 						const time = game.timeCreated.toLocaleTimeString();
