@@ -68,4 +68,4 @@ typecheck-ci: install-ci generate-ci
     npm run ci:typecheck
 
 # Run install, build, test, lint, and pre-commit hooks in sequence
-precommit: lint format hooks build test
+precommit: generate lint format hooks build test
