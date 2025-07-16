@@ -12,8 +12,8 @@ importers:
         specifier: ~6.11.1
         version: 6.11.1
       '@prisma/client':
-        specifier: ~6.11.1
-        version: 6.11.1(prisma@6.11.1(typescript@5.8.3))(typescript@5.8.3)
+        specifier: ~6.12.0
+        version: 6.12.0(prisma@6.11.1(typescript@5.8.3))(typescript@5.8.3)
       '@simplewebauthn/browser':
         specifier: ^13.1.0
         version: 13.1.2
@@ -1218,8 +1218,8 @@ packages:
   '@prisma/adapter-d1@6.11.1':
     resolution: {integrity: sha512-1WDzlEb6vgqDHgYVIX7ygR9chjs9HrKbyPZtjbcTspovwcNdEvuggnBXIVTO+Vo2EsiXDvZ5dB2qho26MduQIg==}
 
-  '@prisma/client@6.11.1':
-    resolution: {integrity: sha512-5CLFh8QP6KxRm83pJ84jaVCeSVPQr8k0L2SEtOJHwdkS57/VQDcI/wQpGmdyOZi+D9gdNabdo8tj1Uk+w+upsQ==}
+  '@prisma/client@6.12.0':
+    resolution: {integrity: sha512-wn98bJ3Cj6edlF4jjpgXwbnQIo/fQLqqQHPk2POrZPxTlhY3+n90SSIF3LMRVa8VzRFC/Gec3YKJRxRu+AIGVA==}
     engines: {node: '>=18.18'}
     peerDependencies:
       prisma: '*'
@@ -2998,6 +2998,7 @@ packages:
 
   rwsdk@0.1.16:
     resolution: {integrity: sha512-mdBDspCaoHp/WfskQOfAsMfh1aA2Mvk95hLsRy/7TB4KW6EAdAVAORp78bGqZ72NBZru8xf0fzBlL3ukuZNdiA==}
+    deprecated: this release was broken - not all files that should have been built and uploaded ended up in the package
     hasBin: true
     peerDependencies:
       vite: ^6.2.6
@@ -4612,7 +4613,7 @@ snapshots:
       '@prisma/driver-adapter-utils': 6.11.1
       ky: 1.7.5
 
-  '@prisma/client@6.11.1(prisma@6.11.1(typescript@5.8.3))(typescript@5.8.3)':
+  '@prisma/client@6.12.0(prisma@6.11.1(typescript@5.8.3))(typescript@5.8.3)':
     optionalDependencies:
       prisma: 6.11.1(typescript@5.8.3)
       typescript: 5.8.3
