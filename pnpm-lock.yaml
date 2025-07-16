@@ -49,8 +49,8 @@ importers:
         specifier: ^9.0.16
         version: 9.0.16(@types/react@19.1.8)(storybook@9.0.17(@testing-library/dom@10.4.0)(prettier@3.6.2))
       '@storybook/addon-onboarding':
-        specifier: ^9.0.16
-        version: 9.0.16(storybook@9.0.17(@testing-library/dom@10.4.0)(prettier@3.6.2))
+        specifier: ^9.0.17
+        version: 9.0.17(storybook@9.0.17(@testing-library/dom@10.4.0)(prettier@3.6.2))
       '@storybook/react':
         specifier: ^9.0.16
         version: 9.0.16(react-dom@19.2.0-canary-39cad7af-20250411(react@19.2.0-canary-39cad7af-20250411))(react@19.2.0-canary-39cad7af-20250411)(storybook@9.0.17(@testing-library/dom@10.4.0)(prettier@3.6.2))(typescript@5.8.3)
@@ -1438,10 +1438,10 @@ packages:
     peerDependencies:
       storybook: ^9.0.16
 
-  '@storybook/addon-onboarding@9.0.16':
-    resolution: {integrity: sha512-69BPJ9fGNGpDAcGvNJ58V5uQOmpHkQMLcgp/ON3NepoCHiSReUzojB6wV8Ag13PUZmvWXVnE14SWKBZp93xTFQ==}
+  '@storybook/addon-onboarding@9.0.17':
+    resolution: {integrity: sha512-WoZZ8d58gP6uBu6OJ2K1GjBSM4+Kcr0I9lo0z3convzYqxrhfUm9pNEwVm57KCbVVyBbIKmevddCsSFoPC5u6Q==}
     peerDependencies:
-      storybook: ^9.0.16
+      storybook: ^9.0.17
 
   '@storybook/builder-vite@9.0.16':
     resolution: {integrity: sha512-zXockUexeRy3ABG7DFLEvJqJe4mGL0JkI7FMrpwiKaHCQNaD87vR0xkRVeh0a3B8GKUNxoYtpYKvdzc9DobQHQ==}
@@ -2998,6 +2998,7 @@ packages:
 
   rwsdk@0.1.16:
     resolution: {integrity: sha512-mdBDspCaoHp/WfskQOfAsMfh1aA2Mvk95hLsRy/7TB4KW6EAdAVAORp78bGqZ72NBZru8xf0fzBlL3ukuZNdiA==}
+    deprecated: this release was broken - not all files that should have been built and uploaded ended up in the package
     hasBin: true
     peerDependencies:
       vite: ^6.2.6
@@ -4806,7 +4807,7 @@ snapshots:
     transitivePeerDependencies:
       - '@types/react'
 
-  '@storybook/addon-onboarding@9.0.16(storybook@9.0.17(@testing-library/dom@10.4.0)(prettier@3.6.2))':
+  '@storybook/addon-onboarding@9.0.17(storybook@9.0.17(@testing-library/dom@10.4.0)(prettier@3.6.2))':
     dependencies:
       storybook: 9.0.17(@testing-library/dom@10.4.0)(prettier@3.6.2)
 
