@@ -38,7 +38,7 @@
 		"@simplewebauthn/browser": "^13.1.0",
 		"@simplewebauthn/server": "^13.1.1",
 		"firebase": "^11.10.0",
-		"rwsdk": "0.1.16",
+		"rwsdk": "0.1.18",
 		"zod": "^4.0.5"
 	},
 	"devDependencies": {
