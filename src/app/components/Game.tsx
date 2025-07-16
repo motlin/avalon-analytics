@@ -80,7 +80,10 @@ export function GameComponent({game}: GameProps) {
 									))}
 								</div>
 							)}
-							<MissionResultComponent mission={mission} />
+							<MissionResultComponent
+								mission={mission}
+								missionNumber={index + 1}
+							/>
 						</MissionComponent>
 					);
 				})}

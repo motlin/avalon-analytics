@@ -23,6 +23,7 @@ export const SuccessNoFails: Story = {
 			numFails: 0,
 			team: ['Alice', 'Bob', 'Charlie'],
 		},
+		missionNumber: 1,
 	},
 };
 
@@ -36,6 +37,7 @@ export const FailOneFail: Story = {
 			numFails: 1,
 			team: ['Alice', 'Bob', 'Charlie', 'Diana'],
 		},
+		missionNumber: 2,
 	},
 };
 
@@ -49,6 +51,7 @@ export const FailMultipleFails: Story = {
 			numFails: 3,
 			team: ['Alice', 'Bob', 'Charlie', 'Diana', 'Eve'],
 		},
+		missionNumber: 3,
 	},
 };
 
@@ -74,5 +77,6 @@ export const SuccessLargeTeam: Story = {
 			numFails: 1,
 			team: ['Player 1', 'Player 2', 'Player 3', 'Player 4', 'Player 5'],
 		},
+		missionNumber: 5,
 	},
 };
