@@ -86,8 +86,12 @@ export class FirestoreRestService {
 		}
 	}
 
-	async getGameLogs(limitCount = 50): Promise<Game[]> {
-		const url = `${this.baseUrl}/logs?pageSize=${limitCount}&orderBy=timeCreated desc&key=${this.apiKey}`;
+	async getGameLogs(limitCount = 50, pageToken?: string): Promise<{games: Game[]; nextPageToken?: string}> {
+		let url = `${this.baseUrl}/logs?pageSize=${limitCount}&orderBy=timeCreated desc&key=${this.apiKey}`;
+
+		if (pageToken) {
+			url += `&pageToken=${encodeURIComponent(pageToken)}`;
+		}
 
 		try {
 			const response = await fetch(url);
@@ -97,7 +101,10 @@ export class FirestoreRestService {
 				throw new Error(`Firestore API error: ${response.status}`);
 			}
 
-			const data = (await response.json()) as {documents?: FirestoreDocument[]};
+			const data = (await response.json()) as {
+				documents?: FirestoreDocument[];
+				nextPageToken?: string;
+			};
 			const games: Game[] = [];
 
 			if (data.documents) {
@@ -110,7 +117,10 @@ export class FirestoreRestService {
 				}
 			}
 
-			return games;
+			return {
+				games,
+				nextPageToken: data.nextPageToken,
+			};
 		} catch (error) {
 			console.error('Failed to fetch game logs:', error);
 			throw error;
