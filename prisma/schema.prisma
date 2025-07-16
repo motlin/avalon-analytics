@@ -55,3 +55,13 @@ model RawGameData {
 
   @@index([createdAt])
 }
+
+model Person {
+  id   String @id @default(uuid())
+  name String @unique
+  uid  String @unique
+  createdAt DateTime @default(now())
+
+  @@index([name])
+  @@index([uid])
+}
