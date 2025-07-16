@@ -71,7 +71,7 @@ export function MissionProgressBarComponent({
 			>
 				{missions.map((mission, index) => {
 					const isCurrentMission = index === currentMissionIndex;
-					const missionCircleSize = isCurrentMission ? '56px' : '48px';
+					const missionCircleSize = isCurrentMission ? 56 : 48;
 
 					return (
 						<div
@@ -115,8 +115,8 @@ export function MissionProgressBarComponent({
 								title={`Mission ${index + 1}: ${mission.state === 'PENDING' ? 'Pending' : mission.state === 'SUCCESS' ? 'Success' : 'Failed'}`}
 							>
 								<MissionCircle
+									mission={mission}
 									missionNumber={index + 1}
-									status={mission.state}
 									size={missionCircleSize}
 								/>
 								{isCurrentMission && (
