@@ -1,4 +1,5 @@
 import type {Player} from '../models/game';
+import {cn} from '@/lib/utils';
 
 interface PlayerPillProps {
 	player: Player;
@@ -8,60 +9,25 @@ interface PlayerPillProps {
 }
 
 export function PlayerPillComponent({player, size = 'medium', showRole = false, onClick}: PlayerPillProps) {
-	const sizes = {
-		small: {
-			padding: '0.25rem 0.5rem',
-			fontSize: '0.75rem',
-		},
-		medium: {
-			padding: '0.375rem 0.75rem',
-			fontSize: '0.875rem',
-		},
-		large: {
-			padding: '0.5rem 1rem',
-			fontSize: '1rem',
-		},
+	const sizeClasses = {
+		small: 'px-2 py-1 text-xs',
+		medium: 'px-3 py-1.5 text-sm',
+		large: 'px-4 py-2 text-base',
 	};
-
-	const baseStyle = {
-		display: 'inline-flex',
-		alignItems: 'center',
-		gap: '0.25rem',
-		borderRadius: '9999px',
-		backgroundColor: '#fafafa',
-		border: '1px solid #e0e0e0',
-		cursor: onClick ? 'pointer' : 'default',
-		transition: 'all 0.2s ease',
-		...sizes[size],
-	};
-
-	const hoverStyle = onClick
-		? {
-				backgroundColor: '#f0f0f0',
-				borderColor: '#d0d0d0',
-			}
-		: {};
 
 	return (
 		<span
-			style={baseStyle}
-			onMouseEnter={(e) => {
-				if (onClick) {
-					Object.assign(e.currentTarget.style, hoverStyle);
-				}
-			}}
-			onMouseLeave={(e) => {
-				Object.assign(e.currentTarget.style, {
-					backgroundColor: baseStyle.backgroundColor,
-					borderColor: baseStyle.border.split(' ')[2],
-				});
-			}}
+			className={cn(
+				'inline-flex items-center gap-1 rounded-full bg-secondary border border-border transition-colors',
+				sizeClasses[size],
+				onClick && 'cursor-pointer hover:bg-secondary/80 hover:border-input',
+			)}
 			onClick={onClick}
 			role={onClick ? 'button' : undefined}
 			tabIndex={onClick ? 0 : undefined}
 		>
-			<span style={{fontWeight: 600}}>{player.name}</span>
-			{showRole && player.role && <span style={{color: '#666', fontSize: '0.9em'}}>({player.role})</span>}
+			<span className="font-semibold">{player.name}</span>
+			{showRole && player.role && <span className="text-muted-foreground text-[0.9em]">({player.role})</span>}
 		</span>
 	);
 }
