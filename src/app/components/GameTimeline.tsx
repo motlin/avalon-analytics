@@ -4,6 +4,7 @@ import {MissionProgressBarComponent} from './MissionProgressBar';
 import {ProposalCardComponent} from './ProposalCard';
 import {PlayerPillComponent} from './PlayerPill';
 import {GameConclusionComponent} from './GameConclusion';
+import {Badge as UiBadge} from './ui/badge';
 
 export type BadgeStatus = 'success' | 'fail' | 'pending' | 'approved' | 'rejected';
 
@@ -42,23 +43,15 @@ const statusConfig: Record<BadgeStatus, {backgroundColor: string; color: string;
 
 export function Badge({status, text}: BadgeProps) {
 	const config = statusConfig[status];
+	const variantMap: Record<BadgeStatus, 'success' | 'destructive' | 'warning' | 'secondary' | 'outline'> = {
+		success: 'success',
+		fail: 'destructive',
+		pending: 'warning',
+		approved: 'secondary',
+		rejected: 'destructive',
+	};
 
-	return (
-		<span
-			style={{
-				display: 'inline-block',
-				padding: '0.25rem 0.5rem',
-				borderRadius: '0.25rem',
-				fontSize: '0.875rem',
-				fontWeight: 500,
-				backgroundColor: config.backgroundColor,
-				color: config.color,
-				border: `1px solid ${config.color}`,
-			}}
-		>
-			{text || config.defaultText}
-		</span>
-	);
+	return <UiBadge variant={variantMap[status]}>{text || config.defaultText}</UiBadge>;
 }
 
 interface GameTimelineProps {
