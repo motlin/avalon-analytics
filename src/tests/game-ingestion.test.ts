@@ -1,5 +1,5 @@
 import {env} from 'cloudflare:test';
-import type {PrismaClient} from '@generated/prisma';
+import type {PrismaClient} from '@generated/prisma/client';
 import {beforeEach, describe, expect, it} from 'vitest';
 import {setupDb} from '../db';
 import {GameIngestionService} from '../app/services/game-ingestion';
@@ -28,10 +28,10 @@ describe('Game Ingestion Service', () => {
 			{
 				id: '2025-01-15T11:00:00Z/test-game-2',
 				timeCreated: new Date('2025-01-15T11:00:00Z'),
-				timeFinished: null,
+				timeFinished: undefined,
 				players: [{uid: 'player2', name: 'Player 2'}],
 				missions: [],
-				outcome: null,
+				outcome: undefined,
 			},
 		] as Game[];
 
@@ -70,10 +70,10 @@ describe('Game Ingestion Service', () => {
 			{
 				id: existingGameKey,
 				timeCreated: new Date('2025-01-15T10:00:00Z'),
-				timeFinished: null,
+				timeFinished: undefined,
 				players: [{uid: 'player3', name: 'Player 3'}],
 				missions: [],
-				outcome: null,
+				outcome: undefined,
 				modified: true,
 			},
 		] as Game[];
@@ -99,18 +99,18 @@ describe('Game Ingestion Service', () => {
 			{
 				id: null as any,
 				timeCreated: new Date('2025-01-15T13:00:00Z'),
-				timeFinished: null,
+				timeFinished: undefined,
 				players: [],
 				missions: [],
-				outcome: null,
+				outcome: undefined,
 			},
 			{
 				id: '2025-01-15T13:30:00Z/valid-game',
 				timeCreated: new Date('2025-01-15T13:30:00Z'),
-				timeFinished: null,
+				timeFinished: undefined,
 				players: [],
 				missions: [],
-				outcome: null,
+				outcome: undefined,
 			},
 		] as Game[];
 
