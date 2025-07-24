@@ -7,11 +7,15 @@ const config: StorybookConfig = {
   ],
   "addons": [
     "@storybook/addon-docs",
-    "@storybook/addon-onboarding"
+    "@storybook/addon-onboarding",
+    "@storybook/addon-vitest"
   ],
   "framework": {
     "name": "@storybook/react-vite",
     "options": {}
+  },
+  "features": {
+    "interactionsDebugger": true
   }
 };
 export default config;

@@ -1,5 +1,5 @@
 import {env} from 'cloudflare:test';
-import type {PrismaClient} from '@generated/prisma';
+import type {PrismaClient} from '../../generated/prisma/client';
 import {beforeEach, describe, expect, it} from 'vitest';
 import {setupDb} from '../db';
 import {suppressExpectedErrors} from './testUtils';
