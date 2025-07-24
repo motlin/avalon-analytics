@@ -9,7 +9,6 @@ const preview: Preview = {
       },
     },
   },
-  experimentalRSC: true,
 };
 
 export default preview;
