@@ -3,47 +3,10 @@ import styles from './GamePlayerList.module.css';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faHammer, faCrown, faVoteYea, faEllipsisH} from '@fortawesome/free-solid-svg-icons';
 import {faThumbsUp, faThumbsDown, faCircle as faCircleRegular} from '@fortawesome/free-regular-svg-icons';
-
-interface AvalonUser {
-	name: string;
-}
-
-interface Mission {
-	teamSize: number;
-}
-
-interface Proposal {
-	team: string[];
-	votes: string[];
-}
-
-interface LobbyRole {
-	assassin: boolean;
-}
-
-interface Game {
-	players: string[];
-	phase: string;
-	currentProposer: string;
-	currentProposalIdx: number;
-	currentMission: Mission;
-	currentProposal: Proposal;
-	lastProposal: Proposal | null;
-	hammer: string;
-}
-
-interface Lobby {
-	role: LobbyRole;
-}
-
-interface AvalonData {
-	game: Game;
-	user: AvalonUser;
-	lobby: Lobby;
-}
+import type {AvalonApi} from './types';
 
 interface GamePlayerListProps {
-	avalon: AvalonData;
+	avalon: AvalonApi;
 	onSelectedPlayers: (players: string[]) => void;
 }
 
@@ -58,7 +21,7 @@ function joinWithAnd(array: string[]): string {
 export default function GamePlayerList({avalon, onSelectedPlayers}: GamePlayerListProps) {
 	const [selectedPlayers, setSelectedPlayers] = useState<string[]>([]);
 
-	const crownColor = avalon.game.currentProposalIdx < 4 ? '#fcfc00' : '#cc0808';
+	const crownColor = (avalon.game.currentProposalIdx ?? 0) < 4 ? '#fcfc00' : '#cc0808';
 
 	const enableCheckboxes = (name: string): boolean => {
 		return (
@@ -70,12 +33,12 @@ export default function GamePlayerList({avalon, onSelectedPlayers}: GamePlayerLi
 	const selectedForMission = (name: string): boolean => {
 		return (
 			(avalon.game.phase === 'PROPOSAL_VOTE' || avalon.game.phase === 'MISSION_VOTE') &&
-			avalon.game.currentProposal?.team?.includes(name)
+			(avalon.game.currentProposal?.team?.includes(name) ?? false)
 		);
 	};
 
 	const hasVoted = (name: string): boolean => {
-		return avalon.game.phase === 'PROPOSAL_VOTE' && avalon.game.currentProposal?.votes?.includes(name);
+		return avalon.game.phase === 'PROPOSAL_VOTE' && (avalon.game.currentProposal?.votes?.includes(name) ?? false);
 	};
 
 	const waitingOnVote = (name: string): boolean => {
@@ -86,10 +49,10 @@ export default function GamePlayerList({avalon, onSelectedPlayers}: GamePlayerLi
 		switch (avalon.game.phase) {
 			case 'TEAM_PROPOSAL':
 			case 'ASSASSINATION':
-				return avalon.game.lastProposal ? avalon.game.lastProposal.team.includes(name) : false;
+				return avalon.game.lastProposal?.team?.includes(name) ?? false;
 			case 'PROPOSAL_VOTE':
 			case 'MISSION_VOTE':
-				return avalon.game.currentProposal?.team?.includes(name) || false;
+				return avalon.game.currentProposal?.team?.includes(name) ?? false;
 			default:
 				console.error('Unhandled game phase', avalon.game.phase);
 				return false;
@@ -98,18 +61,18 @@ export default function GamePlayerList({avalon, onSelectedPlayers}: GamePlayerLi
 
 	const approvedProposal = (name: string): boolean => {
 		if (avalon.game.phase === 'TEAM_PROPOSAL' || avalon.game.phase === 'ASSASSINATION') {
-			return avalon.game.lastProposal ? avalon.game.lastProposal.votes.includes(name) : false;
+			return avalon.game.lastProposal?.votes?.includes(name) ?? false;
 		} else if (avalon.game.phase === 'MISSION_VOTE') {
-			return avalon.game.currentProposal?.votes?.includes(name) || false;
+			return avalon.game.currentProposal?.votes?.includes(name) ?? false;
 		}
 		return false;
 	};
 
 	const rejectedProposal = (name: string): boolean => {
 		if (avalon.game.phase === 'TEAM_PROPOSAL' || avalon.game.phase === 'ASSASSINATION') {
-			return avalon.game.lastProposal ? !avalon.game.lastProposal.votes.includes(name) : false;
+			return !(avalon.game.lastProposal?.votes?.includes(name) ?? true);
 		} else if (avalon.game.phase === 'MISSION_VOTE') {
-			return !avalon.game.currentProposal?.votes?.includes(name);
+			return !(avalon.game.currentProposal?.votes?.includes(name) ?? true);
 		}
 		return false;
 	};
@@ -146,7 +109,7 @@ export default function GamePlayerList({avalon, onSelectedPlayers}: GamePlayerLi
 
 			let maxSelected = 1;
 			if (avalon.game.phase === 'TEAM_PROPOSAL') {
-				maxSelected = avalon.game.currentMission.teamSize;
+				maxSelected = avalon.game.currentMission?.teamSize ?? 1;
 			}
 
 			if (newSelection.length > maxSelected) {
@@ -167,108 +130,111 @@ export default function GamePlayerList({avalon, onSelectedPlayers}: GamePlayerLi
 
 	return (
 		<div className={styles.playerList}>
-			{avalon.game.players.map((playerName) => (
-				<div
-					key={playerName}
-					className={styles.playerItem}
-				>
-					<div className={styles.checkboxColumn}>
-						{enableCheckboxes(playerName) && (
-							<input
-								type="checkbox"
-								className={styles.checkbox}
-								checked={selectedPlayers.includes(playerName)}
-								onChange={(e) => handleCheckboxChange(playerName, e.target.checked)}
-							/>
-						)}
-						{selectedForMission(playerName) && (
-							<input
-								type="checkbox"
-								className={`${styles.checkbox} ${styles.selectedForMission}`}
-								checked={true}
-								readOnly
-							/>
-						)}
-					</div>
+			{avalon.game.players.map((player) => {
+				const playerName = typeof player === 'string' ? player : player.name;
+				return (
+					<div
+						key={typeof player === 'string' ? player : player.uid}
+						className={styles.playerItem}
+					>
+						<div className={styles.checkboxColumn}>
+							{enableCheckboxes(playerName) && (
+								<input
+									type="checkbox"
+									className={styles.checkbox}
+									checked={selectedPlayers.includes(playerName)}
+									onChange={(e) => handleCheckboxChange(playerName, e.target.checked)}
+								/>
+							)}
+							{selectedForMission(playerName) && (
+								<input
+									type="checkbox"
+									className={`${styles.checkbox} ${styles.selectedForMission}`}
+									checked={true}
+									readOnly
+								/>
+							)}
+						</div>
 
-					<div className={styles.statusColumn}>
-						{avalon.game.currentProposer === playerName && (
-							<div
-								className={styles.crown}
-								title={`${playerName} is proposing the next team`}
-							>
-								<span className="fa-layers fa-fw">
-									<FontAwesomeIcon
-										icon={faCrown}
-										color={crownColor}
-									/>
-									<span
-										className="fa-layers-text"
-										style={{fontSize: '0.5em'}}
-									>
-										{avalon.game.currentProposalIdx + 1}
+						<div className={styles.statusColumn}>
+							{avalon.game.currentProposer === playerName && (
+								<div
+									className={styles.crown}
+									title={`${playerName} is proposing the next team`}
+								>
+									<span className="fa-layers fa-fw">
+										<FontAwesomeIcon
+											icon={faCrown}
+											color={crownColor}
+										/>
+										<span
+											className="fa-layers-text"
+											style={{fontSize: '0.5em'}}
+										>
+											{(avalon.game.currentProposalIdx ?? 0) + 1}
+										</span>
 									</span>
-								</span>
-							</div>
-						)}
-						{playerName === avalon.game.hammer && avalon.game.currentProposer !== playerName && (
-							<FontAwesomeIcon icon={faHammer} />
-						)}
-					</div>
+								</div>
+							)}
+							{playerName === avalon.game.hammer && avalon.game.currentProposer !== playerName && (
+								<FontAwesomeIcon icon={faHammer} />
+							)}
+						</div>
 
-					<div className={styles.nameColumn}>{playerName}</div>
+						<div className={styles.nameColumn}>{playerName}</div>
 
-					<div className={styles.iconColumn}>
-						{tooltipText(playerName) && (
-							<div
-								className={styles.statusIcons}
-								title={tooltipText(playerName) || ''}
-							>
-								<span className="fa-layers fa-fw">
-									{wasOnLastTeamProposed(playerName) && (
-										<FontAwesomeIcon
-											icon={faCircleRegular}
-											color="#629ec1"
-											transform="grow-13"
-										/>
-									)}
-									{waitingOnVote(playerName) && (
-										<FontAwesomeIcon
-											icon={faEllipsisH}
-											color="#4c4c4c"
-										/>
-									)}
-									{hasVoted(playerName) && !waitingOnVote(playerName) && (
-										<FontAwesomeIcon
-											icon={faVoteYea}
-											transform="up-1"
-											color="#4c4c4c"
-										/>
-									)}
-									{approvedProposal(playerName) &&
-										!hasVoted(playerName) &&
-										!waitingOnVote(playerName) && (
+						<div className={styles.iconColumn}>
+							{tooltipText(playerName) && (
+								<div
+									className={styles.statusIcons}
+									title={tooltipText(playerName) || ''}
+								>
+									<span className="fa-layers fa-fw">
+										{wasOnLastTeamProposed(playerName) && (
 											<FontAwesomeIcon
-												icon={faThumbsUp}
-												transform="right-1"
-												color={'green'}
+												icon={faCircleRegular}
+												color="#629ec1"
+												transform="grow-13"
 											/>
 										)}
-									{rejectedProposal(playerName) &&
-										!hasVoted(playerName) &&
-										!waitingOnVote(playerName) && (
+										{waitingOnVote(playerName) && (
 											<FontAwesomeIcon
-												icon={faThumbsDown}
-												transform="right-1"
-												color={'#ed1515'}
+												icon={faEllipsisH}
+												color="#4c4c4c"
 											/>
 										)}
-								</span>
-							</div>
-						)}
+										{hasVoted(playerName) && !waitingOnVote(playerName) && (
+											<FontAwesomeIcon
+												icon={faVoteYea}
+												transform="up-1"
+												color="#4c4c4c"
+											/>
+										)}
+										{approvedProposal(playerName) &&
+											!hasVoted(playerName) &&
+											!waitingOnVote(playerName) && (
+												<FontAwesomeIcon
+													icon={faThumbsUp}
+													transform="right-1"
+													color={'green'}
+												/>
+											)}
+										{rejectedProposal(playerName) &&
+											!hasVoted(playerName) &&
+											!waitingOnVote(playerName) && (
+												<FontAwesomeIcon
+													icon={faThumbsDown}
+													transform="right-1"
+													color={'#ed1515'}
+												/>
+											)}
+									</span>
+								</div>
+							)}
+						</div>
 					</div>
-				</div>
-			))}
+				);
+			})}
 		</div>
 	);
 }

@@ -4,7 +4,7 @@ interface MissionSummaryTableProps {
 	game: Game;
 }
 
-export function MissionSummaryTable({game}: MissionSummaryTableProps) {
+function MissionSummaryTable({game}: MissionSummaryTableProps) {
 	const headerStyle = {
 		backgroundColor: '#f3f4f6',
 		padding: '0.75rem',
@@ -131,3 +131,6 @@ export function MissionSummaryTable({game}: MissionSummaryTableProps) {
 		</div>
 	);
 }
+
+export default MissionSummaryTable;
+export {MissionSummaryTable};
