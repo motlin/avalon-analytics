@@ -6,6 +6,7 @@
 			"public/**",
 			"test/**",
 			".storybook/**",
+			"*.json",
 			"*.json5",
 			"*.ts",
 			"*.js",

@@ -6,12 +6,22 @@ export interface Mission extends Omit<BaseMission, 'team'> {
 	evilOnTeam?: string[];
 }
 
+export interface Proposal {
+	proposer: string;
+	team: string[];
+	votes: string[];
+	state: 'APPROVED' | 'REJECTED' | 'PENDING';
+}
+
 export interface Game extends BaseGame {
 	missions: Mission[];
 	phase?: string;
 	currentProposer?: string;
 	currentProposalIdx?: number;
 	currentMission?: Partial<Mission>;
+	currentProposal?: Proposal;
+	lastProposal?: Proposal | null;
+	hammer?: string;
 	roles?: string[];
 	missionVotes?: Record<string, boolean>[];
 	currentMissionIdx?: number;

@@ -63,8 +63,11 @@ function Game() {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const createMockAvalon = (overrides = {}) => ({
-	game: {
+const createMockAvalon = (overrides: any = {}) => {
+	const baseGame = {
+		id: 'mock-game-id',
+		timeCreated: new Date('2025-01-01T00:00:00Z'),
+		missions: [],
 		players: ['CRAIGM', 'ZEHUA', 'VINAY', 'LUKEE', 'KEN'],
 		phase: 'TEAM_PROPOSAL',
 		currentProposer: 'CRAIGM',
@@ -78,17 +81,27 @@ const createMockAvalon = (overrides = {}) => ({
 		},
 		lastProposal: null,
 		hammer: 'KEN',
-	},
-	user: {
-		name: 'CRAIGM',
-	},
-	lobby: {
-		role: {
-			assassin: false,
+	};
+
+	return {
+		game: {
+			...baseGame,
+			...overrides.game,
 		},
-	},
-	...overrides,
-});
+		user: {
+			name: 'CRAIGM',
+		},
+		lobby: {
+			role: {
+				assassin: false,
+			},
+		},
+		config: {
+			roleMap: {},
+		},
+		...overrides,
+	};
+};
 
 export const TeamProposal: Story = {
 	args: {
