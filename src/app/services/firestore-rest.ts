@@ -1,4 +1,5 @@
 import {type Game, GameSchema, type Stats, StatsSchema} from '../models/game';
+import {getLocalCacheService} from './local-cache';
 
 interface FirestoreValue {
 	stringValue?: string;
@@ -106,6 +107,7 @@ export class FirestoreRestService {
 				nextPageToken?: string;
 			};
 			const games: Game[] = [];
+			const localCache = getLocalCacheService();
 
 			if (data.documents) {
 				for (const doc of data.documents) {
@@ -113,6 +115,7 @@ export class FirestoreRestService {
 					const game = this.validateGame(gameData);
 					if (game) {
 						games.push(game);
+						localCache.cacheGame(game);
 					}
 				}
 			}
@@ -128,6 +131,16 @@ export class FirestoreRestService {
 	}
 
 	async getGameLogById(gameId: string): Promise<Game | null> {
+		const localCache = getLocalCacheService();
+
+		if (localCache.hasGameCached(gameId)) {
+			const cachedGame = localCache.getCachedGame(gameId);
+			if (cachedGame) {
+				console.log(`Using cached game for ${gameId}`);
+				return cachedGame;
+			}
+		}
+
 		const url = `${this.baseUrl}/logs/${gameId}?key=${this.apiKey}`;
 
 		try {
@@ -141,7 +154,13 @@ export class FirestoreRestService {
 
 			const doc = (await response.json()) as FirestoreDocument;
 			const gameData = this.convertDocumentToObject(doc);
-			return this.validateGame(gameData);
+			const game = this.validateGame(gameData);
+
+			if (game) {
+				localCache.cacheGame(game);
+			}
+
+			return game;
 		} catch (error) {
 			console.error('Failed to fetch game by ID:', error);
 			throw error;
