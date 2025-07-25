@@ -1,4 +1,5 @@
-import React from 'react';
+import * as React from 'react';
+const {useState} = React;
 import type {Meta, StoryObj} from '@storybook/react-vite';
 import {TeamMemberComponent} from './TeamMember';
 
@@ -196,7 +197,7 @@ export const AllVariants: Story = {
 
 export const InteractiveSelection: Story = {
 	render: () => {
-		const [selectedMembers, setSelectedMembers] = React.useState<string[]>([]);
+		const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
 
 		const toggleSelection = (uid: string) => {
 			setSelectedMembers((prev) => (prev.includes(uid) ? prev.filter((id) => id !== uid) : [...prev, uid]));
