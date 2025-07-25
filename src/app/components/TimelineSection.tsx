@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import type {Game, Mission, Proposal} from '../models/game';
 
 export interface TimelineSectionProps {
@@ -92,7 +92,7 @@ function buildTimelineEvents(game: Game): TimelineEvent[] {
 }
 
 export function TimelineSection({game, showPlayerNames = true, expandedByDefault = false}: TimelineSectionProps) {
-	const [expandedEvents, setExpandedEvents] = React.useState<Set<number>>(
+	const [expandedEvents, setExpandedEvents] = useState<Set<number>>(
 		expandedByDefault ? new Set(Array.from({length: 100}, (_, i) => i)) : new Set(),
 	);
 
