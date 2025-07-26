@@ -1,0 +1,44 @@
+table {
+	border-collapse: collapse;
+}
+
+tr {
+	height: 2.3em;
+}
+
+td {
+	width: 1.7em;
+}
+
+tr:nth-child(even) {
+	background-color: Gainsboro;
+}
+
+tr:nth-child(odd) {
+	background-color: bisque;
+}
+
+.playerName {
+	border-left: 2px solid;
+}
+
+.missionResult {
+	border-right: 2px solid;
+}
+
+.fontWeightMedium {
+	font-weight: 500;
+}
+
+.role {
+	border-right: 2px solid;
+	white-space: nowrap;
+}
+
+.role + td {
+	padding-left: 8px;
+}
+
+.missionResult + td {
+	padding-left: 8px;
+}

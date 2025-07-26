@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/react-vite';
+import type {Meta, StoryObj} from '@storybook/react-vite-vite';
 import {ProposalComponent} from './Proposal';
 
 const meta: Meta<typeof ProposalComponent> = {
