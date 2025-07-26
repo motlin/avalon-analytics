@@ -37,7 +37,7 @@ jobs:
           mkdir -p .wrangler/state/v3/d1
           RWSDK_DEPLOY=1 npx vite build
           # Upload as version with PR prefix (creates preview URL automatically)
-          npx wrangler versions upload --tag pr-${{ github.event.number }} --account-id d6a6604075c347336a008699794d5fb9
+          npx wrangler versions upload --tag pr-${{ github.event.number }}
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
 
