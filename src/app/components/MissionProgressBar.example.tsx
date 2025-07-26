@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import {MissionProgressBarComponent} from './MissionProgressBar';
 import {Mission} from '../models/game';
 
