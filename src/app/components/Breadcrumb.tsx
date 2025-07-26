@@ -1,76 +1,39 @@
-interface BreadcrumbItem {
-	label: string;
-	href?: string;
-}
+import {
+	Breadcrumb as BreadcrumbComponent,
+	BreadcrumbItem,
+	BreadcrumbLink,
+	BreadcrumbList,
+	BreadcrumbPage,
+	BreadcrumbSeparator,
+} from '@/app/components/ui/breadcrumb';
 
 interface BreadcrumbProps {
-	items: BreadcrumbItem[];
+	items: Array<{
+		label: string;
+		href?: string;
+	}>;
 }
 
 export function Breadcrumb({items}: BreadcrumbProps) {
 	return (
-		<>
-			<style>{`
-				.breadcrumb-link:hover {
-					text-decoration: underline !important;
-				}
-			`}</style>
-			<nav
-				aria-label="Breadcrumb"
-				style={{marginBottom: '1rem'}}
-			>
-				<ol
-					style={{
-						display: 'flex',
-						listStyle: 'none',
-						padding: 0,
-						margin: 0,
-						fontSize: '0.9rem',
-						color: '#666',
-					}}
-				>
-					{items.map((item, index) => (
-						<li
-							key={index}
-							style={{display: 'flex', alignItems: 'center'}}
-						>
-							{index > 0 && (
-								<span
-									style={{
-										margin: '0 0.5rem',
-										color: '#999',
-									}}
-									aria-hidden="true"
-								>
-									&gt;
-								</span>
-							)}
+		<BreadcrumbComponent className="mb-4">
+			<BreadcrumbList>
+				{items.map((item, index) => (
+					<div
+						key={index}
+						className="flex items-center"
+					>
+						<BreadcrumbItem>
 							{item.href ? (
-								<a
-									href={item.href}
-									className="breadcrumb-link"
-									style={{
-										color: '#0066cc',
-										textDecoration: 'none',
-									}}
-								>
-									{item.label}
-								</a>
+								<BreadcrumbLink href={item.href}>{item.label}</BreadcrumbLink>
 							) : (
-								<span
-									style={{
-										color: '#333',
-										fontWeight: '500',
-									}}
-									aria-current="page"
-								>
-									{item.label}
-								</span>
+								<BreadcrumbPage>{item.label}</BreadcrumbPage>
 							)}
-						</li>
-					))}
-				</ol>
-			</nav>
-		</>
+						</BreadcrumbItem>
+						{index < items.length - 1 && <BreadcrumbSeparator />}
+					</div>
+				))}
+			</BreadcrumbList>
+		</BreadcrumbComponent>
 	);
 }
