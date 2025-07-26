@@ -1,3 +1,5 @@
+import {ThemeProvider} from './contexts/ThemeContext';
+
 export const Document: React.FC<{children: React.ReactNode}> = ({children}) => (
 	<html lang="en">
 		<head>
@@ -13,7 +15,9 @@ export const Document: React.FC<{children: React.ReactNode}> = ({children}) => (
 			/>
 		</head>
 		<body>
-			<div id="root">{children}</div>
+			<div id="root">
+				<ThemeProvider>{children}</ThemeProvider>
+			</div>
 			<script>import("/src/client.tsx")</script>
 		</body>
 	</html>
