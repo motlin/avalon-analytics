@@ -36,7 +36,8 @@ jobs:
           # Create minimal .wrangler directory to prevent dev:init cascade
           mkdir -p .wrangler/state/v3/d1
           RWSDK_DEPLOY=1 npx vite build
-          npx wrangler deploy --name avalon-analytics-pr-${{ github.event.number }} --no-bundle --account-id d6a6604075c347336a008699794d5fb9
+          # Upload as version with PR prefix (creates preview URL automatically)
+          npx wrangler versions upload --tag pr-${{ github.event.number }} --account-id d6a6604075c347336a008699794d5fb9
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
 
@@ -45,7 +46,8 @@ jobs:
         with:
           script: |
             const prNumber = context.issue.number;
-            const previewUrl = `https://avalon-analytics-pr-${prNumber}.cmotlin.workers.dev`;
+            // Versioned preview URL format: <VERSION_PREFIX>-<WORKER_NAME>.<SUBDOMAIN>.workers.dev
+            const previewUrl = `https://pr-${prNumber}-avalon-analytics.cmotlin.workers.dev`;
 
             // Find existing preview comment
             const comments = await github.rest.issues.listComments({
@@ -58,7 +60,7 @@ jobs:
               comment.body.includes('🚀 Preview deployed:')
             );
 
-            const body = `🚀 Preview deployed: ${previewUrl}`;
+            const body = `🚀 Preview deployed: ${previewUrl}\n\n_Generated via versioned preview URL_`;
 
             if (existingComment) {
               await github.rest.issues.updateComment({
