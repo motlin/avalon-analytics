@@ -9,6 +9,10 @@ updates:
       open-pull-requests-limit: 25
       labels:
           - "dependencies"
+      ignore:
+          # rwsdk@0.1.26 requires vite ^6.2.6, cannot upgrade to vite 7.x
+          - dependency-name: 'vite'
+            versions: ['7.x']
       groups:
           typescript-ecosystem:
               patterns:
