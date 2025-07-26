@@ -1,5 +1,5 @@
 import React from 'react';
-import type {Meta, StoryObj} from '@storybook/react-vite';
+import type {Meta, StoryObj} from '@storybook/react-vite-vite';
 import {TimelineSection} from './TimelineSection';
 import type {Game} from '../models/game';
 

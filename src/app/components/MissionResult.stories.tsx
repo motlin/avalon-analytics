@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/react-vite';
+import type {Meta, StoryObj} from '@storybook/react-vite-vite';
 import {MissionResultComponent} from './MissionResult';
 
 const meta: Meta<typeof MissionResultComponent> = {

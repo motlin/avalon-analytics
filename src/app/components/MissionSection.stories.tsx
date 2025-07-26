@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/react-vite';
+import type {Meta, StoryObj} from '@storybook/react-vite-vite';
 import {MissionSection} from './MissionSection';
 import type {Mission, Game} from '../models/game';
 

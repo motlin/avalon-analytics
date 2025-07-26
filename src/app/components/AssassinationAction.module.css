@@ -1,0 +1,54 @@
+.card {
+  background-color: #90a4ae;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  margin: 8px;
+}
+
+.cardHeader {
+  padding: 16px;
+  background-color: #90a4ae;
+  border-radius: 4px 4px 0 0;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: #fff;
+}
+
+.cardContent {
+  padding: 16px;
+  background-color: #e1f5fe;
+  border-radius: 0 0 4px 4px;
+}
+
+.assassinateButton {
+  background-color: #1976d2;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  text-transform: uppercase;
+  min-height: 36px;
+}
+
+.assassinateButton:hover:not(:disabled) {
+  background-color: #1565c0;
+}
+
+.assassinateButton:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.waitingMessage {
+  color: #666;
+  font-style: italic;
+}
