@@ -1,6 +1,7 @@
 import type {RequestInfo} from 'rwsdk/worker';
 import {Breadcrumb} from '../../components/Breadcrumb';
 import {Pagination} from '../../components/Pagination';
+import {ThemeToggle} from '../../components/ThemeToggle';
 import type {Game} from '../../models/game';
 import {getFirestoreRestService} from '../../services/firestore-rest';
 import {gameIngestionService} from '../../services/game-ingestion';
@@ -32,9 +33,14 @@ export async function GamesList({request}: RequestInfo) {
 	}
 
 	return (
-		<div>
-			<Breadcrumb items={[{label: 'Home', href: '/'}, {label: 'All Games'}]} />
-			<h1>Games List</h1>
+		<div className="p-4">
+			<div className="flex justify-between items-center mb-4">
+				<div>
+					<Breadcrumb items={[{label: 'Home', href: '/'}, {label: 'All Games'}]} />
+					<h1 className="text-2xl font-bold mt-2">Games List</h1>
+				</div>
+				<ThemeToggle />
+			</div>
 			{games.length === 0 ? (
 				<p>No games found</p>
 			) : (
