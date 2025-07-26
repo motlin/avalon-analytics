@@ -18,7 +18,7 @@
     ]
   },
   "vars": {
-    "WEBAUTHN_APP_NAME": "avalon-analytics",
+    "WEBAUTHN_APP_NAME": "avalon-analytics-preview",
     "WEBAUTHN_RP_ID": ""
   },
   "migrations": [
@@ -32,8 +32,8 @@
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "avalon-analytics-juicy-tyrannosaurus",
-      "database_id": "79beff56-da08-4bf5-8ceb-6651972a56ff"
+      "database_name": "avalon-analytics-dev",
+      "database_id": "7deeac8f-f900-4b60-9260-389e8da472d8"
     }
   ]
 }
