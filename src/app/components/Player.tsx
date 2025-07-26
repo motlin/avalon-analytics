@@ -16,7 +16,17 @@ export function PlayerComponent({player}: PlayerProps) {
 		>
 			<strong>{player.name}</strong>
 			{player.role && <span> - Role: {player.role}</span>}
-			<span style={{fontSize: '0.8em', color: '#666'}}> (uid: {player.uid})</span>
+			<span style={{fontSize: '0.8em', color: '#666'}}>
+				{' '}
+				(uid:{' '}
+				<a
+					href={`/uid/${player.uid}`}
+					style={{color: '#0066cc', textDecoration: 'none'}}
+				>
+					{player.uid}
+				</a>
+				)
+			</span>
 		</div>
 	);
 }
