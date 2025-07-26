@@ -1,0 +1,77 @@
+# Fast PR preview deployment - skips validation since merge-group.yml already checks everything
+name: Deploy Preview
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+concurrency:
+  group: preview-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    environment:
+      name: preview-${{ github.event.number }}
+      url: https://avalon-analytics-pr-${{ github.event.number }}.cmotlin.workers.dev
+    steps:
+      - uses: actions/checkout@v4
+      - uses: jdx/mise-action@v2
+
+      - name: Get pnpm store directory
+        run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Fast build and deploy
+        run: |
+          pnpm install --frozen-lockfile --ignore-scripts
+          npx prisma generate
+          # Create minimal .wrangler directory to prevent dev:init cascade
+          mkdir -p .wrangler/state/v3/d1
+          RWSDK_DEPLOY=1 npx vite build
+          npx wrangler deploy --name avalon-analytics-pr-${{ github.event.number }} --no-bundle
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+
+      - name: Comment PR with preview URL
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prNumber = context.issue.number;
+            const previewUrl = `https://avalon-analytics-pr-${prNumber}.cmotlin.workers.dev`;
+
+            // Find existing preview comment
+            const comments = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+            });
+
+            const existingComment = comments.data.find(comment =>
+              comment.body.includes('🚀 Preview deployed:')
+            );
+
+            const body = `🚀 Preview deployed: ${previewUrl}`;
+
+            if (existingComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existingComment.id,
+                body: body
+              });
+            } else {
+              await github.rest.issues.createComment({
+                issue_number: prNumber,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: body
+              });
+            }
