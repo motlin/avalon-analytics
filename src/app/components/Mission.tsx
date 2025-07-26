@@ -7,7 +7,7 @@ interface MissionProps {
 	children?: ReactNode;
 }
 
-export function MissionComponent({mission, missionNumber, children}: MissionProps) {
+function MissionComponent({mission, missionNumber, children}: MissionProps) {
 	return (
 		<div style={{border: '1px solid #ccc', padding: '1rem', marginBottom: '1rem'}}>
 			<h3>Mission {missionNumber}</h3>
@@ -17,3 +17,6 @@ export function MissionComponent({mission, missionNumber, children}: MissionProp
 		</div>
 	);
 }
+
+export default MissionComponent;
+export {MissionComponent};

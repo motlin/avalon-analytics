@@ -112,6 +112,7 @@ const sampleGame: Game = {
 		},
 	],
 	outcome: {
+		state: 'EVIL_WIN',
 		winner: 'EVIL',
 		reason: 'Evil achieved 3 failed missions',
 	},

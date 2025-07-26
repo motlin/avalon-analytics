@@ -438,7 +438,7 @@ export const EvilWinsThreeFails: Story = {
 			outcome: {
 				state: 'EVIL_WIN',
 				message: 'Three failed missions',
-				assassinated: null,
+				assassinated: undefined,
 				roles: [
 					{name: 'MANDEEP', role: 'LOYAL FOLLOWER', assassin: false},
 					{name: 'ROB', role: 'EVIL MINION', assassin: false},
@@ -593,7 +593,7 @@ export const EvilWinsFiveRejectedProposals: Story = {
 			outcome: {
 				state: 'EVIL_WIN',
 				message: 'Five team proposals in a row rejected',
-				assassinated: null,
+				assassinated: undefined,
 				roles: [
 					{name: 'ALLEN', role: 'MORGANA', assassin: false},
 					{name: 'TIFANY', role: 'OBERON', assassin: false},

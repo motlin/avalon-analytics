@@ -34,6 +34,18 @@
 		"build-storybook": "storybook build"
 	},
 	"dependencies": {
+		"@dnd-kit/core": "^6.3.1",
+		"@dnd-kit/sortable": "^10.0.0",
+		"@dnd-kit/utilities": "^3.2.2",
+		"@emotion/react": "^11.14.0",
+		"@emotion/styled": "^11.14.1",
+		"@fortawesome/fontawesome-svg-core": "^6.7.2",
+		"@fortawesome/free-brands-svg-icons": "^6.7.2",
+		"@fortawesome/free-regular-svg-icons": "^6.7.2",
+		"@fortawesome/free-solid-svg-icons": "^6.7.2",
+		"@fortawesome/react-fontawesome": "^0.2.2",
+		"@mui/icons-material": "^7.2.0",
+		"@mui/material": "^7.2.0",
 		"@prisma/adapter-d1": "~6.16.2",
 		"@prisma/client": "~6.16.2",
 		"@simplewebauthn/browser": "^13.2.0",
@@ -43,6 +55,7 @@
 		"firebase": "^12.3.0",
 		"json5": "^2.2.3",
 		"lucide-react": "^0.544.0",
+		"markdown-to-jsx": "^7.7.12",
 		"react": "^19.3.0-canary-f6a48828-20251019",
 		"react-dom": "^19.3.0-canary-f6a48828-20251019",
 		"react-server-dom-webpack": "^19.3.0-canary-f6a48828-20251019",
@@ -86,6 +99,10 @@
 		"wrangler": "^4.43.0"
 	},
 	"pnpm": {
+		"overrides": {
+			"react": "19.1.0",
+			"react-dom": "19.1.0"
+		},
 		"onlyBuiltDependencies": [
 			"@prisma/client",
 			"@prisma/engines",

@@ -113,7 +113,7 @@ export const Clickable: Story = {
 	args: {
 		players: examplePlayers,
 		showRoles: true,
-		onPlayerClick: (player) => console.log('Clicked player:', player.name),
+		onPlayerClick: (player: Player) => console.log('Clicked player:', player.name),
 	},
 };
 
