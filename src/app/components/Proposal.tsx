@@ -1,4 +1,6 @@
 import type {Proposal} from '../models/game';
+import {Card, CardContent, CardHeader, CardTitle} from '@/app/components/ui/card';
+import {Badge} from '@/app/components/ui/badge';
 
 interface ProposalProps {
 	proposal: Proposal;
@@ -7,18 +9,39 @@ interface ProposalProps {
 }
 
 export function ProposalComponent({proposal, proposalNumber}: ProposalProps) {
+	const getStatusVariant = (state: string) => {
+		switch (state) {
+			case 'APPROVED':
+				return 'success';
+			case 'REJECTED':
+				return 'destructive';
+			default:
+				return 'secondary';
+		}
+	};
+
 	return (
-		<div style={{border: '1px solid #ddd', padding: '0.5rem', marginBottom: '0.5rem'}}>
-			<h4>Proposal {proposalNumber}</h4>
-			<p>Proposer: {proposal.proposer}</p>
-			<p>Team: {proposal.team.join(', ')}</p>
-			<p>Status: {proposal.state}</p>
-			{proposal.votes && proposal.votes.length > 0 && (
+		<Card className="mb-2">
+			<CardHeader className="py-3">
+				<div className="flex items-center justify-between">
+					<CardTitle className="text-base">Proposal {proposalNumber}</CardTitle>
+					<Badge variant={getStatusVariant(proposal.state)}>{proposal.state}</Badge>
+				</div>
+			</CardHeader>
+			<CardContent className="py-3 space-y-1 text-sm">
 				<p>
-					Approved by:{' '}
-					{Array.isArray(proposal.votes[0]) ? 'Complex vote structure' : proposal.votes.join(', ')}
+					<span className="font-medium">Proposer:</span> {proposal.proposer}
 				</p>
-			)}
-		</div>
+				<p>
+					<span className="font-medium">Team:</span> {proposal.team.join(', ')}
+				</p>
+				{proposal.votes && proposal.votes.length > 0 && (
+					<p>
+						<span className="font-medium">Approved by:</span>{' '}
+						{Array.isArray(proposal.votes[0]) ? 'Complex vote structure' : proposal.votes.join(', ')}
+					</p>
+				)}
+			</CardContent>
+		</Card>
 	);
 }

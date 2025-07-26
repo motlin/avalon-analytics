@@ -1,5 +1,6 @@
 import type {ReactNode} from 'react';
 import type {Mission} from '../models/game';
+import {Card, CardContent, CardHeader, CardTitle} from '@/app/components/ui/card';
 
 interface MissionProps {
 	mission: Mission;
@@ -9,11 +10,15 @@ interface MissionProps {
 
 export function MissionComponent({mission, missionNumber, children}: MissionProps) {
 	return (
-		<div style={{border: '1px solid #ccc', padding: '1rem', marginBottom: '1rem'}}>
-			<h3>Mission {missionNumber}</h3>
-			<p>Team Size: {mission.teamSize}</p>
-			<p>Fails Required: {mission.failsRequired}</p>
-			{children}
-		</div>
+		<Card className="mb-4">
+			<CardHeader>
+				<CardTitle>Mission {missionNumber}</CardTitle>
+			</CardHeader>
+			<CardContent>
+				<p className="text-sm text-muted-foreground">Team Size: {mission.teamSize}</p>
+				<p className="text-sm text-muted-foreground">Fails Required: {mission.failsRequired}</p>
+				{children}
+			</CardContent>
+		</Card>
 	);
 }

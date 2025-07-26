@@ -3,6 +3,7 @@ import {MissionComponent} from './Mission';
 import {MissionResultComponent} from './MissionResult';
 import {PlayerComponent} from './Player';
 import {ProposalComponent} from './Proposal';
+import {Card, CardContent, CardHeader, CardTitle} from '@/app/components/ui/card';
 import type {Game} from '../models/game';
 
 interface GameProps {
@@ -11,85 +12,73 @@ interface GameProps {
 
 export function GameComponent({game}: GameProps) {
 	return (
-		<div
-			style={{
-				border: '1px solid #ccc',
-				padding: '1.5rem',
-				backgroundColor: '#f5f5f5',
-			}}
-		>
-			<h1>Game Details</h1>
-			<p>Game ID: {game.id}</p>
-			<p>Created: {game.timeCreated.toLocaleString()}</p>
-			{game.timeFinished && <p>Finished: {game.timeFinished.toLocaleString()}</p>}
-
-			<div
-				style={{
-					border: '2px solid #9e9e9e',
-					padding: '1rem',
-					marginTop: '1rem',
-					backgroundColor: '#ffffff',
-				}}
-			>
-				<h2>Players</h2>
-				<div>
-					{game.players.map((player) => (
-						<PlayerComponent
-							key={player.uid}
-							player={player}
-						/>
-					))}
+		<Card className="bg-secondary/20">
+			<CardHeader>
+				<CardTitle>Game Details</CardTitle>
+				<div className="text-sm text-muted-foreground space-y-1">
+					<p>Game ID: {game.id}</p>
+					<p>Created: {game.timeCreated.toLocaleString()}</p>
+					{game.timeFinished && <p>Finished: {game.timeFinished.toLocaleString()}</p>}
 				</div>
-			</div>
+			</CardHeader>
+			<CardContent className="space-y-4">
+				<Card>
+					<CardHeader>
+						<CardTitle className="text-lg">Players</CardTitle>
+					</CardHeader>
+					<CardContent>
+						<div className="space-y-1">
+							{game.players.map((player) => (
+								<PlayerComponent
+									key={player.uid}
+									player={player}
+								/>
+							))}
+						</div>
+					</CardContent>
+				</Card>
 
-			<div
-				style={{
-					border: '2px solid #9e9e9e',
-					padding: '1rem',
-					marginTop: '1rem',
-					backgroundColor: '#ffffff',
-				}}
-			>
-				<h2>Missions</h2>
-				{game.missions.map((mission, index) => {
-					// Only show missions that have been played (have proposals or a result)
-					if (mission.proposals.length === 0 && mission.state === 'PENDING') {
-						return null;
-					}
+				<Card>
+					<CardHeader>
+						<CardTitle className="text-lg">Missions</CardTitle>
+					</CardHeader>
+					<CardContent className="space-y-4">
+						{game.missions.map((mission, index) => {
+							// Only show missions that have been played (have proposals or a result)
+							if (mission.proposals.length === 0 && mission.state === 'PENDING') {
+								return null;
+							}
 
-					return (
-						<MissionComponent
-							key={index}
-							mission={mission}
-							missionNumber={index + 1}
-						>
-							{mission.proposals.length > 0 && (
-								<div
-									style={{
-										marginTop: '0.5rem',
-										marginBottom: '0.5rem',
-									}}
+							return (
+								<MissionComponent
+									key={index}
+									mission={mission}
+									missionNumber={index + 1}
 								>
-									{mission.proposals.map((proposal, propIndex) => (
-										<ProposalComponent
-											key={propIndex}
-											proposal={proposal}
-											proposalNumber={propIndex + 1}
-											missionNumber={index + 1}
-										/>
-									))}
-								</div>
-							)}
-							<MissionResultComponent
-								mission={mission}
-								missionNumber={index + 1}
-							/>
-						</MissionComponent>
-					);
-				})}
-			</div>
+									{mission.proposals.length > 0 && (
+										<div className="space-y-2 my-2">
+											{mission.proposals.map((proposal, propIndex) => (
+												<ProposalComponent
+													key={propIndex}
+													proposal={proposal}
+													proposalNumber={propIndex + 1}
+													missionNumber={index + 1}
+												/>
+											))}
+										</div>
+									)}
+									<MissionResultComponent
+										mission={mission}
+										missionNumber={index + 1}
+									/>
+								</MissionComponent>
+							);
+						})}
+					</CardContent>
+				</Card>
 
-			{game.outcome && <GameOutcomeComponent outcome={game.outcome} />}
-		</div>
+				{game.outcome && <GameOutcomeComponent outcome={game.outcome} />}
+			</CardContent>
+		</Card>
 	);
 }

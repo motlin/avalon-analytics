@@ -1,4 +1,6 @@
 import type {Player} from '../models/game';
+import {Card} from '@/app/components/ui/card';
+import {Badge} from '@/app/components/ui/badge';
 
 interface PlayerProps {
 	player: Player;
@@ -6,27 +8,29 @@ interface PlayerProps {
 
 export function PlayerComponent({player}: PlayerProps) {
 	return (
-		<div
-			style={{
-				border: '1px solid #e0e0e0',
-				padding: '0.5rem',
-				marginBottom: '0.25rem',
-				backgroundColor: '#fafafa',
-			}}
-		>
-			<strong>{player.name}</strong>
-			{player.role && <span> - Role: {player.role}</span>}
-			<span style={{fontSize: '0.8em', color: '#666'}}>
-				{' '}
-				(uid:{' '}
-				<a
-					href={`/uid/${player.uid}`}
-					style={{color: '#0066cc', textDecoration: 'none'}}
-				>
-					{player.uid}
-				</a>
-				)
-			</span>
-		</div>
+		<Card className="p-2 mb-1">
+			<div className="flex items-center justify-between">
+				<div className="flex items-center gap-2">
+					<strong>{player.name}</strong>
+					{player.role && (
+						<Badge
+							variant="outline"
+							className="text-xs"
+						>
+							Role: {player.role}
+						</Badge>
+					)}
+				</div>
+				<span className="text-xs text-muted-foreground">
+					uid:{' '}
+					<a
+						href={`/uid/${player.uid}`}
+						className="text-blue-600 hover:text-blue-800 no-underline"
+					>
+						{player.uid}
+					</a>
+				</span>
+			</div>
+		</Card>
 	);
 }
