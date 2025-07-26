@@ -2,6 +2,7 @@
 
 import {startAuthentication, startRegistration} from '@simplewebauthn/browser';
 import * as React from 'react';
+import {ThemeToggle} from '../../components/ThemeToggle';
 const {useState, useTransition} = React;
 import {finishPasskeyLogin, finishPasskeyRegistration, startPasskeyLogin, startPasskeyRegistration} from './functions';
 
@@ -53,26 +54,35 @@ export function Login() {
 	};
 
 	return (
-		<>
-			<input
-				type="text"
-				value={username}
-				onChange={(e) => setUsername(e.target.value)}
-				placeholder="Username"
-			/>
-			<button
-				onClick={handlePerformPasskeyLogin}
-				disabled={isPending}
-			>
-				{isPending ? <>...</> : 'Login with passkey'}
-			</button>
-			<button
-				onClick={handlePerformPasskeyRegister}
-				disabled={isPending}
-			>
-				{isPending ? <>...</> : 'Register with passkey'}
-			</button>
-			{result && <div>{result}</div>}
-		</>
+		<div className="p-4">
+			<div className="flex justify-between items-center mb-6">
+				<h1 className="text-2xl font-bold">Login</h1>
+				<ThemeToggle />
+			</div>
+			<div className="max-w-md mx-auto space-y-4">
+				<input
+					type="text"
+					value={username}
+					onChange={(e) => setUsername(e.target.value)}
+					placeholder="Username"
+					className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground"
+				/>
+				<button
+					onClick={handlePerformPasskeyLogin}
+					disabled={isPending}
+					className="w-full px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 disabled:opacity-50"
+				>
+					{isPending ? <>...</> : 'Login with passkey'}
+				</button>
+				<button
+					onClick={handlePerformPasskeyRegister}
+					disabled={isPending}
+					className="w-full px-4 py-2 bg-secondary text-secondary-foreground rounded-md hover:bg-secondary/80 disabled:opacity-50"
+				>
+					{isPending ? <>...</> : 'Register with passkey'}
+				</button>
+				{result && <div className="mt-4 text-center">{result}</div>}
+			</div>
+		</div>
 	);
 }
