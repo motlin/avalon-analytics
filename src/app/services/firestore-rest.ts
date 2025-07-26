@@ -148,6 +148,40 @@ export class FirestoreRestService {
 		}
 	}
 
+	async getGamesByPlayerUid(uid: string, limitCount = 50): Promise<Game[]> {
+		let url = `${this.baseUrl}/logs?pageSize=${limitCount}&orderBy=timeCreated desc&key=${this.apiKey}`;
+
+		try {
+			const response = await fetch(url);
+			if (!response.ok) {
+				const errorText = await response.text();
+				console.error('Firestore API error response:', errorText);
+				throw new Error(`Firestore API error: ${response.status}`);
+			}
+
+			const data = (await response.json()) as {
+				documents?: FirestoreDocument[];
+				nextPageToken?: string;
+			};
+			const games: Game[] = [];
+
+			if (data.documents) {
+				for (const doc of data.documents) {
+					const gameData = this.convertDocumentToObject(doc);
+					const game = this.validateGame(gameData);
+					if (game && game.players.some((player) => player.uid === uid)) {
+						games.push(game);
+					}
+				}
+			}
+
+			return games;
+		} catch (error) {
+			console.error('Failed to fetch games by player UID:', error);
+			throw error;
+		}
+	}
+
 	async getStats(): Promise<Stats | null> {
 		const url = `${this.baseUrl}/stats/global?key=${this.apiKey}`;
 
