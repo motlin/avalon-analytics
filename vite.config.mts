@@ -20,8 +20,6 @@ export default defineConfig({
     },
   },
   build: {
-    rollupOptions: {
-      external: ["@prisma/client/runtime/wasm-compiler-edge"],
-    },
+    rollupOptions: {},
   },
 });
