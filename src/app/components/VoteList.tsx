@@ -1,4 +1,5 @@
 import {ProposalVoteComponent} from './ProposalVote';
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/app/components/ui/card';
 
 interface VoteListProps {
 	votes: Record<string, boolean>;
@@ -11,47 +12,25 @@ export function VoteList({votes, title = 'Votes'}: VoteListProps) {
 	const totalVotes = voteEntries.length;
 	const approvalPercentage = totalVotes > 0 ? Math.round((approvalCount / totalVotes) * 100) : 0;
 
-	const containerStyle: React.CSSProperties = {
-		border: '1px solid #e0e0e0',
-		borderRadius: '8px',
-		padding: '16px',
-		backgroundColor: '#ffffff',
-	};
-
-	const titleStyle: React.CSSProperties = {
-		fontSize: '18px',
-		fontWeight: 'bold',
-		marginBottom: '12px',
-		color: '#333333',
-	};
-
-	const summaryStyle: React.CSSProperties = {
-		fontSize: '14px',
-		color: '#666666',
-		marginBottom: '16px',
-	};
-
-	const votesContainerStyle: React.CSSProperties = {
-		display: 'flex',
-		flexDirection: 'column',
-		gap: '8px',
-	};
-
 	return (
-		<div style={containerStyle}>
-			<div style={titleStyle}>{title}</div>
-			<div style={summaryStyle}>
-				{approvalCount} of {totalVotes} approved ({approvalPercentage}%)
-			</div>
-			<div style={votesContainerStyle}>
-				{voteEntries.map(([player, vote]) => (
-					<ProposalVoteComponent
-						key={player}
-						playerName={player}
-						vote={vote}
-					/>
-				))}
-			</div>
-		</div>
+		<Card>
+			<CardHeader>
+				<CardTitle>{title}</CardTitle>
+				<CardDescription>
+					{approvalCount} of {totalVotes} approved ({approvalPercentage}%)
+				</CardDescription>
+			</CardHeader>
+			<CardContent>
+				<div className="flex flex-col gap-2">
+					{voteEntries.map(([player, vote]) => (
+						<ProposalVoteComponent
+							key={player}
+							playerName={player}
+							vote={vote}
+						/>
+					))}
+				</div>
+			</CardContent>
+		</Card>
 	);
 }
