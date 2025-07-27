@@ -3,9 +3,10 @@ repos:
       rev: v5.0.0
       hooks:
           - id: check-yaml
+            args: ['--allow-multiple-documents']
           - id: check-json
             # Exclude JSONC files (JSON with Comments) as they need comment support
-            exclude: "(tsconfig\\.json|\\.devcontainer/devcontainer\\.json)$"
+            exclude: "(tsconfig\\.json|biome\\.jsonc|\\.devcontainer/devcontainer\\.json)$"
           - id: check-toml
           - id: check-xml
           - id: end-of-file-fixer
