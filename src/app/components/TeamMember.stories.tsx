@@ -1,6 +1,6 @@
 import * as React from 'react';
 const {useState} = React;
-import type {Meta, StoryObj} from '@storybook/react-vite';
+import type {Meta, StoryObj} from '@storybook/react-vite-vite';
 import {TeamMemberComponent} from './TeamMember';
 
 const meta: Meta<typeof TeamMemberComponent> = {

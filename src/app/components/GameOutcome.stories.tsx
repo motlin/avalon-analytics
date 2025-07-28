@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/react-vite';
+import type {Meta, StoryObj} from '@storybook/react-vite-vite';
 import {GameOutcomeComponent} from './GameOutcome';
 
 const meta: Meta<typeof GameOutcomeComponent> = {

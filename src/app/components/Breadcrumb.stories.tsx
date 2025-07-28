@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/react-vite';
+import type {Meta, StoryObj} from '@storybook/react-vite-vite';
 import {Breadcrumb} from './Breadcrumb';
 
 const meta: Meta<typeof Breadcrumb> = {
