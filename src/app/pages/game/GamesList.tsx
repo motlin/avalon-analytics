@@ -52,10 +52,29 @@ export async function GamesList({request}: RequestInfo) {
 							const time = game.timeCreated.toLocaleTimeString();
 
 							return (
-								<li key={game.id}>
-									<a href={`/game/${game.id}`}>
-										{date} {time} - {playerCount} players - {winner}
-									</a>
+								<li
+									key={game.id}
+									style={{marginBottom: '0.75rem'}}
+								>
+									<div>
+										<span>
+											{date} {time} - {playerCount} players - {winner}
+										</span>
+										<div style={{marginTop: '0.25rem', fontSize: '0.875rem'}}>
+											<a
+												href={`/game/${game.id}`}
+												style={{marginRight: '1rem', color: '#3b82f6'}}
+											>
+												View Timeline
+											</a>
+											<a
+												href={`/game/${game.id}/summary`}
+												style={{color: '#3b82f6'}}
+											>
+												View Summary
+											</a>
+										</div>
+									</div>
 								</li>
 							);
 						})}
