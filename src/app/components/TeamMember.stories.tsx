@@ -1,5 +1,4 @@
-import * as React from 'react';
-const {useState} = React;
+import React, {useState} from 'react';
 import type {Meta, StoryObj} from '@storybook/react-vite';
 import {TeamMemberComponent} from './TeamMember';
 
