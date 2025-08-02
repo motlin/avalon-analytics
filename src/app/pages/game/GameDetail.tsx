@@ -33,6 +33,18 @@ export async function GameDetail({params}: RequestInfo) {
 					{label: `Game ${game.timeCreated.toLocaleDateString()} ${game.timeCreated.toLocaleTimeString()}`},
 				]}
 			/>
+			<div style={{marginBottom: '1rem', textAlign: 'right'}}>
+				<a
+					href={`/game/${gameId}/summary`}
+					style={{
+						color: '#3b82f6',
+						textDecoration: 'underline',
+						fontSize: '0.875rem',
+					}}
+				>
+					View summary table →
+				</a>
+			</div>
 			<GameComponent game={game} />
 		</div>
 	);
