@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import {useState} from 'react';
 import type {Game, Mission, Proposal} from '../models/game';
 
 export interface TimelineSectionProps {
