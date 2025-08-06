@@ -36,8 +36,8 @@ importers:
         specifier: ^0.536.0
         version: 0.536.0(react@19.1.1)
       rwsdk:
-        specifier: 0.1.28
-        version: 0.1.28(rollup@4.45.1)(typescript@5.9.2)(vite@6.3.5(@types/node@24.2.0)(jiti@2.5.1)(lightningcss@1.30.1)(terser@5.43.1)(yaml@2.8.1))(webpack@5.100.0(esbuild@0.25.8))(workerd@1.20250803.0)
+        specifier: 0.1.32
+        version: 0.1.32(rollup@4.45.1)(typescript@5.9.2)(vite@6.3.5(@types/node@24.2.0)(jiti@2.5.1)(lightningcss@1.30.1)(terser@5.43.1)(yaml@2.8.1))(webpack@5.100.0(esbuild@0.25.8))(workerd@1.20250803.0)
       tailwind-merge:
         specifier: ^3.3.1
         version: 3.3.1
@@ -140,7 +140,7 @@ importers:
         version: 5.9.2
       vibe-rules:
         specifier: ^0.3.85
-        version: 0.3.85(@ai-sdk/openai-compatible@0.2.16(zod@4.0.14))(@ai-sdk/openai@1.3.23(zod@4.0.14))(@aws-sdk/client-dynamodb@3.859.0)(@aws-sdk/client-ec2@3.859.0)(@aws-sdk/client-iam@3.859.0)(@aws-sdk/client-lambda@3.859.0)(@aws-sdk/client-s3@3.859.0)(@aws-sdk/client-sagemaker@3.860.0)(@aws-sdk/client-ses@3.859.0)(@aws-sdk/client-sesv2@3.859.0)(@aws-sdk/client-sqs@3.859.0)(@aws-sdk/client-ssm@3.859.0)(@aws-sdk/client-sts@3.859.0)(@libsql/client@0.15.10)(@octokit/rest@21.1.1)(ai@4.3.19(react@19.1.1)(zod@4.0.14))(arktype@2.1.20)(cloudflare@4.5.0)(drizzle-orm@0.44.4(@cloudflare/workers-types@4.20250805.0)(@libsql/client@0.15.10)(@opentelemetry/api@1.9.0)(@prisma/client@6.13.0(prisma@6.13.0(typescript@5.9.2))(typescript@5.9.2))(kysely@0.28.3)(prisma@6.13.0(typescript@5.9.2)))(hono@4.8.12)(prettier@3.6.2)(stripe@17.7.0)(workerd@1.20250803.0)
+        version: 0.3.85(@ai-sdk/openai-compatible@0.2.16(zod@4.0.14))(@ai-sdk/openai@1.3.23(zod@4.0.14))(@aws-sdk/client-dynamodb@3.859.0)(@aws-sdk/client-ec2@3.859.0)(@aws-sdk/client-iam@3.859.0)(@aws-sdk/client-lambda@3.859.0)(@aws-sdk/client-s3@3.859.0)(@aws-sdk/client-sagemaker@3.860.0)(@aws-sdk/client-ses@3.859.0)(@aws-sdk/client-sesv2@3.859.0)(@aws-sdk/client-sqs@3.859.0)(@aws-sdk/client-ssm@3.859.0)(@aws-sdk/client-sts@3.859.0)(@libsql/client@0.15.10)(@octokit/rest@21.1.1)(ai@4.3.19(react@19.1.1)(zod@4.0.14))(arktype@2.1.20)(cloudflare@4.5.0)(drizzle-orm@0.44.4(@cloudflare/workers-types@4.20250805.0)(@libsql/client@0.15.10)(@opentelemetry/api@1.9.0)(@prisma/client@6.13.0(prisma@6.13.0(typescript@5.9.2))(typescript@5.9.2))(kysely@0.28.4)(prisma@6.13.0(typescript@5.9.2)))(hono@4.8.12)(prettier@3.6.2)(stripe@17.7.0)(workerd@1.20250803.0)
       vite:
         specifier: ^6.2.6
         version: 6.3.5(@types/node@24.2.0)(jiti@2.5.1)(lightningcss@1.30.1)(terser@5.43.1)(yaml@2.8.1)
@@ -3272,10 +3272,6 @@ packages:
   end-of-stream@1.4.5:
     resolution: {integrity: sha512-ooEGc6HP26xXq/N+GCGOT0JKCLDGrq2bQUZrQ7gyrJiZANJ/8YDTxTpQBXGMn+WbIQXNVpyWymm7KYVICQnyOg==}
 
-  enhanced-resolve@5.18.2:
-    resolution: {integrity: sha512-6Jw4sE1maoRJo3q8MsSIn2onJFbLTOjY9hlx4DZXmOKvLRd1Ok2kXmAGXaafL2+ijsJZ1ClYbl/pmqr9+k4iUQ==}
-    engines: {node: '>=10.13.0'}
-
   enhanced-resolve@5.18.3:
     resolution: {integrity: sha512-d4lC8xfavMeBjzGr2vECC3fsGXziXZQyJxD868h2M/mBI3PwAuODxAkLkq5HYuvrPYcUtiLzsTo8U3PgX3Ocww==}
     engines: {node: '>=10.13.0'}
@@ -3543,6 +3539,10 @@ packages:
 
   fs-extra@11.3.0:
     resolution: {integrity: sha512-Z4XaCL6dUDHfP/jT25jJKMmtxvuwbkrD1vNSMFlo9lNLY2c5FHYSQgHPRZUjAB26TpDEoW9HCOgplrdbaPV/ew==}
+    engines: {node: '>=14.14'}
+
+  fs-extra@11.3.1:
+    resolution: {integrity: sha512-eXvGGwZ5CL17ZSwHWd3bbgk7UUpF6IFHtP57NYYakPvHOs8GDgDe5KJI36jIJzDkJ6eJjuzRA8eBQb6SkKue0g==}
     engines: {node: '>=14.14'}
 
   fsevents@2.3.2:
@@ -3884,8 +3884,8 @@ packages:
     peerDependencies:
       kysely: '*'
 
-  kysely@0.28.3:
-    resolution: {integrity: sha512-svKnkSH72APRdjfVCCOknxaC9Eb3nA2StHG9d5/sKOqRvHRp2Dtf1XwDvc92b4B5v6LV+EAGWXQbZ5jMOvHaDw==}
+  kysely@0.28.4:
+    resolution: {integrity: sha512-pfQj8/Bo3KSzC1HIZB5MeeYRWcDmx1ZZv8H25LsyeygqXE+gfsbUAgPT1GSYZFctB1cdOVlv+OifuCls2mQSnw==}
     engines: {node: '>=20.0.0'}
 
   levn@0.4.1:
@@ -4537,8 +4537,8 @@ packages:
   run-parallel@1.2.0:
     resolution: {integrity: sha512-5l4VyZR86LZ/lDxZTR6jqL8AFE2S0IFLMP26AbjsLVADxHdhB/c0GUsH+y39UfCi3dzz8OlQuPmnaJOMoDHQBA==}
 
-  rwsdk@0.1.28:
-    resolution: {integrity: sha512-PgK3Ou8SuFQuEatOFTzHD3WuoWkVcTH6ZGZUu6ekaz8GAUrquH77bx8+TeXLfM+ES6itAPKeukMt5EUcCGFgqw==}
+  rwsdk@0.1.32:
+    resolution: {integrity: sha512-YQxDuNoRrMQWFGmmY4vxyzKEb01LIfnAuDAbaga7BSJlrdaToGNHMybXq7qSFIX+VSJu+CTm2pZwN/rA9XUQCQ==}
     hasBin: true
     peerDependencies:
       vite: ^6.2.6
@@ -4840,8 +4840,8 @@ packages:
   tmp-promise@3.0.3:
     resolution: {integrity: sha512-RwM7MoPojPxsOBYnyd2hy0bxtIlVrihNs9pj5SUvY8Zz1sQcQG2tG1hSr8PDxfgEB8RNKDhqbIlroIarSNDNsQ==}
 
-  tmp@0.2.3:
-    resolution: {integrity: sha512-nZD7m9iCPC5g0pYmcaxogYKggSfLsdxl8of3Q/oIbqCqLLIO9IAF0GWjX1z9NZRHPiXv8Wex4yDCaZsgEw0Y8w==}
+  tmp@0.2.4:
+    resolution: {integrity: sha512-UdiSoX6ypifLmrfQ/XfiawN6hkjSBpCjhKxxZcWlUUmoXLaCKQU0bx4HF/tdDK2uzRuchf1txGvrWBzYREssoQ==}
     engines: {node: '>=14.14'}
 
   to-regex-range@5.0.1:
@@ -8259,7 +8259,7 @@ snapshots:
   '@tailwindcss/node@4.1.11':
     dependencies:
       '@ampproject/remapping': 2.3.0
-      enhanced-resolve: 5.18.2
+      enhanced-resolve: 5.18.3
       jiti: 2.5.1
       lightningcss: 1.30.1
       magic-string: 0.30.17
@@ -8775,7 +8775,7 @@ snapshots:
       json-schema-traverse: 1.0.0
       require-from-string: 2.0.2
 
-  alchemy@0.56.0(@ai-sdk/openai-compatible@0.2.16(zod@4.0.14))(@ai-sdk/openai@1.3.23(zod@4.0.14))(@aws-sdk/client-dynamodb@3.859.0)(@aws-sdk/client-ec2@3.859.0)(@aws-sdk/client-iam@3.859.0)(@aws-sdk/client-lambda@3.859.0)(@aws-sdk/client-s3@3.859.0)(@aws-sdk/client-sagemaker@3.860.0)(@aws-sdk/client-ses@3.859.0)(@aws-sdk/client-sesv2@3.859.0)(@aws-sdk/client-sqs@3.859.0)(@aws-sdk/client-ssm@3.859.0)(@aws-sdk/client-sts@3.859.0)(@libsql/client@0.15.10)(@octokit/rest@21.1.1)(ai@4.3.19(react@19.1.1)(zod@4.0.14))(arktype@2.1.20)(cloudflare@4.5.0)(drizzle-orm@0.44.4(@cloudflare/workers-types@4.20250805.0)(@libsql/client@0.15.10)(@opentelemetry/api@1.9.0)(@prisma/client@6.13.0(prisma@6.13.0(typescript@5.9.2))(typescript@5.9.2))(kysely@0.28.3)(prisma@6.13.0(typescript@5.9.2)))(hono@4.8.12)(prettier@3.6.2)(stripe@17.7.0)(workerd@1.20250803.0):
+  alchemy@0.56.0(@ai-sdk/openai-compatible@0.2.16(zod@4.0.14))(@ai-sdk/openai@1.3.23(zod@4.0.14))(@aws-sdk/client-dynamodb@3.859.0)(@aws-sdk/client-ec2@3.859.0)(@aws-sdk/client-iam@3.859.0)(@aws-sdk/client-lambda@3.859.0)(@aws-sdk/client-s3@3.859.0)(@aws-sdk/client-sagemaker@3.860.0)(@aws-sdk/client-ses@3.859.0)(@aws-sdk/client-sesv2@3.859.0)(@aws-sdk/client-sqs@3.859.0)(@aws-sdk/client-ssm@3.859.0)(@aws-sdk/client-sts@3.859.0)(@libsql/client@0.15.10)(@octokit/rest@21.1.1)(ai@4.3.19(react@19.1.1)(zod@4.0.14))(arktype@2.1.20)(cloudflare@4.5.0)(drizzle-orm@0.44.4(@cloudflare/workers-types@4.20250805.0)(@libsql/client@0.15.10)(@opentelemetry/api@1.9.0)(@prisma/client@6.13.0(prisma@6.13.0(typescript@5.9.2))(typescript@5.9.2))(kysely@0.28.4)(prisma@6.13.0(typescript@5.9.2)))(hono@4.8.12)(prettier@3.6.2)(stripe@17.7.0)(workerd@1.20250803.0):
     dependencies:
       '@ai-sdk/openai': 1.3.23(zod@4.0.14)
       '@ai-sdk/openai-compatible': 0.2.16(zod@4.0.14)
@@ -8803,7 +8803,7 @@ snapshots:
       aws4fetch: 1.0.20
       cloudflare: 4.5.0
       diff: 8.0.2
-      drizzle-orm: 0.44.4(@cloudflare/workers-types@4.20250805.0)(@libsql/client@0.15.10)(@opentelemetry/api@1.9.0)(@prisma/client@6.13.0(prisma@6.13.0(typescript@5.9.2))(typescript@5.9.2))(kysely@0.28.3)(prisma@6.13.0(typescript@5.9.2))
+      drizzle-orm: 0.44.4(@cloudflare/workers-types@4.20250805.0)(@libsql/client@0.15.10)(@opentelemetry/api@1.9.0)(@prisma/client@6.13.0(prisma@6.13.0(typescript@5.9.2))(typescript@5.9.2))(kysely@0.28.4)(prisma@6.13.0(typescript@5.9.2))
       esbuild: 0.25.8
       execa: 9.6.0
       fast-json-patch: 3.1.1
@@ -9195,13 +9195,13 @@ snapshots:
 
   dotenv@16.6.1: {}
 
-  drizzle-orm@0.44.4(@cloudflare/workers-types@4.20250805.0)(@libsql/client@0.15.10)(@opentelemetry/api@1.9.0)(@prisma/client@6.13.0(prisma@6.13.0(typescript@5.9.2))(typescript@5.9.2))(kysely@0.28.3)(prisma@6.13.0(typescript@5.9.2)):
+  drizzle-orm@0.44.4(@cloudflare/workers-types@4.20250805.0)(@libsql/client@0.15.10)(@opentelemetry/api@1.9.0)(@prisma/client@6.13.0(prisma@6.13.0(typescript@5.9.2))(typescript@5.9.2))(kysely@0.28.4)(prisma@6.13.0(typescript@5.9.2)):
     optionalDependencies:
       '@cloudflare/workers-types': 4.20250805.0
       '@libsql/client': 0.15.10
       '@opentelemetry/api': 1.9.0
       '@prisma/client': 6.13.0(prisma@6.13.0(typescript@5.9.2))(typescript@5.9.2)
-      kysely: 0.28.3
+      kysely: 0.28.4
       prisma: 6.13.0(typescript@5.9.2)
 
   dunder-proto@1.0.1:
@@ -9226,11 +9226,6 @@ snapshots:
   end-of-stream@1.4.5:
     dependencies:
       once: 1.4.0
-
-  enhanced-resolve@5.18.2:
-    dependencies:
-      graceful-fs: 4.2.11
-      tapable: 2.2.2
 
   enhanced-resolve@5.18.3:
     dependencies:
@@ -9610,6 +9605,12 @@ snapshots:
       jsonfile: 6.1.0
       universalify: 2.0.1
 
+  fs-extra@11.3.1:
+    dependencies:
+      graceful-fs: 4.2.11
+      jsonfile: 6.1.0
+      universalify: 2.0.1
+
   fsevents@2.3.2:
     optional: true
 
@@ -9906,11 +9907,11 @@ snapshots:
 
   ky@1.7.5: {}
 
-  kysely-do@0.0.1-rc.1(kysely@0.28.3):
+  kysely-do@0.0.1-rc.1(kysely@0.28.4):
     dependencies:
-      kysely: 0.28.3
+      kysely: 0.28.4
 
-  kysely@0.28.3: {}
+  kysely@0.28.4: {}
 
   levn@0.4.1:
     dependencies:
@@ -10595,7 +10596,7 @@ snapshots:
     dependencies:
       queue-microtask: 1.2.3
 
-  rwsdk@0.1.28(rollup@4.45.1)(typescript@5.9.2)(vite@6.3.5(@types/node@24.2.0)(jiti@2.5.1)(lightningcss@1.30.1)(terser@5.43.1)(yaml@2.8.1))(webpack@5.100.0(esbuild@0.25.8))(workerd@1.20250803.0):
+  rwsdk@0.1.32(rollup@4.45.1)(typescript@5.9.2)(vite@6.3.5(@types/node@24.2.0)(jiti@2.5.1)(lightningcss@1.30.1)(terser@5.43.1)(yaml@2.8.1))(webpack@5.100.0(esbuild@0.25.8))(workerd@1.20250803.0):
     dependencies:
       '@ast-grep/napi': 0.38.7
       '@cloudflare/vite-plugin': 1.7.4(rollup@4.45.1)(vite@6.3.5(@types/node@24.2.0)(jiti@2.5.1)(lightningcss@1.30.1)(terser@5.43.1)(yaml@2.8.1))(workerd@1.20250803.0)(wrangler@4.28.0(@cloudflare/workers-types@4.20250805.0))
@@ -10608,15 +10609,15 @@ snapshots:
       '@vitejs/plugin-react': 4.7.0(vite@6.3.5(@types/node@24.2.0)(jiti@2.5.1)(lightningcss@1.30.1)(terser@5.43.1)(yaml@2.8.1))
       chokidar: 3.6.0
       debug: 4.4.1
-      enhanced-resolve: 5.18.2
+      enhanced-resolve: 5.18.3
       eventsource-parser: 3.0.3
       execa: 9.6.0
-      fs-extra: 11.3.0
+      fs-extra: 11.3.1
       glob: 11.0.3
       ignore: 7.0.5
       jsonc-parser: 3.3.1
-      kysely: 0.28.3
-      kysely-do: 0.0.1-rc.1(kysely@0.28.3)
+      kysely: 0.28.4
+      kysely-do: 0.0.1-rc.1(kysely@0.28.4)
       lodash: 4.17.21
       magic-string: 0.30.17
       miniflare: 4.20250803.0
@@ -10977,9 +10978,9 @@ snapshots:
 
   tmp-promise@3.0.3:
     dependencies:
-      tmp: 0.2.3
+      tmp: 0.2.4
 
-  tmp@0.2.3: {}
+  tmp@0.2.4: {}
 
   to-regex-range@5.0.1:
     dependencies:
@@ -11109,13 +11110,13 @@ snapshots:
     dependencies:
       chalk: 4.1.2
       commander: 11.1.0
-      fs-extra: 11.3.0
+      fs-extra: 11.3.1
       import-meta-resolve: 4.1.0
       zod: 3.25.76
 
-  vibe-rules@0.3.85(@ai-sdk/openai-compatible@0.2.16(zod@4.0.14))(@ai-sdk/openai@1.3.23(zod@4.0.14))(@aws-sdk/client-dynamodb@3.859.0)(@aws-sdk/client-ec2@3.859.0)(@aws-sdk/client-iam@3.859.0)(@aws-sdk/client-lambda@3.859.0)(@aws-sdk/client-s3@3.859.0)(@aws-sdk/client-sagemaker@3.860.0)(@aws-sdk/client-ses@3.859.0)(@aws-sdk/client-sesv2@3.859.0)(@aws-sdk/client-sqs@3.859.0)(@aws-sdk/client-ssm@3.859.0)(@aws-sdk/client-sts@3.859.0)(@libsql/client@0.15.10)(@octokit/rest@21.1.1)(ai@4.3.19(react@19.1.1)(zod@4.0.14))(arktype@2.1.20)(cloudflare@4.5.0)(drizzle-orm@0.44.4(@cloudflare/workers-types@4.20250805.0)(@libsql/client@0.15.10)(@opentelemetry/api@1.9.0)(@prisma/client@6.13.0(prisma@6.13.0(typescript@5.9.2))(typescript@5.9.2))(kysely@0.28.3)(prisma@6.13.0(typescript@5.9.2)))(hono@4.8.12)(prettier@3.6.2)(stripe@17.7.0)(workerd@1.20250803.0):
+  vibe-rules@0.3.85(@ai-sdk/openai-compatible@0.2.16(zod@4.0.14))(@ai-sdk/openai@1.3.23(zod@4.0.14))(@aws-sdk/client-dynamodb@3.859.0)(@aws-sdk/client-ec2@3.859.0)(@aws-sdk/client-iam@3.859.0)(@aws-sdk/client-lambda@3.859.0)(@aws-sdk/client-s3@3.859.0)(@aws-sdk/client-sagemaker@3.860.0)(@aws-sdk/client-ses@3.859.0)(@aws-sdk/client-sesv2@3.859.0)(@aws-sdk/client-sqs@3.859.0)(@aws-sdk/client-ssm@3.859.0)(@aws-sdk/client-sts@3.859.0)(@libsql/client@0.15.10)(@octokit/rest@21.1.1)(ai@4.3.19(react@19.1.1)(zod@4.0.14))(arktype@2.1.20)(cloudflare@4.5.0)(drizzle-orm@0.44.4(@cloudflare/workers-types@4.20250805.0)(@libsql/client@0.15.10)(@opentelemetry/api@1.9.0)(@prisma/client@6.13.0(prisma@6.13.0(typescript@5.9.2))(typescript@5.9.2))(kysely@0.28.4)(prisma@6.13.0(typescript@5.9.2)))(hono@4.8.12)(prettier@3.6.2)(stripe@17.7.0)(workerd@1.20250803.0):
     dependencies:
-      alchemy: 0.56.0(@ai-sdk/openai-compatible@0.2.16(zod@4.0.14))(@ai-sdk/openai@1.3.23(zod@4.0.14))(@aws-sdk/client-dynamodb@3.859.0)(@aws-sdk/client-ec2@3.859.0)(@aws-sdk/client-iam@3.859.0)(@aws-sdk/client-lambda@3.859.0)(@aws-sdk/client-s3@3.859.0)(@aws-sdk/client-sagemaker@3.860.0)(@aws-sdk/client-ses@3.859.0)(@aws-sdk/client-sesv2@3.859.0)(@aws-sdk/client-sqs@3.859.0)(@aws-sdk/client-ssm@3.859.0)(@aws-sdk/client-sts@3.859.0)(@libsql/client@0.15.10)(@octokit/rest@21.1.1)(ai@4.3.19(react@19.1.1)(zod@4.0.14))(arktype@2.1.20)(cloudflare@4.5.0)(drizzle-orm@0.44.4(@cloudflare/workers-types@4.20250805.0)(@libsql/client@0.15.10)(@opentelemetry/api@1.9.0)(@prisma/client@6.13.0(prisma@6.13.0(typescript@5.9.2))(typescript@5.9.2))(kysely@0.28.3)(prisma@6.13.0(typescript@5.9.2)))(hono@4.8.12)(prettier@3.6.2)(stripe@17.7.0)(workerd@1.20250803.0)
+      alchemy: 0.56.0(@ai-sdk/openai-compatible@0.2.16(zod@4.0.14))(@ai-sdk/openai@1.3.23(zod@4.0.14))(@aws-sdk/client-dynamodb@3.859.0)(@aws-sdk/client-ec2@3.859.0)(@aws-sdk/client-iam@3.859.0)(@aws-sdk/client-lambda@3.859.0)(@aws-sdk/client-s3@3.859.0)(@aws-sdk/client-sagemaker@3.860.0)(@aws-sdk/client-ses@3.859.0)(@aws-sdk/client-sesv2@3.859.0)(@aws-sdk/client-sqs@3.859.0)(@aws-sdk/client-ssm@3.859.0)(@aws-sdk/client-sts@3.859.0)(@libsql/client@0.15.10)(@octokit/rest@21.1.1)(ai@4.3.19(react@19.1.1)(zod@4.0.14))(arktype@2.1.20)(cloudflare@4.5.0)(drizzle-orm@0.44.4(@cloudflare/workers-types@4.20250805.0)(@libsql/client@0.15.10)(@opentelemetry/api@1.9.0)(@prisma/client@6.13.0(prisma@6.13.0(typescript@5.9.2))(typescript@5.9.2))(kysely@0.28.4)(prisma@6.13.0(typescript@5.9.2)))(hono@4.8.12)(prettier@3.6.2)(stripe@17.7.0)(workerd@1.20250803.0)
       chalk: 4.1.2
       commander: 11.1.0
       fs-extra: 11.3.0
