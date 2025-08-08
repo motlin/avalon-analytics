@@ -50,13 +50,13 @@ importers:
         version: 2.1.4
       '@cloudflare/vite-plugin':
         specifier: 1.11.1
-        version: 1.11.1(rollup@4.45.1)(vite@6.3.5(@types/node@24.2.0)(jiti@2.5.1)(lightningcss@1.30.1)(terser@5.43.1)(yaml@2.8.1))(workerd@1.20250803.0)(wrangler@4.28.0(@cloudflare/workers-types@4.20250806.0))
+        version: 1.11.1(rollup@4.45.1)(vite@6.3.5(@types/node@24.2.0)(jiti@2.5.1)(lightningcss@1.30.1)(terser@5.43.1)(yaml@2.8.1))(workerd@1.20250803.0)(wrangler@4.28.0(@cloudflare/workers-types@4.20250807.0))
       '@cloudflare/vitest-pool-workers':
         specifier: ^0.8.60
-        version: 0.8.60(@cloudflare/workers-types@4.20250806.0)(@vitest/runner@3.2.4)(@vitest/snapshot@3.2.4)(vitest@3.2.4)
+        version: 0.8.60(@cloudflare/workers-types@4.20250807.0)(@vitest/runner@3.2.4)(@vitest/snapshot@3.2.4)(vitest@3.2.4)
       '@cloudflare/workers-types':
-        specifier: ^4.20250806.0
-        version: 4.20250806.0
+        specifier: ^4.20250807.0
+        version: 4.20250807.0
       '@eslint/js':
         specifier: ^9.32.0
         version: 9.32.0
@@ -140,7 +140,7 @@ importers:
         version: 5.9.2
       vibe-rules:
         specifier: ^0.3.85
-        version: 0.3.85(@ai-sdk/openai-compatible@0.2.16(zod@4.0.15))(@ai-sdk/openai@1.3.23(zod@4.0.15))(@aws-sdk/client-dynamodb@3.859.0)(@aws-sdk/client-ec2@3.859.0)(@aws-sdk/client-iam@3.859.0)(@aws-sdk/client-lambda@3.859.0)(@aws-sdk/client-s3@3.859.0)(@aws-sdk/client-sagemaker@3.860.0)(@aws-sdk/client-ses@3.859.0)(@aws-sdk/client-sesv2@3.859.0)(@aws-sdk/client-sqs@3.859.0)(@aws-sdk/client-ssm@3.859.0)(@aws-sdk/client-sts@3.859.0)(@libsql/client@0.15.10)(@octokit/rest@21.1.1)(ai@4.3.19(react@19.1.1)(zod@4.0.15))(arktype@2.1.20)(cloudflare@4.5.0)(drizzle-orm@0.44.4(@cloudflare/workers-types@4.20250806.0)(@libsql/client@0.15.10)(@opentelemetry/api@1.9.0)(@prisma/client@6.13.0(prisma@6.13.0(typescript@5.9.2))(typescript@5.9.2))(kysely@0.28.4)(prisma@6.13.0(typescript@5.9.2)))(hono@4.8.12)(prettier@3.6.2)(stripe@17.7.0)(workerd@1.20250803.0)
+        version: 0.3.85(@ai-sdk/openai-compatible@0.2.16(zod@4.0.15))(@ai-sdk/openai@1.3.23(zod@4.0.15))(@aws-sdk/client-dynamodb@3.859.0)(@aws-sdk/client-ec2@3.859.0)(@aws-sdk/client-iam@3.859.0)(@aws-sdk/client-lambda@3.859.0)(@aws-sdk/client-s3@3.859.0)(@aws-sdk/client-sagemaker@3.860.0)(@aws-sdk/client-ses@3.859.0)(@aws-sdk/client-sesv2@3.859.0)(@aws-sdk/client-sqs@3.859.0)(@aws-sdk/client-ssm@3.859.0)(@aws-sdk/client-sts@3.859.0)(@libsql/client@0.15.10)(@octokit/rest@21.1.1)(ai@4.3.19(react@19.1.1)(zod@4.0.15))(arktype@2.1.20)(cloudflare@4.5.0)(drizzle-orm@0.44.4(@cloudflare/workers-types@4.20250807.0)(@libsql/client@0.15.10)(@opentelemetry/api@1.9.0)(@prisma/client@6.13.0(prisma@6.13.0(typescript@5.9.2))(typescript@5.9.2))(kysely@0.28.4)(prisma@6.13.0(typescript@5.9.2)))(hono@4.8.12)(prettier@3.6.2)(stripe@17.7.0)(workerd@1.20250803.0)
       vite:
         specifier: ^6.2.6
         version: 6.3.5(@types/node@24.2.0)(jiti@2.5.1)(lightningcss@1.30.1)(terser@5.43.1)(yaml@2.8.1)
@@ -149,7 +149,7 @@ importers:
         version: 3.2.4(@types/node@24.2.0)(@vitest/browser@3.2.4)(jiti@2.5.1)(lightningcss@1.30.1)(terser@5.43.1)(yaml@2.8.1)
       wrangler:
         specifier: ^4.28.0
-        version: 4.28.0(@cloudflare/workers-types@4.20250806.0)
+        version: 4.28.0(@cloudflare/workers-types@4.20250807.0)
 
 packages:
 
@@ -737,8 +737,8 @@ packages:
   '@cloudflare/workers-types@4.20250214.0':
     resolution: {integrity: sha512-+M8oOFVbyXT5GeJrYLWMUGyPf5wGB4+k59PPqdedtOig7NjZ5r4S79wMdaZ/EV5IV8JPtZBSNjTKpDnNmfxjaQ==}
 
-  '@cloudflare/workers-types@4.20250806.0':
-    resolution: {integrity: sha512-zPhaMWbwBaxrx2J54SfnKoBiiEQ0scfT8tuu4r5EvLSu82DB+plEFQAZXRdsi6cL04AMpZ43ErSyRPe2KK9cZA==}
+  '@cloudflare/workers-types@4.20250807.0':
+    resolution: {integrity: sha512-Zbrz9egAfwmlkUaZ1tQ+19pt5eomCJ57mAviT1HCsvnSFP1MoffMbYiU/xUomuekHtx0aVO4EacZwchCgjSvmw==}
 
   '@cspotcode/source-map-support@0.8.1':
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
@@ -6653,7 +6653,7 @@ snapshots:
     optionalDependencies:
       workerd: 1.20250803.0
 
-  '@cloudflare/vite-plugin@1.11.1(rollup@4.45.1)(vite@6.3.5(@types/node@24.2.0)(jiti@2.5.1)(lightningcss@1.30.1)(terser@5.43.1)(yaml@2.8.1))(workerd@1.20250803.0)(wrangler@4.28.0(@cloudflare/workers-types@4.20250806.0))':
+  '@cloudflare/vite-plugin@1.11.1(rollup@4.45.1)(vite@6.3.5(@types/node@24.2.0)(jiti@2.5.1)(lightningcss@1.30.1)(terser@5.43.1)(yaml@2.8.1))(workerd@1.20250803.0)(wrangler@4.28.0(@cloudflare/workers-types@4.20250807.0))':
     dependencies:
       '@cloudflare/unenv-preset': 2.6.0(unenv@2.0.0-rc.19)(workerd@1.20250803.0)
       '@mjackson/node-fetch-server': 0.6.1
@@ -6664,7 +6664,7 @@ snapshots:
       tinyglobby: 0.2.14
       unenv: 2.0.0-rc.19
       vite: 6.3.5(@types/node@24.2.0)(jiti@2.5.1)(lightningcss@1.30.1)(terser@5.43.1)(yaml@2.8.1)
-      wrangler: 4.28.0(@cloudflare/workers-types@4.20250806.0)
+      wrangler: 4.28.0(@cloudflare/workers-types@4.20250807.0)
       ws: 8.18.0
     transitivePeerDependencies:
       - bufferutil
@@ -6672,7 +6672,7 @@ snapshots:
       - utf-8-validate
       - workerd
 
-  '@cloudflare/vite-plugin@1.7.4(rollup@4.45.1)(vite@6.3.5(@types/node@24.2.0)(jiti@2.5.1)(lightningcss@1.30.1)(terser@5.43.1)(yaml@2.8.1))(workerd@1.20250803.0)(wrangler@4.28.0(@cloudflare/workers-types@4.20250806.0))':
+  '@cloudflare/vite-plugin@1.7.4(rollup@4.45.1)(vite@6.3.5(@types/node@24.2.0)(jiti@2.5.1)(lightningcss@1.30.1)(terser@5.43.1)(yaml@2.8.1))(workerd@1.20250803.0)(wrangler@4.28.0(@cloudflare/workers-types@4.20250807.0))':
     dependencies:
       '@cloudflare/unenv-preset': 2.3.3(unenv@2.0.0-rc.17)(workerd@1.20250803.0)
       '@mjackson/node-fetch-server': 0.6.1
@@ -6683,7 +6683,7 @@ snapshots:
       tinyglobby: 0.2.14
       unenv: 2.0.0-rc.17
       vite: 6.3.5(@types/node@24.2.0)(jiti@2.5.1)(lightningcss@1.30.1)(terser@5.43.1)(yaml@2.8.1)
-      wrangler: 4.28.0(@cloudflare/workers-types@4.20250806.0)
+      wrangler: 4.28.0(@cloudflare/workers-types@4.20250807.0)
       ws: 8.18.0
     transitivePeerDependencies:
       - bufferutil
@@ -6691,7 +6691,7 @@ snapshots:
       - utf-8-validate
       - workerd
 
-  '@cloudflare/vitest-pool-workers@0.8.60(@cloudflare/workers-types@4.20250806.0)(@vitest/runner@3.2.4)(@vitest/snapshot@3.2.4)(vitest@3.2.4)':
+  '@cloudflare/vitest-pool-workers@0.8.60(@cloudflare/workers-types@4.20250807.0)(@vitest/runner@3.2.4)(@vitest/snapshot@3.2.4)(vitest@3.2.4)':
     dependencies:
       '@vitest/runner': 3.2.4
       '@vitest/snapshot': 3.2.4
@@ -6701,7 +6701,7 @@ snapshots:
       miniflare: 4.20250803.0
       semver: 7.7.2
       vitest: 3.2.4(@types/node@24.2.0)(@vitest/browser@3.2.4)(jiti@2.5.1)(lightningcss@1.30.1)(terser@5.43.1)(yaml@2.8.1)
-      wrangler: 4.28.0(@cloudflare/workers-types@4.20250806.0)
+      wrangler: 4.28.0(@cloudflare/workers-types@4.20250807.0)
       zod: 3.25.76
     transitivePeerDependencies:
       - '@cloudflare/workers-types'
@@ -6745,7 +6745,7 @@ snapshots:
 
   '@cloudflare/workers-types@4.20250214.0': {}
 
-  '@cloudflare/workers-types@4.20250806.0': {}
+  '@cloudflare/workers-types@4.20250807.0': {}
 
   '@cspotcode/source-map-support@0.8.1':
     dependencies:
@@ -9043,7 +9043,7 @@ snapshots:
       json-schema-traverse: 1.0.0
       require-from-string: 2.0.2
 
-  alchemy@0.56.0(@ai-sdk/openai-compatible@0.2.16(zod@4.0.15))(@ai-sdk/openai@1.3.23(zod@4.0.15))(@aws-sdk/client-dynamodb@3.859.0)(@aws-sdk/client-ec2@3.859.0)(@aws-sdk/client-iam@3.859.0)(@aws-sdk/client-lambda@3.859.0)(@aws-sdk/client-s3@3.859.0)(@aws-sdk/client-sagemaker@3.860.0)(@aws-sdk/client-ses@3.859.0)(@aws-sdk/client-sesv2@3.859.0)(@aws-sdk/client-sqs@3.859.0)(@aws-sdk/client-ssm@3.859.0)(@aws-sdk/client-sts@3.859.0)(@libsql/client@0.15.10)(@octokit/rest@21.1.1)(ai@4.3.19(react@19.1.1)(zod@4.0.15))(arktype@2.1.20)(cloudflare@4.5.0)(drizzle-orm@0.44.4(@cloudflare/workers-types@4.20250806.0)(@libsql/client@0.15.10)(@opentelemetry/api@1.9.0)(@prisma/client@6.13.0(prisma@6.13.0(typescript@5.9.2))(typescript@5.9.2))(kysely@0.28.4)(prisma@6.13.0(typescript@5.9.2)))(hono@4.8.12)(prettier@3.6.2)(stripe@17.7.0)(workerd@1.20250803.0):
+  alchemy@0.56.0(@ai-sdk/openai-compatible@0.2.16(zod@4.0.15))(@ai-sdk/openai@1.3.23(zod@4.0.15))(@aws-sdk/client-dynamodb@3.859.0)(@aws-sdk/client-ec2@3.859.0)(@aws-sdk/client-iam@3.859.0)(@aws-sdk/client-lambda@3.859.0)(@aws-sdk/client-s3@3.859.0)(@aws-sdk/client-sagemaker@3.860.0)(@aws-sdk/client-ses@3.859.0)(@aws-sdk/client-sesv2@3.859.0)(@aws-sdk/client-sqs@3.859.0)(@aws-sdk/client-ssm@3.859.0)(@aws-sdk/client-sts@3.859.0)(@libsql/client@0.15.10)(@octokit/rest@21.1.1)(ai@4.3.19(react@19.1.1)(zod@4.0.15))(arktype@2.1.20)(cloudflare@4.5.0)(drizzle-orm@0.44.4(@cloudflare/workers-types@4.20250807.0)(@libsql/client@0.15.10)(@opentelemetry/api@1.9.0)(@prisma/client@6.13.0(prisma@6.13.0(typescript@5.9.2))(typescript@5.9.2))(kysely@0.28.4)(prisma@6.13.0(typescript@5.9.2)))(hono@4.8.12)(prettier@3.6.2)(stripe@17.7.0)(workerd@1.20250803.0):
     dependencies:
       '@ai-sdk/openai': 1.3.23(zod@4.0.15)
       '@ai-sdk/openai-compatible': 0.2.16(zod@4.0.15)
@@ -9071,7 +9071,7 @@ snapshots:
       aws4fetch: 1.0.20
       cloudflare: 4.5.0
       diff: 8.0.2
-      drizzle-orm: 0.44.4(@cloudflare/workers-types@4.20250806.0)(@libsql/client@0.15.10)(@opentelemetry/api@1.9.0)(@prisma/client@6.13.0(prisma@6.13.0(typescript@5.9.2))(typescript@5.9.2))(kysely@0.28.4)(prisma@6.13.0(typescript@5.9.2))
+      drizzle-orm: 0.44.4(@cloudflare/workers-types@4.20250807.0)(@libsql/client@0.15.10)(@opentelemetry/api@1.9.0)(@prisma/client@6.13.0(prisma@6.13.0(typescript@5.9.2))(typescript@5.9.2))(kysely@0.28.4)(prisma@6.13.0(typescript@5.9.2))
       esbuild: 0.25.8
       execa: 9.6.0
       fast-json-patch: 3.1.1
@@ -9463,9 +9463,9 @@ snapshots:
 
   dotenv@16.6.1: {}
 
-  drizzle-orm@0.44.4(@cloudflare/workers-types@4.20250806.0)(@libsql/client@0.15.10)(@opentelemetry/api@1.9.0)(@prisma/client@6.13.0(prisma@6.13.0(typescript@5.9.2))(typescript@5.9.2))(kysely@0.28.4)(prisma@6.13.0(typescript@5.9.2)):
+  drizzle-orm@0.44.4(@cloudflare/workers-types@4.20250807.0)(@libsql/client@0.15.10)(@opentelemetry/api@1.9.0)(@prisma/client@6.13.0(prisma@6.13.0(typescript@5.9.2))(typescript@5.9.2))(kysely@0.28.4)(prisma@6.13.0(typescript@5.9.2)):
     optionalDependencies:
-      '@cloudflare/workers-types': 4.20250806.0
+      '@cloudflare/workers-types': 4.20250807.0
       '@libsql/client': 0.15.10
       '@opentelemetry/api': 1.9.0
       '@prisma/client': 6.13.0(prisma@6.13.0(typescript@5.9.2))(typescript@5.9.2)
@@ -10849,8 +10849,8 @@ snapshots:
   rwsdk@0.1.32(rollup@4.45.1)(typescript@5.9.2)(vite@6.3.5(@types/node@24.2.0)(jiti@2.5.1)(lightningcss@1.30.1)(terser@5.43.1)(yaml@2.8.1))(webpack@5.100.0(esbuild@0.25.8))(workerd@1.20250803.0):
     dependencies:
       '@ast-grep/napi': 0.38.7
-      '@cloudflare/vite-plugin': 1.7.4(rollup@4.45.1)(vite@6.3.5(@types/node@24.2.0)(jiti@2.5.1)(lightningcss@1.30.1)(terser@5.43.1)(yaml@2.8.1))(workerd@1.20250803.0)(wrangler@4.28.0(@cloudflare/workers-types@4.20250806.0))
-      '@cloudflare/workers-types': 4.20250806.0
+      '@cloudflare/vite-plugin': 1.7.4(rollup@4.45.1)(vite@6.3.5(@types/node@24.2.0)(jiti@2.5.1)(lightningcss@1.30.1)(terser@5.43.1)(yaml@2.8.1))(workerd@1.20250803.0)(wrangler@4.28.0(@cloudflare/workers-types@4.20250807.0))
+      '@cloudflare/workers-types': 4.20250807.0
       '@puppeteer/browsers': 2.10.6
       '@types/fs-extra': 11.0.4
       '@types/react': 19.1.9
@@ -10885,7 +10885,7 @@ snapshots:
       vibe-rules: 0.2.57
       vite: 6.3.5(@types/node@24.2.0)(jiti@2.5.1)(lightningcss@1.30.1)(terser@5.43.1)(yaml@2.8.1)
       vite-tsconfig-paths: 5.1.4(typescript@5.9.2)(vite@6.3.5(@types/node@24.2.0)(jiti@2.5.1)(lightningcss@1.30.1)(terser@5.43.1)(yaml@2.8.1))
-      wrangler: 4.28.0(@cloudflare/workers-types@4.20250806.0)
+      wrangler: 4.28.0(@cloudflare/workers-types@4.20250807.0)
     transitivePeerDependencies:
       - bare-buffer
       - bufferutil
@@ -11364,9 +11364,9 @@ snapshots:
       import-meta-resolve: 4.1.0
       zod: 3.25.76
 
-  vibe-rules@0.3.85(@ai-sdk/openai-compatible@0.2.16(zod@4.0.15))(@ai-sdk/openai@1.3.23(zod@4.0.15))(@aws-sdk/client-dynamodb@3.859.0)(@aws-sdk/client-ec2@3.859.0)(@aws-sdk/client-iam@3.859.0)(@aws-sdk/client-lambda@3.859.0)(@aws-sdk/client-s3@3.859.0)(@aws-sdk/client-sagemaker@3.860.0)(@aws-sdk/client-ses@3.859.0)(@aws-sdk/client-sesv2@3.859.0)(@aws-sdk/client-sqs@3.859.0)(@aws-sdk/client-ssm@3.859.0)(@aws-sdk/client-sts@3.859.0)(@libsql/client@0.15.10)(@octokit/rest@21.1.1)(ai@4.3.19(react@19.1.1)(zod@4.0.15))(arktype@2.1.20)(cloudflare@4.5.0)(drizzle-orm@0.44.4(@cloudflare/workers-types@4.20250806.0)(@libsql/client@0.15.10)(@opentelemetry/api@1.9.0)(@prisma/client@6.13.0(prisma@6.13.0(typescript@5.9.2))(typescript@5.9.2))(kysely@0.28.4)(prisma@6.13.0(typescript@5.9.2)))(hono@4.8.12)(prettier@3.6.2)(stripe@17.7.0)(workerd@1.20250803.0):
+  vibe-rules@0.3.85(@ai-sdk/openai-compatible@0.2.16(zod@4.0.15))(@ai-sdk/openai@1.3.23(zod@4.0.15))(@aws-sdk/client-dynamodb@3.859.0)(@aws-sdk/client-ec2@3.859.0)(@aws-sdk/client-iam@3.859.0)(@aws-sdk/client-lambda@3.859.0)(@aws-sdk/client-s3@3.859.0)(@aws-sdk/client-sagemaker@3.860.0)(@aws-sdk/client-ses@3.859.0)(@aws-sdk/client-sesv2@3.859.0)(@aws-sdk/client-sqs@3.859.0)(@aws-sdk/client-ssm@3.859.0)(@aws-sdk/client-sts@3.859.0)(@libsql/client@0.15.10)(@octokit/rest@21.1.1)(ai@4.3.19(react@19.1.1)(zod@4.0.15))(arktype@2.1.20)(cloudflare@4.5.0)(drizzle-orm@0.44.4(@cloudflare/workers-types@4.20250807.0)(@libsql/client@0.15.10)(@opentelemetry/api@1.9.0)(@prisma/client@6.13.0(prisma@6.13.0(typescript@5.9.2))(typescript@5.9.2))(kysely@0.28.4)(prisma@6.13.0(typescript@5.9.2)))(hono@4.8.12)(prettier@3.6.2)(stripe@17.7.0)(workerd@1.20250803.0):
     dependencies:
-      alchemy: 0.56.0(@ai-sdk/openai-compatible@0.2.16(zod@4.0.15))(@ai-sdk/openai@1.3.23(zod@4.0.15))(@aws-sdk/client-dynamodb@3.859.0)(@aws-sdk/client-ec2@3.859.0)(@aws-sdk/client-iam@3.859.0)(@aws-sdk/client-lambda@3.859.0)(@aws-sdk/client-s3@3.859.0)(@aws-sdk/client-sagemaker@3.860.0)(@aws-sdk/client-ses@3.859.0)(@aws-sdk/client-sesv2@3.859.0)(@aws-sdk/client-sqs@3.859.0)(@aws-sdk/client-ssm@3.859.0)(@aws-sdk/client-sts@3.859.0)(@libsql/client@0.15.10)(@octokit/rest@21.1.1)(ai@4.3.19(react@19.1.1)(zod@4.0.15))(arktype@2.1.20)(cloudflare@4.5.0)(drizzle-orm@0.44.4(@cloudflare/workers-types@4.20250806.0)(@libsql/client@0.15.10)(@opentelemetry/api@1.9.0)(@prisma/client@6.13.0(prisma@6.13.0(typescript@5.9.2))(typescript@5.9.2))(kysely@0.28.4)(prisma@6.13.0(typescript@5.9.2)))(hono@4.8.12)(prettier@3.6.2)(stripe@17.7.0)(workerd@1.20250803.0)
+      alchemy: 0.56.0(@ai-sdk/openai-compatible@0.2.16(zod@4.0.15))(@ai-sdk/openai@1.3.23(zod@4.0.15))(@aws-sdk/client-dynamodb@3.859.0)(@aws-sdk/client-ec2@3.859.0)(@aws-sdk/client-iam@3.859.0)(@aws-sdk/client-lambda@3.859.0)(@aws-sdk/client-s3@3.859.0)(@aws-sdk/client-sagemaker@3.860.0)(@aws-sdk/client-ses@3.859.0)(@aws-sdk/client-sesv2@3.859.0)(@aws-sdk/client-sqs@3.859.0)(@aws-sdk/client-ssm@3.859.0)(@aws-sdk/client-sts@3.859.0)(@libsql/client@0.15.10)(@octokit/rest@21.1.1)(ai@4.3.19(react@19.1.1)(zod@4.0.15))(arktype@2.1.20)(cloudflare@4.5.0)(drizzle-orm@0.44.4(@cloudflare/workers-types@4.20250807.0)(@libsql/client@0.15.10)(@opentelemetry/api@1.9.0)(@prisma/client@6.13.0(prisma@6.13.0(typescript@5.9.2))(typescript@5.9.2))(kysely@0.28.4)(prisma@6.13.0(typescript@5.9.2)))(hono@4.8.12)(prettier@3.6.2)(stripe@17.7.0)(workerd@1.20250803.0)
       chalk: 4.1.2
       commander: 11.1.0
       fs-extra: 11.3.0
@@ -11580,7 +11580,7 @@ snapshots:
       '@cloudflare/workerd-linux-arm64': 1.20250803.0
       '@cloudflare/workerd-windows-64': 1.20250803.0
 
-  wrangler@4.28.0(@cloudflare/workers-types@4.20250806.0):
+  wrangler@4.28.0(@cloudflare/workers-types@4.20250807.0):
     dependencies:
       '@cloudflare/kv-asset-handler': 0.4.0
       '@cloudflare/unenv-preset': 2.6.0(unenv@2.0.0-rc.19)(workerd@1.20250803.0)
@@ -11591,7 +11591,7 @@ snapshots:
       unenv: 2.0.0-rc.19
       workerd: 1.20250803.0
     optionalDependencies:
-      '@cloudflare/workers-types': 4.20250806.0
+      '@cloudflare/workers-types': 4.20250807.0
       fsevents: 2.3.3
     transitivePeerDependencies:
       - bufferutil
