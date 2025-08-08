@@ -50,7 +50,7 @@ importers:
         version: 2.1.4
       '@cloudflare/vite-plugin':
         specifier: 1.11.1
-        version: 1.11.1(rollup@4.45.1)(vite@6.3.5(@types/node@24.2.0)(jiti@2.5.1)(lightningcss@1.30.1)(terser@5.43.1)(yaml@2.8.1))(workerd@1.20250803.0)(wrangler@4.28.0(@cloudflare/workers-types@4.20250807.0))
+        version: 1.11.1(rollup@4.45.1)(vite@6.3.5(@types/node@24.2.0)(jiti@2.5.1)(lightningcss@1.30.1)(terser@5.43.1)(yaml@2.8.1))(workerd@1.20250803.0)(wrangler@4.28.1(@cloudflare/workers-types@4.20250807.0))
       '@cloudflare/vitest-pool-workers':
         specifier: ^0.8.61
         version: 0.8.61(@cloudflare/workers-types@4.20250807.0)(@vitest/runner@3.2.4)(@vitest/snapshot@3.2.4)(vitest@3.2.4)
@@ -148,8 +148,8 @@ importers:
         specifier: ^3.2.4
         version: 3.2.4(@types/node@24.2.0)(@vitest/browser@3.2.4)(jiti@2.5.1)(lightningcss@1.30.1)(terser@5.43.1)(yaml@2.8.1)
       wrangler:
-        specifier: ^4.28.0
-        version: 4.28.0(@cloudflare/workers-types@4.20250807.0)
+        specifier: ^4.28.1
+        version: 4.28.1(@cloudflare/workers-types@4.20250807.0)
 
 packages:
 
@@ -6663,7 +6663,7 @@ snapshots:
     optionalDependencies:
       workerd: 1.20250803.0
 
-  '@cloudflare/vite-plugin@1.11.1(rollup@4.45.1)(vite@6.3.5(@types/node@24.2.0)(jiti@2.5.1)(lightningcss@1.30.1)(terser@5.43.1)(yaml@2.8.1))(workerd@1.20250803.0)(wrangler@4.28.0(@cloudflare/workers-types@4.20250807.0))':
+  '@cloudflare/vite-plugin@1.11.1(rollup@4.45.1)(vite@6.3.5(@types/node@24.2.0)(jiti@2.5.1)(lightningcss@1.30.1)(terser@5.43.1)(yaml@2.8.1))(workerd@1.20250803.0)(wrangler@4.28.1(@cloudflare/workers-types@4.20250807.0))':
     dependencies:
       '@cloudflare/unenv-preset': 2.6.0(unenv@2.0.0-rc.19)(workerd@1.20250803.0)
       '@mjackson/node-fetch-server': 0.6.1
@@ -6674,7 +6674,7 @@ snapshots:
       tinyglobby: 0.2.14
       unenv: 2.0.0-rc.19
       vite: 6.3.5(@types/node@24.2.0)(jiti@2.5.1)(lightningcss@1.30.1)(terser@5.43.1)(yaml@2.8.1)
-      wrangler: 4.28.0(@cloudflare/workers-types@4.20250807.0)
+      wrangler: 4.28.1(@cloudflare/workers-types@4.20250807.0)
       ws: 8.18.0
     transitivePeerDependencies:
       - bufferutil
@@ -6682,7 +6682,7 @@ snapshots:
       - utf-8-validate
       - workerd
 
-  '@cloudflare/vite-plugin@1.7.4(rollup@4.45.1)(vite@6.3.5(@types/node@24.2.0)(jiti@2.5.1)(lightningcss@1.30.1)(terser@5.43.1)(yaml@2.8.1))(workerd@1.20250803.0)(wrangler@4.28.0(@cloudflare/workers-types@4.20250807.0))':
+  '@cloudflare/vite-plugin@1.7.4(rollup@4.45.1)(vite@6.3.5(@types/node@24.2.0)(jiti@2.5.1)(lightningcss@1.30.1)(terser@5.43.1)(yaml@2.8.1))(workerd@1.20250803.0)(wrangler@4.28.1(@cloudflare/workers-types@4.20250807.0))':
     dependencies:
       '@cloudflare/unenv-preset': 2.3.3(unenv@2.0.0-rc.17)(workerd@1.20250803.0)
       '@mjackson/node-fetch-server': 0.6.1
@@ -6693,7 +6693,7 @@ snapshots:
       tinyglobby: 0.2.14
       unenv: 2.0.0-rc.17
       vite: 6.3.5(@types/node@24.2.0)(jiti@2.5.1)(lightningcss@1.30.1)(terser@5.43.1)(yaml@2.8.1)
-      wrangler: 4.28.0(@cloudflare/workers-types@4.20250807.0)
+      wrangler: 4.28.1(@cloudflare/workers-types@4.20250807.0)
       ws: 8.18.0
     transitivePeerDependencies:
       - bufferutil
@@ -10859,7 +10859,7 @@ snapshots:
   rwsdk@0.1.32(rollup@4.45.1)(typescript@5.9.2)(vite@6.3.5(@types/node@24.2.0)(jiti@2.5.1)(lightningcss@1.30.1)(terser@5.43.1)(yaml@2.8.1))(webpack@5.100.0(esbuild@0.25.8))(workerd@1.20250803.0):
     dependencies:
       '@ast-grep/napi': 0.38.7
-      '@cloudflare/vite-plugin': 1.7.4(rollup@4.45.1)(vite@6.3.5(@types/node@24.2.0)(jiti@2.5.1)(lightningcss@1.30.1)(terser@5.43.1)(yaml@2.8.1))(workerd@1.20250803.0)(wrangler@4.28.0(@cloudflare/workers-types@4.20250807.0))
+      '@cloudflare/vite-plugin': 1.7.4(rollup@4.45.1)(vite@6.3.5(@types/node@24.2.0)(jiti@2.5.1)(lightningcss@1.30.1)(terser@5.43.1)(yaml@2.8.1))(workerd@1.20250803.0)(wrangler@4.28.1(@cloudflare/workers-types@4.20250807.0))
       '@cloudflare/workers-types': 4.20250807.0
       '@puppeteer/browsers': 2.10.6
       '@types/fs-extra': 11.0.4
@@ -10895,7 +10895,7 @@ snapshots:
       vibe-rules: 0.2.57
       vite: 6.3.5(@types/node@24.2.0)(jiti@2.5.1)(lightningcss@1.30.1)(terser@5.43.1)(yaml@2.8.1)
       vite-tsconfig-paths: 5.1.4(typescript@5.9.2)(vite@6.3.5(@types/node@24.2.0)(jiti@2.5.1)(lightningcss@1.30.1)(terser@5.43.1)(yaml@2.8.1))
-      wrangler: 4.28.0(@cloudflare/workers-types@4.20250807.0)
+      wrangler: 4.28.1(@cloudflare/workers-types@4.20250807.0)
     transitivePeerDependencies:
       - bare-buffer
       - bufferutil
