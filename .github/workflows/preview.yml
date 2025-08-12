@@ -19,7 +19,7 @@ jobs:
       name: preview-${{ github.event.pull_request.number }}
       url: https://pr-${{ github.event.pull_request.number }}-avalon-analytics.cmotlin.workers.dev
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: jdx/mise-action@v2
 
       - name: Get pnpm store directory

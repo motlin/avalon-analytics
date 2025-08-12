@@ -16,7 +16,7 @@ jobs:
             checks: write
             pull-requests: write
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v5
             - uses: jdx/mise-action@v2
 
             - name: Get pnpm store directory
@@ -39,7 +39,7 @@ jobs:
         name: Format (Biome)
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v5
             - uses: jdx/mise-action@v2
 
             - name: Get pnpm store directory
@@ -57,7 +57,7 @@ jobs:
     typecheck:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v5
             - uses: jdx/mise-action@v2
 
             - name: Get pnpm store directory
@@ -75,7 +75,7 @@ jobs:
     build:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v5
             - uses: jdx/mise-action@v2
 
             - name: Get pnpm store directory
@@ -93,7 +93,7 @@ jobs:
     test:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v5
             - uses: jdx/mise-action@v2
 
             - name: Get pnpm store directory
@@ -112,7 +112,7 @@ jobs:
         name: Check generated files
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v5
             - uses: jdx/mise-action@v2
 
             - name: Get pnpm store directory
