@@ -194,35 +194,37 @@ export const AllVariants: Story = {
 	),
 };
 
+const InteractiveSelectionComponent = () => {
+	const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
+
+	const toggleSelection = (uid: string) => {
+		setSelectedMembers((prev) => (prev.includes(uid) ? prev.filter((id) => id !== uid) : [...prev, uid]));
+	};
+
+	const players = [
+		{uid: '1', name: 'Alice', role: 'Merlin'},
+		{uid: '2', name: 'Bob'},
+		{uid: '3', name: 'Charlie'},
+		{uid: '4', name: 'Diana', role: 'Mordred'},
+		{uid: '5', name: 'Eve'},
+	];
+
+	return (
+		<div style={{display: 'flex', gap: '0.5rem', flexWrap: 'wrap', maxWidth: '400px'}}>
+			{players.map((player, index) => (
+				<TeamMemberComponent
+					key={player.uid}
+					player={player}
+					isSelected={selectedMembers.includes(player.uid)}
+					isProposer={index === 0}
+					showRole
+					onClick={() => toggleSelection(player.uid)}
+				/>
+			))}
+		</div>
+	);
+};
+
 export const InteractiveSelection: Story = {
-	render: () => {
-		const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
-
-		const toggleSelection = (uid: string) => {
-			setSelectedMembers((prev) => (prev.includes(uid) ? prev.filter((id) => id !== uid) : [...prev, uid]));
-		};
-
-		const players = [
-			{uid: '1', name: 'Alice', role: 'Merlin'},
-			{uid: '2', name: 'Bob'},
-			{uid: '3', name: 'Charlie'},
-			{uid: '4', name: 'Diana', role: 'Mordred'},
-			{uid: '5', name: 'Eve'},
-		];
-
-		return (
-			<div style={{display: 'flex', gap: '0.5rem', flexWrap: 'wrap', maxWidth: '400px'}}>
-				{players.map((player, index) => (
-					<TeamMemberComponent
-						key={player.uid}
-						player={player}
-						isSelected={selectedMembers.includes(player.uid)}
-						isProposer={index === 0}
-						showRole
-						onClick={() => toggleSelection(player.uid)}
-					/>
-				))}
-			</div>
-		);
-	},
+	render: () => <InteractiveSelectionComponent />,
 };
