@@ -74,6 +74,8 @@ jobs:
 
     build:
         runs-on: ubuntu-latest
+        env:
+            AUTH_SECRET_KEY: ci-build-secret
         steps:
             - uses: actions/checkout@v6
             - uses: jdx/mise-action@v3
@@ -111,6 +113,8 @@ jobs:
     check-generated:
         name: Check generated files
         runs-on: ubuntu-latest
+        env:
+            AUTH_SECRET_KEY: ci-build-secret
         steps:
             - uses: actions/checkout@v6
             - uses: jdx/mise-action@v3
