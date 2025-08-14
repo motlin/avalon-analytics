@@ -19,14 +19,7 @@
   },
   "vars": {
     "WEBAUTHN_APP_NAME": "avalon-analytics",
-    "WEBAUTHN_RP_ID": "",
-    "FIREBASE_API_KEY": "AIzaSyCwhCvO8NbTusBaHmHHnNT7yC0_11UL2RI",
-    "FIREBASE_AUTH_DOMAIN": "georgyo-avalon.firebaseapp.com",
-    "FIREBASE_DATABASE_URL": "https://georgyo-avalon-default-rtdb.firebaseio.com",
-    "FIREBASE_PROJECT_ID": "georgyo-avalon",
-    "FIREBASE_STORAGE_BUCKET": "georgyo-avalon.appspot.com",
-    "FIREBASE_MESSAGING_SENDER_ID": "1000859874531",
-    "FIREBASE_APP_ID": "1:1000859874531:web:789f785c58c574bff181d6"
+    "WEBAUTHN_RP_ID": ""
   },
   "migrations": [
     {
