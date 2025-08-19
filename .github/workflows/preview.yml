@@ -20,7 +20,7 @@ jobs:
       url: https://pr-${{ github.event.pull_request.number }}-avalon-analytics.cmotlin.workers.dev
     steps:
       - uses: actions/checkout@v5
-      - uses: jdx/mise-action@v2
+      - uses: jdx/mise-action@v3
 
       - name: Get pnpm store directory
         run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
