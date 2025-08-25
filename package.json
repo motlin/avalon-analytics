@@ -48,7 +48,7 @@
 		"zod": "^4.0.17"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "2.1.4",
+		"@biomejs/biome": "2.2.2",
 		"@cloudflare/vite-plugin": "1.11.2",
 		"@cloudflare/vitest-pool-workers": "^0.8.66",
 		"@cloudflare/workers-types": "^4.20250823.0",
