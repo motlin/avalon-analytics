@@ -115,8 +115,8 @@ importers:
         specifier: ^2.5.1
         version: 2.5.1
       miniflare:
-        specifier: ^4.20250816.1
-        version: 4.20250816.1
+        specifier: ^4.20250823.1
+        version: 4.20250823.1
       prettier:
         specifier: ^3.6.2
         version: 3.6.2
@@ -3192,6 +3192,11 @@ packages:
 
   miniflare@4.20250823.0:
     resolution: {integrity: sha512-ofQRQ6rb/5P4nsz/J+xptdrN4zvYUm0wuezbKfaxbAGiIVTsM1vd+Pta5MtZwdQ6BKLM9tKMtU0rnbTzy3wntQ==}
+    engines: {node: '>=18.0.0'}
+    hasBin: true
+
+  miniflare@4.20250823.1:
+    resolution: {integrity: sha512-qjbF69XXyHXk4R//q0a9MLraKE9MLKZ/94k6jKcfouJ0g+se7VyMzCBryeWA534+ZAlNM4Ay5gqYr1v3Wk6ctQ==}
     engines: {node: '>=18.0.0'}
     hasBin: true
 
@@ -7209,6 +7214,24 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
+  miniflare@4.20250823.1:
+    dependencies:
+      '@cspotcode/source-map-support': 0.8.1
+      acorn: 8.14.0
+      acorn-walk: 8.3.2
+      exit-hook: 2.2.1
+      glob-to-regexp: 0.4.1
+      sharp: 0.33.5
+      stoppable: 1.1.0
+      undici: 7.15.0
+      workerd: 1.20250823.0
+      ws: 8.18.0
+      youch: 4.1.0-beta.10
+      zod: 3.22.3
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+
   minimatch@10.0.3:
     dependencies:
       '@isaacs/brace-expansion': 5.0.0
@@ -7641,7 +7664,7 @@ snapshots:
       kysely-do: 0.0.1-rc.1(kysely@0.28.5)
       lodash: 4.17.21
       magic-string: 0.30.18
-      miniflare: 4.20250816.1
+      miniflare: 4.20250823.1
       picocolors: 1.1.1
       proper-lockfile: 4.1.2
       puppeteer-core: 22.15.0
