@@ -50,7 +50,7 @@
 	"devDependencies": {
 		"@biomejs/biome": "2.2.2",
 		"@cloudflare/vite-plugin": "1.11.7",
-		"@cloudflare/vitest-pool-workers": "^0.8.67",
+		"@cloudflare/vitest-pool-workers": "^0.8.68",
 		"@cloudflare/workers-types": "^4.20250828.0",
 		"@eslint/js": "^9.34.0",
 		"@storybook/addon-docs": "^9.1.3",
