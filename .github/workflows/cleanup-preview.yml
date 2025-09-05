@@ -22,7 +22,7 @@ jobs:
         continue-on-error: true
 
       - name: Comment on PR about cleanup
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const prNumber = context.issue.number;
