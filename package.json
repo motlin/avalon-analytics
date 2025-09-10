@@ -82,7 +82,7 @@
 		"vibe-rules": "^0.3.91",
 		"vite": "^6.3.6",
 		"vitest": "^3.2.4",
-		"wrangler": "^4.34.0"
+		"wrangler": "^4.35.0"
 	},
 	"pnpm": {
 		"onlyBuiltDependencies": [
