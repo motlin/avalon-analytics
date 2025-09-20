@@ -178,6 +178,15 @@
 			"linter": {
 				"enabled": false
 			}
+		},
+		{
+			"includes": ["eslint_report.json"],
+			"formatter": {
+				"enabled": false
+			},
+			"linter": {
+				"enabled": false
+			}
 		}
 	]
 }
