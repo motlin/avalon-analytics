@@ -72,3 +72,6 @@ generated/
 
 *storybook.log
 storybook-static
+
+# Serena MCP files
+.serena
