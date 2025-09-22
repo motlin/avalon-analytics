@@ -1,8 +1,7 @@
 'use client';
 
 import {startAuthentication, startRegistration} from '@simplewebauthn/browser';
-import * as React from 'react';
-const {useState, useTransition} = React;
+import {useState, useTransition} from 'react';
 import {finishPasskeyLogin, finishPasskeyRegistration, startPasskeyLogin, startPasskeyRegistration} from './functions';
 
 export function Login() {
