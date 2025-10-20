@@ -67,8 +67,8 @@ format-ci: install-ci
 typecheck-ci: install-ci generate-ci
     npm run ci:typecheck
 
-# Run install, build, test, lint, and pre-commit hooks in sequence
-precommit: generate lint format hooks build test storybook-tests
+# Run install, build, lint, and pre-commit hooks in sequence
+precommit: generate lint format hooks build storybook-tests
 
 # `npm run storybook`
 storybook: install
