@@ -22,7 +22,8 @@ export type AppContext = {
 
 export default defineApp([
 	setCommonHeaders(),
-	async ({ctx, request, headers}) => {
+	async ({ctx, request, response}) => {
+		const {headers} = response;
 		console.log('🔍 Worker env keys:', Object.keys(env));
 		await setupDb(env);
 		setupSessionStore(env);
