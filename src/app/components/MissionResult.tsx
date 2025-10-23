@@ -5,7 +5,7 @@ interface MissionResultProps {
 	missionNumber?: number;
 }
 
-export function MissionResultComponent({mission, missionNumber}: MissionResultProps) {
+function MissionResultComponent({mission, missionNumber}: MissionResultProps) {
 	if (mission.state === 'PENDING') {
 		return null;
 	}
@@ -162,3 +162,6 @@ export function MissionResultComponent({mission, missionNumber}: MissionResultPr
 		</div>
 	);
 }
+
+export default MissionResultComponent;
+export {MissionResultComponent};
