@@ -19,7 +19,8 @@
   },
   "vars": {
     "WEBAUTHN_APP_NAME": "avalon-analytics-preview",
-    "WEBAUTHN_RP_ID": ""
+    "WEBAUTHN_RP_ID": "",
+    "AUTH_SECRET_KEY": ""
   },
   "migrations": [
     {
