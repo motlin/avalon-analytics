@@ -12,7 +12,7 @@ export const ProposalSchema = z.object({
 	proposer: z.string(),
 	team: z.array(z.string()),
 	votes: z.array(z.string()),
-	state: z.enum(['APPROVED', 'REJECTED']),
+	state: z.enum(['APPROVED', 'REJECTED', 'PENDING']),
 });
 
 export type Proposal = z.infer<typeof ProposalSchema>;
@@ -28,9 +28,22 @@ export const MissionSchema = z.object({
 
 export type Mission = z.infer<typeof MissionSchema>;
 
+export const RoleSchema = z.object({
+	name: z.string(),
+	role: z.string(),
+	assassin: z.boolean(),
+});
+
+export type Role = z.infer<typeof RoleSchema>;
+
 export const GameOutcomeSchema = z.object({
-	winner: z.enum(['GOOD', 'EVIL']),
-	reason: z.string(),
+	state: z.string(),
+	message: z.string().optional(),
+	assassinated: z.string().optional(),
+	roles: z.array(RoleSchema).optional(),
+	votes: z.array(z.record(z.string(), z.boolean())).optional(),
+	winner: z.string().optional(),
+	reason: z.string().optional(),
 });
 
 export type GameOutcome = z.infer<typeof GameOutcomeSchema>;
@@ -73,7 +86,7 @@ export const GameSchema = z
 		options: GameOptionsSchema.optional(),
 		timeCreated: FirestoreTimestampSchema,
 		timeFinished: FirestoreTimestampSchema.optional(),
-		outcome: z.any().optional(), // Complex nested structure, skip validation for now
+		outcome: GameOutcomeSchema.optional(),
 		__collections__: z.record(z.string(), z.any()).optional(),
 	})
 	.passthrough();

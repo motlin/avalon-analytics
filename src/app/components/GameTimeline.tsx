@@ -1,5 +1,4 @@
-import * as React from 'react';
-const {useState} = React;
+import React, {useState} from 'react';
 import type {Game, Mission, Proposal} from '../models/game';
 import {MissionProgressBarComponent} from './MissionProgressBar';
 import {ProposalCardComponent} from './ProposalCard';
@@ -65,7 +64,7 @@ export function GameTimelineComponent({game, showSecrets: initialShowSecrets = f
 
 	const getOutcomeText = () => {
 		if (!game.outcome) return '';
-		const winner = game.outcome.winner || game.outcome.outcome;
+		const winner = game.outcome.winner;
 		const reason = game.outcome.reason || game.outcome.message;
 		return `${winner} Victory - ${reason}`;
 	};
@@ -321,8 +320,8 @@ export function GameTimelineComponent({game, showSecrets: initialShowSecrets = f
 				{game.outcome && (
 					<div style={missionSectionStyle}>
 						<GameConclusionComponent
-							winner={game.outcome.winner || game.outcome.outcome}
-							reason={game.outcome.reason || game.outcome.message}
+							winner={(game.outcome.winner || 'GOOD') as 'GOOD' | 'EVIL'}
+							reason={game.outcome.reason || game.outcome.message || ''}
 							roles={game.players.map((player) => ({
 								name: player.name,
 								role: player.role || 'Unknown',

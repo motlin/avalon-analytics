@@ -5,7 +5,9 @@ import {setupDb} from '../db';
 import {suppressExpectedErrors} from './testUtils';
 import gameLogSample from './fixtures/game-log-sample.json';
 
-describe('Raw Game Data', () => {
+// ⚠️ Skipped due to upstream Prisma WASM incompatibility with vitest-pool-workers
+// See: https://github.com/cloudflare/workers-sdk/issues/5685
+describe.skip('Raw Game Data', () => {
 	let db: PrismaClient;
 
 	beforeEach(async () => {

@@ -18,7 +18,8 @@
 			"./worker-configuration.d.ts",
 			"./types/rw.d.ts",
 			"./types/vite.d.ts",
-			"./types/cloudflare-test.d.ts"
+			"./types/cloudflare-test.d.ts",
+			"./src/app/types/css-modules.d.ts"
 		],
 		"paths": {
 			"@/*": ["./src/*"],
@@ -46,5 +47,5 @@
 		/* Skip type checking all .d.ts files. */
 		"skipLibCheck": true
 	},
-	"include": ["src", ".storybook", "*.ts", "*.d.ts"]
+	"include": ["src", ".storybook", "server", "*.ts", "*.d.ts"]
 }

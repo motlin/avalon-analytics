@@ -21,6 +21,9 @@ export default defineConfig({
 	define: {
 		'process.env.NODE_ENV': '"test"',
 	},
+	optimizeDeps: {
+		include: ['react', 'react-dom', '@mdx-js/react'],
+	},
 	test: {
 		name: 'storybook',
 		browser: {

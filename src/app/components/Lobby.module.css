@@ -1,0 +1,395 @@
+/* Lobby component styles */
+
+.container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 16px;
+	width: 100%;
+	max-width: 1200px;
+	margin: 0 auto;
+}
+
+/* Server shutdown card */
+.shutdownCard {
+	background-color: #b2ebf2;
+	border-radius: 4px;
+	box-shadow:
+		0 2px 1px -1px rgba(0, 0, 0, 0.2),
+		0 1px 1px 0 rgba(0, 0, 0, 0.14),
+		0 1px 3px 0 rgba(0, 0, 0, 0.12);
+	margin-bottom: 24px;
+	width: 100%;
+	max-width: 600px;
+}
+
+.shutdownTitle {
+	background-color: #26c6da;
+	padding: 16px;
+	border-radius: 4px 4px 0 0;
+}
+
+.shutdownTitle h3 {
+	margin: 0;
+	font-size: 1.25rem;
+	font-weight: 500;
+	color: #333;
+}
+
+.shutdownText {
+	padding: 16px;
+	color: #333;
+	font-size: 0.875rem;
+	line-height: 1.4;
+}
+
+/* Main layout */
+.mainLayout {
+	display: flex;
+	align-items: flex-start;
+	justify-content: center;
+	flex-wrap: wrap;
+	gap: 24px;
+	width: 100%;
+	margin-bottom: 24px;
+}
+
+.playersSection {
+	flex: 1;
+	min-width: 300px;
+	max-width: 500px;
+}
+
+.rolesSection {
+	flex: 1;
+	min-width: 300px;
+	max-width: 500px;
+}
+
+.sectionContainer {
+	width: 100%;
+}
+
+.sectionTitle {
+	color: #b2ebf2;
+	font-size: 1rem;
+	font-weight: 400;
+	margin: 0 0 16px 0;
+	text-align: left;
+}
+
+.dragHint {
+	color: #b2ebf2;
+	font-size: 0.75rem;
+	margin: 8px 0 0 0;
+	text-align: left;
+	opacity: 0.8;
+}
+
+/* Team info */
+.teamInfoLayout {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	margin-bottom: 24px;
+}
+
+.teamInfo {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 60px;
+}
+
+.teamInfoText {
+	color: #b2ebf2;
+	font-size: 1.25rem;
+	font-weight: 400;
+	margin: 0;
+	text-align: center;
+}
+
+/* Options section */
+.optionsSection {
+	width: 100%;
+	max-width: 600px;
+	margin-bottom: 24px;
+}
+
+.optionsList {
+	background-color: #546e7a;
+	border-radius: 4px;
+	box-shadow:
+		0 2px 1px -1px rgba(0, 0, 0, 0.2),
+		0 1px 1px 0 rgba(0, 0, 0, 0.14),
+		0 1px 3px 0 rgba(0, 0, 0, 0.12);
+	overflow: hidden;
+}
+
+.optionItem {
+	background-color: white;
+	display: flex;
+	align-items: center;
+	padding: 12px 16px;
+	border: none;
+}
+
+.checkboxContainer {
+	flex: 0 0 auto;
+	margin-right: 16px;
+}
+
+.checkbox {
+	width: 18px;
+	height: 18px;
+	accent-color: #333;
+}
+
+.optionLabel {
+	flex: 1;
+	font-size: 0.875rem;
+	color: #333;
+}
+
+.infoButton {
+	flex: 0 0 auto;
+	margin-left: 16px;
+}
+
+.infoBtn {
+	background: transparent;
+	border: none;
+	cursor: pointer;
+	padding: 4px;
+	border-radius: 4px;
+	color: #666;
+	font-size: 1rem;
+	transition: background-color 0.3s ease;
+}
+
+.infoBtn:hover {
+	background-color: rgba(0, 0, 0, 0.04);
+}
+
+/* Dialog overlay and modal */
+.dialogOverlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.5);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	z-index: 1000;
+}
+
+.dialog {
+	background-color: #b2ebf2;
+	border-radius: 4px;
+	box-shadow:
+		0 11px 15px -7px rgba(0, 0, 0, 0.2),
+		0 24px 38px 3px rgba(0, 0, 0, 0.14),
+		0 9px 46px 8px rgba(0, 0, 0, 0.12);
+	max-width: 450px;
+	width: 90%;
+	min-width: 280px;
+}
+
+.dialogTitle {
+	background-color: #26c6da;
+	padding: 16px;
+	border-radius: 4px 4px 0 0;
+}
+
+.dialogTitle h3 {
+	margin: 0;
+	font-size: 1.25rem;
+	font-weight: 500;
+	color: #333;
+}
+
+.dialogText {
+	padding: 16px;
+	color: #333;
+	font-size: 0.875rem;
+	line-height: 1.4;
+}
+
+/* Start game section */
+.startGameSection {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	margin-bottom: 48px;
+	padding-top: 8px;
+}
+
+.startButton {
+	background-color: #1976d2;
+	color: white;
+	border: none;
+	padding: 12px 24px;
+	border-radius: 4px;
+	cursor: pointer;
+	font-size: 0.875rem;
+	font-weight: 500;
+	text-transform: uppercase;
+	letter-spacing: 0.02857em;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	transition:
+		background-color 0.3s ease,
+		box-shadow 0.3s ease;
+	box-shadow:
+		0 2px 1px -1px rgba(0, 0, 0, 0.2),
+		0 1px 1px 0 rgba(0, 0, 0, 0.14),
+		0 1px 3px 0 rgba(0, 0, 0, 0.12);
+	min-height: 48px;
+}
+
+.startButton:hover {
+	background-color: #1565c0;
+	box-shadow:
+		0 3px 3px -2px rgba(0, 0, 0, 0.2),
+		0 3px 4px 0 rgba(0, 0, 0, 0.14),
+		0 1px 8px 0 rgba(0, 0, 0, 0.12);
+}
+
+.startButton:disabled,
+.startButtonLoading {
+	opacity: 0.6;
+	cursor: not-allowed;
+	background-color: #1976d2;
+}
+
+.startButtonIcon {
+	font-size: 1rem;
+	line-height: 1;
+}
+
+.cannotStartCard {
+	background-color: #546e7a;
+	border-radius: 4px;
+	box-shadow:
+		0 2px 1px -1px rgba(0, 0, 0, 0.2),
+		0 1px 1px 0 rgba(0, 0, 0, 0.14),
+		0 1px 3px 0 rgba(0, 0, 0, 0.12);
+	padding: 16px;
+	max-width: 400px;
+	width: 100%;
+}
+
+.cannotStartText {
+	color: white;
+	font-size: 0.875rem;
+	text-align: center;
+	margin: 0;
+}
+
+/* Feedback section */
+.feedbackSection {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	width: 100%;
+	padding-top: 48px;
+}
+
+.feedbackContainer {
+	width: 100%;
+	max-width: 200px;
+}
+
+.feedbackButton {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	width: 100%;
+	padding: 8px 16px;
+	background-color: #e0e0e0;
+	color: #333;
+	text-decoration: none;
+	border-radius: 4px;
+	font-size: 0.75rem;
+	font-weight: 500;
+	text-transform: uppercase;
+	letter-spacing: 0.02857em;
+	transition: background-color 0.3s ease;
+	border: none;
+	cursor: pointer;
+	box-shadow:
+		0 2px 1px -1px rgba(0, 0, 0, 0.2),
+		0 1px 1px 0 rgba(0, 0, 0, 0.14),
+		0 1px 3px 0 rgba(0, 0, 0, 0.12);
+}
+
+.feedbackButton:hover {
+	background-color: #d5d5d5;
+	text-decoration: none;
+	color: #333;
+}
+
+.feedbackIcon {
+	font-size: 0.875rem;
+	line-height: 1;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+	.container {
+		padding: 8px;
+	}
+
+	.mainLayout {
+		flex-direction: column;
+		gap: 16px;
+	}
+
+	.playersSection,
+	.rolesSection {
+		max-width: 100%;
+	}
+
+	.teamInfoText {
+		font-size: 1.1rem;
+	}
+
+	.startButton {
+		padding: 10px 20px;
+		font-size: 0.8rem;
+	}
+
+	.feedbackSection {
+		align-items: center;
+	}
+
+	.feedbackContainer {
+		max-width: 100%;
+	}
+}
+
+@media (max-width: 480px) {
+	.dialog {
+		margin: 16px;
+		width: calc(100% - 32px);
+	}
+
+	.sectionTitle {
+		font-size: 0.9rem;
+	}
+
+	.teamInfoText {
+		font-size: 1rem;
+	}
+
+	.optionItem {
+		padding: 8px 12px;
+	}
+}
