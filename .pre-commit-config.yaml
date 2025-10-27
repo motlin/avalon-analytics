@@ -9,8 +9,9 @@ repos:
           - id: check-toml
           - id: check-xml
           - id: end-of-file-fixer
-            exclude: "\\.cursor/"
+            exclude: "(\\.cursor/|worker-configuration\\.d\\.ts)"
           - id: trailing-whitespace
+            exclude: "worker-configuration\\.d\\.ts"
           - id: check-added-large-files
             args: ['--maxkb=1000']
           - id: check-case-conflict
