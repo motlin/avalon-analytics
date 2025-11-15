@@ -25,7 +25,7 @@ function getWebAuthnConfig(request: Request) {
 
 export async function startPasskeyRegistration(username: string) {
 	const {rpName, rpID} = getWebAuthnConfig(requestInfo.request);
-	const {headers} = requestInfo;
+	const {headers} = requestInfo.response;
 
 	const options = await generateRegistrationOptions({
 		rpName,
@@ -46,7 +46,7 @@ export async function startPasskeyRegistration(username: string) {
 
 export async function startPasskeyLogin() {
 	const {rpID} = getWebAuthnConfig(requestInfo.request);
-	const {headers} = requestInfo;
+	const {headers} = requestInfo.response;
 
 	const options = await generateAuthenticationOptions({
 		rpID,
@@ -60,7 +60,10 @@ export async function startPasskeyLogin() {
 }
 
 export async function finishPasskeyRegistration(username: string, registration: RegistrationResponseJSON) {
-	const {request, headers} = requestInfo;
+	const {
+		request,
+		response: {headers},
+	} = requestInfo;
 	const {origin} = new URL(request.url);
 
 	const session = await sessions.load(request);
@@ -102,7 +105,10 @@ export async function finishPasskeyRegistration(username: string, registration: 
 }
 
 export async function finishPasskeyLogin(login: AuthenticationResponseJSON) {
-	const {request, headers} = requestInfo;
+	const {
+		request,
+		response: {headers},
+	} = requestInfo;
 	const {origin} = new URL(request.url);
 
 	const session = await sessions.load(request);
