@@ -33,17 +33,18 @@ jobs:
             ${{ runner.os }}-pnpm-store-
 
       - name: Setup preview configuration
+        id: setup
         run: |
-          # Replace the placeholder with the actual dev database ID
           if [ -n "${{ secrets.CLOUDFLARE_DEV_DB_ID }}" ]; then
             sed -i 's/PLACEHOLDER_DEV_DB_ID/${{ secrets.CLOUDFLARE_DEV_DB_ID }}/g' wrangler.preview.jsonc
             echo "Using development database for preview deployment"
+            echo "has_dev_db=true" >> $GITHUB_OUTPUT
           else
             echo "Warning: CLOUDFLARE_DEV_DB_ID not set, using production config"
           fi
 
       - name: Run migrations on dev database
-        if: ${{ secrets.CLOUDFLARE_DEV_DB_ID != '' }}
+        if: steps.setup.outputs.has_dev_db == 'true'
         uses: cloudflare/wrangler-action@v3.14.1
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -56,7 +57,7 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          wranglerConfigPath: ${{ secrets.CLOUDFLARE_DEV_DB_ID && 'wrangler.preview.jsonc' || 'wrangler.jsonc' }}
+          wranglerConfigPath: ${{ steps.setup.outputs.has_dev_db == 'true' && 'wrangler.preview.jsonc' || 'wrangler.jsonc' }}
           preCommands: |
             pnpm install --frozen-lockfile --ignore-scripts
             npx prisma generate
