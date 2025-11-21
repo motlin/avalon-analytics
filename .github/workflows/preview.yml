@@ -43,6 +43,7 @@ jobs:
           fi
 
       - name: Run migrations on dev database
+        if: ${{ secrets.CLOUDFLARE_DEV_DB_ID != '' }}
         uses: cloudflare/wrangler-action@v3.14.1
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
