@@ -2,64 +2,10 @@ import React, {useState} from 'react';
 import GamePlayerList from './GamePlayerList';
 import RoleList from './RoleList';
 import styles from './GameParticipants.module.css';
-
-interface Role {
-	name: string;
-	team: 'good' | 'evil';
-	description: string;
-}
-
-interface RoleConfig {
-	[key: string]: Role;
-}
-
-interface Config {
-	roleMap: RoleConfig;
-}
-
-interface AvalonUser {
-	name: string;
-}
-
-interface Mission {
-	teamSize: number;
-}
-
-interface Proposal {
-	team: string[];
-	votes: string[];
-}
-
-interface LobbyRole {
-	assassin: boolean;
-}
-
-interface Game {
-	players: string[];
-	phase: string;
-	currentProposer: string;
-	currentProposalIdx: number;
-	currentMission: Mission;
-	currentProposal: Proposal;
-	lastProposal: Proposal | null;
-	hammer: string;
-	roles: string[];
-}
-
-interface Lobby {
-	role: LobbyRole;
-	game: Game;
-}
-
-interface AvalonData {
-	game: Game;
-	user: AvalonUser;
-	lobby: Lobby;
-	config: Config;
-}
+import type {AvalonApi} from './types';
 
 interface GameParticipantsProps {
-	avalon: AvalonData;
+	avalon: AvalonApi;
 	onSelectedPlayers: (players: string[]) => void;
 }
 
@@ -68,7 +14,7 @@ const GameParticipants: React.FC<GameParticipantsProps> = ({avalon, onSelectedPl
 
 	const tabs = ['Players', 'Roles'];
 
-	const roles = avalon.lobby.game.roles.map((r) => avalon.config.roleMap[r]);
+	const roles = avalon.lobby.game.roles?.map((r) => avalon.config.roleMap[r]) || [];
 
 	return (
 		<div className={styles.gameParticipants}>

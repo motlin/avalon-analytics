@@ -54,7 +54,6 @@ build: install
 build-ci: install-ci
     npm run build
 
-
 # `npm run format`
 format: install
     npm run format

@@ -51,79 +51,115 @@ function Game() {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const createMockAvalon = (overrides = {}) => ({
-	game: {
-		players: ['ALICE', 'BOB', 'CHARLIE', 'DIANA', 'EVE'],
+const createMockAvalon = (overrides: any = {}) => {
+	const baseGame = {
+		id: 'mock-game-id',
+		timeCreated: new Date('2025-01-01T00:00:00Z'),
+		missions: [
+			{
+				state: 'PENDING' as const,
+				teamSize: 2,
+				failsRequired: 1,
+				numFails: 0,
+				team: [],
+				votes: [],
+				proposals: [],
+			},
+		],
+		players: [
+			{uid: '1', name: 'ALICE'},
+			{uid: '2', name: 'BOB'},
+			{uid: '3', name: 'CHARLIE'},
+			{uid: '4', name: 'DIANA'},
+			{uid: '5', name: 'EVE'},
+		],
 		phase: 'TEAM_PROPOSAL',
 		currentProposer: 'ALICE',
 		currentProposalIdx: 0,
 		currentMission: {
+			state: 'PENDING' as const,
 			teamSize: 3,
+			failsRequired: 1,
+			team: [],
+			votes: [],
+			proposals: [],
 		},
 		currentProposal: {
 			team: ['ALICE', 'BOB', 'CHARLIE'],
 			votes: ['ALICE', 'BOB'],
+			proposer: 'ALICE',
+			state: 'PENDING' as const,
 		},
 		lastProposal: null,
 		hammer: 'EVE',
 		roles: ['merlin', 'percival', 'loyal_follower', 'morgana', 'evil_minion'],
-	},
-	user: {
-		name: 'ALICE',
-	},
-	lobby: {
-		role: {
-			assassin: false,
-		},
+	};
+
+	return {
 		game: {
-			players: ['ALICE', 'BOB', 'CHARLIE', 'DIANA', 'EVE'],
-			phase: 'TEAM_PROPOSAL',
-			currentProposer: 'ALICE',
-			currentProposalIdx: 0,
-			currentMission: {
-				teamSize: 3,
-			},
-			currentProposal: {
-				team: ['ALICE', 'BOB', 'CHARLIE'],
-				votes: ['ALICE', 'BOB'],
-			},
-			lastProposal: null,
-			hammer: 'EVE',
-			roles: ['merlin', 'percival', 'loyal_follower', 'morgana', 'evil_minion'],
+			...baseGame,
+			...overrides.game,
 		},
-	},
-	config: {
-		roleMap: {
-			merlin: {
-				name: 'Merlin',
-				team: 'good' as const,
-				description: 'Merlin sees all evil people (except for Mordred), but can also be assassinated.',
+		user: {
+			name: 'ALICE',
+		},
+		lobby: {
+			role: {
+				assassin: false,
 			},
-			percival: {
-				name: 'Percival',
-				team: 'good' as const,
-				description: 'Percival can see Merlin and Morgana but does not know which one is which.',
-			},
-			loyal_follower: {
-				name: 'Loyal Follower',
-				team: 'good' as const,
-				description: 'Loyal Follower is a genuinely good person.',
-			},
-			morgana: {
-				name: 'Morgana',
-				team: 'evil' as const,
-				description:
-					'Morgana appears indistinguishable from Merlin to Percival. She sees other evil people (except Oberon)',
-			},
-			evil_minion: {
-				name: 'Evil Minion',
-				team: 'evil' as const,
-				description: 'Evil Minion is pretty evil. He can see other evil people (except Oberon)',
+			game: {
+				id: 'mock-game-id',
+				timeCreated: new Date('2025-01-01T00:00:00Z'),
+				missions: [],
+				players: [],
+				phase: 'TEAM_PROPOSAL',
+				currentProposer: 'ALICE',
+				currentProposalIdx: 0,
+				currentMission: {
+					teamSize: 3,
+				},
+				currentProposal: {
+					team: ['ALICE', 'BOB', 'CHARLIE'],
+					votes: ['ALICE', 'BOB'],
+				},
+				lastProposal: null,
+				hammer: 'EVE',
+				roles: ['merlin', 'percival', 'loyal_follower', 'morgana', 'evil_minion'],
 			},
 		},
-	},
-	...overrides,
-});
+		config: {
+			roleMap: {
+				merlin: {
+					name: 'Merlin',
+					team: 'good' as const,
+					description: 'Merlin sees all evil people (except for Mordred), but can also be assassinated.',
+				},
+				percival: {
+					name: 'Percival',
+					team: 'good' as const,
+					description: 'Percival can see Merlin and Morgana but does not know which one is which.',
+				},
+				loyal_follower: {
+					name: 'Loyal Follower',
+					team: 'good' as const,
+					description: 'Loyal Follower is a genuinely good person.',
+				},
+				morgana: {
+					name: 'Morgana',
+					team: 'evil' as const,
+					description:
+						'Morgana appears indistinguishable from Merlin to Percival. She sees other evil people (except Oberon)',
+				},
+				evil_minion: {
+					name: 'Evil Minion',
+					team: 'evil' as const,
+					description: 'Evil Minion is pretty evil. He can see other evil people (except Oberon)',
+				},
+			},
+		},
+		...overrides,
+	};
+};
 
 export const Default: Story = {
 	args: {

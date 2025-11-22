@@ -12,7 +12,14 @@ if (typeof window !== 'undefined') {
 	globalThis.React = React;
 	globalThis.ReactDOM = ReactDOM;
 }
+if (typeof window !== 'undefined') {
+	(window as any).React = React;
+}
 
 const annotations = setProjectAnnotations([globalStorybookConfig]);
 
-beforeAll(annotations.beforeAll);
+beforeAll(async () => {
+	if (annotations.beforeAll) {
+		await annotations.beforeAll();
+	}
+});

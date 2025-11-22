@@ -1,0 +1,171 @@
+/* Activator button styling */
+.activatorButton {
+	background-color: #ffffff;
+	border: none;
+	border-radius: 4px;
+	padding: 8px 16px;
+	font-size: 0.875rem;
+	font-weight: 500;
+	color: rgba(0, 0, 0, 0.87);
+	cursor: pointer;
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	box-shadow:
+		0 3px 1px -2px rgba(0, 0, 0, 0.2),
+		0 2px 2px 0 rgba(0, 0, 0, 0.14),
+		0 1px 5px 0 rgba(0, 0, 0, 0.12);
+	transition: box-shadow 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.activatorButton:hover {
+	box-shadow:
+		0 2px 4px -1px rgba(0, 0, 0, 0.2),
+		0 4px 5px 0 rgba(0, 0, 0, 0.14),
+		0 1px 10px 0 rgba(0, 0, 0, 0.12);
+}
+
+.activatorButton:focus {
+	outline: none;
+	box-shadow:
+		0 2px 4px -1px rgba(0, 0, 0, 0.2),
+		0 4px 5px 0 rgba(0, 0, 0, 0.14),
+		0 1px 10px 0 rgba(0, 0, 0, 0.12);
+}
+
+.activatorButton svg {
+	margin-right: 8px;
+	font-size: 1rem;
+}
+
+/* Bottom sheet modal overlay */
+.overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.5);
+	display: flex;
+	align-items: flex-end;
+	justify-content: center;
+	z-index: 1000;
+	animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+/* Bottom sheet container */
+.bottomSheet {
+	width: 100%;
+	max-width: 600px;
+	animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+	from {
+		transform: translateY(100%);
+	}
+	to {
+		transform: translateY(0);
+	}
+}
+
+/* Card styling - matches Vuetify cyan lighten-4 */
+.card {
+	background-color: #b2dfdb; /* cyan lighten-4 */
+	border-radius: 4px 4px 0 0;
+	box-shadow:
+		0 5px 5px -3px rgba(0, 0, 0, 0.2),
+		0 8px 10px 1px rgba(0, 0, 0, 0.14),
+		0 3px 14px 2px rgba(0, 0, 0, 0.12);
+	overflow: hidden;
+}
+
+/* Card title styling */
+.cardTitle {
+	padding: 16px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.roleTitle {
+	background-color: #80cbc4; /* cyan lighten-2 */
+	gap: 8px;
+}
+
+.titleContent {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
+
+.roleIcon {
+	font-size: 1.5rem;
+	margin-right: 8px;
+}
+
+.roleName {
+	font-size: 1.25rem;
+	font-weight: 500;
+	color: rgba(0, 0, 0, 0.87);
+}
+
+/* Card content styling */
+.cardText {
+	padding: 16px;
+	color: rgba(0, 0, 0, 0.87);
+}
+
+.cardText p {
+	margin: 0 0 16px 0;
+	line-height: 1.5;
+}
+
+.cardText p:last-child {
+	margin-bottom: 0;
+}
+
+.statsContent {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
+
+/* Typography classes */
+.fontWeightBold {
+	font-weight: 700;
+}
+
+.fontWeightMedium {
+	font-weight: 500;
+}
+
+.subheading {
+	font-size: 1rem;
+	font-weight: 400;
+	margin: 0 0 16px 0;
+	text-align: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+	.bottomSheet {
+		margin: 0;
+		border-radius: 0;
+	}
+
+	.card {
+		border-radius: 0;
+	}
+}

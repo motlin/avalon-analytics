@@ -75,6 +75,7 @@ export const NeedsToVote: Story = {
 						team: ['CRAIGM', 'ZEHUA', 'VINAY'],
 						votes: [],
 						state: 'APPROVED',
+						proposer: 'CRAIGM',
 					},
 					currentMission: {
 						team: [],
@@ -116,6 +117,7 @@ export const WaitingForOthers: Story = {
 						team: ['CRAIGM', 'ZEHUA', 'VINAY'],
 						votes: [],
 						state: 'APPROVED',
+						proposer: 'CRAIGM',
 					},
 					currentMission: {
 						team: ['CRAIGM'],
@@ -157,6 +159,7 @@ export const SinglePlayerWaiting: Story = {
 						team: ['CRAIGM', 'ZEHUA'],
 						votes: [],
 						state: 'APPROVED',
+						proposer: 'CRAIGM',
 					},
 					currentMission: {
 						team: ['CRAIGM'],
