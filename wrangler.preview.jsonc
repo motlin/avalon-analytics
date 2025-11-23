@@ -34,7 +34,7 @@
     {
       "binding": "DB",
       "database_name": "avalon-analytics-dev",
-      "database_id": "7deeac8f-f900-4b60-9260-389e8da472d8"
+      "database_id": "PLACEHOLDER_DEV_DB_ID"
     }
   ]
 }
