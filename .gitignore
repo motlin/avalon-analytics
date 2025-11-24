@@ -38,6 +38,9 @@ dist
 # ESLint CI reports
 eslint_report.json
 
+# Wrangler generated types
+worker-configuration.d.ts
+
 # Optional stylelint cache
 .stylelintcache
 
