@@ -1,0 +1,30 @@
+# Jobs that run on push to main, after pull requests are merged. Jobs here can be a subset of the jobs that run on merge_group. These jobs should never fail since the jobs in merge_group already passed.
+
+on:
+    push:
+        branches:
+            - main
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+    cancel-in-progress: true
+
+jobs:
+    install-and-build:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: jdx/mise-action@v2
+
+            - name: Get pnpm store directory
+              run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+            - uses: actions/cache@v4
+              with:
+                  path: ${{ env.STORE_PATH }}
+                  key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+                  restore-keys: |
+                      ${{ runner.os }}-pnpm-store-
+
+            - run: just install
+            - run: just build-ci

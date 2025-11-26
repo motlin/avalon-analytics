@@ -1,0 +1,46 @@
+default_language_version:
+    node: '20.18.1'
+
+repos:
+    - repo: https://github.com/pre-commit/pre-commit-hooks
+      rev: v5.0.0
+      hooks:
+          - id: check-yaml
+          - id: check-json
+            # Exclude JSONC files (JSON with Comments) as they need comment support
+            exclude: "(tsconfig\\.json|\\.devcontainer/devcontainer\\.json)$"
+          - id: check-toml
+          - id: check-xml
+          - id: end-of-file-fixer
+            exclude: "\\.cursor/"
+          - id: trailing-whitespace
+          - id: check-added-large-files
+            args: ['--maxkb=1000']
+          - id: check-case-conflict
+          - id: check-merge-conflict
+          - id: detect-private-key
+          - id: mixed-line-ending
+            args: ['--fix=lf']
+
+    - repo: local
+      hooks:
+          - id: biome
+            name: biome
+            entry: pnpm exec biome format --write
+            language: system
+            types: [file]
+            files: \.(js|jsx|ts|tsx|mjs|cjs|json|json5)$
+            exclude: "package(-lock)?\\.json"
+
+          - id: prettier
+            name: prettier
+            entry: pnpm exec prettier --write
+            language: system
+            types_or: [yaml, markdown, html]
+
+          - id: eslint
+            name: eslint
+            entry: pnpm exec eslint --fix
+            language: system
+            files: \.(js|jsx|ts|tsx|mjs|cjs)$
+            types: [file]
