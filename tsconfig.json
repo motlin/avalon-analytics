@@ -47,5 +47,5 @@
 		/* Skip type checking all .d.ts files. */
 		"skipLibCheck": true
 	},
-	"include": ["src", ".storybook", "server", "*.ts", "*.d.ts"]
+	"include": ["src", ".storybook", "server", "types", "*.ts", "*.d.ts"]
 }
