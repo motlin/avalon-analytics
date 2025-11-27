@@ -38,33 +38,134 @@ export async function UidDetail({params}: RequestInfo) {
 				<p>No games found for this player.</p>
 			) : (
 				<div style={{marginTop: '1rem'}}>
-					{games.map((game) => (
-						<div
-							key={game.id}
-							style={{
-								border: '1px solid #ccc',
-								padding: '1rem',
-								marginBottom: '1rem',
-								backgroundColor: '#f9f9f9',
-							}}
-						>
-							<h3>
-								<a
-									href={`/game/${game.id}`}
-									style={{textDecoration: 'none', color: '#0066cc'}}
+					{games.map((game) => {
+						const playerInGame = game.players.find((p) => p.uid === uid);
+						const playerRole = game.outcome?.roles?.find((r: any) => r.name === playerInGame?.name);
+						const normalizedRole = playerRole?.role?.toUpperCase();
+						const isEvil =
+							normalizedRole &&
+							['MORDRED', 'MORGANA', 'ASSASSIN', 'EVIL MINION', 'MINION OF MORDRED', 'OBERON'].includes(
+								normalizedRole,
+							);
+						const playerWon =
+							game.outcome &&
+							((isEvil && game.outcome.state === 'EVIL_WIN') ||
+								(!isEvil && game.outcome.state === 'GOOD_WIN'));
+						const wasAssassinated = game.outcome?.assassinated === playerInGame?.name;
+						const wasMerlin = normalizedRole === 'MERLIN';
+
+						const getOutcomeDescription = () => {
+							if (!game.outcome) return null;
+
+							const outcomeReason = game.outcome.reason || game.outcome.message;
+							const reasons: {[key: string]: string} = {
+								'Three successful missions': '3 missions succeeded',
+								'Three failed missions': '3 missions failed',
+								'Five rejected proposals': '5 proposals rejected',
+								'Merlin assassinated': 'Merlin assassinated',
+								'Failed to assassinate Merlin': 'Failed to assassinate Merlin',
+							};
+
+							return outcomeReason ? reasons[outcomeReason] || outcomeReason : null;
+						};
+
+						return (
+							<div
+								key={game.id}
+								style={{
+									border: '2px solid',
+									borderColor: playerWon ? '#4caf50' : '#f44336',
+									padding: '1rem',
+									marginBottom: '1rem',
+									backgroundColor: playerWon ? '#f8fff8' : '#fff8f8',
+									borderRadius: '8px',
+									boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+								}}
+							>
+								<div
+									style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start'}}
 								>
-									Game {game.timeCreated.toLocaleDateString()} {game.timeCreated.toLocaleTimeString()}
-								</a>
-							</h3>
-							<p>Players: {game.players.map((p) => p.name).join(', ')}</p>
-							{game.outcome && (
-								<p>
-									Outcome: {game.outcome.winner} wins - {game.outcome.reason}
-								</p>
-							)}
-							{game.timeFinished && <p>Finished: {game.timeFinished.toLocaleString()}</p>}
-						</div>
-					))}
+									<div style={{flex: 1}}>
+										<h3 style={{margin: '0 0 0.5rem 0'}}>
+											<a
+												href={`/game/${game.id}`}
+												style={{textDecoration: 'none', color: '#0066cc'}}
+											>
+												{game.timeCreated.toLocaleDateString()}{' '}
+												{game.timeCreated.toLocaleTimeString()}
+											</a>
+										</h3>
+
+										<div
+											style={{display: 'flex', flexWrap: 'wrap', gap: '1rem', fontSize: '0.9rem'}}
+										>
+											<div style={{display: 'flex', alignItems: 'center', gap: '0.5rem'}}>
+												<strong>Result:</strong>
+												<span
+													style={{
+														color: playerWon ? '#4caf50' : '#f44336',
+														fontWeight: 'bold',
+													}}
+												>
+													{playerWon ? '✅ Victory' : '❌ Defeat'}
+												</span>
+											</div>
+
+											{playerRole && (
+												<div style={{display: 'flex', alignItems: 'center', gap: '0.5rem'}}>
+													<strong>Role:</strong>
+													<span
+														style={{
+															color: isEvil ? '#c62828' : '#2e7d32',
+															fontWeight: 'bold',
+														}}
+													>
+														{playerRole.role}
+													</span>
+												</div>
+											)}
+
+											{game.outcome && (
+												<div style={{display: 'flex', alignItems: 'center', gap: '0.5rem'}}>
+													<strong>Outcome:</strong>
+													<span>{getOutcomeDescription()}</span>
+												</div>
+											)}
+										</div>
+
+										{(wasAssassinated || wasMerlin) && (
+											<div
+												style={{
+													marginTop: '0.5rem',
+													padding: '0.5rem',
+													backgroundColor: wasAssassinated ? '#fff3cd' : '#e3f2fd',
+													border: '1px solid',
+													borderColor: wasAssassinated ? '#ffeaa7' : '#90caf9',
+													borderRadius: '4px',
+													fontSize: '0.9rem',
+												}}
+											>
+												{wasAssassinated && (
+													<span>
+														🗡️ <strong>You were assassinated!</strong>
+													</span>
+												)}
+												{wasMerlin && !wasAssassinated && (
+													<span>
+														🧙 <strong>You were Merlin and survived!</strong>
+													</span>
+												)}
+											</div>
+										)}
+									</div>
+								</div>
+
+								<div style={{marginTop: '0.75rem', fontSize: '0.85rem', color: '#666'}}>
+									<strong>Players:</strong> {game.players.map((p) => p.name).join(', ')}
+								</div>
+							</div>
+						);
+					})}
 				</div>
 			)}
 		</div>
