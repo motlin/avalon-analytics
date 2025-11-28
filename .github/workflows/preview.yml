@@ -49,6 +49,7 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: '4.50.0'
           command: d1 migrations apply avalon-analytics-dev --remote
         continue-on-error: true
 
@@ -57,6 +58,7 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: '4.50.0'
           preCommands: |
             pnpm install --frozen-lockfile --ignore-scripts
             npx prisma generate
