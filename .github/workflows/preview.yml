@@ -53,20 +53,23 @@ jobs:
           command: d1 migrations apply avalon-analytics-dev --remote
         continue-on-error: true
 
-      - name: Fast build and deploy
+      - name: Install and build
+        run: |
+          pnpm install --frozen-lockfile --ignore-scripts
+          npx prisma generate
+          mkdir -p .wrangler/state/v3/d1
+          RWSDK_DEPLOY=1 npx vite build
+        env:
+          RWSDK_DEPLOY: 1
+
+      - name: Deploy preview
         uses: cloudflare/wrangler-action@v3.14.1
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           wranglerVersion: '4.50.0'
-          preCommands: |
-            pnpm install --frozen-lockfile --ignore-scripts
-            npx prisma generate
-            mkdir -p .wrangler/state/v3/d1
-            RWSDK_DEPLOY=1 npx vite build
-          command: versions upload --preview-alias pr-${{ github.event.pull_request.number }} -c ${{ steps.setup.outputs.has_dev_db == 'true' && 'wrangler.preview.jsonc' || 'wrangler.jsonc' }}
-        env:
-          RWSDK_DEPLOY: 1
+          workingDirectory: dist/worker
+          command: versions upload --preview-alias pr-${{ github.event.pull_request.number }} -c wrangler.json
 
       - name: Comment PR with preview URL
         uses: actions/github-script@v8
