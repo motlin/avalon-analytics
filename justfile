@@ -51,7 +51,7 @@ build: install
     op run -- npm run build
 
 # `npm run build`
-build-ci: install-ci
+build-ci: generate-ci
     npm run build
 
 # `npm run format`

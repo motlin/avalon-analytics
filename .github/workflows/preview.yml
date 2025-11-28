@@ -57,13 +57,12 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          wranglerConfigPath: ${{ steps.setup.outputs.has_dev_db == 'true' && 'wrangler.preview.jsonc' || 'wrangler.jsonc' }}
           preCommands: |
             pnpm install --frozen-lockfile --ignore-scripts
             npx prisma generate
             mkdir -p .wrangler/state/v3/d1
             RWSDK_DEPLOY=1 npx vite build
-          command: versions upload --preview-alias pr-${{ github.event.pull_request.number }}
+          command: versions upload --preview-alias pr-${{ github.event.pull_request.number }} -c ${{ steps.setup.outputs.has_dev_db == 'true' && 'wrangler.preview.jsonc' || 'wrangler.jsonc' }}
         env:
           RWSDK_DEPLOY: 1
 
