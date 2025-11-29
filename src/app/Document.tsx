@@ -1,3 +1,6 @@
+// TODO: Read CSS path from client manifest instead of hardcoding
+// The CSS filename includes a hash that changes on content changes
+// Manifest is at dist/client/.vite/manifest.json: ["src/client.tsx"].css[0]
 export const Document: React.FC<{children: React.ReactNode}> = ({children}) => (
 	<html lang="en">
 		<head>
@@ -9,7 +12,7 @@ export const Document: React.FC<{children: React.ReactNode}> = ({children}) => (
 			<title>Avalon Analytics</title>
 			<link
 				rel="stylesheet"
-				href="/assets/client-CUW1QcOX.css"
+				href="/assets/client-DI2cLmb9.css"
 			/>
 			<link
 				rel="modulepreload"
