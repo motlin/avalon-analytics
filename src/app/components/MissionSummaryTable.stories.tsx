@@ -1,151 +1,75 @@
 import type {Meta, StoryObj} from '@storybook/react-vite';
-import {MissionSummaryTable} from './MissionSummaryTable';
-import type {Game} from '../models/game';
+import MissionSummaryTable from './MissionSummaryTable';
+import {realGame} from '../test-data/realGameData';
 
-const meta = {
-	title: 'Components/MissionSummaryTable',
+const meta: Meta<typeof MissionSummaryTable> = {
 	component: MissionSummaryTable,
 	parameters: {
-		layout: 'padded',
+		layout: 'centered',
+		docs: {
+			description: {
+				component: `
+The MissionSummaryTable provides a comprehensive overview of game history, showing all missions, proposals, votes, and outcomes in a structured table format. This is essential for analyzing gameplay patterns and making informed decisions.
+
+### Table Structure
+
+**Columns:**
+- **Player Name** - Each row represents a player
+- **Role** - Shows player's role when game is complete
+- **Proposal Cells** - Each proposal shows proposer (yellow), team members (blue circle), and vote (thumbs up/down)
+- **Mission Result** - Check/X showing if player passed/failed the mission
+
+### Visual Indicators
+
+- **Yellow circle** - Player was the proposer
+- **Blue circle** - Player was on the proposed team
+- **Thumbs up (green)** - Player approved the proposal
+- **Thumbs down (red)** - Player rejected the proposal
+- **Green check** - Player passed the mission
+- **Red X** - Player failed the mission
+
+### Information Analysis
+
+The table helps players:
+- Track voting patterns to identify alliances
+- See who proposed which teams
+- Analyze mission participation and outcomes
+- Review the complete game history at a glance
+- Understand why certain decisions were made
+
+### Post-Game Analysis
+
+When roles are revealed, the table becomes a powerful tool for understanding the game dynamics and learning from player behaviors.
+        `,
+			},
+		},
 	},
-} satisfies Meta<typeof MissionSummaryTable>;
+	argTypes: {
+		game: {
+			control: 'object',
+			description: 'The complete game object from Firebase',
+		},
+	},
+	tags: ['autodocs'],
+};
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const sampleGame: Game = {
-	id: 'game-123',
-	timeCreated: new Date('2024-01-15T14:30:00'),
-	timeFinished: new Date('2024-01-15T15:15:00'),
-	players: [
-		{uid: 'player1', name: 'Alice', role: 'Merlin'},
-		{uid: 'player2', name: 'Bob', role: 'Assassin'},
-		{uid: 'player3', name: 'Charlie', role: 'Loyal'},
-		{uid: 'player4', name: 'Diana', role: 'Morgana'},
-		{uid: 'player5', name: 'Eve', role: 'Loyal'},
-	],
-	missions: [
-		{
-			teamSize: 2,
-			failsRequired: 1,
-			state: 'SUCCESS',
-			numFails: 0,
-			team: ['Alice', 'Charlie'],
-			proposals: [
-				{
-					proposer: 'Alice',
-					team: ['Alice', 'Bob'],
-					votes: ['Alice', 'Bob', 'Diana'],
-					state: 'REJECTED',
-				},
-				{
-					proposer: 'Bob',
-					team: ['Alice', 'Charlie'],
-					votes: ['Alice', 'Bob', 'Charlie', 'Eve'],
-					state: 'APPROVED',
-				},
-			],
-		},
-		{
-			teamSize: 3,
-			failsRequired: 1,
-			state: 'FAIL',
-			numFails: 1,
-			team: ['Bob', 'Diana', 'Eve'],
-			proposals: [
-				{
-					proposer: 'Charlie',
-					team: ['Bob', 'Diana', 'Eve'],
-					votes: ['Bob', 'Charlie', 'Diana', 'Eve'],
-					state: 'APPROVED',
-				},
-			],
-		},
-		{
-			teamSize: 2,
-			failsRequired: 1,
-			state: 'SUCCESS',
-			numFails: 0,
-			team: ['Alice', 'Eve'],
-			proposals: [
-				{
-					proposer: 'Diana',
-					team: ['Bob', 'Diana'],
-					votes: ['Bob', 'Diana'],
-					state: 'REJECTED',
-				},
-				{
-					proposer: 'Eve',
-					team: ['Charlie', 'Diana'],
-					votes: ['Charlie', 'Diana'],
-					state: 'REJECTED',
-				},
-				{
-					proposer: 'Alice',
-					team: ['Alice', 'Eve'],
-					votes: ['Alice', 'Charlie', 'Eve'],
-					state: 'APPROVED',
-				},
-			],
-		},
-		{
-			teamSize: 3,
-			failsRequired: 2,
-			state: 'FAIL',
-			numFails: 2,
-			team: ['Bob', 'Charlie', 'Diana'],
-			proposals: [
-				{
-					proposer: 'Bob',
-					team: ['Bob', 'Charlie', 'Diana'],
-					votes: ['Bob', 'Charlie', 'Diana', 'Eve'],
-					state: 'APPROVED',
-				},
-			],
-		},
-		{
-			teamSize: 3,
-			failsRequired: 1,
-			state: 'PENDING',
-			team: [],
-			proposals: [],
-		},
-	],
-	outcome: {
-		state: 'EVIL_WIN',
-		winner: 'EVIL',
-		reason: 'Evil achieved 3 failed missions',
-	},
-	options: {
-		enableLancelot: false,
-		enableTwoFailProtection: false,
-		enableLadyOfTheLake: false,
-	},
-};
-
-export const CompleteGame: Story = {
+export const RealGameComplete: Story = {
 	args: {
-		game: sampleGame,
+		game: realGame,
 	},
 };
 
-export const GameInProgress: Story = {
+export const RealGameNoRoles: Story = {
 	args: {
 		game: {
-			...sampleGame,
-			timeFinished: undefined,
-			outcome: undefined,
-			missions: sampleGame.missions.slice(0, 3),
-		},
-	},
-};
-
-export const SingleMission: Story = {
-	args: {
-		game: {
-			...sampleGame,
-			missions: [sampleGame.missions[0]],
-			outcome: undefined,
+			...realGame,
+			outcome: {
+				...realGame.outcome!,
+				roles: undefined,
+			},
 		},
 	},
 };

@@ -1,62 +1,38 @@
 import gameData from './game-2025-07-16T19:54:25.962Z_VGZ.json';
-import type {Mission} from '../models/game';
+import type {Game} from '../models/game';
 
-interface GamePlayer {
-	name: string;
+// Convert JSON timestamps to Date objects for the Game type
+function parseTimestamp(ts: any): Date {
+	if (ts?.value) {
+		return new Date(ts.value._seconds * 1000 + ts.value._nanoseconds / 1000000);
+	}
+	if (ts?._seconds) {
+		return new Date(ts._seconds * 1000 + ts._nanoseconds / 1000000);
+	}
+	return new Date();
 }
 
-interface GamePlayerRole {
-	name: string;
-	role: string;
-}
+export const realGame: Game = {
+	id: 'game-2025-07-16T19:54:25.962Z_VGZ',
+	players: gameData.players,
+	missions: gameData.missions as Game['missions'],
+	outcome: gameData.outcome as Game['outcome'],
+	options: gameData.options,
+	timeCreated: parseTimestamp(gameData.timeCreated),
+	timeFinished: parseTimestamp(gameData.timeFinished),
+};
 
-interface GameProposal {
-	proposer: string;
-	state: string;
-	team: string[];
-	votes: string[];
-}
+// Keep legacy exports for backwards compatibility
+export const realGamePlayers = gameData.players.map((player: any) => player.name);
 
-interface GameMission {
-	state: string;
-	teamSize: number;
-	failsRequired: number;
-	team: string[];
-	proposals: GameProposal[];
-	numFails: number;
-}
-
-interface GameData {
-	players: GamePlayer[];
-	missions: GameMission[];
-	outcome: {
-		roles: GamePlayerRole[];
-		votes: any[];
-	};
-}
-
-const typedGameData = gameData as GameData;
-
-export const realGamePlayers = typedGameData.players.map((player) => player.name);
-
-export const realGameRoles = typedGameData.outcome.roles.map((playerRole) => ({
+export const realGameRoles = gameData.outcome.roles.map((playerRole: any) => ({
 	name: playerRole.name,
 	role: playerRole.role,
 }));
 
-export const realGameMissions: Mission[] = typedGameData.missions.map((mission) => ({
-	...mission,
-	state: mission.state as 'SUCCESS' | 'FAIL' | 'PENDING',
-	proposals: mission.proposals.map((proposal) => ({
-		...proposal,
-		state: proposal.state as 'APPROVED' | 'REJECTED' | 'PENDING',
-	})),
-}));
+export const realGameMissions = gameData.missions;
 
-export const realGameMissionVotes: Record<number, Record<string, boolean>> = typedGameData.outcome.votes.reduce(
-	(acc, vote, index) => {
-		acc[index] = vote;
-		return acc;
-	},
-	{} as Record<number, Record<string, boolean>>,
-);
+export const realGameMissionVotes = gameData.outcome.votes.reduce((acc: any, vote: any, index: number) => {
+	acc[index] = vote;
+	return acc;
+}, {});

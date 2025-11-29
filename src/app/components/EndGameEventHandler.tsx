@@ -3,6 +3,7 @@ import Achievements from './Achievements';
 import {MissionSummaryTable} from './MissionSummaryTable';
 import styles from './EndGameEventHandler.module.css';
 import type {AvalonApi} from './types';
+import type {Player} from '../models/game';
 
 interface EndGameEventHandlerProps {
 	avalon: AvalonApi;
@@ -68,7 +69,20 @@ const EndGameEventHandler: React.FC<EndGameEventHandlerProps> = ({avalon}) => {
 							</p>
 						)}
 						<div className={styles.tableContainer}>
-							<MissionSummaryTable game={avalon.game} />
+							<MissionSummaryTable
+								game={
+									{
+										...avalon.game,
+										players: avalon.game.players.map((p: string | Player) =>
+											typeof p === 'string' ? {uid: p, name: p} : p,
+										),
+										outcome: {
+											...avalon.lobby.game.outcome,
+											votes: avalon.game.missionVotes,
+										},
+									} as any
+								}
+							/>
 						</div>
 						<Achievements avalon={avalon} />
 					</div>

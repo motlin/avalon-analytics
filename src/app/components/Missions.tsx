@@ -121,7 +121,21 @@ const Missions: React.FC<MissionsProps> = ({avalon}) => {
 									mission.proposals &&
 									mission.proposals.length > 0 ? (
 										<MissionSummaryTable
-											game={{...avalon.game, missions: [mission as any]} as any}
+											game={
+												{
+													...avalon.game,
+													players: avalon.game.players.map((p) =>
+														typeof p === 'string' ? {uid: p, name: p} : p,
+													),
+													missions: [mission],
+													outcome: avalon.game.missionVotes
+														? {
+																state: 'IN_PROGRESS',
+																votes: [avalon.game.missionVotes[idx]],
+															}
+														: undefined,
+												} as any
+											}
 										/>
 									) : null}
 								</div>
