@@ -6,7 +6,11 @@ export const Document: React.FC<{children: React.ReactNode}> = ({children}) => (
 				name="viewport"
 				content="width=device-width, initial-scale=1"
 			/>
-			<title>@redwoodjs/starter-standard</title>
+			<title>Avalon Analytics</title>
+			<link
+				rel="stylesheet"
+				href="/assets/client-CUW1QcOX.css"
+			/>
 			<link
 				rel="modulepreload"
 				href="/src/client.tsx"
