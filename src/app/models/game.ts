@@ -39,7 +39,10 @@ export type Role = z.infer<typeof RoleSchema>;
 export const GameOutcomeSchema = z.object({
 	state: z.string(),
 	message: z.string().optional(),
-	assassinated: z.string().optional(),
+	assassinated: z
+		.union([z.string(), z.boolean(), z.null()])
+		.optional()
+		.transform((val) => (typeof val === 'string' ? val : undefined)),
 	roles: z.array(RoleSchema).optional(),
 	votes: z.array(z.record(z.string(), z.boolean())).optional(),
 	winner: z.string().optional(),

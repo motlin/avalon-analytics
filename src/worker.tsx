@@ -24,32 +24,46 @@ export default defineApp([
 	setCommonHeaders(),
 	async ({ctx, request, response}) => {
 		console.log('🔍 Worker env keys:', Object.keys(env));
-		await setupDb(env);
-		setupSessionStore(env);
+		// Note: setupDb() is NOT called here to avoid Prisma WASM loading issues
+		// It will be called lazily when db access is actually needed
 		setupFirestoreRestService(env);
 
-		try {
-			ctx.session = await sessions.load(request);
-		} catch (error) {
-			if (error instanceof ErrorResponse && error.code === 401) {
-				await sessions.remove(request, response.headers);
-				response.headers.set('Location', '/user/login');
+		// Only set up sessions if AUTH_SECRET_KEY is configured
+		if (env.AUTH_SECRET_KEY) {
+			setupSessionStore(env);
+			try {
+				ctx.session = await sessions.load(request);
+			} catch (error) {
+				if (error instanceof ErrorResponse && error.code === 401) {
+					await sessions.remove(request, response.headers);
+					response.headers.set('Location', '/user/login');
 
-				return new Response(null, {
-					status: 302,
-					headers: response.headers,
-				});
+					return new Response(null, {
+						status: 302,
+						headers: response.headers,
+					});
+				}
+				throw error;
 			}
-
-			throw error;
+		} else {
+			console.warn('AUTH_SECRET_KEY not configured, sessions disabled');
+			ctx.session = null;
 		}
 
 		if (ctx.session?.userId) {
-			ctx.user = await db.user.findUnique({
-				where: {
-					id: ctx.session.userId,
-				},
-			});
+			// Lazy initialize Prisma only when we need to look up the user
+			try {
+				await setupDb(env);
+				ctx.user = await db.user.findUnique({
+					where: {
+						id: ctx.session.userId,
+					},
+				});
+			} catch (error) {
+				console.error('Failed to load user from DB:', error);
+				// Continue without user - pages that need auth will redirect
+				ctx.user = null;
+			}
 		}
 	},
 	render(Document, [

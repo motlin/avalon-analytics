@@ -80,3 +80,7 @@ storybook: install
 # `npm run storybook:test`
 storybook-tests: install
     npm run storybook:test
+
+# `npx wrangler deploy --config dist/worker/wrangler.json`
+deploy: build
+    npx wrangler deploy --config dist/worker/wrangler.json
