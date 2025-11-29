@@ -1,3 +1,5 @@
+'use client';
+
 import {useState} from 'react';
 import type {Game, Mission, Proposal} from '../models/game';
 import {MissionProgressBarComponent} from './MissionProgressBar';

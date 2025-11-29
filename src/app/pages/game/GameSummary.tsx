@@ -58,7 +58,7 @@ export async function GameSummary({params}: RequestInfo) {
 
 			<div style={{marginTop: '2rem', textAlign: 'center'}}>
 				<a
-					href={`/games/${gameId}`}
+					href={`/game/${gameId}`}
 					style={{
 						color: '#3b82f6',
 						textDecoration: 'underline',
