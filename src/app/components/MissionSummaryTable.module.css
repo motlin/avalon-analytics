@@ -1,20 +1,20 @@
-table {
+.table {
   border-collapse: collapse;
 }
 
-tr {
+.table tr {
   height: 2.3em;
 }
 
-td {
+.table td {
   width: 1.7em;
 }
 
-tr:nth-child(even) {
+.evenRow {
   background-color: Gainsboro;
 }
 
-tr:nth-child(odd) {
+.oddRow {
   background-color: bisque;
 }
 
