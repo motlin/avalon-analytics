@@ -96,9 +96,18 @@ export function GameConclusionComponent({winner, reason, assassinated, roles}: G
 						}}
 					>
 						{roles.map((player, index) => {
-							const isEvil = ['Mordred', 'Morgana', 'Assassin', 'Minion of Mordred', 'Oberon'].includes(
-								player.role,
-							);
+							const isEvil = [
+								'MORDRED',
+								'MORGANA',
+								'ASSASSIN',
+								'OBERON',
+								'EVIL MINION',
+								'Mordred',
+								'Morgana',
+								'Assassin',
+								'Minion of Mordred',
+								'Oberon',
+							].includes(player.role);
 
 							return (
 								<div
@@ -110,14 +119,6 @@ export function GameConclusionComponent({winner, reason, assassinated, roles}: G
 										padding: '1rem',
 										backgroundColor: isEvil ? '#ffebee' : '#e8f5e9',
 										boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-										transition: 'transform 0.2s',
-										cursor: 'default',
-									}}
-									onMouseEnter={(e) => {
-										e.currentTarget.style.transform = 'translateY(-2px)';
-									}}
-									onMouseLeave={(e) => {
-										e.currentTarget.style.transform = 'translateY(0)';
 									}}
 								>
 									<div
