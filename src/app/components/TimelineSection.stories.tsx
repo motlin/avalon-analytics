@@ -121,6 +121,7 @@ const sampleGame: Game = {
 	],
 	outcome: {
 		state: 'EVIL_WIN',
+		assassinated: undefined,
 		winner: 'EVIL',
 		reason: 'Evil won by failing 2 missions',
 	},
@@ -220,6 +221,7 @@ export const ShortGame: Story = {
 			],
 			outcome: {
 				state: 'GOOD_WIN',
+				assassinated: undefined,
 				winner: 'GOOD',
 				reason: 'Good won by succeeding 3 missions',
 			},

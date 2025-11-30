@@ -16,7 +16,7 @@ export const realGame: Game = {
 	id: 'game-2025-07-16T19:54:25.962Z_VGZ',
 	players: gameData.players,
 	missions: gameData.missions as Game['missions'],
-	outcome: gameData.outcome as Game['outcome'],
+	outcome: gameData.outcome as unknown as Game['outcome'],
 	options: gameData.options,
 	timeCreated: parseTimestamp(gameData.timeCreated),
 	timeFinished: parseTimestamp(gameData.timeFinished),

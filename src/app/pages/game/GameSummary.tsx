@@ -1,9 +1,42 @@
+import {faTrophy} from '@fortawesome/free-solid-svg-icons';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import type {RequestInfo} from 'rwsdk/worker';
+import GameAnalysis from '../../avalon-analysis';
 import {Breadcrumb} from '../../components/Breadcrumb';
+import {GameConclusionComponent} from '../../components/GameConclusion';
 import {MissionSummaryTable} from '../../components/MissionSummaryTable';
-import {PlayerRosterComponent} from '../../components/PlayerRoster';
 import type {Game} from '../../models/game';
 import {getFirestoreRestService} from '../../services/firestore-rest';
+
+const ROLE_MAP: Record<string, {team: 'good' | 'evil'}> = {
+	MERLIN: {team: 'good'},
+	PERCIVAL: {team: 'good'},
+	'LOYAL FOLLOWER': {team: 'good'},
+	MORGANA: {team: 'evil'},
+	ASSASSIN: {team: 'evil'},
+	MORDRED: {team: 'evil'},
+	OBERON: {team: 'evil'},
+	'EVIL MINION': {team: 'evil'},
+};
+
+function getBadges(game: Game): Array<{title: string; body: string}> {
+	if (!game.outcome?.state || game.outcome.state === 'CANCELED' || !game.outcome.roles) {
+		return [];
+	}
+
+	const gameForAnalysis = {
+		players: game.players.map((p) => p.name),
+		missions: game.missions,
+		outcome: game.outcome,
+	};
+
+	try {
+		const gameAnalysis = new GameAnalysis(gameForAnalysis as any, ROLE_MAP);
+		return gameAnalysis.getBadges();
+	} catch {
+		return [];
+	}
+}
 
 export async function GameSummary({params}: RequestInfo) {
 	const gameId = params.gameId;
@@ -24,6 +57,8 @@ export async function GameSummary({params}: RequestInfo) {
 	if (!game) {
 		return <div>Game not found</div>;
 	}
+
+	const badges = getBadges(game);
 
 	return (
 		<div style={{padding: '1rem', maxWidth: '1200px', margin: '0 auto'}}>
@@ -46,15 +81,56 @@ export async function GameSummary({params}: RequestInfo) {
 				</div>
 			</div>
 
-			<div style={{marginBottom: '2rem'}}>
-				<h2 style={{fontSize: '1.5rem', fontWeight: 600, marginBottom: '1rem'}}>Players</h2>
-				<PlayerRosterComponent players={game.players} />
-			</div>
+			{game.outcome && game.outcome.winner && (
+				<GameConclusionComponent
+					winner={game.outcome.winner as 'GOOD' | 'EVIL'}
+					reason={game.outcome.reason || ''}
+					assassinated={game.outcome.assassinated}
+					roles={game.outcome.roles}
+				/>
+			)}
 
-			<div>
+			<div style={{marginTop: '2rem'}}>
 				<h2 style={{fontSize: '1.5rem', fontWeight: 600, marginBottom: '1rem'}}>Mission Summary</h2>
 				<MissionSummaryTable game={game} />
 			</div>
+
+			{badges.length > 0 && (
+				<div style={{marginTop: '2rem'}}>
+					<h2 style={{fontSize: '1.5rem', fontWeight: 600, marginBottom: '1rem'}}>Achievements</h2>
+					<div style={{display: 'flex', flexWrap: 'wrap', gap: '1rem'}}>
+						{badges.map((badge) => (
+							<div
+								key={badge.title}
+								style={{
+									border: '1px solid #ffc107',
+									borderRadius: '8px',
+									padding: '1rem',
+									backgroundColor: '#fffbeb',
+									minWidth: '200px',
+									maxWidth: '300px',
+								}}
+							>
+								<div
+									style={{
+										display: 'flex',
+										alignItems: 'center',
+										gap: '0.5rem',
+										marginBottom: '0.5rem',
+									}}
+								>
+									<FontAwesomeIcon
+										icon={faTrophy}
+										style={{color: '#ffc107', fontSize: '1.25rem'}}
+									/>
+									<strong style={{fontSize: '1rem'}}>{badge.title}</strong>
+								</div>
+								<p style={{margin: 0, color: '#666', fontSize: '0.875rem'}}>{badge.body}</p>
+							</div>
+						))}
+					</div>
+				</div>
+			)}
 
 			<div style={{marginTop: '2rem', textAlign: 'center'}}>
 				<a

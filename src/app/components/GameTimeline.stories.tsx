@@ -142,6 +142,7 @@ const sampleGame: Game = {
 		winner: 'EVIL',
 		reason: 'Merlin Assassinated',
 		message: 'ROB (Evil Assassin) correctly identified KEN as Merlin',
+		assassinated: undefined,
 		state: 'EVIL_WIN',
 	},
 	options: {
@@ -207,6 +208,7 @@ export const GoodVictory: Story = {
 			outcome: {
 				winner: 'GOOD',
 				reason: 'Three Successful Missions',
+				assassinated: undefined,
 				state: 'GOOD_WIN',
 			},
 		},

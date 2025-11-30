@@ -78,6 +78,7 @@ const createMockAvalon = (overrides = {}) => ({
 		outcome: {
 			state: 'IN_PROGRESS' as const,
 			message: '',
+			assassinated: undefined,
 			roles: [],
 			votes: [],
 		},
@@ -100,6 +101,7 @@ const createMockAvalon = (overrides = {}) => ({
 			outcome: {
 				state: 'IN_PROGRESS' as const,
 				message: '',
+				assassinated: undefined,
 				roles: [],
 				votes: [],
 			},

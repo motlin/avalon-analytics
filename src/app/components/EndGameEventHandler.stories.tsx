@@ -102,6 +102,7 @@ const createMockAvalon = (gameOutcome: 'GOOD_WIN' | 'EVIL_WIN' | 'CANCELED', ass
 				outcome: {
 					state: gameOutcome,
 					message: '',
+					assassinated: undefined,
 					roles: [],
 					votes: [],
 				},
