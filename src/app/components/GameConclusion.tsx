@@ -11,6 +11,8 @@ interface GameConclusionProps {
 
 export function GameConclusionComponent({winner, reason, assassinated, roles}: GameConclusionProps) {
 	const isGoodWin = winner === 'GOOD';
+	const assassin = roles?.find((r) => r.assassin)?.name;
+	const assassinatedRole = roles?.find((r) => r.name === assassinated)?.role;
 
 	return (
 		<div
@@ -68,7 +70,8 @@ export function GameConclusionComponent({winner, reason, assassinated, roles}: G
 							color: '#856404',
 						}}
 					>
-						🗡️ <strong>{assassinated}</strong> was assassinated!
+						🗡️ <strong>{assassin || 'The Assassin'}</strong> assassinated <strong>{assassinated}</strong>
+						{assassinatedRole && ` (${assassinatedRole})`}
 					</p>
 				</div>
 			)}

@@ -60,6 +60,16 @@ export async function GameSummary({params}: RequestInfo) {
 
 	const badges = getBadges(game);
 
+	const getWinner = (): 'GOOD' | 'EVIL' | null => {
+		if (game.outcome?.winner) return game.outcome.winner as 'GOOD' | 'EVIL';
+		if (game.outcome?.state === 'GOOD_WIN') return 'GOOD';
+		if (game.outcome?.state === 'EVIL_WIN') return 'EVIL';
+		return null;
+	};
+
+	const winner = getWinner();
+	const reason = game.outcome?.message || game.outcome?.reason || '';
+
 	return (
 		<div style={{padding: '1rem', maxWidth: '1200px', margin: '0 auto'}}>
 			<Breadcrumb
@@ -81,10 +91,10 @@ export async function GameSummary({params}: RequestInfo) {
 				</div>
 			</div>
 
-			{game.outcome && game.outcome.winner && (
+			{game.outcome && winner && (
 				<GameConclusionComponent
-					winner={game.outcome.winner as 'GOOD' | 'EVIL'}
-					reason={game.outcome.reason || ''}
+					winner={winner}
+					reason={reason}
 					assassinated={game.outcome.assassinated}
 					roles={game.outcome.roles}
 				/>
