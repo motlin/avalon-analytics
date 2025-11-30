@@ -1,6 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/react-vite';
 import MissionSummaryTable from './MissionSummaryTable';
-import {realGame} from '../test-data/realGameData';
+import {realGame, sampleGame} from '../test-data/realGameData';
 
 const meta: Meta<typeof MissionSummaryTable> = {
 	component: MissionSummaryTable,
@@ -68,6 +68,25 @@ export const RealGameNoRoles: Story = {
 			...realGame,
 			outcome: {
 				...realGame.outcome!,
+				roles: undefined,
+			},
+		},
+	},
+};
+
+// 6-player sample game from game-log-sample.json
+export const SampleGameComplete: Story = {
+	args: {
+		game: sampleGame,
+	},
+};
+
+export const SampleGameNoRoles: Story = {
+	args: {
+		game: {
+			...sampleGame,
+			outcome: {
+				...sampleGame.outcome!,
 				roles: undefined,
 			},
 		},
