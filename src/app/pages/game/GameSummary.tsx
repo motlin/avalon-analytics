@@ -1,41 +1,35 @@
-import {faTrophy} from '@fortawesome/free-solid-svg-icons';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import type {RequestInfo} from 'rwsdk/worker';
-import GameAnalysis from '../../avalon-analysis';
+import Achievements from '../../components/Achievements';
 import {Breadcrumb} from '../../components/Breadcrumb';
 import {GameConclusionComponent} from '../../components/GameConclusion';
 import {MissionSummaryTable} from '../../components/MissionSummaryTable';
+import type {AvalonApi} from '../../components/types';
 import type {Game} from '../../models/game';
 import {getFirestoreRestService} from '../../services/firestore-rest';
 
-const ROLE_MAP: Record<string, {team: 'good' | 'evil'}> = {
-	MERLIN: {team: 'good'},
-	PERCIVAL: {team: 'good'},
-	'LOYAL FOLLOWER': {team: 'good'},
-	MORGANA: {team: 'evil'},
-	ASSASSIN: {team: 'evil'},
-	MORDRED: {team: 'evil'},
-	OBERON: {team: 'evil'},
-	'EVIL MINION': {team: 'evil'},
+const ROLE_MAP: Record<string, {name: string; team: 'good' | 'evil'; description: string}> = {
+	MERLIN: {name: 'MERLIN', team: 'good', description: 'Sees evil'},
+	PERCIVAL: {name: 'PERCIVAL', team: 'good', description: 'Sees Merlin'},
+	'LOYAL FOLLOWER': {name: 'LOYAL FOLLOWER', team: 'good', description: 'Loyal servant'},
+	MORGANA: {name: 'MORGANA', team: 'evil', description: 'Appears as Merlin'},
+	ASSASSIN: {name: 'ASSASSIN', team: 'evil', description: 'Can assassinate Merlin'},
+	MORDRED: {name: 'MORDRED', team: 'evil', description: 'Hidden from Merlin'},
+	OBERON: {name: 'OBERON', team: 'evil', description: 'Unknown to evil'},
+	'EVIL MINION': {name: 'EVIL MINION', team: 'evil', description: 'Evil servant'},
 };
 
-function getBadges(game: Game): Array<{title: string; body: string}> {
-	if (!game.outcome?.state || game.outcome.state === 'CANCELED' || !game.outcome.roles) {
-		return [];
-	}
-
-	const gameForAnalysis = {
+function buildAvalonApi(game: Game): AvalonApi {
+	const gameWithStringPlayers = {
+		...game,
 		players: game.players.map((p) => p.name),
-		missions: game.missions,
-		outcome: game.outcome,
 	};
 
-	try {
-		const gameAnalysis = new GameAnalysis(gameForAnalysis as any, ROLE_MAP);
-		return gameAnalysis.getBadges();
-	} catch {
-		return [];
-	}
+	return {
+		game: gameWithStringPlayers as any,
+		user: {name: ''},
+		lobby: {game: gameWithStringPlayers as any},
+		config: {roleMap: ROLE_MAP},
+	};
 }
 
 export async function GameSummary({params}: RequestInfo) {
@@ -58,7 +52,7 @@ export async function GameSummary({params}: RequestInfo) {
 		return <div>Game not found</div>;
 	}
 
-	const badges = getBadges(game);
+	const avalonApi = buildAvalonApi(game);
 
 	const getWinner = (): 'GOOD' | 'EVIL' | null => {
 		if (game.outcome?.winner) return game.outcome.winner as 'GOOD' | 'EVIL';
@@ -105,42 +99,7 @@ export async function GameSummary({params}: RequestInfo) {
 				<MissionSummaryTable game={game} />
 			</div>
 
-			{badges.length > 0 && (
-				<div style={{marginTop: '2rem'}}>
-					<h2 style={{fontSize: '1.5rem', fontWeight: 600, marginBottom: '1rem'}}>Achievements</h2>
-					<div style={{display: 'flex', flexWrap: 'wrap', gap: '1rem'}}>
-						{badges.map((badge) => (
-							<div
-								key={badge.title}
-								style={{
-									border: '1px solid #ffc107',
-									borderRadius: '8px',
-									padding: '1rem',
-									backgroundColor: '#fffbeb',
-									minWidth: '200px',
-									maxWidth: '300px',
-								}}
-							>
-								<div
-									style={{
-										display: 'flex',
-										alignItems: 'center',
-										gap: '0.5rem',
-										marginBottom: '0.5rem',
-									}}
-								>
-									<FontAwesomeIcon
-										icon={faTrophy}
-										style={{color: '#ffc107', fontSize: '1.25rem'}}
-									/>
-									<strong style={{fontSize: '1rem'}}>{badge.title}</strong>
-								</div>
-								<p style={{margin: 0, color: '#666', fontSize: '0.875rem'}}>{badge.body}</p>
-							</div>
-						))}
-					</div>
-				</div>
-			)}
+			<Achievements avalon={avalonApi} />
 
 			<div style={{marginTop: '2rem', textAlign: 'center'}}>
 				<a

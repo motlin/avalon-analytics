@@ -1,0 +1,35 @@
+.container {
+	background-color: #b2ebf2; /* cyan lighten-4 */
+	border-radius: 4px;
+	margin-top: 1rem;
+}
+
+.title {
+	background-color: #80deea; /* cyan lighten-2 */
+	padding: 16px 30px;
+	text-align: center;
+	border-radius: 4px 4px 0 0;
+}
+
+.title h2 {
+	margin: 0;
+	font-size: 1.5rem;
+	font-weight: bold;
+}
+
+.content {
+	padding: 16px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.message {
+	font-size: 1.25rem;
+	font-weight: bold;
+	margin-bottom: 8px;
+}
+
+.assassinationInfo {
+	margin-bottom: 16px;
+}
