@@ -1,6 +1,6 @@
 import type {RequestInfo} from 'rwsdk/worker';
+import {AnnotatedGameTimelineComponent} from '../../components/AnnotatedGameTimeline';
 import {Breadcrumb} from '../../components/Breadcrumb';
-import {GameTimelineComponent} from '../../components/GameTimeline';
 import {LocalTimestamp} from '../../components/LocalTimestamp';
 import type {Game} from '../../models/game';
 import {getFirestoreRestService} from '../../services/firestore-rest';
@@ -45,7 +45,7 @@ export async function GameDetail({params}: RequestInfo) {
 					View summary table →
 				</a>
 			</div>
-			<GameTimelineComponent game={game} />
+			<AnnotatedGameTimelineComponent game={game} />
 		</div>
 	);
 }
