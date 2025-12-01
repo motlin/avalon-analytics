@@ -408,6 +408,49 @@ export const KnownEvilHammerPredicate: ProposalPredicate = {
 	},
 };
 
+// 💭 No Dream Team Plus Self (didn't propose dream team + self when team size increased by 1)
+export const NoDreamTeamPlusSelfPredicate: ProposalPredicate = {
+	name: 'NoDreamTeamPlusSelfProposalPredicate',
+	isRelevant: (context) => {
+		// Skip if this is an evil hammer win (auto-fail scenario)
+		if (isEvilHammerWin(context)) return false;
+
+		// Not relevant for first mission
+		if (context.missionNumber === 0) return false;
+
+		const previousMission = context.game.missions[context.missionNumber - 1];
+
+		// Only relevant if team size increased by exactly 1
+		if (previousMission.teamSize + 1 !== context.mission.teamSize) return false;
+
+		// Only relevant if previous mission succeeded
+		if (previousMission.state !== 'SUCCESS') return false;
+
+		// Only relevant if leader was NOT on the dream team (so they should add themselves)
+		const lastProposalIndex = previousMission.proposals.length - 1;
+		const dreamTeam = previousMission.proposals[lastProposalIndex].team;
+		return !dreamTeam.includes(context.proposal.proposer);
+	},
+	isWeird: (context) => {
+		if (context.missionNumber === 0) return false;
+
+		const previousMission = context.game.missions[context.missionNumber - 1];
+		const lastProposalIndex = previousMission.proposals.length - 1;
+		const dreamTeam = previousMission.proposals[lastProposalIndex].team;
+
+		// Weird if leader didn't include themselves OR didn't include the entire dream team
+		return (
+			!teamIncludesPlayer(context, context.proposal.proposer) ||
+			!dreamTeam.every((player) => context.proposal.team.includes(player))
+		);
+	},
+	isWorthCommentary: () => true,
+	getCommentary: (context) => {
+		const role = getLeaderRole(context) ?? 'Unknown';
+		return `${getRoleEmoji(role)}${role} ${context.proposal.proposer} didn't propose the dream team plus self.`;
+	},
+};
+
 // 💭 No Dream Team (didn't propose the team that succeeded on previous mission of same size)
 export const NoDreamTeamPredicate: ProposalPredicate = {
 	name: 'NoDreamTeamProposalPredicate',
@@ -461,6 +504,7 @@ export const PROPOSAL_PREDICATES: ProposalPredicate[] = [
 	OneEvilTeamFirstPredicate,
 	OneEvilTeamPredicate,
 	SameTeamPredicate,
+	NoDreamTeamPlusSelfPredicate,
 	NoDreamTeamPredicate,
 	TooManyEvilPlayersPredicate,
 	KnownEvilHammerPredicate,
