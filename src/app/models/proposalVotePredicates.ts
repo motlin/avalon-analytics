@@ -9,6 +9,7 @@ import type {Annotation, GameContext, ProposalContext, ProposalVoteContext} from
 import {
 	alreadyFailedTwo,
 	alreadySucceededTwo,
+	countEvilOnTeam,
 	countSeenEvilOnTeam,
 	getMaxTeamSize,
 	getPlayerRole,
@@ -309,7 +310,8 @@ export const RiskingEvilLossPredicate: ProposalVotePredicate = {
 	name: 'RiskingEvilLossProposalVotePredicate',
 	isRelevant: (context) => {
 		if (isEvilHammerWin(context)) return false;
-		return alreadySucceededTwo(context) && countSeenEvilOnTeam(context) === 0;
+		// Use countEvilOnTeam (not countSeenEvilOnTeam) because Mordred can still fail the mission
+		return alreadySucceededTwo(context) && countEvilOnTeam(context) === 0;
 	},
 	isWeird: (context) => context.votedYes,
 	isWorthCommentary: (context) => {
@@ -321,9 +323,7 @@ export const RiskingEvilLossPredicate: ProposalVotePredicate = {
 	},
 	getCommentary: (context) => {
 		const role = getPlayerRole(context, context.voterName) ?? 'Unknown';
-		const evilCount = countSeenEvilOnTeam(context);
-		const failsRequired = context.mission.failsRequired;
-		return `${getRoleEmoji(role)}${role} ${context.voterName} off-team approved a team that would win for good, with ${evilCount} seen evil players when ${failsRequired} fails were required.`;
+		return `${getRoleEmoji(role)}${role} ${context.voterName} off-team approved a team that would win for good.`;
 	},
 };
 
