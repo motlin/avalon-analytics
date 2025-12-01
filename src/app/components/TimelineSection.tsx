@@ -1,6 +1,12 @@
 import {useState} from 'react';
 import type {Game, Mission, Proposal} from '../models/game';
 
+function deriveWinner(outcome: Game['outcome']): 'GOOD' | 'EVIL' {
+	if (!outcome) return 'GOOD';
+	if (outcome.winner === 'GOOD' || outcome.winner === 'EVIL') return outcome.winner;
+	return outcome.state === 'GOOD_WIN' ? 'GOOD' : 'EVIL';
+}
+
 export interface TimelineSectionProps {
 	game: Game;
 	showPlayerNames?: boolean;
@@ -79,11 +85,12 @@ function buildTimelineEvents(game: Game): TimelineEvent[] {
 	});
 
 	if (game.timeFinished && game.outcome) {
+		const winner = deriveWinner(game.outcome);
 		events.push({
 			type: 'game_end',
 			timestamp: game.timeFinished,
 			description: `🏁 Game Ended`,
-			outcome: game.outcome.winner === 'GOOD' ? 'success' : 'fail',
+			outcome: winner === 'GOOD' ? 'success' : 'fail',
 			details: game.outcome.reason,
 		});
 	}
@@ -311,8 +318,8 @@ export function TimelineSection({game, showPlayerNames = true, expandedByDefault
 					{game.outcome && (
 						<div>
 							<strong>Winner:</strong>{' '}
-							<span style={{color: game.outcome.winner === 'GOOD' ? '#059669' : '#dc2626'}}>
-								{game.outcome.winner}
+							<span style={{color: deriveWinner(game.outcome) === 'GOOD' ? '#059669' : '#dc2626'}}>
+								{deriveWinner(game.outcome)}
 							</span>
 						</div>
 					)}

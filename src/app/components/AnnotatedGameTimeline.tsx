@@ -19,12 +19,19 @@ interface AnnotatedGameTimelineProps {
 	showSecrets?: boolean;
 }
 
+function deriveWinner(outcome: Game['outcome']): 'GOOD' | 'EVIL' {
+	if (!outcome) return 'GOOD';
+	if (outcome.winner === 'GOOD' || outcome.winner === 'EVIL') return outcome.winner;
+	return outcome.state === 'GOOD_WIN' ? 'GOOD' : 'EVIL';
+}
+
 export function AnnotatedGameTimelineComponent({
 	game,
 	showSecrets: initialShowSecrets = false,
 }: AnnotatedGameTimelineProps) {
 	const [showSecrets, setShowSecrets] = useState(initialShowSecrets);
 	const annotatedGame = annotateGame(game);
+	const winner = deriveWinner(game.outcome);
 
 	return (
 		<div style={containerStyle}>
@@ -42,9 +49,7 @@ export function AnnotatedGameTimelineComponent({
 					<h3 style={titleStyle}>Game Log with Annotations</h3>
 					{game.outcome && (
 						<p style={outcomeTextStyle(showSecrets)}>
-							{showSecrets
-								? `${game.outcome.winner} Victory - ${game.outcome.reason || game.outcome.message}`
-								: ''}
+							{showSecrets ? `${winner} Victory - ${game.outcome.reason || game.outcome.message}` : ''}
 						</p>
 					)}
 				</div>
@@ -65,7 +70,7 @@ export function AnnotatedGameTimelineComponent({
 				{game.outcome && (
 					<div style={missionSectionStyle}>
 						<GameConclusionComponent
-							winner={(game.outcome.winner || 'GOOD') as 'GOOD' | 'EVIL'}
+							winner={winner}
 							reason={game.outcome.reason || game.outcome.message || ''}
 							roles={game.players.map((player) => ({
 								name: player.name,

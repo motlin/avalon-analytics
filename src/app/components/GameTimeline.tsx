@@ -61,12 +61,18 @@ interface GameTimelineProps {
 	showSecrets?: boolean;
 }
 
+function deriveWinner(outcome: Game['outcome']): 'GOOD' | 'EVIL' {
+	if (!outcome) return 'GOOD';
+	if (outcome.winner === 'GOOD' || outcome.winner === 'EVIL') return outcome.winner;
+	return outcome.state === 'GOOD_WIN' ? 'GOOD' : 'EVIL';
+}
+
 export function GameTimelineComponent({game, showSecrets: initialShowSecrets = false}: GameTimelineProps) {
 	const [showSecrets, setShowSecrets] = useState(initialShowSecrets);
+	const winner = deriveWinner(game.outcome);
 
 	const getOutcomeText = () => {
 		if (!game.outcome) return '';
-		const winner = game.outcome.winner;
 		const reason = game.outcome.reason || game.outcome.message;
 		return `${winner} Victory - ${reason}`;
 	};
@@ -322,7 +328,7 @@ export function GameTimelineComponent({game, showSecrets: initialShowSecrets = f
 				{game.outcome && (
 					<div style={missionSectionStyle}>
 						<GameConclusionComponent
-							winner={(game.outcome.winner || 'GOOD') as 'GOOD' | 'EVIL'}
+							winner={winner}
 							reason={game.outcome.reason || game.outcome.message || ''}
 							roles={game.players.map((player) => ({
 								name: player.name,
