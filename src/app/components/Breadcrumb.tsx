@@ -17,7 +17,7 @@ export function Breadcrumb({items}: BreadcrumbProps) {
 			`}</style>
 			<nav
 				aria-label="Breadcrumb"
-				style={{padding: '1rem', paddingBottom: 0}}
+				style={{padding: '16px 30px', paddingBottom: 0}}
 			>
 				<ol
 					style={{
