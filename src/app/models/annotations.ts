@@ -8,6 +8,21 @@
 import type {Game, Mission, Player, Proposal} from './game';
 
 // ============================================================================
+// 🔧 Utility Functions
+// ============================================================================
+
+/**
+ * Converts a string to title case (e.g., "EVIL MINION" -> "Evil Minion")
+ */
+function toTitleCase(text: string): string {
+	return text
+		.toLowerCase()
+		.split(' ')
+		.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+		.join(' ');
+}
+
+// ============================================================================
 // 🎭 Role Definitions
 // ============================================================================
 
@@ -123,7 +138,8 @@ export function createGameContext(game: Game): GameContext {
 }
 
 export function getPlayerRole(context: GameContext, playerName: string): string | undefined {
-	return context.rolesByName.get(playerName);
+	const role = context.rolesByName.get(playerName);
+	return role ? toTitleCase(role) : undefined;
 }
 
 export function getLeaderRole(context: ProposalContext): string | undefined {
