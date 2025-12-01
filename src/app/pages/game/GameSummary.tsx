@@ -33,8 +33,10 @@ function buildAvalonApi(game: Game): AvalonApi {
 	};
 }
 
-export async function GameSummary({params}: RequestInfo) {
+export async function GameSummary({params, request}: RequestInfo) {
 	const gameId = params.gameId;
+	const url = new URL(request.url);
+	const showSecrets = url.searchParams.get('showSecrets') === 'true';
 	let game: Game | null = null;
 	let error: string | null = null;
 
@@ -128,6 +130,7 @@ export async function GameSummary({params}: RequestInfo) {
 						/>
 					}
 					achievements={<Achievements avalon={avalonApi} />}
+					initialRevealed={showSecrets}
 				/>
 
 				{/* Link to detailed timeline */}

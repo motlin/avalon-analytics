@@ -5,8 +5,10 @@ import {LocalTimestamp} from '../../components/LocalTimestamp';
 import type {Game} from '../../models/game';
 import {getFirestoreRestService} from '../../services/firestore-rest';
 
-export async function GameDetail({params}: RequestInfo) {
+export async function GameDetail({params, request}: RequestInfo) {
 	const gameId = params.gameId;
+	const url = new URL(request.url);
+	const showSecrets = url.searchParams.get('showSecrets') === 'true';
 	let game: Game | null = null;
 	let error: string | null = null;
 
@@ -45,7 +47,10 @@ export async function GameDetail({params}: RequestInfo) {
 					View summary table →
 				</a>
 			</div>
-			<AnnotatedGameTimelineComponent game={game} />
+			<AnnotatedGameTimelineComponent
+				game={game}
+				showSecrets={showSecrets}
+			/>
 		</div>
 	);
 }

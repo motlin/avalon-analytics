@@ -10,6 +10,7 @@ interface GameSummaryContentProps {
 	missionTable: ReactNode;
 	missionTableWithSpoilers: ReactNode;
 	achievements: ReactNode;
+	initialRevealed?: boolean;
 }
 
 export function GameSummaryContent({
@@ -19,8 +20,9 @@ export function GameSummaryContent({
 	missionTable,
 	missionTableWithSpoilers,
 	achievements,
+	initialRevealed = false,
 }: GameSummaryContentProps) {
-	const [revealed, setRevealed] = useState(false);
+	const [revealed, setRevealed] = useState(initialRevealed);
 
 	return (
 		<>
