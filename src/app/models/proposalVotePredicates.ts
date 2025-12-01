@@ -53,6 +53,60 @@ interface EarlierProposalInfo {
 	proposalNumber: number;
 }
 
+function getTrustedPlayersOnMission(context: ProposalVoteContext): string[] {
+	const voterName = context.voterName;
+	const mission = context.game.missions[context.missionNumber];
+
+	// Get all proposals up to and including the current one
+	const priorProposals = mission.proposals.slice(0, context.proposalNumber + 1);
+
+	// Collect all team members from proposals where the voter voted yes
+	const trustedPlayersSet = new Set<string>();
+	for (const proposal of priorProposals) {
+		const votedYes = proposal.votes.includes(voterName);
+		if (votedYes) {
+			for (const teamMember of proposal.team) {
+				if (teamMember !== voterName) {
+					trustedPlayersSet.add(teamMember);
+				}
+			}
+		}
+	}
+
+	// Sort by player index (order in game)
+	const playerOrder = context.game.players.map((p) => p.name);
+	return [...trustedPlayersSet].sort((a, b) => playerOrder.indexOf(a) - playerOrder.indexOf(b));
+}
+
+/**
+ * Checks if a player can see another player based on role visibility rules.
+ * This is primarily used to determine if an evil player can see another evil player.
+ * - Known evil players (Morgana, Assassin, Mordred, Evil Minion) can see each other
+ * - Oberon cannot see other evil players and other evil cannot see Oberon
+ */
+function playerSeesPlayer(context: ProposalVoteContext, viewerName: string, targetName: string): boolean {
+	const viewerRole = getPlayerRole(context, viewerName);
+	const targetRole = getPlayerRole(context, targetName);
+
+	if (!viewerRole || !targetRole) return false;
+
+	// If viewer is Oberon, they cannot see anyone evil
+	if (viewerRole === 'Oberon') return false;
+
+	// If target is Oberon, other evil cannot see them
+	if (targetRole === 'Oberon') return false;
+
+	// Known evil can see other known evil
+	return isKnownEvil(viewerRole) && isKnownEvil(targetRole);
+}
+
+/**
+ * Checks if an evil player can see any evil players on the given team.
+ */
+function voterSeesAnyEvilOnTeam(context: ProposalVoteContext): boolean {
+	return context.proposal.team.some((teamMember) => playerSeesPlayer(context, context.voterName, teamMember));
+}
+
 function getEarlierProposalWithSameTeam(context: ProposalVoteContext): EarlierProposalInfo | null {
 	const currentTeamSorted = [...context.proposal.team].sort();
 
@@ -392,6 +446,53 @@ export const SwitchedVoteProposalVotePredicate: ProposalVotePredicate = {
 	},
 };
 
+// 🔢 Trusted More Than Max Team Size Players On Last Mission
+export const TrustedMoreThanMaxTeamSizePlayersOnLastMissionProposalVotePredicate: ProposalVotePredicate = {
+	name: 'TrustedMoreThanMaxTeamSizePlayersOnLastMissionProposalVotePredicate',
+	isRelevant: (context) => {
+		if (isHammer(context)) return false;
+		// Mission number >= 3 (0-indexed: >= 2, so missions 3, 4, 5)
+		return context.missionNumber >= 2;
+	},
+	isWeird: (context) => {
+		if (!context.votedYes) return false;
+
+		const trustedPlayers = getTrustedPlayersOnMission(context);
+		const maxTeamSize = getMaxTeamSize(context.game);
+		const failsRequired = context.mission.failsRequired;
+		const twoFailsAdjustment = failsRequired === 2 ? 1 : 0;
+		const reasonableNumberToTrust = maxTeamSize - 1 + twoFailsAdjustment;
+
+		return trustedPlayers.length > reasonableNumberToTrust;
+	},
+	isWorthCommentary: () => true,
+	getCommentary: (context) => {
+		const role = getPlayerRole(context, context.voterName) ?? 'Unknown';
+		const trustedPlayers = getTrustedPlayersOnMission(context);
+		const trustedNames = trustedPlayers.join(', ');
+		return `${getRoleEmoji(role)}${role} ${context.voterName} trusted ${trustedPlayers.length} players on mission ${context.missionNumber + 1}. Trusted: ${trustedNames}.`;
+	},
+};
+
+// 🗳️ Off-Team Approve One Evil (when two fails required)
+export const OffTeamApproveOneEvilProposalVotePredicate: ProposalVotePredicate = {
+	name: 'OffTeamApproveOneEvilProposalVotePredicate',
+	isRelevant: (context) => {
+		// Must be off-team
+		if (teamIncludesPlayer(context, context.voterName)) return false;
+		// Mission must require 2 fails
+		if (context.mission.failsRequired !== 2) return false;
+		// Team must have exactly 1 seen evil player
+		return countSeenEvilOnTeam(context) === 1;
+	},
+	isWeird: (context) => context.votedYes,
+	isWorthCommentary: () => true,
+	getCommentary: (context) => {
+		const role = getPlayerRole(context, context.voterName) ?? 'Unknown';
+		return `${getRoleEmoji(role)}${role} ${context.voterName} off-team approved a proposal with 1 seen evil player when two fails are required.`;
+	},
+};
+
 // ✅ First All Good Team Vote
 export const FirstAllGoodTeamVotePredicate: ProposalVotePredicate = {
 	name: 'FirstAllGoodTeamVotePredicate',
@@ -429,6 +530,140 @@ export const FirstAllGoodTeamVotePredicate: ProposalVotePredicate = {
 	},
 };
 
+// 🔄 Approving Proposal With Teammates From Failed Mission
+export const ApprovingProposalWithTeammatesFromFailedMissionProposalVotePredicate: ProposalVotePredicate = {
+	name: 'ApprovingProposalWithTeammatesFromFailedMissionProposalVotePredicate',
+	isRelevant: (context) => {
+		// Not relevant if evil hammer win
+		if (isHammer(context) && context.proposal.state === 'REJECTED') return false;
+
+		// Not relevant if 2 fails required (since 1 evil can't fail the mission alone)
+		if (context.mission.failsRequired === 2) return false;
+
+		// Check if there are previous failed missions with the same players (excluding the voter)
+		return getPreviousFailedMissionsWithSamePlayers(context).length > 0;
+	},
+	isWeird: (context) => context.votedYes,
+	isWorthCommentary: () => true,
+	getCommentary: (context) => {
+		const role = getPlayerRole(context, context.voterName) ?? 'Unknown';
+		const failedMissions = getPreviousFailedMissionsWithSamePlayers(context);
+		const missionDetails = failedMissions.map((m) => `Mission ${m.missionNumber + 1}`).join(', ');
+		return `${getRoleEmoji(role)}${role} ${context.voterName} approved a proposal with the same players as a previous failed mission. ${missionDetails}.`;
+	},
+};
+
+interface FailedMissionInfo {
+	mission: ProposalVoteContext['mission'];
+	missionNumber: number;
+}
+
+function getPreviousFailedMissionsWithSamePlayers(context: ProposalVoteContext): FailedMissionInfo[] {
+	const voterName = context.voterName;
+	const currentTeamWithoutVoter = context.proposal.team.filter((name) => name !== voterName);
+
+	const failedMissions: FailedMissionInfo[] = [];
+
+	// Check all previous missions
+	for (let missionIndex = 0; missionIndex < context.missionNumber; missionIndex++) {
+		const mission = context.game.missions[missionIndex];
+
+		// Only consider failed missions
+		if (mission.state !== 'FAIL') continue;
+
+		// Get the team from the last (approved) proposal of the failed mission
+		const lastProposal = mission.proposals[mission.proposals.length - 1];
+		if (!lastProposal || lastProposal.state !== 'APPROVED') continue;
+
+		const failedTeamWithoutVoter = lastProposal.team.filter((name) => name !== voterName);
+
+		// Check if current team (without voter) contains all players from the failed team (without voter)
+		const containsAllFailedPlayers = failedTeamWithoutVoter.every((name) => currentTeamWithoutVoter.includes(name));
+
+		if (containsAllFailedPlayers) {
+			failedMissions.push({mission, missionNumber: missionIndex});
+		}
+	}
+
+	return failedMissions;
+}
+
+// ✋ Did Not Protest Vote When Good Was About To Win
+export const DidNotProtestVoteWhenGoodWasAboutToWinProposalVotePredicate: ProposalVotePredicate = {
+	name: 'DidNotProtestVoteWhenGoodWasAboutToWinProposalVotePredicate',
+	isRelevant: (context) => {
+		// Not relevant if evil hammer win (5th proposal rejected)
+		if (isHammer(context) && context.proposal.state === 'REJECTED') return false;
+
+		// Must be hammer (5th proposal)
+		if (!isHammer(context)) return false;
+
+		// Voter must be evil
+		const voterRole = getPlayerRole(context, context.voterName);
+		if (!isEvilRole(voterRole)) return false;
+
+		// Good must have already succeeded two missions (about to win)
+		if (!alreadySucceededTwo(context)) return false;
+
+		// Voter doesn't see anyone on the team
+		// This isn't actually so weird when Oberon is in play.
+		// The player might be hoping an evil player that they cannot see is on the team.
+		return !voterSeesAnyEvilOnTeam(context);
+	},
+	isWeird: (context) => context.votedYes,
+	isWorthCommentary: () => true,
+	getCommentary: (context) => {
+		const role = getPlayerRole(context, context.voterName) ?? 'Unknown';
+		return `${getRoleEmoji(role)}${role} ${context.voterName} did not protest vote when good was about to win.`;
+	},
+};
+
+// ✅ First All Good Team of Max Size Vote
+export const FirstAllGoodTeamOfMaxSizeVotePredicate: ProposalVotePredicate = {
+	name: 'FirstAllGoodTeamOfMaxSizeVotePredicate',
+	isRelevant: (context) => {
+		const maxTeamSize = getMaxTeamSize(context.game);
+
+		// Team size must be max size
+		if (context.mission.teamSize !== maxTeamSize) return false;
+
+		// Must be an all good team
+		if (!isAllGoodTeam(context)) return false;
+
+		// Check if this is the first all good team of max size
+		for (let missionIndex = 0; missionIndex <= context.missionNumber; missionIndex++) {
+			const mission = context.game.missions[missionIndex];
+
+			// Only consider missions with max team size
+			if (mission.teamSize !== maxTeamSize) continue;
+
+			const proposalLimit =
+				missionIndex === context.missionNumber ? context.proposalNumber : mission.proposals.length;
+
+			for (let proposalIndex = 0; proposalIndex < proposalLimit; proposalIndex++) {
+				const proposal = mission.proposals[proposalIndex];
+				const proposalContext: ProposalContext = {
+					...context,
+					mission,
+					missionNumber: missionIndex,
+					proposal,
+					proposalNumber: proposalIndex,
+				};
+				if (isAllGoodTeam(proposalContext)) {
+					return false; // There was an earlier all good team of max size
+				}
+			}
+		}
+		return true;
+	},
+	isWeird: (context) => context.votedYes,
+	isWorthCommentary: () => true,
+	getCommentary: (context) => {
+		const role = getPlayerRole(context, context.voterName) ?? 'Unknown';
+		return `${getRoleEmoji(role)}${role} ${context.voterName} voted for an all good team of max size.`;
+	},
+};
+
 // ============================================================================
 // 📋 All Proposal Vote Predicates
 // ============================================================================
@@ -451,7 +686,12 @@ export const PROPOSAL_VOTE_PREDICATES: ProposalVotePredicate[] = [
 	ApproveWhenNextLeaderProposalVotePredicate,
 	OnProposalButDidntVoteForItEarlyGameProposalVotePredicate,
 	SwitchedVoteProposalVotePredicate,
+	TrustedMoreThanMaxTeamSizePlayersOnLastMissionProposalVotePredicate,
+	OffTeamApproveOneEvilProposalVotePredicate,
 	FirstAllGoodTeamVotePredicate,
+	FirstAllGoodTeamOfMaxSizeVotePredicate,
+	ApprovingProposalWithTeammatesFromFailedMissionProposalVotePredicate,
+	DidNotProtestVoteWhenGoodWasAboutToWinProposalVotePredicate,
 ];
 
 // ============================================================================

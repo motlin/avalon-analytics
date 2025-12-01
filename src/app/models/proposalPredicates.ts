@@ -8,6 +8,7 @@
 import type {Annotation, GameContext, ProposalContext} from './annotations';
 import {
 	countSeenEvilOnTeam,
+	getHammerPlayer,
 	getLeaderRole,
 	getMaxTeamSize,
 	getPlayerRole,
@@ -375,6 +376,23 @@ export const TooManyEvilPlayersPredicate: ProposalPredicate = {
 	},
 };
 
+// 🔨 Hammer Pandering (including the hammer player on proposals 1-4)
+export const HammerPanderingPredicate: ProposalPredicate = {
+	name: 'HammerPanderingProposalPredicate',
+	isRelevant: (context) => context.proposalNumber < 4, // proposals 1-4 (0-indexed: 0-3)
+	isWeird: (context) => {
+		const hammer = getHammerPlayer(context);
+		return hammer !== null && teamIncludesPlayer(context, hammer);
+	},
+	isWorthCommentary: () => true,
+	getCommentary: (context) => {
+		const role = getLeaderRole(context) ?? 'Unknown';
+		const hammer = getHammerPlayer(context);
+		const hammerRole = hammer ? (getPlayerRole(context, hammer) ?? 'Unknown') : 'Unknown';
+		return `${getRoleEmoji(role)}${role} ${context.proposal.proposer} pandered to the hammer ${getRoleEmoji(hammerRole)}${hammerRole} ${hammer}.`;
+	},
+};
+
 // 🔨 Is Hammer (5th proposal - always noted)
 export const IsHammerPredicate: ProposalPredicate = {
 	name: 'FirstHammerProposalPredicate',
@@ -451,6 +469,30 @@ export const NoDreamTeamPlusSelfPredicate: ProposalPredicate = {
 	},
 };
 
+// 🧙 Final All Good Team Does Not Include Merlin
+export const FinalAllGoodTeamDoesNotIncludeMerlinPredicate: ProposalPredicate = {
+	name: 'FinalAllGoodTeamDoesNotIncludeMerlinProposalPredicate',
+	isRelevant: (context) => context.missionNumber === 4 && isAllGoodTeam(context),
+	isWeird: (context) => !teamIncludesRole(context, 'Merlin'),
+	isWorthCommentary: () => true,
+	getCommentary: (context) => {
+		const role = getLeaderRole(context) ?? 'Unknown';
+		return `${getRoleEmoji(role)}${role} ${context.proposal.proposer} proposed an all good team without Merlin.`;
+	},
+};
+
+// 🧔 Final All Good Team Does Not Include Percival
+export const FinalAllGoodTeamDoesNotIncludePercivalPredicate: ProposalPredicate = {
+	name: 'FinalAllGoodTeamDoesNotIncludePercivalProposalPredicate',
+	isRelevant: (context) => context.missionNumber === 4 && isAllGoodTeam(context),
+	isWeird: (context) => !teamIncludesRole(context, 'Percival'),
+	isWorthCommentary: () => true,
+	getCommentary: (context) => {
+		const role = getLeaderRole(context) ?? 'Unknown';
+		return `${getRoleEmoji(role)}${role} ${context.proposal.proposer} proposed an all good team without Percival.`;
+	},
+};
+
 // 💭 No Dream Team (didn't propose the team that succeeded on previous mission of same size)
 export const NoDreamTeamPredicate: ProposalPredicate = {
 	name: 'NoDreamTeamProposalPredicate',
@@ -506,7 +548,10 @@ export const PROPOSAL_PREDICATES: ProposalPredicate[] = [
 	SameTeamPredicate,
 	NoDreamTeamPlusSelfPredicate,
 	NoDreamTeamPredicate,
+	FinalAllGoodTeamDoesNotIncludeMerlinPredicate,
+	FinalAllGoodTeamDoesNotIncludePercivalPredicate,
 	TooManyEvilPlayersPredicate,
+	HammerPanderingPredicate,
 	KnownEvilHammerPredicate,
 	IsHammerPredicate,
 ];
