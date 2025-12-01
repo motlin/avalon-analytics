@@ -8,9 +8,13 @@
 'use client';
 
 import {useState} from 'react';
+import '@fortawesome/fontawesome-svg-core/styles.css';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faCheckCircle, faTimesCircle, faCircle} from '@fortawesome/free-solid-svg-icons';
+import {faThumbsUp, faThumbsDown, faCircle as faCircleRegular} from '@fortawesome/free-regular-svg-icons';
 import type {Game} from '../models/game';
 import type {AnnotatedMission, AnnotatedPlayerRow, AnnotatedProposal} from '../models/annotations';
-import {annotateGame, formatRoleWithEmoji, formatVoteIndicator} from '../models/gameAnnotator';
+import {annotateGame, formatRoleWithEmoji} from '../models/gameAnnotator';
 import {isEvilRole, getPlayerRole, createGameContext} from '../models/annotations';
 import {MissionProgressBarComponent} from './MissionProgressBar';
 import {GameConclusionComponent} from './GameConclusion';
@@ -137,6 +141,14 @@ function MissionSection({annotatedMission, showSecrets, game}: MissionSectionPro
 					</div>
 				) : (
 					<>
+						{proposals.map((annotatedProposal) => (
+							<ProposalSection
+								key={annotatedProposal.proposalNumber}
+								annotatedProposal={annotatedProposal}
+								showSecrets={showSecrets}
+							/>
+						))}
+
 						{missionVotes && mission.team.length > 0 && (
 							<MissionVoteResults
 								missionVotes={missionVotes}
@@ -145,14 +157,6 @@ function MissionSection({annotatedMission, showSecrets, game}: MissionSectionPro
 								showSecrets={showSecrets}
 							/>
 						)}
-
-						{proposals.map((annotatedProposal) => (
-							<ProposalSection
-								key={annotatedProposal.proposalNumber}
-								annotatedProposal={annotatedProposal}
-								showSecrets={showSecrets}
-							/>
-						))}
 
 						{showSecrets && missionVoteAnnotations.length > 0 && (
 							<div className={styles.annotationBox}>
@@ -238,21 +242,40 @@ interface PlayerRowProps {
 function PlayerRow({row, showSecrets, isEven}: PlayerRowProps) {
 	const {playerName, playerRole, isLeader, isOnTeam, votedYes} = row;
 
-	const leaderIcon = isLeader ? '\uD83D\uDC51' : '\u2B1C'; // 👑 or ⬜
-	const teamIcon = isOnTeam ? '\u2611\uFE0F' : '\u2B1C'; // ☑️ or ⬜
-	const voteIcon = formatVoteIndicator(votedYes);
-
 	return (
 		<div className={`${styles.playerRow} ${isEven ? styles.playerRowEven : styles.playerRowOdd}`}>
-			<span className={styles.iconCell}>{leaderIcon}</span>
-			<span className={styles.iconCell}>{teamIcon}</span>
 			{showSecrets && (
 				<span className={styles.roleCell}>
 					{formatRoleWithEmoji(playerRole ? toTitleCase(playerRole) : playerRole)}
 				</span>
 			)}
 			<span className={styles.nameCell}>{toTitleCase(playerName)}</span>
-			<span className={styles.iconCell}>{voteIcon}</span>
+			<span className={styles.proposalCell}>
+				<span className="fa-layers fa-fw">
+					{isLeader && (
+						<FontAwesomeIcon
+							icon={faCircle}
+							color="yellow"
+							transform="grow-13"
+						/>
+					)}
+					{isOnTeam && (
+						<FontAwesomeIcon
+							icon={faCircleRegular}
+							transform="grow-13"
+							className="fa-solid"
+							color="#629ec1"
+						/>
+					)}
+					{votedYes !== null && (
+						<FontAwesomeIcon
+							icon={votedYes ? faThumbsUp : faThumbsDown}
+							transform="right-1"
+							color={votedYes ? 'green' : '#ed1515'}
+						/>
+					)}
+				</span>
+			</span>
 		</div>
 	);
 }
@@ -329,10 +352,18 @@ function MissionVoteResults({missionVotes, team, game, showSecrets}: MissionVote
 		<div className={styles.missionVoteResults}>
 			<div className={styles.missionVoteSummary}>
 				<span className={styles.missionVoteCount}>
-					<span className={styles.successVoteIcon}>&#x2714;</span> {successCount} Success
+					<FontAwesomeIcon
+						icon={faCheckCircle}
+						color="green"
+					/>{' '}
+					{successCount} Success
 				</span>
 				<span className={styles.missionVoteCount}>
-					<span className={styles.failVoteIcon}>&#x2716;</span> {failCount} Fail
+					<FontAwesomeIcon
+						icon={faTimesCircle}
+						color="red"
+					/>{' '}
+					{failCount} Fail
 				</span>
 			</div>
 			<div className={styles.missionVoteGrid}>
@@ -341,8 +372,12 @@ function MissionVoteResults({missionVotes, team, game, showSecrets}: MissionVote
 						key={result.playerName}
 						className={styles.missionVoteRow}
 					>
-						<span className={result.votedSuccess ? styles.successVoteIcon : styles.failVoteIcon}>
-							{result.votedSuccess ? '\u2714' : '\u2716'}
+						<span className={styles.missionVoteIcon}>
+							<FontAwesomeIcon
+								icon={result.votedSuccess ? faCheckCircle : faTimesCircle}
+								size="lg"
+								color={result.votedSuccess ? 'green' : 'red'}
+							/>
 						</span>
 						{showSecrets && result.role && (
 							<span className={styles.missionVoteRole}>

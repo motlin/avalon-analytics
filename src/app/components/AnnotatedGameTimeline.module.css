@@ -44,7 +44,7 @@
 }
 
 .card {
-	background: white;
+	background-color: #b5e0ea;
 	border-radius: 8px;
 	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 	border: 1px solid #e5e7eb;
@@ -93,7 +93,7 @@
 .missionHeader {
 	display: flex;
 	align-items: flex-start;
-	background-color: Gainsboro;
+	background-color: bisque;
 	padding: 12px 16px;
 	border-bottom: 2px solid;
 }
@@ -180,17 +180,16 @@
 }
 
 .playerRowEven {
-	background-color: Gainsboro;
+	background-color: transparent;
 }
 
 .playerRowOdd {
 	background-color: bisque;
 }
 
-.iconCell {
-	width: 24px;
+.proposalCell {
 	text-align: center;
-	flex-shrink: 0;
+	min-width: 2em;
 	padding: 0 4px;
 }
 
@@ -233,7 +232,7 @@
 
 /* Mission Vote Results - styled like MissionSummaryTable */
 .missionVoteResults {
-	background-color: Gainsboro;
+	background-color: bisque;
 	border-radius: 6px;
 	padding: 12px 16px;
 	margin-bottom: 16px;
@@ -269,18 +268,10 @@
 	gap: 8px;
 }
 
-.successVoteIcon {
-	color: green;
-	font-weight: bold;
-	width: 20px;
+.missionVoteIcon {
+	width: 24px;
 	text-align: center;
-}
-
-.failVoteIcon {
-	color: #ed1515;
-	font-weight: bold;
-	width: 20px;
-	text-align: center;
+	flex-shrink: 0;
 }
 
 .missionVoteRole {
