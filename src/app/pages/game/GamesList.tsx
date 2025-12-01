@@ -1,5 +1,6 @@
 import type {RequestInfo} from 'rwsdk/worker';
 import {Breadcrumb} from '../../components/Breadcrumb';
+import {LocalTimestamp} from '../../components/LocalTimestamp';
 import {Pagination} from '../../components/Pagination';
 import type {Game} from '../../models/game';
 import {getFirestoreRestService} from '../../services/firestore-rest';
@@ -47,8 +48,6 @@ export async function GamesList({request}: RequestInfo) {
 							{games.map((game) => {
 								const playerNames = game.players.map((p) => p.name).join(', ');
 								const playerCount = game.players.length;
-								const date = game.timeCreated.toLocaleDateString();
-								const time = game.timeCreated.toLocaleTimeString();
 
 								return (
 									<div
@@ -56,7 +55,7 @@ export async function GamesList({request}: RequestInfo) {
 										className={styles.gameCard}
 									>
 										<div className={styles.gameCardHeader}>
-											{date} {time}
+											<LocalTimestamp isoString={game.timeCreated.toISOString()} />
 										</div>
 										<div className={styles.gameCardContent}>
 											<div className={styles.playerInfo}>

@@ -1,7 +1,7 @@
 import type {RequestInfo} from 'rwsdk/worker';
 import Achievements from '../../components/Achievements';
 import {Breadcrumb} from '../../components/Breadcrumb';
-import {GameConclusionComponent} from '../../components/GameConclusion';
+import {LocalTimestamp} from '../../components/LocalTimestamp';
 import {MissionSummaryTable} from '../../components/MissionSummaryTable';
 import type {AvalonApi} from '../../components/types';
 import type {Game} from '../../models/game';
@@ -65,53 +65,83 @@ export async function GameSummary({params}: RequestInfo) {
 	const reason = game.outcome?.message || game.outcome?.reason || '';
 
 	return (
-		<div style={{padding: '1rem', maxWidth: '1200px', margin: '0 auto'}}>
+		<div style={{backgroundColor: '#b2ebf2', minHeight: '100vh'}}>
 			<Breadcrumb
-				items={[
-					{label: 'Home', href: '/'},
-					{label: 'All Games', href: '/games'},
-					{
-						label: `Game Summary ${game.timeCreated.toLocaleDateString()} ${game.timeCreated.toLocaleTimeString()}`,
-					},
-				]}
+				items={[{label: 'Home', href: '/'}, {label: 'All Games', href: '/games'}, {label: 'Game Summary'}]}
 			/>
 
-			<div style={{marginTop: '2rem', marginBottom: '2rem'}}>
-				<h1 style={{fontSize: '2rem', fontWeight: 700, marginBottom: '0.5rem'}}>Game Summary</h1>
-				<div style={{color: '#6b7280'}}>
-					<p>Game ID: {game.id}</p>
-					<p>Created: {game.timeCreated.toLocaleString()}</p>
-					{game.timeFinished && <p>Finished: {game.timeFinished.toLocaleString()}</p>}
+			{/* Game Summary header styled with cyan theme */}
+			<div
+				style={{
+					backgroundColor: '#80deea',
+					padding: '16px 30px',
+					textAlign: 'center',
+				}}
+			>
+				<h1 style={{margin: 0, fontSize: '1.5rem', fontWeight: 'bold'}}>Game Summary</h1>
+				<div style={{fontSize: '0.875rem', marginTop: '8px'}}>
+					<LocalTimestamp isoString={game.timeCreated.toISOString()} />
+					{game.timeFinished && (
+						<>
+							{' '}
+							—{' '}
+							<LocalTimestamp
+								isoString={game.timeFinished.toISOString()}
+								showDate={false}
+							/>
+						</>
+					)}
 				</div>
 			</div>
 
-			{game.outcome && winner && (
-				<GameConclusionComponent
-					winner={winner}
-					reason={reason}
-					assassinated={game.outcome.assassinated}
-					roles={game.outcome.roles}
-				/>
-			)}
+			{/* Main content area */}
+			<div
+				style={{
+					padding: '16px',
+					display: 'flex',
+					flexDirection: 'column',
+					alignItems: 'center',
+				}}
+			>
+				{/* Winner announcement */}
+				{game.outcome && winner && (
+					<h2 style={{fontSize: '1.5rem', fontWeight: 'bold', margin: '16px 0'}}>
+						{winner === 'GOOD' ? 'Good wins!' : 'Evil wins!'}
+					</h2>
+				)}
 
-			<div style={{marginTop: '2rem'}}>
-				<h2 style={{fontSize: '1.5rem', fontWeight: 600, marginBottom: '1rem'}}>Mission Summary</h2>
-				<MissionSummaryTable game={game} />
-			</div>
+				{/* Outcome reason */}
+				{reason && <p style={{fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '8px'}}>{reason}</p>}
 
-			<Achievements avalon={avalonApi} />
+				{/* Assassination info (for good wins where Merlin survived) */}
+				{game.outcome?.assassinated && (
+					<p style={{marginBottom: '16px'}}>
+						{game.outcome.assassinated} was assassinated by{' '}
+						{game.outcome.roles?.find((r) => r.assassin)?.name || 'The Assassin'}
+					</p>
+				)}
 
-			<div style={{marginTop: '2rem', textAlign: 'center'}}>
-				<a
-					href={`/game/${gameId}`}
-					style={{
-						color: '#3b82f6',
-						textDecoration: 'underline',
-						fontSize: '0.875rem',
-					}}
-				>
-					View detailed game timeline →
-				</a>
+				{/* Mission summary table */}
+				<div style={{overflowX: 'auto', width: '100%', display: 'flex', justifyContent: 'center'}}>
+					<MissionSummaryTable game={game} />
+				</div>
+
+				{/* Achievements */}
+				<Achievements avalon={avalonApi} />
+
+				{/* Link to detailed timeline */}
+				<div style={{marginTop: '2rem'}}>
+					<a
+						href={`/game/${gameId}`}
+						style={{
+							color: '#1976d2',
+							textDecoration: 'underline',
+							fontSize: '0.875rem',
+						}}
+					>
+						View detailed game timeline →
+					</a>
+				</div>
 			</div>
 		</div>
 	);

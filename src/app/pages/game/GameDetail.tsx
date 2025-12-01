@@ -1,6 +1,7 @@
 import type {RequestInfo} from 'rwsdk/worker';
 import {Breadcrumb} from '../../components/Breadcrumb';
 import {GameTimelineComponent} from '../../components/GameTimeline';
+import {LocalTimestamp} from '../../components/LocalTimestamp';
 import type {Game} from '../../models/game';
 import {getFirestoreRestService} from '../../services/firestore-rest';
 
@@ -27,12 +28,11 @@ export async function GameDetail({params}: RequestInfo) {
 	return (
 		<div style={{padding: '1rem'}}>
 			<Breadcrumb
-				items={[
-					{label: 'Home', href: '/'},
-					{label: 'All Games', href: '/games'},
-					{label: `Game ${game.timeCreated.toLocaleDateString()} ${game.timeCreated.toLocaleTimeString()}`},
-				]}
+				items={[{label: 'Home', href: '/'}, {label: 'All Games', href: '/games'}, {label: 'Game Timeline'}]}
 			/>
+			<div style={{marginBottom: '1rem', fontSize: '0.875rem', color: '#6b7280'}}>
+				<LocalTimestamp isoString={game.timeCreated.toISOString()} />
+			</div>
 			<div style={{marginBottom: '1rem', textAlign: 'right'}}>
 				<a
 					href={`/game/${gameId}/summary`}

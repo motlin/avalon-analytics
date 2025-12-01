@@ -1,5 +1,6 @@
 import type {RequestInfo} from 'rwsdk/worker';
 import {Breadcrumb} from '../../components/Breadcrumb';
+import {LocalTimestamp} from '../../components/LocalTimestamp';
 import type {Game} from '../../models/game';
 import {getFirestoreRestService} from '../../services/firestore-rest';
 
@@ -91,8 +92,7 @@ export async function UidDetail({params}: RequestInfo) {
 												href={`/game/${game.id}`}
 												style={{textDecoration: 'none', color: '#0066cc'}}
 											>
-												{game.timeCreated.toLocaleDateString()}{' '}
-												{game.timeCreated.toLocaleTimeString()}
+												<LocalTimestamp isoString={game.timeCreated.toISOString()} />
 											</a>
 										</h3>
 
