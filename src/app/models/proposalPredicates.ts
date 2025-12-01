@@ -33,8 +33,20 @@ export interface ProposalPredicate {
 }
 
 // ============================================================================
-// 🎯 Helper: Find first proposal matching condition across game
+// 🎯 Helper Functions
 // ============================================================================
+
+/**
+ * Checks if this is an "evil hammer win" scenario - where evil wins by
+ * having all 5 proposals rejected (auto-fail). In this case, the hammer
+ * proposal behavior is not noteworthy since evil already won.
+ */
+function isEvilHammerWin(context: ProposalContext): boolean {
+	// If it's the hammer (5th proposal) and it was rejected, evil wins
+	if (context.proposalNumber !== 4) return false;
+	// Check if the proposal was rejected (no team was sent)
+	return context.proposal.state === 'REJECTED';
+}
 
 function findFirstProposalMatching(
 	context: GameContext,
@@ -375,6 +387,59 @@ export const IsHammerPredicate: ProposalPredicate = {
 	},
 };
 
+// 🔨 Known Evil Hammer Adding Known Evil
+export const KnownEvilHammerPredicate: ProposalPredicate = {
+	name: 'KnownEvilHammerProposalPredicate',
+	isRelevant: (context) => {
+		// Skip if this is an evil hammer win (auto-fail scenario)
+		if (isEvilHammerWin(context)) return false;
+		// Only relevant for hammer proposals (5th proposal) by known evil leaders
+		return context.proposalNumber === 4 && isKnownEvil(getLeaderRole(context));
+	},
+	isWeird: (context) => {
+		// Weird if team has 2 or more known evil players (leader + another)
+		const knownEvilCount = context.proposal.team.filter((name) => isKnownEvil(getPlayerRole(context, name))).length;
+		return knownEvilCount >= 2;
+	},
+	isWorthCommentary: () => true,
+	getCommentary: (context) => {
+		const role = getLeaderRole(context) ?? 'Unknown';
+		return `${getRoleEmoji(role)}${role} ${context.proposal.proposer} proposed a team with an additional known evil.`;
+	},
+};
+
+// 💭 No Dream Team (didn't propose the team that succeeded on previous mission of same size)
+export const NoDreamTeamPredicate: ProposalPredicate = {
+	name: 'NoDreamTeamProposalPredicate',
+	isRelevant: (context) => {
+		// Skip if this is an evil hammer win (auto-fail scenario)
+		if (isEvilHammerWin(context)) return false;
+
+		// Not relevant for first mission
+		if (context.missionNumber === 0) return false;
+
+		const previousMission = context.game.missions[context.missionNumber - 1];
+
+		// Only relevant if previous mission had same team size AND succeeded
+		return previousMission.teamSize === context.mission.teamSize && previousMission.state === 'SUCCESS';
+	},
+	isWeird: (context) => {
+		if (context.missionNumber === 0) return false;
+
+		const previousMission = context.game.missions[context.missionNumber - 1];
+		const lastProposalIndex = previousMission.proposals.length - 1;
+		const dreamTeam = previousMission.proposals[lastProposalIndex].team;
+
+		// Weird if current team doesn't contain all players from the dream team
+		return !dreamTeam.every((player) => context.proposal.team.includes(player));
+	},
+	isWorthCommentary: () => true,
+	getCommentary: (context) => {
+		const role = getLeaderRole(context) ?? 'Unknown';
+		return `${getRoleEmoji(role)}${role} ${context.proposal.proposer} didn't propose the dream team.`;
+	},
+};
+
 // ============================================================================
 // 📋 All Proposal Predicates
 // ============================================================================
@@ -396,7 +461,9 @@ export const PROPOSAL_PREDICATES: ProposalPredicate[] = [
 	OneEvilTeamFirstPredicate,
 	OneEvilTeamPredicate,
 	SameTeamPredicate,
+	NoDreamTeamPredicate,
 	TooManyEvilPlayersPredicate,
+	KnownEvilHammerPredicate,
 	IsHammerPredicate,
 ];
 
