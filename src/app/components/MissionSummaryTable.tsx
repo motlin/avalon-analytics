@@ -83,12 +83,12 @@ const MissionSummaryTable: React.FC<MissionSummaryTableProps> = ({game, showSpoi
 								);
 							});
 
-							const missionVoteCell = showSpoilers && missionVotes && (
+							const missionVoteCell = (
 								<td
 									key={`${player}_mission${missionIndex}`}
 									className={styles.missionResult}
 								>
-									{mission.team.includes(player) && (
+									{mission.team.includes(player) && missionVotes && (
 										<span className="fa-layers fa-fw">
 											<FontAwesomeIcon
 												icon={

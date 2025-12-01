@@ -92,3 +92,17 @@ export const SampleGameNoRoles: Story = {
 		},
 	},
 };
+
+export const RealGameHiddenSpoilers: Story = {
+	args: {
+		game: realGame,
+		showSpoilers: false,
+	},
+	parameters: {
+		docs: {
+			description: {
+				story: 'With showSpoilers=false, roles are hidden but mission votes and boundaries remain visible.',
+			},
+		},
+	},
+};
