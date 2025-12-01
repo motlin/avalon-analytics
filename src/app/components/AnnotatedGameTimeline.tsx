@@ -9,11 +9,12 @@
 
 import {useState} from 'react';
 import type {Game} from '../models/game';
-import type {AnnotatedGame, AnnotatedMission, AnnotatedPlayerRow, AnnotatedProposal} from '../models/annotations';
+import type {AnnotatedMission, AnnotatedPlayerRow, AnnotatedProposal} from '../models/annotations';
 import {annotateGame, formatRoleWithEmoji, formatVoteIndicator} from '../models/gameAnnotator';
 import {isEvilRole, getPlayerRole, createGameContext} from '../models/annotations';
 import {MissionProgressBarComponent} from './MissionProgressBar';
 import {GameConclusionComponent} from './GameConclusion';
+import styles from './AnnotatedGameTimeline.module.css';
 
 /**
  * Converts a string to title case (e.g., "CRAIG" -> "Craig", "EVIL MINION" -> "Evil Minion")
@@ -46,27 +47,27 @@ export function AnnotatedGameTimelineComponent({
 	const winner = deriveWinner(game.outcome);
 
 	return (
-		<div style={containerStyle}>
-			<h2 style={{fontSize: '24px', fontWeight: 'bold', marginBottom: '16px'}}>Annotated Game Timeline</h2>
+		<div className={styles.container}>
+			<h2 className={styles.title}>Annotated Game Timeline</h2>
 
 			<button
-				style={revealButtonStyle(showSecrets)}
+				className={`${styles.revealButton} ${showSecrets ? styles.revealButtonActive : ''}`}
 				onClick={() => setShowSecrets(!showSecrets)}
 			>
 				{showSecrets ? 'Hide Secrets' : 'Reveal Secrets'}
 			</button>
 
-			<div style={cardStyle}>
-				<div style={headerStyle}>
-					<h3 style={titleStyle}>Game Log with Annotations</h3>
+			<div className={styles.card}>
+				<div className={styles.header}>
+					<h3 className={styles.headerTitle}>Game Log with Annotations</h3>
 					{game.outcome && (
-						<p style={outcomeTextStyle(showSecrets)}>
+						<p className={`${styles.outcomeText} ${!showSecrets ? styles.outcomeHidden : ''}`}>
 							{showSecrets ? `${winner} Victory - ${game.outcome.reason || game.outcome.message}` : ''}
 						</p>
 					)}
 				</div>
 
-				<div style={{marginBottom: '48px'}}>
+				<div className={styles.progressBarWrapper}>
 					<MissionProgressBarComponent missions={game.missions} />
 				</div>
 
@@ -80,7 +81,7 @@ export function AnnotatedGameTimelineComponent({
 				))}
 
 				{game.outcome && (
-					<div style={missionSectionStyle}>
+					<div className={styles.conclusionWrapper}>
 						<GameConclusionComponent
 							winner={winner}
 							reason={game.outcome.reason || game.outcome.message || ''}
@@ -114,68 +115,60 @@ function MissionSection({annotatedMission, showSecrets, game}: MissionSectionPro
 	const missionNotPlayed = state === 'PENDING' && proposals.length === 0;
 
 	return (
-		<div style={isDoubleFail ? doubleFailMissionStyle : missionSectionStyle}>
-			<div style={missionHeaderStyle}>
-				<div style={missionLabelStyle}>
-					<h4 style={{fontWeight: '600', marginBottom: '4px'}}>
+		<div className={`${styles.missionSection} ${isDoubleFail ? styles.doubleFailMission : ''}`}>
+			<div className={styles.missionHeader}>
+				<div className={styles.missionLabel}>
+					<h4 className={styles.missionLabelTitle}>
 						Mission {missionNumber}
 						{isDoubleFail ? ' \u26A1' : ''}
 					</h4>
-					<p style={{fontSize: '14px', color: '#6b7280', marginBottom: '2px'}}>{mission.teamSize} players</p>
-					<p
-						style={{
-							fontSize: '14px',
-							color: isDoubleFail ? '#7c3aed' : '#6b7280',
-							fontWeight: isDoubleFail ? '600' : 'normal',
-						}}
-					>
+					<p className={styles.missionLabelInfo}>{mission.teamSize} players</p>
+					<p className={`${styles.missionLabelInfo} ${isDoubleFail ? styles.missionLabelInfoHighlight : ''}`}>
 						{mission.failsRequired} fail{mission.failsRequired > 1 ? 's' : ''} required
 					</p>
 				</div>
+			</div>
 
-				<div style={missionContentStyle}>
-					{missionNotPlayed ? (
-						<div style={{...simpleCardStyle, opacity: 0.6}}>
-							<span style={pendingBadgeStyle}>NOT PLAYED</span>
-							<p style={{fontSize: '14px', color: '#6b7280', marginTop: '8px'}}>
-								Mission not completed - Game ended earlier
-							</p>
-						</div>
-					) : (
-						<>
-							{missionVotes && mission.team.length > 0 && (
-								<MissionVoteResults
-									missionVotes={missionVotes}
-									team={mission.team}
-									game={game}
-									showSecrets={showSecrets}
-								/>
-							)}
+			<div className={styles.missionContent}>
+				{missionNotPlayed ? (
+					<div className={styles.pendingCard}>
+						<span className={styles.pendingBadge}>NOT PLAYED</span>
+						<p className={styles.pendingText}>Mission not completed - Game ended earlier</p>
+					</div>
+				) : (
+					<>
+						{missionVotes && mission.team.length > 0 && (
+							<MissionVoteResults
+								missionVotes={missionVotes}
+								team={mission.team}
+								game={game}
+								showSecrets={showSecrets}
+							/>
+						)}
 
-							{proposals.map((annotatedProposal) => (
-								<ProposalSection
-									key={annotatedProposal.proposalNumber}
-									annotatedProposal={annotatedProposal}
-									showSecrets={showSecrets}
-								/>
-							))}
+						{proposals.map((annotatedProposal) => (
+							<ProposalSection
+								key={annotatedProposal.proposalNumber}
+								annotatedProposal={annotatedProposal}
+								showSecrets={showSecrets}
+							/>
+						))}
 
-							{showSecrets && missionVoteAnnotations.length > 0 && (
-								<div style={annotationBoxStyle}>
-									<strong>Mission vote notes:</strong>
-									{missionVoteAnnotations.map((annotation, index) => (
-										<div
-											key={index}
-											style={annotationLineStyle}
-										>
-											{annotation.commentary}
-										</div>
-									))}
-								</div>
-							)}
-						</>
-					)}
-				</div>
+						{showSecrets && missionVoteAnnotations.length > 0 && (
+							<div className={styles.annotationBox}>
+								<strong>Mission vote notes:</strong>
+								{missionVoteAnnotations.map((annotation, index) => (
+									<div
+										key={index}
+										className={styles.annotationLine}
+									>
+										{annotation.commentary}
+									</div>
+								))}
+							</div>
+						)}
+					</>
+				)}
 			</div>
 		</div>
 	);
@@ -194,30 +187,32 @@ function ProposalSection({annotatedProposal, showSecrets}: ProposalSectionProps)
 	const {proposalNumber, annotations, playerRows} = annotatedProposal;
 
 	return (
-		<div style={proposalCardStyle}>
-			<div style={proposalHeaderStyle}>
+		<div className={styles.proposalCard}>
+			<div className={styles.proposalHeader}>
 				<strong>Proposal {proposalNumber}</strong>
 			</div>
 
-			<div style={playerGridStyle}>
-				{playerRows.map((row) => (
+			<div className={styles.playerGrid}>
+				{playerRows.map((row, index) => (
 					<PlayerRow
 						key={row.playerName}
 						row={row}
 						showSecrets={showSecrets}
+						isEven={index % 2 === 0}
 					/>
 				))}
 			</div>
 
 			{showSecrets && annotations.length > 0 && (
-				<div style={annotationBoxStyle}>
+				<div className={styles.annotationBox}>
 					<strong>Team proposal notes:</strong>
 					{annotations.map((annotation, index) => (
 						<div
 							key={index}
-							style={annotationLineStyle}
+							className={styles.annotationLine}
 						>
-							{annotation.commentary} <span style={predicateNameStyle}>({annotation.predicateName})</span>
+							{annotation.commentary}{' '}
+							<span className={styles.predicateName}>({annotation.predicateName})</span>
 						</div>
 					))}
 				</div>
@@ -237,9 +232,10 @@ function ProposalSection({annotatedProposal, showSecrets}: ProposalSectionProps)
 interface PlayerRowProps {
 	row: AnnotatedPlayerRow;
 	showSecrets: boolean;
+	isEven: boolean;
 }
 
-function PlayerRow({row, showSecrets}: PlayerRowProps) {
+function PlayerRow({row, showSecrets, isEven}: PlayerRowProps) {
 	const {playerName, playerRole, isLeader, isOnTeam, votedYes} = row;
 
 	const leaderIcon = isLeader ? '\uD83D\uDC51' : '\u2B1C'; // 👑 or ⬜
@@ -247,16 +243,16 @@ function PlayerRow({row, showSecrets}: PlayerRowProps) {
 	const voteIcon = formatVoteIndicator(votedYes);
 
 	return (
-		<div style={playerRowStyle}>
-			<span style={iconCellStyle}>{leaderIcon}</span>
-			<span style={iconCellStyle}>{teamIcon}</span>
+		<div className={`${styles.playerRow} ${isEven ? styles.playerRowEven : styles.playerRowOdd}`}>
+			<span className={styles.iconCell}>{leaderIcon}</span>
+			<span className={styles.iconCell}>{teamIcon}</span>
 			{showSecrets && (
-				<span style={roleCellStyle}>
+				<span className={styles.roleCell}>
 					{formatRoleWithEmoji(playerRole ? toTitleCase(playerRole) : playerRole)}
 				</span>
 			)}
-			<span style={nameCellStyle}>{toTitleCase(playerName)}</span>
-			<span style={iconCellStyle}>{voteIcon}</span>
+			<span className={styles.nameCell}>{toTitleCase(playerName)}</span>
+			<span className={styles.iconCell}>{voteIcon}</span>
 		</div>
 	);
 }
@@ -274,15 +270,16 @@ function VoteAnnotations({playerRows}: VoteAnnotationsProps) {
 	if (rowsWithAnnotations.length === 0) return null;
 
 	return (
-		<div style={annotationBoxStyle}>
+		<div className={styles.annotationBox}>
 			<strong>Vote notes:</strong>
 			{rowsWithAnnotations.flatMap((row) =>
 				row.voteAnnotations.map((annotation, index) => (
 					<div
 						key={`${row.playerName}-${index}`}
-						style={annotationLineStyle}
+						className={styles.annotationLine}
 					>
-						{annotation.commentary} <span style={predicateNameStyle}>({annotation.predicateName})</span>
+						{annotation.commentary}{' '}
+						<span className={styles.predicateName}>({annotation.predicateName})</span>
 					</div>
 				)),
 			)}
@@ -329,31 +326,33 @@ function MissionVoteResults({missionVotes, team, game, showSecrets}: MissionVote
 	const failCount = voteResults.filter((v) => v.votedSuccess === false).length;
 
 	return (
-		<div style={missionVoteResultsStyle}>
-			<div style={missionVoteSummaryStyle}>
-				<span style={missionVoteCountStyle}>
-					<span style={successVoteIconStyle}>&#x2714;</span> {successCount} Success
+		<div className={styles.missionVoteResults}>
+			<div className={styles.missionVoteSummary}>
+				<span className={styles.missionVoteCount}>
+					<span className={styles.successVoteIcon}>&#x2714;</span> {successCount} Success
 				</span>
-				<span style={missionVoteCountStyle}>
-					<span style={failVoteIconStyle}>&#x2716;</span> {failCount} Fail
+				<span className={styles.missionVoteCount}>
+					<span className={styles.failVoteIcon}>&#x2716;</span> {failCount} Fail
 				</span>
 			</div>
-			<div style={missionVoteGridStyle}>
+			<div className={styles.missionVoteGrid}>
 				{voteResults.map((result) => (
 					<div
 						key={result.playerName}
-						style={missionVoteRowStyle}
+						className={styles.missionVoteRow}
 					>
-						<span style={result.votedSuccess ? successVoteIconStyle : failVoteIconStyle}>
+						<span className={result.votedSuccess ? styles.successVoteIcon : styles.failVoteIcon}>
 							{result.votedSuccess ? '\u2714' : '\u2716'}
 						</span>
 						{showSecrets && result.role && (
-							<span style={missionVoteRoleStyle}>{formatRoleWithEmoji(toTitleCase(result.role))}</span>
+							<span className={styles.missionVoteRole}>
+								{formatRoleWithEmoji(toTitleCase(result.role))}
+							</span>
 						)}
-						<span style={missionVoteNameStyle}>{toTitleCase(result.playerName)}</span>
-						{showSecrets && result.voteType === 'duck' && <span style={duckBadgeStyle}>DUCKED</span>}
+						<span className={styles.missionVoteName}>{toTitleCase(result.playerName)}</span>
+						{showSecrets && result.voteType === 'duck' && <span className={styles.duckBadge}>DUCKED</span>}
 						{showSecrets && result.voteType === 'fail' && result.isEvil && (
-							<span style={failedBadgeStyle}>FAILED</span>
+							<span className={styles.failedBadge}>FAILED</span>
 						)}
 					</div>
 				))}
@@ -361,247 +360,5 @@ function MissionVoteResults({missionVotes, team, game, showSecrets}: MissionVote
 		</div>
 	);
 }
-
-// ============================================================================
-// 🎨 Styles
-// ============================================================================
-
-const containerStyle: React.CSSProperties = {
-	maxWidth: '1200px',
-	margin: '0 auto',
-	padding: '32px',
-};
-
-const cardStyle: React.CSSProperties = {
-	background: 'white',
-	borderRadius: '8px',
-	boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
-	border: '1px solid #e5e7eb',
-	padding: '40px',
-};
-
-const simpleCardStyle: React.CSSProperties = {
-	background: 'white',
-	borderRadius: '8px',
-	boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
-	border: '1px solid #e5e7eb',
-	padding: '16px',
-};
-
-const headerStyle: React.CSSProperties = {
-	textAlign: 'center',
-	marginBottom: '16px',
-};
-
-const titleStyle: React.CSSProperties = {
-	fontSize: '28px',
-	fontWeight: 'bold',
-	marginBottom: '8px',
-};
-
-const outcomeTextStyle = (showSecrets: boolean): React.CSSProperties => ({
-	color: '#6b7280',
-	backgroundColor: showSecrets ? 'transparent' : '#1f2937',
-	padding: '2px 8px',
-	borderRadius: '4px',
-	display: 'inline-block',
-	transition: 'all 0.3s ease',
-});
-
-const revealButtonStyle = (showSecrets: boolean): React.CSSProperties => ({
-	backgroundColor: showSecrets ? '#dc2626' : '#4f46e5',
-	color: 'white',
-	border: 'none',
-	padding: '8px 16px',
-	borderRadius: '6px',
-	fontSize: '14px',
-	fontWeight: '500',
-	cursor: 'pointer',
-	marginBottom: '24px',
-});
-
-const missionSectionStyle: React.CSSProperties = {
-	marginBottom: '48px',
-};
-
-const doubleFailMissionStyle: React.CSSProperties = {
-	...missionSectionStyle,
-	border: '2px solid #7c3aed',
-	borderRadius: '8px',
-	padding: '24px',
-	marginLeft: '-24px',
-	marginRight: '-24px',
-};
-
-const missionHeaderStyle: React.CSSProperties = {
-	display: 'flex',
-	alignItems: 'flex-start',
-	gap: '24px',
-	marginBottom: '24px',
-};
-
-const missionLabelStyle: React.CSSProperties = {
-	width: '140px',
-	textAlign: 'right',
-	flexShrink: 0,
-};
-
-const missionContentStyle: React.CSSProperties = {
-	flex: 1,
-};
-
-const proposalCardStyle: React.CSSProperties = {
-	backgroundColor: '#f9fafb',
-	borderRadius: '6px',
-	padding: '16px',
-	marginBottom: '16px',
-	border: '1px solid #e5e7eb',
-};
-
-const proposalHeaderStyle: React.CSSProperties = {
-	marginBottom: '12px',
-	fontSize: '14px',
-};
-
-const playerGridStyle: React.CSSProperties = {
-	fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
-	fontSize: '13px',
-	lineHeight: '1.8',
-};
-
-const playerRowStyle: React.CSSProperties = {
-	display: 'flex',
-	alignItems: 'center',
-	gap: '8px',
-};
-
-const iconCellStyle: React.CSSProperties = {
-	width: '24px',
-	textAlign: 'center',
-	flexShrink: 0,
-};
-
-const roleCellStyle: React.CSSProperties = {
-	minWidth: '160px',
-	whiteSpace: 'nowrap',
-	flexShrink: 0,
-};
-
-const nameCellStyle: React.CSSProperties = {
-	minWidth: '100px',
-	fontWeight: '500',
-	flexShrink: 0,
-};
-
-const annotationBoxStyle: React.CSSProperties = {
-	marginTop: '12px',
-	padding: '12px',
-	backgroundColor: '#fef3c7',
-	borderRadius: '4px',
-	fontSize: '13px',
-	border: '1px solid #fcd34d',
-};
-
-const annotationLineStyle: React.CSSProperties = {
-	marginTop: '4px',
-	paddingLeft: '8px',
-};
-
-const predicateNameStyle: React.CSSProperties = {
-	color: '#92400e',
-	fontSize: '11px',
-	fontStyle: 'italic',
-};
-
-// Badge styles
-const pendingBadgeStyle: React.CSSProperties = {
-	backgroundColor: '#fff3cd',
-	color: '#856404',
-	padding: '4px 8px',
-	borderRadius: '4px',
-	fontSize: '12px',
-	fontWeight: '600',
-};
-
-// Mission vote result styles
-const missionVoteResultsStyle: React.CSSProperties = {
-	backgroundColor: '#f0f9ff',
-	borderRadius: '6px',
-	padding: '12px 16px',
-	marginBottom: '16px',
-	border: '1px solid #bae6fd',
-};
-
-const missionVoteSummaryStyle: React.CSSProperties = {
-	display: 'flex',
-	gap: '16px',
-	marginBottom: '8px',
-	fontWeight: '600',
-	fontSize: '14px',
-};
-
-const missionVoteCountStyle: React.CSSProperties = {
-	display: 'flex',
-	alignItems: 'center',
-	gap: '4px',
-};
-
-const missionVoteGridStyle: React.CSSProperties = {
-	fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
-	fontSize: '13px',
-	lineHeight: '1.8',
-};
-
-const missionVoteRowStyle: React.CSSProperties = {
-	display: 'flex',
-	alignItems: 'center',
-	gap: '8px',
-};
-
-const successVoteIconStyle: React.CSSProperties = {
-	color: '#16a34a',
-	fontWeight: 'bold',
-	width: '20px',
-	textAlign: 'center',
-};
-
-const failVoteIconStyle: React.CSSProperties = {
-	color: '#dc2626',
-	fontWeight: 'bold',
-	width: '20px',
-	textAlign: 'center',
-};
-
-const missionVoteRoleStyle: React.CSSProperties = {
-	minWidth: '160px',
-	whiteSpace: 'nowrap',
-	flexShrink: 0,
-};
-
-const missionVoteNameStyle: React.CSSProperties = {
-	minWidth: '100px',
-	fontWeight: '500',
-	flexShrink: 0,
-};
-
-const duckBadgeStyle: React.CSSProperties = {
-	backgroundColor: '#fef3c7',
-	color: '#92400e',
-	padding: '2px 6px',
-	borderRadius: '4px',
-	fontSize: '10px',
-	fontWeight: '600',
-	marginLeft: '8px',
-};
-
-const failedBadgeStyle: React.CSSProperties = {
-	backgroundColor: '#fee2e2',
-	color: '#991b1b',
-	padding: '2px 6px',
-	borderRadius: '4px',
-	fontSize: '10px',
-	fontWeight: '600',
-	marginLeft: '8px',
-};
 
 export default AnnotatedGameTimelineComponent;

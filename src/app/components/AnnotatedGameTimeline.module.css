@@ -1,0 +1,325 @@
+/* AnnotatedGameTimeline CSS Module
+ * Styled consistently with MissionSummaryTable
+ */
+
+.container {
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 32px;
+}
+
+.title {
+	font-size: 24px;
+	font-weight: bold;
+	margin-bottom: 16px;
+}
+
+.revealButton {
+	background-color: #00838f;
+	color: white;
+	border: none;
+	border-radius: 4px;
+	padding: 8px 16px;
+	font-size: 14px;
+	font-weight: 500;
+	cursor: pointer;
+	margin-bottom: 24px;
+	box-shadow:
+		0 3px 1px -2px rgba(0, 0, 0, 0.2),
+		0 2px 2px 0 rgba(0, 0, 0, 0.14),
+		0 1px 5px 0 rgba(0, 0, 0, 0.12);
+	transition: background-color 0.2s ease;
+}
+
+.revealButton:hover {
+	background-color: #006064;
+}
+
+.revealButtonActive {
+	background-color: #c62828;
+}
+
+.revealButtonActive:hover {
+	background-color: #b71c1c;
+}
+
+.card {
+	background: white;
+	border-radius: 8px;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+	border: 1px solid #e5e7eb;
+	padding: 40px;
+}
+
+.header {
+	text-align: center;
+	margin-bottom: 16px;
+}
+
+.headerTitle {
+	font-size: 28px;
+	font-weight: bold;
+	margin-bottom: 8px;
+}
+
+.outcomeText {
+	color: #6b7280;
+	padding: 2px 8px;
+	border-radius: 4px;
+	display: inline-block;
+	transition: all 0.3s ease;
+}
+
+.outcomeHidden {
+	background-color: #1f2937;
+}
+
+.progressBarWrapper {
+	margin-bottom: 48px;
+}
+
+/* Mission Section - consistent with MissionSummaryTable row patterns */
+.missionSection {
+	margin-bottom: 32px;
+	border: 1px solid #e5e7eb;
+	border-radius: 8px;
+	overflow: hidden;
+}
+
+.doubleFailMission {
+	border: 2px solid #7c3aed;
+}
+
+.missionHeader {
+	display: flex;
+	align-items: flex-start;
+	background-color: Gainsboro;
+	padding: 12px 16px;
+	border-bottom: 2px solid;
+}
+
+.missionLabel {
+	width: 140px;
+	text-align: left;
+	flex-shrink: 0;
+}
+
+.missionLabelTitle {
+	font-weight: 600;
+	margin-bottom: 4px;
+}
+
+.missionLabelInfo {
+	font-size: 14px;
+	color: #6b7280;
+	margin-bottom: 2px;
+}
+
+.missionLabelInfoHighlight {
+	color: #7c3aed;
+	font-weight: 600;
+}
+
+.missionContent {
+	flex: 1;
+	padding: 16px;
+}
+
+.pendingCard {
+	background: white;
+	border-radius: 6px;
+	border: 1px solid #e5e7eb;
+	padding: 16px;
+	opacity: 0.6;
+}
+
+.pendingBadge {
+	background-color: #fff3cd;
+	color: #856404;
+	padding: 4px 8px;
+	border-radius: 4px;
+	font-size: 12px;
+	font-weight: 600;
+}
+
+.pendingText {
+	font-size: 14px;
+	color: #6b7280;
+	margin-top: 8px;
+}
+
+/* Proposal Card - using MissionSummaryTable alternating colors */
+.proposalCard {
+	background-color: bisque;
+	border-radius: 6px;
+	padding: 12px 16px;
+	margin-bottom: 12px;
+	border-left: 2px solid;
+	border-right: 2px solid;
+}
+
+.proposalHeader {
+	margin-bottom: 8px;
+	font-size: 14px;
+	font-weight: 600;
+	padding-bottom: 8px;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* Player Grid - table-like layout matching MissionSummaryTable */
+.playerGrid {
+	font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+	font-size: 13px;
+}
+
+.playerRow {
+	display: flex;
+	align-items: center;
+	height: 2.3em;
+	gap: 8px;
+}
+
+.playerRowEven {
+	background-color: Gainsboro;
+}
+
+.playerRowOdd {
+	background-color: bisque;
+}
+
+.iconCell {
+	width: 24px;
+	text-align: center;
+	flex-shrink: 0;
+	padding: 0 4px;
+}
+
+.roleCell {
+	min-width: 160px;
+	white-space: nowrap;
+	flex-shrink: 0;
+	padding-left: 8px;
+	padding-right: 8px;
+	border-right: 2px solid;
+}
+
+.nameCell {
+	min-width: 100px;
+	font-weight: 500;
+	flex-shrink: 0;
+	padding-left: 8px;
+}
+
+/* Annotation Box */
+.annotationBox {
+	margin-top: 12px;
+	padding: 12px;
+	background-color: #fef3c7;
+	border-radius: 4px;
+	font-size: 13px;
+	border: 1px solid #fcd34d;
+}
+
+.annotationLine {
+	margin-top: 4px;
+	padding-left: 8px;
+}
+
+.predicateName {
+	color: #92400e;
+	font-size: 11px;
+	font-style: italic;
+}
+
+/* Mission Vote Results - styled like MissionSummaryTable */
+.missionVoteResults {
+	background-color: Gainsboro;
+	border-radius: 6px;
+	padding: 12px 16px;
+	margin-bottom: 16px;
+	border-left: 2px solid;
+	border-right: 2px solid;
+}
+
+.missionVoteSummary {
+	display: flex;
+	gap: 16px;
+	margin-bottom: 8px;
+	font-weight: 600;
+	font-size: 14px;
+	padding-bottom: 8px;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.missionVoteCount {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+}
+
+.missionVoteGrid {
+	font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+	font-size: 13px;
+}
+
+.missionVoteRow {
+	display: flex;
+	align-items: center;
+	height: 2.3em;
+	gap: 8px;
+}
+
+.successVoteIcon {
+	color: green;
+	font-weight: bold;
+	width: 20px;
+	text-align: center;
+}
+
+.failVoteIcon {
+	color: #ed1515;
+	font-weight: bold;
+	width: 20px;
+	text-align: center;
+}
+
+.missionVoteRole {
+	min-width: 160px;
+	white-space: nowrap;
+	flex-shrink: 0;
+	padding-left: 8px;
+	padding-right: 8px;
+	border-right: 2px solid;
+}
+
+.missionVoteName {
+	min-width: 100px;
+	font-weight: 500;
+	flex-shrink: 0;
+	padding-left: 8px;
+}
+
+.duckBadge {
+	background-color: #fef3c7;
+	color: #92400e;
+	padding: 2px 6px;
+	border-radius: 4px;
+	font-size: 10px;
+	font-weight: 600;
+	margin-left: 8px;
+}
+
+.failedBadge {
+	background-color: #fee2e2;
+	color: #991b1b;
+	padding: 2px 6px;
+	border-radius: 4px;
+	font-size: 10px;
+	font-weight: 600;
+	margin-left: 8px;
+}
+
+/* Game Conclusion wrapper */
+.conclusionWrapper {
+	margin-top: 32px;
+}
