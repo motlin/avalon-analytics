@@ -8,9 +8,10 @@ import type {Game} from '../models/game';
 
 interface MissionSummaryTableProps {
 	game: Game;
+	showSpoilers?: boolean;
 }
 
-const MissionSummaryTable: React.FC<MissionSummaryTableProps> = ({game}) => {
+const MissionSummaryTable: React.FC<MissionSummaryTableProps> = ({game, showSpoilers = true}) => {
 	const players = game.players.map((p) => p.name);
 	const missions = game.missions;
 	const roles = game.outcome?.roles?.map((r) => ({
@@ -36,7 +37,9 @@ const MissionSummaryTable: React.FC<MissionSummaryTableProps> = ({game}) => {
 						<td className={styles.playerName}>
 							<span className={styles.fontWeightMedium}>{player}</span>
 						</td>
-						{roles && <td className={styles.role}>{roles.find((r) => r.name === player)?.role}</td>}
+						{showSpoilers && roles && (
+							<td className={styles.role}>{roles.find((r) => r.name === player)?.role}</td>
+						)}
 						{missions.flatMap((mission, missionIndex) => {
 							const validProposals = mission.proposals.filter((p) => p.team.length > 0);
 							const proposalCells = validProposals.map((proposal, proposalIndex) => {
@@ -80,7 +83,7 @@ const MissionSummaryTable: React.FC<MissionSummaryTableProps> = ({game}) => {
 								);
 							});
 
-							const missionVoteCell = missionVotes && (
+							const missionVoteCell = showSpoilers && missionVotes && (
 								<td
 									key={`${player}_mission${missionIndex}`}
 									className={styles.missionResult}

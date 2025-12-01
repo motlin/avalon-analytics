@@ -1,6 +1,7 @@
 import type {RequestInfo} from 'rwsdk/worker';
 import Achievements from '../../components/Achievements';
 import {Breadcrumb} from '../../components/Breadcrumb';
+import {GameSummaryContent} from '../../components/GameSummaryContent';
 import {LocalTimestamp} from '../../components/LocalTimestamp';
 import {MissionSummaryTable} from '../../components/MissionSummaryTable';
 import type {AvalonApi} from '../../components/types';
@@ -103,31 +104,31 @@ export async function GameSummary({params}: RequestInfo) {
 					alignItems: 'center',
 				}}
 			>
-				{/* Winner announcement */}
-				{game.outcome && winner && (
-					<h2 style={{fontSize: '1.5rem', fontWeight: 'bold', margin: '16px 0'}}>
-						{winner === 'GOOD' ? 'Good wins!' : 'Evil wins!'}
-					</h2>
-				)}
-
-				{/* Outcome reason */}
-				{reason && <p style={{fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '8px'}}>{reason}</p>}
-
-				{/* Assassination info (for good wins where Merlin survived) */}
-				{game.outcome?.assassinated && (
-					<p style={{marginBottom: '16px'}}>
-						{game.outcome.assassinated} was assassinated by{' '}
-						{game.outcome.roles?.find((r) => r.assassin)?.name || 'The Assassin'}
-					</p>
-				)}
-
-				{/* Mission summary table */}
-				<div style={{overflowX: 'auto', width: '100%', display: 'flex', justifyContent: 'center'}}>
-					<MissionSummaryTable game={game} />
-				</div>
-
-				{/* Achievements */}
-				<Achievements avalon={avalonApi} />
+				<GameSummaryContent
+					winner={game.outcome ? winner : null}
+					reason={reason}
+					assassinationInfo={
+						game.outcome?.assassinated ? (
+							<p style={{marginBottom: '16px'}}>
+								{game.outcome.assassinated} was assassinated by{' '}
+								{game.outcome.roles?.find((r) => r.assassin)?.name || 'The Assassin'}
+							</p>
+						) : null
+					}
+					missionTable={
+						<MissionSummaryTable
+							game={game}
+							showSpoilers={false}
+						/>
+					}
+					missionTableWithSpoilers={
+						<MissionSummaryTable
+							game={game}
+							showSpoilers={true}
+						/>
+					}
+					achievements={<Achievements avalon={avalonApi} />}
+				/>
 
 				{/* Link to detailed timeline */}
 				<div style={{marginTop: '2rem'}}>
