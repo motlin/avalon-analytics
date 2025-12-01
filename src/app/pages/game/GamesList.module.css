@@ -1,0 +1,75 @@
+.container {
+	background-color: #b2ebf2; /* cyan lighten-4 */
+	min-height: 100vh;
+}
+
+.header {
+	background-color: #80deea; /* cyan lighten-2 */
+	padding: 16px 30px;
+	text-align: center;
+}
+
+.header h1 {
+	margin: 0;
+	font-size: 1.5rem;
+	font-weight: bold;
+}
+
+.content {
+	padding: 16px;
+	max-width: 800px;
+	margin: 0 auto;
+}
+
+.noGames {
+	text-align: center;
+}
+
+.gameList {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.gameCard {
+	background-color: #eceff1;
+	border-radius: 4px;
+	box-shadow:
+		0 3px 1px -2px rgba(0, 0, 0, 0.2),
+		0 2px 2px 0 rgba(0, 0, 0, 0.14),
+		0 1px 5px 0 rgba(0, 0, 0, 0.12);
+	overflow: hidden;
+}
+
+.gameCardHeader {
+	background-color: #4dd0e1; /* cyan lighten-1 */
+	padding: 12px 16px;
+	font-weight: bold;
+}
+
+.gameCardContent {
+	padding: 12px 16px;
+}
+
+.playerInfo {
+	font-size: 0.875rem;
+	color: #555;
+	margin-bottom: 8px;
+}
+
+.gameLinks {
+	font-size: 0.875rem;
+}
+
+.gameLinks a {
+	color: #1976d2;
+	margin-right: 16px;
+}
+
+.gameLinks a:last-child {
+	margin-right: 0;
+}
+
+.pagination {
+	margin-top: 24px;
+}

@@ -4,6 +4,7 @@ import {Pagination} from '../../components/Pagination';
 import type {Game} from '../../models/game';
 import {getFirestoreRestService} from '../../services/firestore-rest';
 import {gameIngestionService} from '../../services/game-ingestion';
+import styles from './GamesList.module.css';
 
 export async function GamesList({request}: RequestInfo) {
 	let games: Game[] = [];
@@ -32,63 +33,57 @@ export async function GamesList({request}: RequestInfo) {
 	}
 
 	return (
-		<div>
+		<div className={styles.container}>
 			<Breadcrumb items={[{label: 'Home', href: '/'}, {label: 'All Games'}]} />
-			<h1>Games List</h1>
-			{games.length === 0 ? (
-				<p>No games found</p>
-			) : (
-				<>
-					<ul>
-						{games.map((game) => {
-							const winner =
-								game.outcome?.state === 'GOOD_WIN'
-									? 'GOOD'
-									: game.outcome?.state
-										? 'EVIL'
-										: 'In Progress';
-							const playerCount = Object.keys(game.players).length;
-							const date = game.timeCreated.toLocaleDateString();
-							const time = game.timeCreated.toLocaleTimeString();
+			<div className={styles.header}>
+				<h1>All Games</h1>
+			</div>
+			<div className={styles.content}>
+				{games.length === 0 ? (
+					<p className={styles.noGames}>No games found</p>
+				) : (
+					<>
+						<div className={styles.gameList}>
+							{games.map((game) => {
+								const playerNames = game.players.map((p) => p.name).join(', ');
+								const playerCount = game.players.length;
+								const date = game.timeCreated.toLocaleDateString();
+								const time = game.timeCreated.toLocaleTimeString();
 
-							return (
-								<li
-									key={game.id}
-									style={{marginBottom: '0.75rem'}}
-								>
-									<div>
-										<span>
-											{date} {time} - {playerCount} players - {winner}
-										</span>
-										<div style={{marginTop: '0.25rem', fontSize: '0.875rem'}}>
-											<a
-												href={`/game/${game.id}`}
-												style={{marginRight: '1rem', color: '#3b82f6'}}
-											>
-												View Timeline
-											</a>
-											<a
-												href={`/game/${game.id}/summary`}
-												style={{color: '#3b82f6'}}
-											>
-												View Summary
-											</a>
+								return (
+									<div
+										key={game.id}
+										className={styles.gameCard}
+									>
+										<div className={styles.gameCardHeader}>
+											{date} {time}
+										</div>
+										<div className={styles.gameCardContent}>
+											<div className={styles.playerInfo}>
+												{playerCount} players: {playerNames}
+											</div>
+											<div className={styles.gameLinks}>
+												<a href={`/game/${game.id}`}>View Timeline</a>
+												<a href={`/game/${game.id}/summary`}>View Summary</a>
+											</div>
 										</div>
 									</div>
-								</li>
-							);
-						})}
-					</ul>
-					<Pagination
-						currentPage={currentPage}
-						totalPages={0}
-						baseUrl="/games"
-						hasNext={!!nextPageToken}
-						hasPrevious={currentPage > 1}
-						nextPageToken={nextPageToken}
-					/>
-				</>
-			)}
+								);
+							})}
+						</div>
+						<div className={styles.pagination}>
+							<Pagination
+								currentPage={currentPage}
+								totalPages={0}
+								baseUrl="/games"
+								hasNext={!!nextPageToken}
+								hasPrevious={currentPage > 1}
+								nextPageToken={nextPageToken}
+							/>
+						</div>
+					</>
+				)}
+			</div>
 		</div>
 	);
 }
