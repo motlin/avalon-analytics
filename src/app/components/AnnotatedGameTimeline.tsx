@@ -392,22 +392,25 @@ const playerGridStyle: React.CSSProperties = {
 const playerRowStyle: React.CSSProperties = {
 	display: 'flex',
 	alignItems: 'center',
-	gap: '4px',
+	gap: '8px',
 };
 
 const iconCellStyle: React.CSSProperties = {
 	width: '24px',
 	textAlign: 'center',
+	flexShrink: 0,
 };
 
 const roleCellStyle: React.CSSProperties = {
-	width: '100px',
+	minWidth: '160px',
 	whiteSpace: 'nowrap',
+	flexShrink: 0,
 };
 
 const nameCellStyle: React.CSSProperties = {
-	width: '120px',
+	minWidth: '100px',
 	fontWeight: '500',
+	flexShrink: 0,
 };
 
 const annotationBoxStyle: React.CSSProperties = {
