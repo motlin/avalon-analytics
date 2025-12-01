@@ -15,7 +15,6 @@ import {
 	getRoleEmoji,
 	isAllGoodTeam,
 	isEvilRole,
-	isGoodRole,
 	isKnownEvil,
 	teamIncludesPlayer,
 	teamIncludesRole,
@@ -314,9 +313,8 @@ export const RiskingEvilLossPredicate: ProposalVotePredicate = {
 	},
 	isWeird: (context) => context.votedYes,
 	isWorthCommentary: (context) => {
-		const voterRole = getPlayerRole(context, context.voterName);
-		// Not weird if good voter is on the team
-		if (teamIncludesPlayer(context, context.voterName) && isGoodRole(voterRole)) {
+		// Not weird if voter is on the team - they're not "off-team"
+		if (teamIncludesPlayer(context, context.voterName)) {
 			return false;
 		}
 		return true;
