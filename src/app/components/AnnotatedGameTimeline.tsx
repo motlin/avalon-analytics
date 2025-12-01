@@ -15,6 +15,17 @@ import {isEvilRole, getPlayerRole, createGameContext} from '../models/annotation
 import {MissionProgressBarComponent} from './MissionProgressBar';
 import {GameConclusionComponent} from './GameConclusion';
 
+/**
+ * Converts a string to title case (e.g., "CRAIG" -> "Craig", "EVIL MINION" -> "Evil Minion")
+ */
+function toTitleCase(text: string): string {
+	return text
+		.toLowerCase()
+		.split(' ')
+		.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+		.join(' ');
+}
+
 interface AnnotatedGameTimelineProps {
 	game: Game;
 	showSecrets?: boolean;
@@ -239,8 +250,12 @@ function PlayerRow({row, showSecrets}: PlayerRowProps) {
 		<div style={playerRowStyle}>
 			<span style={iconCellStyle}>{leaderIcon}</span>
 			<span style={iconCellStyle}>{teamIcon}</span>
-			{showSecrets && <span style={roleCellStyle}>{formatRoleWithEmoji(playerRole)}</span>}
-			<span style={nameCellStyle}>{playerName}</span>
+			{showSecrets && (
+				<span style={roleCellStyle}>
+					{formatRoleWithEmoji(playerRole ? toTitleCase(playerRole) : playerRole)}
+				</span>
+			)}
+			<span style={nameCellStyle}>{toTitleCase(playerName)}</span>
 			<span style={iconCellStyle}>{voteIcon}</span>
 		</div>
 	);
@@ -333,9 +348,9 @@ function MissionVoteResults({missionVotes, team, game, showSecrets}: MissionVote
 							{result.votedSuccess ? '\u2714' : '\u2716'}
 						</span>
 						{showSecrets && result.role && (
-							<span style={missionVoteRoleStyle}>{formatRoleWithEmoji(result.role)}</span>
+							<span style={missionVoteRoleStyle}>{formatRoleWithEmoji(toTitleCase(result.role))}</span>
 						)}
-						<span style={missionVoteNameStyle}>{result.playerName}</span>
+						<span style={missionVoteNameStyle}>{toTitleCase(result.playerName)}</span>
 						{showSecrets && result.voteType === 'duck' && <span style={duckBadgeStyle}>DUCKED</span>}
 						{showSecrets && result.voteType === 'fail' && result.isEvil && (
 							<span style={failedBadgeStyle}>FAILED</span>
