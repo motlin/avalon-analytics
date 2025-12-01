@@ -11,6 +11,7 @@ import {useState} from 'react';
 import type {Game} from '../models/game';
 import type {AnnotatedGame, AnnotatedMission, AnnotatedPlayerRow, AnnotatedProposal} from '../models/annotations';
 import {annotateGame, formatProposalOutcome, formatRoleWithEmoji, formatVoteIndicator} from '../models/gameAnnotator';
+import {isEvilRole, getPlayerRole, createGameContext} from '../models/annotations';
 import {MissionProgressBarComponent} from './MissionProgressBar';
 import {GameConclusionComponent} from './GameConclusion';
 
@@ -64,6 +65,7 @@ export function AnnotatedGameTimelineComponent({
 						annotatedMission={annotatedMission}
 						showSecrets={showSecrets}
 						totalPlayers={game.players.length}
+						game={game}
 					/>
 				))}
 
@@ -93,10 +95,12 @@ interface MissionSectionProps {
 	annotatedMission: AnnotatedMission;
 	showSecrets: boolean;
 	totalPlayers: number;
+	game: Game;
 }
 
-function MissionSection({annotatedMission, showSecrets, totalPlayers}: MissionSectionProps) {
+function MissionSection({annotatedMission, showSecrets, totalPlayers, game}: MissionSectionProps) {
 	const {mission, missionNumber, state, failCount, proposals, missionVoteAnnotations} = annotatedMission;
+	const missionVotes = game.outcome?.votes?.[missionNumber - 1];
 	const isDoubleFail = mission.failsRequired === 2;
 	const missionNotPlayed = state === 'PENDING' && proposals.length === 0;
 
@@ -136,6 +140,15 @@ function MissionSection({annotatedMission, showSecrets, totalPlayers}: MissionSe
 									{state === 'FAIL' && ` (${failCount} fail${failCount !== 1 ? 's' : ''})`}
 								</span>
 							</div>
+
+							{missionVotes && mission.team.length > 0 && (
+								<MissionVoteResults
+									missionVotes={missionVotes}
+									team={mission.team}
+									game={game}
+									showSecrets={showSecrets}
+								/>
+							)}
 
 							{proposals.map((annotatedProposal) => (
 								<ProposalSection
@@ -278,6 +291,78 @@ function VoteAnnotations({playerRows}: VoteAnnotationsProps) {
 					</div>
 				)),
 			)}
+		</div>
+	);
+}
+
+// ============================================================================
+// 🎯 Mission Vote Results
+// ============================================================================
+
+interface MissionVoteResultsProps {
+	missionVotes: Record<string, boolean>;
+	team: string[];
+	game: Game;
+	showSecrets: boolean;
+}
+
+function MissionVoteResults({missionVotes, team, game, showSecrets}: MissionVoteResultsProps) {
+	const gameContext = createGameContext(game);
+
+	const voteResults = team.map((playerName) => {
+		const votedSuccess = missionVotes[playerName];
+		const role = getPlayerRole(gameContext, playerName);
+		const isEvil = isEvilRole(role);
+
+		let voteType: 'success' | 'fail' | 'duck' = 'success';
+		if (votedSuccess === false) {
+			voteType = 'fail';
+		} else if (votedSuccess === true && isEvil) {
+			voteType = 'duck';
+		}
+
+		return {
+			playerName,
+			role,
+			isEvil,
+			votedSuccess,
+			voteType,
+		};
+	});
+
+	const successCount = voteResults.filter((v) => v.votedSuccess === true).length;
+	const failCount = voteResults.filter((v) => v.votedSuccess === false).length;
+
+	return (
+		<div style={missionVoteResultsStyle}>
+			<div style={missionVoteSummaryStyle}>
+				<span style={missionVoteCountStyle}>
+					<span style={successVoteIconStyle}>&#x2714;</span> {successCount} Success
+				</span>
+				<span style={missionVoteCountStyle}>
+					<span style={failVoteIconStyle}>&#x2716;</span> {failCount} Fail
+				</span>
+			</div>
+			<div style={missionVoteGridStyle}>
+				{voteResults.map((result) => (
+					<div
+						key={result.playerName}
+						style={missionVoteRowStyle}
+					>
+						<span style={result.votedSuccess ? successVoteIconStyle : failVoteIconStyle}>
+							{result.votedSuccess ? '\u2714' : '\u2716'}
+						</span>
+						{showSecrets && result.role && (
+							<span style={missionVoteRoleStyle}>{formatRoleWithEmoji(result.role)}</span>
+						)}
+						<span style={missionVoteNameStyle}>{result.playerName}</span>
+						{showSecrets && result.voteType === 'duck' && <span style={duckBadgeStyle}>DUCKED</span>}
+						{showSecrets && result.voteType === 'fail' && result.isEvil && (
+							<span style={failedBadgeStyle}>FAILED</span>
+						)}
+					</div>
+				))}
+			</div>
 		</div>
 	);
 }
@@ -475,6 +560,87 @@ const rejectedBadgeStyle: React.CSSProperties = {
 	padding: '2px 6px',
 	borderRadius: '4px',
 	fontSize: '11px',
+};
+
+// Mission vote result styles
+const missionVoteResultsStyle: React.CSSProperties = {
+	backgroundColor: '#f0f9ff',
+	borderRadius: '6px',
+	padding: '12px 16px',
+	marginBottom: '16px',
+	border: '1px solid #bae6fd',
+};
+
+const missionVoteSummaryStyle: React.CSSProperties = {
+	display: 'flex',
+	gap: '16px',
+	marginBottom: '8px',
+	fontWeight: '600',
+	fontSize: '14px',
+};
+
+const missionVoteCountStyle: React.CSSProperties = {
+	display: 'flex',
+	alignItems: 'center',
+	gap: '4px',
+};
+
+const missionVoteGridStyle: React.CSSProperties = {
+	fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
+	fontSize: '13px',
+	lineHeight: '1.8',
+};
+
+const missionVoteRowStyle: React.CSSProperties = {
+	display: 'flex',
+	alignItems: 'center',
+	gap: '8px',
+};
+
+const successVoteIconStyle: React.CSSProperties = {
+	color: '#16a34a',
+	fontWeight: 'bold',
+	width: '20px',
+	textAlign: 'center',
+};
+
+const failVoteIconStyle: React.CSSProperties = {
+	color: '#dc2626',
+	fontWeight: 'bold',
+	width: '20px',
+	textAlign: 'center',
+};
+
+const missionVoteRoleStyle: React.CSSProperties = {
+	minWidth: '160px',
+	whiteSpace: 'nowrap',
+	flexShrink: 0,
+};
+
+const missionVoteNameStyle: React.CSSProperties = {
+	minWidth: '100px',
+	fontWeight: '500',
+	flexShrink: 0,
+};
+
+const duckBadgeStyle: React.CSSProperties = {
+	backgroundColor: '#fef3c7',
+	color: '#92400e',
+	padding: '2px 6px',
+	borderRadius: '4px',
+	fontSize: '10px',
+	fontWeight: '600',
+	marginLeft: '8px',
+};
+
+const failedBadgeStyle: React.CSSProperties = {
+	backgroundColor: '#fee2e2',
+	color: '#991b1b',
+	padding: '2px 6px',
+	borderRadius: '4px',
+	fontSize: '10px',
+	fontWeight: '600',
+	marginLeft: '8px',
 };
 
 export default AnnotatedGameTimelineComponent;
