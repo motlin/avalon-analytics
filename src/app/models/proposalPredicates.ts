@@ -184,6 +184,38 @@ export const MerlinMorganaTwoPredicate: ProposalPredicate = {
 	},
 };
 
+// 🎯 Proposed Two Other Players (not including self)
+export const ProposedTwoOtherPlayersPredicate: ProposalPredicate = {
+	name: 'ProposedTwoOtherPlayersProposalPredicate',
+	isRelevant: (context) => context.mission.teamSize === 2,
+	isWeird: (context) => !teamIncludesPlayer(context, context.proposal.proposer),
+	isWorthCommentary: () => true,
+	getCommentary: (context) => {
+		const role = getLeaderRole(context) ?? 'Unknown';
+		return `${getRoleEmoji(role)}${role} ${context.proposal.proposer} proposed a team with two other players.`;
+	},
+};
+
+// 🎭 Merlin-Morgana-Self Three Person Team
+export const MerlinMorganaSelfPredicate: ProposalPredicate = {
+	name: 'MerlinMorganaSelfProposalPredicate',
+	isRelevant: (context) => {
+		const leaderRole = getLeaderRole(context);
+		return (
+			context.mission.teamSize === 3 &&
+			teamIncludesPlayer(context, context.proposal.proposer) &&
+			leaderRole !== 'Merlin' &&
+			leaderRole !== 'Morgana'
+		);
+	},
+	isWeird: (context) => teamIncludesRole(context, 'Merlin') && teamIncludesRole(context, 'Morgana'),
+	isWorthCommentary: () => true,
+	getCommentary: (context) => {
+		const role = getLeaderRole(context) ?? 'Unknown';
+		return `${getRoleEmoji(role)}${role} ${context.proposal.proposer} proposed a team with both Merlin and Morgana.`;
+	},
+};
+
 // 🚫 Proposal Without Self
 export const ProposalWithoutSelfPredicate: ProposalPredicate = {
 	name: 'ProposalWithoutSelfProposalPredicate',
@@ -252,6 +284,18 @@ export const OneEvilTeamFirstPredicate: ProposalPredicate = {
 	getCommentary: (context) => {
 		const role = getLeaderRole(context) ?? 'Unknown';
 		return `${getRoleEmoji(role)}${role} ${context.proposal.proposer} proposed the first team with just one evil player when 2 fails are required.`;
+	},
+};
+
+// 🎯 One Evil Team when 2 Fails Required (general case, not first)
+export const OneEvilTeamPredicate: ProposalPredicate = {
+	name: 'OneEvilTeamProposalPredicate',
+	isRelevant: (context) => context.mission.failsRequired === 2,
+	isWeird: (context) => countSeenEvilOnTeam(context) === 1,
+	isWorthCommentary: (context) => !OneEvilTeamFirstPredicate.isRelevant(context),
+	getCommentary: (context) => {
+		const role = getLeaderRole(context) ?? 'Unknown';
+		return `${getRoleEmoji(role)}${role} ${context.proposal.proposer} proposed a team with just one evil player when 2 fails are required.`;
 	},
 };
 
@@ -344,10 +388,13 @@ export const PROPOSAL_PREDICATES: ProposalPredicate[] = [
 	MerlinProposingMorganaPredicate,
 	ProposedMerlinPredicate,
 	MerlinMorganaTwoPredicate,
+	MerlinMorganaSelfPredicate,
+	ProposedTwoOtherPlayersPredicate,
 	AllGoodTeamWithoutSelfPredicate,
 	ProposalWithoutSelfPredicate,
 	RiskingLossPredicate,
 	OneEvilTeamFirstPredicate,
+	OneEvilTeamPredicate,
 	SameTeamPredicate,
 	TooManyEvilPlayersPredicate,
 	IsHammerPredicate,
