@@ -25,49 +25,50 @@ export type RoleType =
 	| 'Unknown';
 
 export const ROLE_EMOJI: Record<string, string> = {
-	Merlin: '🧙',
-	Percival: '🧔',
-	Loyal: '😇',
-	'Loyal Follower': '😇',
-	Good: '😇',
-	Morgana: '😈',
-	Assassin: '😈',
-	Oberon: '👻',
-	Mordred: '🦹',
-	Evil: '😈',
-	'Evil Minion': '😈',
-	Unknown: '❓',
+	merlin: '🧙',
+	percival: '🧔',
+	loyal: '😇',
+	'loyal follower': '😇',
+	good: '😇',
+	morgana: '😈',
+	assassin: '😈',
+	oberon: '😈',
+	mordred: '😈',
+	evil: '😈',
+	'evil minion': '😈',
+	'minion of mordred': '😈',
+	unknown: '❓',
 };
 
 export function getRoleEmoji(role: string | undefined): string {
-	if (!role) return ROLE_EMOJI.Unknown;
-	return ROLE_EMOJI[role] ?? ROLE_EMOJI.Unknown;
+	if (!role) return ROLE_EMOJI.unknown;
+	return ROLE_EMOJI[role.toLowerCase()] ?? ROLE_EMOJI.unknown;
 }
 
 export function isEvilRole(role: string | undefined): boolean {
 	if (!role) return false;
-	const evilRoles = ['Morgana', 'Assassin', 'Oberon', 'Mordred', 'Evil', 'Evil Minion'];
-	return evilRoles.includes(role);
+	const evilRoles = ['morgana', 'assassin', 'oberon', 'mordred', 'evil', 'evil minion', 'minion of mordred'];
+	return evilRoles.includes(role.toLowerCase());
 }
 
 export function isGoodRole(role: string | undefined): boolean {
 	if (!role) return false;
-	const goodRoles = ['Merlin', 'Percival', 'Loyal', 'Loyal Follower', 'Good'];
-	return goodRoles.includes(role);
+	const goodRoles = ['merlin', 'percival', 'loyal', 'loyal follower', 'good'];
+	return goodRoles.includes(role.toLowerCase());
 }
 
 export function isKnownEvil(role: string | undefined): boolean {
 	if (!role) return false;
 	// Oberon is evil but not known to other evil players
-	const knownEvilRoles = ['Morgana', 'Assassin', 'Mordred', 'Evil', 'Evil Minion'];
-	return knownEvilRoles.includes(role);
+	const knownEvilRoles = ['morgana', 'assassin', 'mordred', 'evil', 'evil minion', 'minion of mordred'];
+	return knownEvilRoles.includes(role.toLowerCase());
 }
 
 export function isSeenEvil(role: string | undefined): boolean {
 	if (!role) return false;
 	// Mordred is not seen by Merlin
-	const seenEvilRoles = ['Morgana', 'Assassin', 'Oberon', 'Evil', 'Evil Minion'];
-	return seenEvilRoles.includes(role);
+	const seenEvilRoles = ['morgana', 'assassin', 'oberon', 'evil', 'evil minion', 'minion of mordred'];
+	return seenEvilRoles.includes(role.toLowerCase());
 }
 
 // ============================================================================
