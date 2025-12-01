@@ -21,6 +21,17 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
-    rollupOptions: {},
+    rollupOptions: {
+      output: {
+        assetFileNames: (assetInfo) => {
+          // Use stable names for CSS files (no hash)
+          if (assetInfo.name?.endsWith('.css')) {
+            return 'assets/[name][extname]';
+          }
+          // Keep hashes for other assets
+          return 'assets/[name]-[hash][extname]';
+        },
+      },
+    },
   },
 });

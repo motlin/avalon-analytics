@@ -8,6 +8,14 @@ export const Document: React.FC<{children: React.ReactNode}> = ({children}) => (
 			/>
 			<title>Avalon Analytics</title>
 			<link
+				rel="stylesheet"
+				href="/assets/client.css"
+			/>
+			<link
+				rel="stylesheet"
+				href="/assets/worker-entry.css"
+			/>
+			<link
 				rel="modulepreload"
 				href="/src/client.tsx"
 			/>
