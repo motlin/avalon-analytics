@@ -63,7 +63,6 @@ export async function GamesList({request}: RequestInfo) {
 												{playerCount} players: {playerNames}
 											</div>
 											<div className={styles.gameLinks}>
-												<a href={`/game/${game.id}`}>View Timeline</a>
 												<a href={`/game/${game.id}/summary`}>View Summary</a>
 											</div>
 										</div>
