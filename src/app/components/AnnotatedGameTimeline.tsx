@@ -10,7 +10,7 @@
 import {useState} from 'react';
 import type {Game} from '../models/game';
 import type {AnnotatedGame, AnnotatedMission, AnnotatedPlayerRow, AnnotatedProposal} from '../models/annotations';
-import {annotateGame, formatProposalOutcome, formatRoleWithEmoji, formatVoteIndicator} from '../models/gameAnnotator';
+import {annotateGame, formatRoleWithEmoji, formatVoteIndicator} from '../models/gameAnnotator';
 import {isEvilRole, getPlayerRole, createGameContext} from '../models/annotations';
 import {MissionProgressBarComponent} from './MissionProgressBar';
 import {GameConclusionComponent} from './GameConclusion';
@@ -64,7 +64,6 @@ export function AnnotatedGameTimelineComponent({
 						key={annotatedMission.missionNumber}
 						annotatedMission={annotatedMission}
 						showSecrets={showSecrets}
-						totalPlayers={game.players.length}
 						game={game}
 					/>
 				))}
@@ -94,12 +93,11 @@ export function AnnotatedGameTimelineComponent({
 interface MissionSectionProps {
 	annotatedMission: AnnotatedMission;
 	showSecrets: boolean;
-	totalPlayers: number;
 	game: Game;
 }
 
-function MissionSection({annotatedMission, showSecrets, totalPlayers, game}: MissionSectionProps) {
-	const {mission, missionNumber, state, failCount, proposals, missionVoteAnnotations} = annotatedMission;
+function MissionSection({annotatedMission, showSecrets, game}: MissionSectionProps) {
+	const {mission, missionNumber, state, proposals, missionVoteAnnotations} = annotatedMission;
 	const missionVotes = game.outcome?.votes?.[missionNumber - 1];
 	const isDoubleFail = mission.failsRequired === 2;
 	const missionNotPlayed = state === 'PENDING' && proposals.length === 0;
@@ -134,13 +132,6 @@ function MissionSection({annotatedMission, showSecrets, totalPlayers, game}: Mis
 						</div>
 					) : (
 						<>
-							<div style={{marginBottom: '12px'}}>
-								<span style={state === 'SUCCESS' ? successBadgeStyle : failBadgeStyle}>
-									MISSION {state === 'SUCCESS' ? 'PASSED' : 'FAILED'}
-									{state === 'FAIL' && ` (${failCount} fail${failCount !== 1 ? 's' : ''})`}
-								</span>
-							</div>
-
 							{missionVotes && mission.team.length > 0 && (
 								<MissionVoteResults
 									missionVotes={missionVotes}
@@ -155,7 +146,6 @@ function MissionSection({annotatedMission, showSecrets, totalPlayers, game}: Mis
 									key={annotatedProposal.proposalNumber}
 									annotatedProposal={annotatedProposal}
 									showSecrets={showSecrets}
-									totalPlayers={totalPlayers}
 								/>
 							))}
 
@@ -187,25 +177,15 @@ function MissionSection({annotatedMission, showSecrets, totalPlayers, game}: Mis
 interface ProposalSectionProps {
 	annotatedProposal: AnnotatedProposal;
 	showSecrets: boolean;
-	totalPlayers: number;
 }
 
-function ProposalSection({annotatedProposal, showSecrets, totalPlayers}: ProposalSectionProps) {
-	const {proposal, proposalNumber, proposerRole, annotations, playerRows} = annotatedProposal;
-	const yesVotes = proposal.votes.length;
-	const outcomeText = formatProposalOutcome(proposal.state, yesVotes, totalPlayers);
+function ProposalSection({annotatedProposal, showSecrets}: ProposalSectionProps) {
+	const {proposalNumber, annotations, playerRows} = annotatedProposal;
 
 	return (
 		<div style={proposalCardStyle}>
 			<div style={proposalHeaderStyle}>
-				<strong>Proposal {proposalNumber}</strong> by{' '}
-				<span style={{fontWeight: 'bold'}}>
-					{showSecrets && proposerRole ? formatRoleWithEmoji(proposerRole) + ' ' : ''}
-					{proposal.proposer}
-				</span>{' '}
-				<span style={proposal.state === 'APPROVED' ? approvedBadgeStyle : rejectedBadgeStyle}>
-					{outcomeText}
-				</span>
+				<strong>Proposal {proposalNumber}</strong>
 			</div>
 
 			<div style={playerGridStyle}>
@@ -519,24 +499,6 @@ const predicateNameStyle: React.CSSProperties = {
 };
 
 // Badge styles
-const successBadgeStyle: React.CSSProperties = {
-	backgroundColor: '#d4edda',
-	color: '#155724',
-	padding: '4px 8px',
-	borderRadius: '4px',
-	fontSize: '12px',
-	fontWeight: '600',
-};
-
-const failBadgeStyle: React.CSSProperties = {
-	backgroundColor: '#f8d7da',
-	color: '#721c24',
-	padding: '4px 8px',
-	borderRadius: '4px',
-	fontSize: '12px',
-	fontWeight: '600',
-};
-
 const pendingBadgeStyle: React.CSSProperties = {
 	backgroundColor: '#fff3cd',
 	color: '#856404',
@@ -544,22 +506,6 @@ const pendingBadgeStyle: React.CSSProperties = {
 	borderRadius: '4px',
 	fontSize: '12px',
 	fontWeight: '600',
-};
-
-const approvedBadgeStyle: React.CSSProperties = {
-	backgroundColor: '#d1ecf1',
-	color: '#0c5460',
-	padding: '2px 6px',
-	borderRadius: '4px',
-	fontSize: '11px',
-};
-
-const rejectedBadgeStyle: React.CSSProperties = {
-	backgroundColor: '#f5c6cb',
-	color: '#721c24',
-	padding: '2px 6px',
-	borderRadius: '4px',
-	fontSize: '11px',
 };
 
 // Mission vote result styles
