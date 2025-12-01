@@ -1,11 +1,23 @@
 import type {RequestInfo} from 'rwsdk/worker';
 import {Breadcrumb} from '../../components/Breadcrumb';
-import {LocalTimestamp} from '../../components/LocalTimestamp';
 import {Pagination} from '../../components/Pagination';
 import type {Game} from '../../models/game';
 import {getFirestoreRestService} from '../../services/firestore-rest';
 import {gameIngestionService} from '../../services/game-ingestion';
 import styles from './GamesList.module.css';
+
+function formatGameDate(date: Date): {dateString: string; timeString: string} {
+	const year = date.getFullYear();
+	const month = String(date.getMonth() + 1).padStart(2, '0');
+	const day = String(date.getDate()).padStart(2, '0');
+	const dateString = `${year}-${month}-${day}`;
+
+	const hours = String(date.getHours()).padStart(2, '0');
+	const minutes = String(date.getMinutes()).padStart(2, '0');
+	const timeString = `${hours}:${minutes}`;
+
+	return {dateString, timeString};
+}
 
 export async function GamesList({request}: RequestInfo) {
 	let games: Game[] = [];
@@ -48,24 +60,24 @@ export async function GamesList({request}: RequestInfo) {
 							{games.map((game) => {
 								const playerNames = game.players.map((p) => p.name).join(', ');
 								const playerCount = game.players.length;
+								const {dateString, timeString} = formatGameDate(game.timeCreated);
 
 								return (
-									<div
+									<a
 										key={game.id}
+										href={`/game/${game.id}/summary`}
 										className={styles.gameCard}
 									>
 										<div className={styles.gameCardHeader}>
-											<LocalTimestamp isoString={game.timeCreated.toISOString()} />
+											<span className={styles.dateText}>{dateString}</span>
+											<span className={styles.timeText}>{timeString}</span>
 										</div>
 										<div className={styles.gameCardContent}>
 											<div className={styles.playerInfo}>
 												{playerCount} players: {playerNames}
 											</div>
-											<div className={styles.gameLinks}>
-												<a href={`/game/${game.id}/summary`}>View Summary</a>
-											</div>
 										</div>
-									</div>
+									</a>
 								);
 							})}
 						</div>
