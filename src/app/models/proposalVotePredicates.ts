@@ -47,6 +47,41 @@ function isEvilHammerWin(context: ProposalContext): boolean {
 	return context.proposalNumber === 4 && context.proposal.state === 'REJECTED';
 }
 
+interface EarlierProposalInfo {
+	proposal: ProposalContext['proposal'];
+	missionNumber: number;
+	proposalNumber: number;
+}
+
+function getEarlierProposalWithSameTeam(context: ProposalVoteContext): EarlierProposalInfo | null {
+	const currentTeamSorted = [...context.proposal.team].sort();
+
+	// Search all previous proposals in reverse order (most recent first)
+	for (let missionIndex = context.missionNumber; missionIndex >= 0; missionIndex--) {
+		const mission = context.game.missions[missionIndex];
+		const proposalLimit =
+			missionIndex === context.missionNumber ? context.proposalNumber : mission.proposals.length;
+
+		for (let proposalIndex = proposalLimit - 1; proposalIndex >= 0; proposalIndex--) {
+			const proposal = mission.proposals[proposalIndex];
+			const proposalTeamSorted = [...proposal.team].sort();
+
+			if (
+				currentTeamSorted.length === proposalTeamSorted.length &&
+				currentTeamSorted.every((name, index) => name === proposalTeamSorted[index])
+			) {
+				return {
+					proposal,
+					missionNumber: missionIndex,
+					proposalNumber: proposalIndex,
+				};
+			}
+		}
+	}
+
+	return null;
+}
+
 // ============================================================================
 // 📋 Proposal Vote Predicates
 // ============================================================================
@@ -292,6 +327,71 @@ export const EvilVotedAgainstEvilPredicate: ProposalVotePredicate = {
 	},
 };
 
+// 🗳️ Approve When Next Leader
+export const ApproveWhenNextLeaderProposalVotePredicate: ProposalVotePredicate = {
+	name: 'ApproveWhenNextLeaderProposalVotePredicate',
+	isRelevant: (context) => {
+		if (isHammer(context)) return false;
+
+		const playerNames = context.game.players.map((p) => p.name);
+		const numPlayers = playerNames.length;
+		const leaderIndex = playerNames.indexOf(context.proposal.proposer);
+		const voterIndex = playerNames.indexOf(context.voterName);
+
+		if (leaderIndex === -1 || voterIndex === -1) return false;
+
+		// Check if voter is the next leader (one position after current leader, wrapping around)
+		return voterIndex === (leaderIndex + 1) % numPlayers;
+	},
+	isWeird: (context) => context.votedYes,
+	isWorthCommentary: () => true,
+	getCommentary: (context) => {
+		const role = getPlayerRole(context, context.voterName) ?? 'Unknown';
+		return `${getRoleEmoji(role)}${role} ${context.voterName} approved the proposal when they are the next leader anyway.`;
+	},
+};
+
+// 🗳️ On Proposal But Didn't Vote For It (early game)
+export const OnProposalButDidntVoteForItEarlyGameProposalVotePredicate: ProposalVotePredicate = {
+	name: 'OnProposalButDidntVoteForItEarlyGameProposalVotePredicate',
+	isRelevant: (context) => {
+		// Early game: proposals 1-3 (0-indexed: 0-2), missions 1-2 (0-indexed: 0-1)
+		if (context.proposalNumber > 2) return false;
+		if (context.missionNumber >= 2) return false;
+		if (!teamIncludesPlayer(context, context.voterName)) return false;
+		// Leader must also be on the team
+		return teamIncludesPlayer(context, context.proposal.proposer);
+	},
+	isWeird: (context) => !context.votedYes,
+	isWorthCommentary: () => false, // Track but don't comment on every one
+	getCommentary: (context) => {
+		const role = getPlayerRole(context, context.voterName) ?? 'Unknown';
+		return `${getRoleEmoji(role)}${role} ${context.voterName} voted against an early proposal that included them.`;
+	},
+};
+
+// 🔄 Switched Vote From Identical Earlier Proposal
+export const SwitchedVoteProposalVotePredicate: ProposalVotePredicate = {
+	name: 'SwitchedVoteProposalVotePredicate',
+	isRelevant: (context) => {
+		if (isHammer(context)) return false;
+		return getEarlierProposalWithSameTeam(context) !== null;
+	},
+	isWeird: (context) => {
+		const earlierProposal = getEarlierProposalWithSameTeam(context);
+		if (!earlierProposal) return false;
+		const earlierVotedYes = earlierProposal.proposal.votes.includes(context.voterName);
+		return earlierVotedYes !== context.votedYes;
+	},
+	isWorthCommentary: () => true,
+	getCommentary: (context) => {
+		const role = getPlayerRole(context, context.voterName) ?? 'Unknown';
+		const earlierProposal = getEarlierProposalWithSameTeam(context);
+		if (!earlierProposal) return '';
+		return `${getRoleEmoji(role)}${role} ${context.voterName} switched their vote from an identical earlier proposal on mission ${earlierProposal.missionNumber + 1} proposal ${earlierProposal.proposalNumber + 1}.`;
+	},
+};
+
 // ✅ First All Good Team Vote
 export const FirstAllGoodTeamVotePredicate: ProposalVotePredicate = {
 	name: 'FirstAllGoodTeamVotePredicate',
@@ -348,6 +448,9 @@ export const PROPOSAL_VOTE_PREDICATES: ProposalVotePredicate[] = [
 	OffTeamApproveAllGoodTeamPredicate,
 	OffTeamApproveMaxSizePredicate,
 	EvilVotedAgainstEvilPredicate,
+	ApproveWhenNextLeaderProposalVotePredicate,
+	OnProposalButDidntVoteForItEarlyGameProposalVotePredicate,
+	SwitchedVoteProposalVotePredicate,
 	FirstAllGoodTeamVotePredicate,
 ];
 
