@@ -126,10 +126,6 @@ function MissionSection({annotatedMission, showSecrets, game}: MissionSectionPro
 						Mission {missionNumber}
 						{isDoubleFail ? ' \u26A1' : ''}
 					</h4>
-					<p className={styles.missionLabelInfo}>{mission.teamSize} players</p>
-					<p className={`${styles.missionLabelInfo} ${isDoubleFail ? styles.missionLabelInfoHighlight : ''}`}>
-						{mission.failsRequired} fail{mission.failsRequired > 1 ? 's' : ''} required
-					</p>
 				</div>
 			</div>
 

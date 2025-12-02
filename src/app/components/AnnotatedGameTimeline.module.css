@@ -109,17 +109,6 @@
 	margin-bottom: 4px;
 }
 
-.missionLabelInfo {
-	font-size: 14px;
-	color: #6b7280;
-	margin-bottom: 2px;
-}
-
-.missionLabelInfoHighlight {
-	color: #7c3aed;
-	font-weight: 600;
-}
-
 .missionContent {
 	flex: 1;
 	padding: 16px;
