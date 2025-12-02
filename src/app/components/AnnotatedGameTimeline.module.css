@@ -184,6 +184,13 @@
 	background-color: bisque;
 }
 
+.statusCell {
+	min-width: 2em;
+	text-align: center;
+	font-size: 1.2em;
+	padding: 0 4px;
+}
+
 .proposalCell {
 	text-align: center;
 	min-width: 2em;
@@ -191,7 +198,7 @@
 }
 
 .nameCell {
-	border-left: 2px solid;
+	border-left: 2px solid rgba(0, 0, 0, 0.3);
 	min-width: 100px;
 	font-weight: 500;
 	flex-shrink: 0;
@@ -200,7 +207,7 @@
 }
 
 .roleCell {
-	border-right: 2px solid;
+	border-right: 2px solid rgba(0, 0, 0, 0.3);
 	min-width: 160px;
 	white-space: nowrap;
 	flex-shrink: 0;
@@ -209,7 +216,7 @@
 }
 
 .missionResultCell {
-	border-right: 2px solid;
+	border-right: 2px solid rgba(0, 0, 0, 0.3);
 	text-align: center;
 	padding: 0 4px;
 	margin-left: auto;

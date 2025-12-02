@@ -253,6 +253,7 @@ export interface AnnotatedPlayerRow {
 	playerName: string;
 	playerRole?: string;
 	isLeader: boolean;
+	isHammer: boolean;
 	isOnTeam: boolean;
 	votedYes: boolean;
 	voteAnnotations: Annotation[];

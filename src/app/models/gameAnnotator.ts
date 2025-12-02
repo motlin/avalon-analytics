@@ -93,8 +93,12 @@ function annotateProposal(
 
 function buildPlayerRows(context: ProposalContext): AnnotatedPlayerRow[] {
 	const rows: AnnotatedPlayerRow[] = [];
+	const players = context.game.players;
+	const leaderIndex = players.findIndex((p) => p.name === context.proposal.proposer);
+	const hammerIndex = (leaderIndex + 4) % players.length;
+	const hammerName = players[hammerIndex].name;
 
-	for (const player of context.game.players) {
+	for (const player of players) {
 		const votedYes = context.proposal.votes.includes(player.name);
 
 		const voteContext: ProposalVoteContext = {
@@ -109,6 +113,7 @@ function buildPlayerRows(context: ProposalContext): AnnotatedPlayerRow[] {
 			playerName: player.name,
 			playerRole: getPlayerRole(context, player.name),
 			isLeader: context.proposal.proposer === player.name,
+			isHammer: player.name === hammerName,
 			isOnTeam: context.proposal.team.includes(player.name),
 			votedYes,
 			voteAnnotations,

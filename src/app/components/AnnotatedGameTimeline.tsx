@@ -10,7 +10,7 @@
 import {useState} from 'react';
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faCheckCircle, faTimesCircle, faCircle} from '@fortawesome/free-solid-svg-icons';
+import {faCheckCircle, faTimesCircle, faCrown, faHammer} from '@fortawesome/free-solid-svg-icons';
 import {faThumbsUp, faThumbsDown, faCircle as faCircleRegular} from '@fortawesome/free-regular-svg-icons';
 import type {Game} from '../models/game';
 import type {AnnotatedMission, AnnotatedPlayerRow, AnnotatedProposal} from '../models/annotations';
@@ -203,6 +203,7 @@ function ProposalSection({annotatedProposal, showSecrets, missionVotes, team}: P
 							showSecrets={showSecrets}
 							isEven={index % 2 === 0}
 							missionVote={missionVote}
+							proposalNumber={proposalNumber}
 						/>
 					);
 				})}
@@ -244,11 +245,35 @@ interface MissionVote {
 	votedSuccess: boolean | undefined;
 }
 
-function PlayerRow({row, showSecrets, isEven, missionVote}: PlayerRowProps & {missionVote?: MissionVote}) {
-	const {playerName, playerRole, isLeader, isOnTeam, votedYes} = row;
+function PlayerRow({
+	row,
+	showSecrets,
+	isEven,
+	missionVote,
+	proposalNumber,
+}: PlayerRowProps & {missionVote?: MissionVote; proposalNumber: number}) {
+	const {playerName, playerRole, isLeader, isHammer, isOnTeam, votedYes} = row;
+	const crownColor = proposalNumber < 5 ? '#fcfc00' : '#cc0808';
 
 	return (
 		<div className={`${styles.playerRow} ${isEven ? styles.playerRowEven : styles.playerRowOdd}`}>
+			<span className={styles.statusCell}>
+				{isLeader && (
+					<span className="fa-layers fa-fw">
+						<FontAwesomeIcon
+							icon={faCrown}
+							color={crownColor}
+						/>
+						<span
+							className="fa-layers-text"
+							style={{fontSize: '0.5em', fontWeight: 'bold'}}
+						>
+							{proposalNumber}
+						</span>
+					</span>
+				)}
+				{isHammer && !isLeader && <FontAwesomeIcon icon={faHammer} />}
+			</span>
 			<span className={styles.nameCell}>{playerName}</span>
 			{showSecrets && (
 				<span className={styles.roleCell}>
@@ -257,13 +282,6 @@ function PlayerRow({row, showSecrets, isEven, missionVote}: PlayerRowProps & {mi
 			)}
 			<span className={styles.proposalCell}>
 				<span className="fa-layers fa-fw">
-					{isLeader && (
-						<FontAwesomeIcon
-							icon={faCircle}
-							color="yellow"
-							transform="grow-13"
-						/>
-					)}
 					{isOnTeam && (
 						<FontAwesomeIcon
 							icon={faCircleRegular}
