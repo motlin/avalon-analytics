@@ -167,6 +167,18 @@
 /* Player Grid - table-like layout matching MissionSummaryTable */
 .playerGrid {
 	font-size: 13px;
+	position: relative;
+}
+
+/* Continuous vertical bar between icon column and player name */
+.playerGrid::before {
+	content: "";
+	position: absolute;
+	left: calc(2em + 8px + 4px);
+	top: 0;
+	bottom: 0;
+	width: 2px;
+	background-color: rgba(0, 0, 0, 0.3);
 }
 
 .playerRow {
@@ -198,11 +210,10 @@
 }
 
 .nameCell {
-	border-left: 2px solid rgba(0, 0, 0, 0.3);
 	min-width: 100px;
 	font-weight: 500;
 	flex-shrink: 0;
-	padding-left: 8px;
+	padding-left: 10px;
 	padding-right: 8px;
 }
 
