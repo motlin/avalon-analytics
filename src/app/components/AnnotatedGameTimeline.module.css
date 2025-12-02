@@ -167,7 +167,7 @@
 	top: 0;
 	bottom: 0;
 	width: 2px;
-	background-color: rgba(0, 0, 0, 0.3);
+	background-color: black;
 }
 
 .playerRow {
@@ -207,7 +207,7 @@
 }
 
 .roleCell {
-	border-right: 2px solid rgba(0, 0, 0, 0.3);
+	border-right: 2px solid;
 	min-width: 160px;
 	white-space: nowrap;
 	flex-shrink: 0;
@@ -216,9 +216,18 @@
 }
 
 .missionResultCell {
-	border-right: 2px solid rgba(0, 0, 0, 0.3);
+	border-right: 2px solid;
 	text-align: center;
 	padding: 0 4px;
+}
+
+.roleCell + .proposalCell {
+	padding-left: 8px;
+}
+
+.missionResultCell + span {
+	padding-left: 8px;
+	border-left: 2px solid;
 }
 
 /* Annotation Box */
