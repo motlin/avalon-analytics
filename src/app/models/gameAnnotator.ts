@@ -94,8 +94,11 @@ function annotateProposal(
 function buildPlayerRows(context: ProposalContext): AnnotatedPlayerRow[] {
 	const rows: AnnotatedPlayerRow[] = [];
 	const players = context.game.players;
-	const leaderIndex = players.findIndex((p) => p.name === context.proposal.proposer);
-	const hammerIndex = (leaderIndex + 4) % players.length;
+	// Hammer is determined by the FIRST proposal's leader, not the current one
+	// The hammer player is whoever would be leader on proposal 5
+	const firstProposal = context.mission.proposals[0];
+	const firstLeaderIndex = players.findIndex((p) => p.name === firstProposal.proposer);
+	const hammerIndex = (firstLeaderIndex + 4) % players.length;
 	const hammerName = players[hammerIndex].name;
 
 	for (const player of players) {

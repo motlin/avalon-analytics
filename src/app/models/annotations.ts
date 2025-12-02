@@ -213,18 +213,18 @@ export function getMaxTeamSize(game: Game): number {
 }
 
 /**
- * Gets the hammer player (5th leader in rotation) for a given proposal.
- * The hammer is the player who will be leader if all prior proposals are rejected.
+ * Gets the hammer player (5th leader in rotation) for a given mission.
+ * The hammer is the player who will be leader on proposal 5.
+ * This is constant for all proposals within a mission.
  */
 export function getHammerPlayer(context: ProposalContext): string | null {
 	const playerNames = context.game.players.map((p) => p.name);
-	const leaderIndex = playerNames.indexOf(context.proposal.proposer);
-	if (leaderIndex === -1) return null;
+	const firstProposal = context.mission.proposals[0];
+	const firstLeaderIndex = playerNames.indexOf(firstProposal.proposer);
+	if (firstLeaderIndex === -1) return null;
 
-	// Hammer is 4 positions ahead of current leader (since current is position 0)
-	// This means hammer = leader + (4 - proposalNumber) positions ahead
-	const positionsToHammer = 4 - context.proposalNumber;
-	const hammerIndex = (leaderIndex + positionsToHammer) % playerNames.length;
+	// Hammer is 4 positions ahead of the first leader (who would be leader on proposal 5)
+	const hammerIndex = (firstLeaderIndex + 4) % playerNames.length;
 	return playerNames[hammerIndex];
 }
 
