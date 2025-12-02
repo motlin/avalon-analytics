@@ -249,7 +249,7 @@ function PlayerRow({row, showSecrets, isEven, missionVote}: PlayerRowProps & {mi
 
 	return (
 		<div className={`${styles.playerRow} ${isEven ? styles.playerRowEven : styles.playerRowOdd}`}>
-			<span className={styles.nameCell}>{toTitleCase(playerName)}</span>
+			<span className={styles.nameCell}>{playerName}</span>
 			{showSecrets && (
 				<span className={styles.roleCell}>
 					{formatRoleWithEmoji(playerRole ? toTitleCase(playerRole) : playerRole)}
