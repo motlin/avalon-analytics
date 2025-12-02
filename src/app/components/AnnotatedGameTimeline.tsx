@@ -10,7 +10,7 @@
 import {useState} from 'react';
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faCheckCircle, faTimesCircle, faCrown, faHammer} from '@fortawesome/free-solid-svg-icons';
+import {faCheckCircle, faTimesCircle, faCrown, faHammer, faCircle} from '@fortawesome/free-solid-svg-icons';
 import {faThumbsUp, faThumbsDown, faCircle as faCircleRegular} from '@fortawesome/free-regular-svg-icons';
 import type {Game} from '../models/game';
 import type {Annotation, AnnotatedMission, AnnotatedPlayerRow, AnnotatedProposal} from '../models/annotations';
@@ -319,6 +319,15 @@ function PlayerRow({
 			<span className={styles.proposalCell}>
 				<span className={hasVoteAnnotations ? styles.proposalVoteTooltipWrapper : undefined}>
 					<span className="fa-layers fa-fw">
+						{isLeader && (
+							<span className={styles.proposerIcon}>
+								<FontAwesomeIcon
+									icon={faCircle}
+									color="yellow"
+									transform="grow-13"
+								/>
+							</span>
+						)}
 						{isOnTeam && (
 							<FontAwesomeIcon
 								icon={faCircleRegular}

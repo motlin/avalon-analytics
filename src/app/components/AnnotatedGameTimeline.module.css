@@ -373,3 +373,8 @@
 	opacity: 1;
 	transition-delay: 0s;
 }
+
+/* Proposer icon - yellow circle behind thumb icons */
+.proposerIcon {
+	/* Wrapper for the yellow proposer indicator circle */
+}
