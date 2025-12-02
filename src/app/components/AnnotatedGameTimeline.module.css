@@ -190,6 +190,9 @@
 	text-align: center;
 	font-size: 1.2em;
 	padding: 0 4px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 .proposalCell {
