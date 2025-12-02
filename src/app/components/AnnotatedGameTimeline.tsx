@@ -277,7 +277,11 @@ function PlayerRow({
 		<div className={`${styles.playerRow} ${isEven ? styles.playerRowEven : styles.playerRowOdd}`}>
 			<span className={styles.statusCell}>
 				{isLeader && (
-					<span className={hasProposalAnnotations ? styles.crownTooltipWrapper : undefined}>
+					<span
+						className={
+							hasProposalAnnotations ? `${styles.crownTooltipWrapper} ${styles.hasAnnotation}` : undefined
+						}
+					>
 						<span className="fa-layers fa-fw">
 							<FontAwesomeIcon
 								icon={faCrown}
@@ -317,7 +321,11 @@ function PlayerRow({
 				</span>
 			)}
 			<span className={styles.proposalCell}>
-				<span className={hasVoteAnnotations ? styles.proposalVoteTooltipWrapper : undefined}>
+				<span
+					className={
+						hasVoteAnnotations ? `${styles.proposalVoteTooltipWrapper} ${styles.hasAnnotation}` : undefined
+					}
+				>
 					<span className="fa-layers fa-fw">
 						{isLeader && (
 							<span className={styles.proposerIcon}>
@@ -362,7 +370,13 @@ function PlayerRow({
 			</span>
 			{missionVote && missionVote.votedSuccess !== undefined && (
 				<span className={styles.missionResultCell}>
-					<span className={hasMissionVoteAnnotations ? styles.missionVoteTooltipWrapper : undefined}>
+					<span
+						className={
+							hasMissionVoteAnnotations
+								? `${styles.missionVoteTooltipWrapper} ${styles.hasAnnotation}`
+								: undefined
+						}
+					>
 						<span className="fa-layers fa-fw">
 							<FontAwesomeIcon
 								icon={missionVote.votedSuccess ? faCheckCircle : faTimesCircle}

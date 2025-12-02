@@ -380,3 +380,21 @@
 .proposerIcon {
 	/* Wrapper for the yellow proposer indicator circle */
 }
+
+/* Annotation indicator - small dot to show hover notes are available */
+.hasAnnotation {
+	position: relative;
+}
+
+.hasAnnotation::after {
+	content: "";
+	position: absolute;
+	top: -2px;
+	right: -2px;
+	width: 6px;
+	height: 6px;
+	background-color: #f59e0b;
+	border-radius: 50%;
+	border: 1px solid #fef3c7;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
