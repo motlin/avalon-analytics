@@ -148,7 +148,7 @@ export const EarlyOffTeamApprovalPredicate: ProposalVotePredicate = {
 	isWorthCommentary: () => false, // Track but don't comment on every one
 	getCommentary: (context) => {
 		const role = getPlayerRole(context, context.voterName) ?? 'Unknown';
-		return `${getRoleEmoji(role)}${role} ${context.voterName} voted for a team that did not include them.`;
+		return `${getRoleEmoji(role)} ${role} ${context.voterName} voted for a team that did not include them.`;
 	},
 };
 
@@ -160,7 +160,7 @@ export const LateOffTeamApprovalPredicate: ProposalVotePredicate = {
 	isWorthCommentary: () => false, // Common enough to not comment
 	getCommentary: (context) => {
 		const role = getPlayerRole(context, context.voterName) ?? 'Unknown';
-		return `${getRoleEmoji(role)}${role} ${context.voterName} voted for a team that did not include them.`;
+		return `${getRoleEmoji(role)} ${role} ${context.voterName} voted for a team that did not include them.`;
 	},
 };
 
@@ -175,7 +175,7 @@ export const ProtestVotePredicate: ProposalVotePredicate = {
 	isWorthCommentary: (context) => isAllGoodTeam(context),
 	getCommentary: (context) => {
 		const role = getPlayerRole(context, context.voterName) ?? 'Unknown';
-		return `${getRoleEmoji(role)}${role} ${context.voterName} protest voted (voted no on the 5th proposal).`;
+		return `${getRoleEmoji(role)} ${role} ${context.voterName} protest voted (voted no on the 5th proposal).`;
 	},
 };
 
@@ -196,7 +196,7 @@ export const ProtestVoteEvilTeamPredicate: ProposalVotePredicate = {
 	isWorthCommentary: () => true,
 	getCommentary: (context) => {
 		const role = getPlayerRole(context, context.voterName) ?? 'Unknown';
-		return `${getRoleEmoji(role)}${role} ${context.voterName} protest voted when the team included seen evil players.`;
+		return `${getRoleEmoji(role)} ${role} ${context.voterName} protest voted when the team included seen evil players.`;
 	},
 };
 
@@ -217,7 +217,7 @@ export const ProtestVoteGoodTeamPredicate: ProposalVotePredicate = {
 	isWorthCommentary: () => true,
 	getCommentary: (context) => {
 		const role = getPlayerRole(context, context.voterName) ?? 'Unknown';
-		return `${getRoleEmoji(role)}${role} ${context.voterName} protest voted when the team did not include seen evil players.`;
+		return `${getRoleEmoji(role)} ${role} ${context.voterName} protest voted when the team did not include seen evil players.`;
 	},
 };
 
@@ -233,7 +233,7 @@ export const MerlinVotedForMorganaPredicate: ProposalVotePredicate = {
 	isWeird: (context) => context.votedYes,
 	isWorthCommentary: () => true,
 	getCommentary: (context) => {
-		return `🧙Merlin ${context.voterName} voted for a team including Morgana.`;
+		return `🧙 Merlin ${context.voterName} voted for a team including Morgana.`;
 	},
 };
 
@@ -249,7 +249,7 @@ export const MorganaVotedForMerlinPredicate: ProposalVotePredicate = {
 	isWeird: (context) => context.votedYes,
 	isWorthCommentary: () => true,
 	getCommentary: (context) => {
-		return `😈Morgana ${context.voterName} voted for a team including Merlin.`;
+		return `😈 Morgana ${context.voterName} voted for a team including Merlin.`;
 	},
 };
 
@@ -265,7 +265,7 @@ export const PercivalVotedForBothPredicate: ProposalVotePredicate = {
 	isWeird: (context) => context.votedYes,
 	isWorthCommentary: () => true,
 	getCommentary: (context) => {
-		return `🧔Percival ${context.voterName} voted for a team including both Merlin and Morgana.`;
+		return `🧔 Percival ${context.voterName} voted for a team including both Merlin and Morgana.`;
 	},
 };
 
@@ -277,7 +277,7 @@ export const VoteAgainstOwnProposalPredicate: ProposalVotePredicate = {
 	isWorthCommentary: () => true,
 	getCommentary: (context) => {
 		const role = getPlayerRole(context, context.voterName) ?? 'Unknown';
-		return `${getRoleEmoji(role)}${role} ${context.voterName} voted against their own proposal.`;
+		return `${getRoleEmoji(role)} ${role} ${context.voterName} voted against their own proposal.`;
 	},
 };
 
@@ -301,7 +301,7 @@ export const RiskingGoodLossPredicate: ProposalVotePredicate = {
 		const role = getPlayerRole(context, context.voterName) ?? 'Unknown';
 		const evilCount = countSeenEvilOnTeam(context);
 		const failsRequired = context.mission.failsRequired;
-		return `${getRoleEmoji(role)}${role} ${context.voterName} risked losing by voting for a team with ${evilCount} seen evil players when ${failsRequired} fails were required and two missions had already failed.`;
+		return `${getRoleEmoji(role)} ${role} ${context.voterName} risked losing by voting for a team with ${evilCount} seen evil players when ${failsRequired} fails were required and two missions had already failed.`;
 	},
 };
 
@@ -323,7 +323,7 @@ export const RiskingEvilLossPredicate: ProposalVotePredicate = {
 	},
 	getCommentary: (context) => {
 		const role = getPlayerRole(context, context.voterName) ?? 'Unknown';
-		return `${getRoleEmoji(role)}${role} ${context.voterName} off-team approved a team that would win for good.`;
+		return `${getRoleEmoji(role)} ${role} ${context.voterName} off-team approved a team that would win for good.`;
 	},
 };
 
@@ -339,7 +339,7 @@ export const OffTeamApproveAllGoodTeamPredicate: ProposalVotePredicate = {
 	isWorthCommentary: () => true,
 	getCommentary: (context) => {
 		const role = getPlayerRole(context, context.voterName) ?? 'Unknown';
-		return `${getRoleEmoji(role)}${role} ${context.voterName} approved an all good team that did not include them.`;
+		return `${getRoleEmoji(role)} ${role} ${context.voterName} approved an all good team that did not include them.`;
 	},
 };
 
@@ -355,7 +355,7 @@ export const OffTeamApproveMaxSizePredicate: ProposalVotePredicate = {
 	isWorthCommentary: () => true,
 	getCommentary: (context) => {
 		const role = getPlayerRole(context, context.voterName) ?? 'Unknown';
-		return `${getRoleEmoji(role)}${role} ${context.voterName} approved a proposal of max size that did not include them.`;
+		return `${getRoleEmoji(role)} ${role} ${context.voterName} approved a proposal of max size that did not include them.`;
 	},
 };
 
@@ -375,7 +375,7 @@ export const EvilVotedAgainstEvilPredicate: ProposalVotePredicate = {
 	isWorthCommentary: (context) => context.proposal.proposer !== context.voterName,
 	getCommentary: (context) => {
 		const role = getPlayerRole(context, context.voterName) ?? 'Unknown';
-		return `${getRoleEmoji(role)}${role} ${context.voterName} voted against a proposal that included two known evil players.`;
+		return `${getRoleEmoji(role)} ${role} ${context.voterName} voted against a proposal that included two known evil players.`;
 	},
 };
 
@@ -399,7 +399,7 @@ export const ApproveWhenNextLeaderProposalVotePredicate: ProposalVotePredicate =
 	isWorthCommentary: () => true,
 	getCommentary: (context) => {
 		const role = getPlayerRole(context, context.voterName) ?? 'Unknown';
-		return `${getRoleEmoji(role)}${role} ${context.voterName} approved the proposal when they are the next leader anyway.`;
+		return `${getRoleEmoji(role)} ${role} ${context.voterName} approved the proposal when they are the next leader anyway.`;
 	},
 };
 
@@ -418,7 +418,7 @@ export const OnProposalButDidntVoteForItEarlyGameProposalVotePredicate: Proposal
 	isWorthCommentary: () => false, // Track but don't comment on every one
 	getCommentary: (context) => {
 		const role = getPlayerRole(context, context.voterName) ?? 'Unknown';
-		return `${getRoleEmoji(role)}${role} ${context.voterName} voted against an early proposal that included them.`;
+		return `${getRoleEmoji(role)} ${role} ${context.voterName} voted against an early proposal that included them.`;
 	},
 };
 
@@ -440,7 +440,7 @@ export const SwitchedVoteProposalVotePredicate: ProposalVotePredicate = {
 		const role = getPlayerRole(context, context.voterName) ?? 'Unknown';
 		const earlierProposal = getEarlierProposalWithSameTeam(context);
 		if (!earlierProposal) return '';
-		return `${getRoleEmoji(role)}${role} ${context.voterName} switched their vote from an identical earlier proposal on mission ${earlierProposal.missionNumber + 1} proposal ${earlierProposal.proposalNumber + 1}.`;
+		return `${getRoleEmoji(role)} ${role} ${context.voterName} switched their vote from an identical earlier proposal on mission ${earlierProposal.missionNumber + 1} proposal ${earlierProposal.proposalNumber + 1}.`;
 	},
 };
 
@@ -468,7 +468,7 @@ export const TrustedMoreThanMaxTeamSizePlayersOnLastMissionProposalVotePredicate
 		const role = getPlayerRole(context, context.voterName) ?? 'Unknown';
 		const trustedPlayers = getTrustedPlayersOnMission(context);
 		const trustedNames = trustedPlayers.join(', ');
-		return `${getRoleEmoji(role)}${role} ${context.voterName} trusted ${trustedPlayers.length} players on mission ${context.missionNumber + 1}. Trusted: ${trustedNames}.`;
+		return `${getRoleEmoji(role)} ${role} ${context.voterName} trusted ${trustedPlayers.length} players on mission ${context.missionNumber + 1}. Trusted: ${trustedNames}.`;
 	},
 };
 
@@ -487,7 +487,7 @@ export const OffTeamApproveOneEvilProposalVotePredicate: ProposalVotePredicate =
 	isWorthCommentary: () => true,
 	getCommentary: (context) => {
 		const role = getPlayerRole(context, context.voterName) ?? 'Unknown';
-		return `${getRoleEmoji(role)}${role} ${context.voterName} off-team approved a proposal with 1 seen evil player when two fails are required.`;
+		return `${getRoleEmoji(role)} ${role} ${context.voterName} off-team approved a proposal with 1 seen evil player when two fails are required.`;
 	},
 };
 
@@ -524,7 +524,7 @@ export const FirstAllGoodTeamVotePredicate: ProposalVotePredicate = {
 	isWorthCommentary: () => true,
 	getCommentary: (context) => {
 		const role = getPlayerRole(context, context.voterName) ?? 'Unknown';
-		return `${getRoleEmoji(role)}${role} ${context.voterName} voted for the first all good team.`;
+		return `${getRoleEmoji(role)} ${role} ${context.voterName} voted for the first all good team.`;
 	},
 };
 
@@ -547,7 +547,7 @@ export const ApprovingProposalWithTeammatesFromFailedMissionProposalVotePredicat
 		const role = getPlayerRole(context, context.voterName) ?? 'Unknown';
 		const failedMissions = getPreviousFailedMissionsWithSamePlayers(context);
 		const missionDetails = failedMissions.map((m) => `Mission ${m.missionNumber + 1}`).join(', ');
-		return `${getRoleEmoji(role)}${role} ${context.voterName} approved a proposal with the same players as a previous failed mission. ${missionDetails}.`;
+		return `${getRoleEmoji(role)} ${role} ${context.voterName} approved a proposal with the same players as a previous failed mission. ${missionDetails}.`;
 	},
 };
 
@@ -612,7 +612,7 @@ export const DidNotProtestVoteWhenGoodWasAboutToWinProposalVotePredicate: Propos
 	isWorthCommentary: () => true,
 	getCommentary: (context) => {
 		const role = getPlayerRole(context, context.voterName) ?? 'Unknown';
-		return `${getRoleEmoji(role)}${role} ${context.voterName} did not protest vote when good was about to win.`;
+		return `${getRoleEmoji(role)} ${role} ${context.voterName} did not protest vote when good was about to win.`;
 	},
 };
 
@@ -658,7 +658,7 @@ export const FirstAllGoodTeamOfMaxSizeVotePredicate: ProposalVotePredicate = {
 	isWorthCommentary: () => true,
 	getCommentary: (context) => {
 		const role = getPlayerRole(context, context.voterName) ?? 'Unknown';
-		return `${getRoleEmoji(role)}${role} ${context.voterName} voted for an all good team of max size.`;
+		return `${getRoleEmoji(role)} ${role} ${context.voterName} voted for an all good team of max size.`;
 	},
 };
 

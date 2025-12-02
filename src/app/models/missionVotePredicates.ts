@@ -77,7 +77,7 @@ export const DuckingWhenGoodWonTwoPredicate: MissionVotePredicate = {
 	isWorthCommentary: () => true,
 	getCommentary: (context) => {
 		const role = getPlayerRole(context, context.voterName) ?? 'Unknown';
-		return `${getRoleEmoji(role)}${role} ${context.voterName} ducked when good already won two missions.`;
+		return `${getRoleEmoji(role)} ${role} ${context.voterName} ducked when good already won two missions.`;
 	},
 };
 
@@ -92,7 +92,7 @@ export const DuckingWhenEvilWonTwoPredicate: MissionVotePredicate = {
 	isWorthCommentary: () => true,
 	getCommentary: (context) => {
 		const role = getPlayerRole(context, context.voterName) ?? 'Unknown';
-		return `${getRoleEmoji(role)}${role} ${context.voterName} ducked when evil already won two missions.`;
+		return `${getRoleEmoji(role)} ${role} ${context.voterName} ducked when evil already won two missions.`;
 	},
 };
 
@@ -113,7 +113,7 @@ export const OberonDuckedPredicate: MissionVotePredicate = {
 		return !duckingGood && !duckingEvil;
 	},
 	getCommentary: (context) => {
-		return `👻Oberon ${context.voterName} ducked (did not fail a mission).`;
+		return `👻 Oberon ${context.voterName} ducked (did not fail a mission).`;
 	},
 };
 
@@ -135,7 +135,7 @@ export const EvilDuckedPredicate: MissionVotePredicate = {
 	},
 	getCommentary: (context) => {
 		const role = getPlayerRole(context, context.voterName) ?? 'Unknown';
-		return `${getRoleEmoji(role)}${role} ${context.voterName} ducked.`;
+		return `${getRoleEmoji(role)} ${role} ${context.voterName} ducked.`;
 	},
 };
 
@@ -170,7 +170,7 @@ export const FailureToCoordinatePredicate: MissionVotePredicate = {
 		const role = getPlayerRole(context, context.voterName) ?? 'Unknown';
 		const knownEvilFails = getKnownEvilFailVotes(context);
 		const failsRequired = context.mission.failsRequired;
-		return `${getRoleEmoji(role)}${role} ${context.voterName} failed to coordinate. ${knownEvilFails.length} known evil players voted fail, but only ${failsRequired} fails were required.`;
+		return `${getRoleEmoji(role)} ${role} ${context.voterName} failed to coordinate. ${knownEvilFails.length} known evil players voted fail, but only ${failsRequired} fails were required.`;
 	},
 };
 
@@ -207,7 +207,7 @@ export const EvilNotClosestFailedPredicate: MissionVotePredicate = {
 	isWorthCommentary: () => true,
 	getCommentary: (context) => {
 		const role = getPlayerRole(context, context.voterName) ?? 'Unknown';
-		return `${getRoleEmoji(role)}${role} ${context.voterName} failed the mission despite not being the evil player closest to the leader.`;
+		return `${getRoleEmoji(role)} ${role} ${context.voterName} failed the mission despite not being the evil player closest to the leader.`;
 	},
 };
 

@@ -211,8 +211,8 @@ function incrementMap(map: Map<string, number>, key: string): void {
 // ============================================================================
 
 export function formatRoleWithEmoji(role: string | undefined): string {
-	if (!role) return '❓Unknown';
-	return `${getRoleEmoji(role)}${role}`;
+	if (!role) return '❓ Unknown';
+	return `${getRoleEmoji(role)} ${role}`;
 }
 
 export function formatTeamIndicator(isLeader: boolean, isOnTeam: boolean): string {

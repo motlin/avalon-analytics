@@ -88,7 +88,7 @@ export const FirstAllGoodTeamPredicate: ProposalPredicate = {
 	isWorthCommentary: () => true,
 	getCommentary: (context) => {
 		const role = getLeaderRole(context) ?? 'Unknown';
-		return `${getRoleEmoji(role)}${role} ${context.proposal.proposer} proposed the first all good team.`;
+		return `${getRoleEmoji(role)} ${role} ${context.proposal.proposer} proposed the first all good team.`;
 	},
 };
 
@@ -109,7 +109,7 @@ export const FirstAllGoodTeamOfMaxSizePredicate: ProposalPredicate = {
 	isWorthCommentary: () => true,
 	getCommentary: (context) => {
 		const role = getLeaderRole(context) ?? 'Unknown';
-		return `${getRoleEmoji(role)}${role} ${context.proposal.proposer} proposed an all good team of max size.`;
+		return `${getRoleEmoji(role)} ${role} ${context.proposal.proposer} proposed an all good team of max size.`;
 	},
 };
 
@@ -120,7 +120,7 @@ export const PercivalProposingMerlinPredicate: ProposalPredicate = {
 	isWeird: (context) => teamIncludesRole(context, 'Merlin') && !teamIncludesRole(context, 'Morgana'),
 	isWorthCommentary: () => true,
 	getCommentary: (context) => {
-		return `🧔Percival ${context.proposal.proposer} proposed Merlin.`;
+		return `🧔 Percival ${context.proposal.proposer} proposed Merlin.`;
 	},
 };
 
@@ -131,7 +131,7 @@ export const PercivalProposingMorganaPredicate: ProposalPredicate = {
 	isWeird: (context) => teamIncludesRole(context, 'Morgana') && !teamIncludesRole(context, 'Merlin'),
 	isWorthCommentary: () => true,
 	getCommentary: (context) => {
-		return `🧔Percival ${context.proposal.proposer} proposed Morgana.`;
+		return `🧔 Percival ${context.proposal.proposer} proposed Morgana.`;
 	},
 };
 
@@ -142,7 +142,7 @@ export const PercivalProposingMerlinAndMorganaPredicate: ProposalPredicate = {
 	isWeird: (context) => teamIncludesRole(context, 'Merlin') && teamIncludesRole(context, 'Morgana'),
 	isWorthCommentary: () => true,
 	getCommentary: (context) => {
-		return `🧔Percival ${context.proposal.proposer} proposed both Merlin and Morgana.`;
+		return `🧔 Percival ${context.proposal.proposer} proposed both Merlin and Morgana.`;
 	},
 };
 
@@ -166,7 +166,7 @@ export const MerlinProposingMorganaPredicate: ProposalPredicate = {
 	},
 	getCommentary: (context) => {
 		const role = getLeaderRole(context) ?? 'Unknown';
-		return `${getRoleEmoji(role)}${role} ${context.proposal.proposer} proposed a team with Morgana.`;
+		return `${getRoleEmoji(role)} ${role} ${context.proposal.proposer} proposed a team with Morgana.`;
 	},
 };
 
@@ -181,7 +181,7 @@ export const ProposedMerlinPredicate: ProposalPredicate = {
 	isWorthCommentary: () => true,
 	getCommentary: (context) => {
 		const role = getLeaderRole(context) ?? 'Unknown';
-		return `${getRoleEmoji(role)}${role} ${context.proposal.proposer} proposed a team with Merlin.`;
+		return `${getRoleEmoji(role)} ${role} ${context.proposal.proposer} proposed a team with Merlin.`;
 	},
 };
 
@@ -193,7 +193,7 @@ export const MerlinMorganaTwoPredicate: ProposalPredicate = {
 	isWorthCommentary: () => true,
 	getCommentary: (context) => {
 		const role = getLeaderRole(context) ?? 'Unknown';
-		return `${getRoleEmoji(role)}${role} ${context.proposal.proposer} proposed a team with just Merlin and Morgana.`;
+		return `${getRoleEmoji(role)} ${role} ${context.proposal.proposer} proposed a team with just Merlin and Morgana.`;
 	},
 };
 
@@ -205,7 +205,7 @@ export const ProposedTwoOtherPlayersPredicate: ProposalPredicate = {
 	isWorthCommentary: () => true,
 	getCommentary: (context) => {
 		const role = getLeaderRole(context) ?? 'Unknown';
-		return `${getRoleEmoji(role)}${role} ${context.proposal.proposer} proposed a team with two other players.`;
+		return `${getRoleEmoji(role)} ${role} ${context.proposal.proposer} proposed a team with two other players.`;
 	},
 };
 
@@ -225,7 +225,7 @@ export const MerlinMorganaSelfPredicate: ProposalPredicate = {
 	isWorthCommentary: () => true,
 	getCommentary: (context) => {
 		const role = getLeaderRole(context) ?? 'Unknown';
-		return `${getRoleEmoji(role)}${role} ${context.proposal.proposer} proposed a team with both Merlin and Morgana.`;
+		return `${getRoleEmoji(role)} ${role} ${context.proposal.proposer} proposed a team with both Merlin and Morgana.`;
 	},
 };
 
@@ -243,7 +243,7 @@ export const ProposalWithoutSelfPredicate: ProposalPredicate = {
 	},
 	getCommentary: (context) => {
 		const role = getLeaderRole(context) ?? 'Unknown';
-		return `${getRoleEmoji(role)}${role} ${context.proposal.proposer} proposed a team without self.`;
+		return `${getRoleEmoji(role)} ${role} ${context.proposal.proposer} proposed a team without self.`;
 	},
 };
 
@@ -255,7 +255,7 @@ export const AllGoodTeamWithoutSelfPredicate: ProposalPredicate = {
 	isWorthCommentary: () => true,
 	getCommentary: (context) => {
 		const role = getLeaderRole(context) ?? 'Unknown';
-		return `${getRoleEmoji(role)}${role} ${context.proposal.proposer} proposed an all good team without self.`;
+		return `${getRoleEmoji(role)} ${role} ${context.proposal.proposer} proposed an all good team without self.`;
 	},
 };
 
@@ -276,7 +276,7 @@ export const RiskingLossPredicate: ProposalPredicate = {
 		const role = getLeaderRole(context) ?? 'Unknown';
 		const evilCount = countSeenEvilOnTeam(context);
 		const failsRequired = context.mission.failsRequired;
-		return `${getRoleEmoji(role)}${role} ${context.proposal.proposer} risked losing by proposing a team with ${evilCount} seen evil players when ${failsRequired} fails were required and two missions had already failed.`;
+		return `${getRoleEmoji(role)} ${role} ${context.proposal.proposer} risked losing by proposing a team with ${evilCount} seen evil players when ${failsRequired} fails were required and two missions had already failed.`;
 	},
 };
 
@@ -296,7 +296,7 @@ export const OneEvilTeamFirstPredicate: ProposalPredicate = {
 	isWorthCommentary: () => true,
 	getCommentary: (context) => {
 		const role = getLeaderRole(context) ?? 'Unknown';
-		return `${getRoleEmoji(role)}${role} ${context.proposal.proposer} proposed the first team with just one evil player when 2 fails are required.`;
+		return `${getRoleEmoji(role)} ${role} ${context.proposal.proposer} proposed the first team with just one evil player when 2 fails are required.`;
 	},
 };
 
@@ -308,7 +308,7 @@ export const OneEvilTeamPredicate: ProposalPredicate = {
 	isWorthCommentary: (context) => !OneEvilTeamFirstPredicate.isRelevant(context),
 	getCommentary: (context) => {
 		const role = getLeaderRole(context) ?? 'Unknown';
-		return `${getRoleEmoji(role)}${role} ${context.proposal.proposer} proposed a team with just one evil player when 2 fails are required.`;
+		return `${getRoleEmoji(role)} ${role} ${context.proposal.proposer} proposed a team with just one evil player when 2 fails are required.`;
 	},
 };
 
@@ -350,11 +350,11 @@ export const SameTeamPredicate: ProposalPredicate = {
 				const previousProposal = mission.proposals[proposalIndex];
 				const previousTeam = [...previousProposal.team].sort();
 				if (JSON.stringify(currentTeam) === JSON.stringify(previousTeam)) {
-					return `${getRoleEmoji(role)}${role} ${context.proposal.proposer} proposed the same team from mission ${missionIndex + 1} proposal ${proposalIndex + 1}.`;
+					return `${getRoleEmoji(role)} ${role} ${context.proposal.proposer} proposed the same team from mission ${missionIndex + 1} proposal ${proposalIndex + 1}.`;
 				}
 			}
 		}
-		return `${getRoleEmoji(role)}${role} ${context.proposal.proposer} proposed a duplicate team.`;
+		return `${getRoleEmoji(role)} ${role} ${context.proposal.proposer} proposed a duplicate team.`;
 	},
 };
 
@@ -372,7 +372,7 @@ export const TooManyEvilPlayersPredicate: ProposalPredicate = {
 	isWorthCommentary: () => true,
 	getCommentary: (context) => {
 		const role = getLeaderRole(context) ?? 'Unknown';
-		return `${getRoleEmoji(role)}${role} ${context.proposal.proposer} proposed a team with more evil players than fails required.`;
+		return `${getRoleEmoji(role)} ${role} ${context.proposal.proposer} proposed a team with more evil players than fails required.`;
 	},
 };
 
@@ -389,7 +389,7 @@ export const HammerPanderingPredicate: ProposalPredicate = {
 		const role = getLeaderRole(context) ?? 'Unknown';
 		const hammer = getHammerPlayer(context);
 		const hammerRole = hammer ? (getPlayerRole(context, hammer) ?? 'Unknown') : 'Unknown';
-		return `${getRoleEmoji(role)}${role} ${context.proposal.proposer} pandered to the hammer ${getRoleEmoji(hammerRole)}${hammerRole} ${hammer}.`;
+		return `${getRoleEmoji(role)} ${role} ${context.proposal.proposer} pandered to the hammer ${getRoleEmoji(hammerRole)} ${hammerRole} ${hammer}.`;
 	},
 };
 
@@ -401,7 +401,7 @@ export const IsHammerPredicate: ProposalPredicate = {
 	isWorthCommentary: () => false, // Just for tracking, not commentary
 	getCommentary: (context) => {
 		const role = getLeaderRole(context) ?? 'Unknown';
-		return `${getRoleEmoji(role)}${role} ${context.proposal.proposer} was the hammer.`;
+		return `${getRoleEmoji(role)} ${role} ${context.proposal.proposer} was the hammer.`;
 	},
 };
 
@@ -422,7 +422,7 @@ export const KnownEvilHammerPredicate: ProposalPredicate = {
 	isWorthCommentary: () => true,
 	getCommentary: (context) => {
 		const role = getLeaderRole(context) ?? 'Unknown';
-		return `${getRoleEmoji(role)}${role} ${context.proposal.proposer} proposed a team with an additional known evil.`;
+		return `${getRoleEmoji(role)} ${role} ${context.proposal.proposer} proposed a team with an additional known evil.`;
 	},
 };
 
@@ -465,7 +465,7 @@ export const NoDreamTeamPlusSelfPredicate: ProposalPredicate = {
 	isWorthCommentary: () => true,
 	getCommentary: (context) => {
 		const role = getLeaderRole(context) ?? 'Unknown';
-		return `${getRoleEmoji(role)}${role} ${context.proposal.proposer} didn't propose the dream team plus self.`;
+		return `${getRoleEmoji(role)} ${role} ${context.proposal.proposer} didn't propose the dream team plus self.`;
 	},
 };
 
@@ -477,7 +477,7 @@ export const FinalAllGoodTeamDoesNotIncludeMerlinPredicate: ProposalPredicate = 
 	isWorthCommentary: () => true,
 	getCommentary: (context) => {
 		const role = getLeaderRole(context) ?? 'Unknown';
-		return `${getRoleEmoji(role)}${role} ${context.proposal.proposer} proposed an all good team without Merlin.`;
+		return `${getRoleEmoji(role)} ${role} ${context.proposal.proposer} proposed an all good team without Merlin.`;
 	},
 };
 
@@ -489,7 +489,7 @@ export const FinalAllGoodTeamDoesNotIncludePercivalPredicate: ProposalPredicate 
 	isWorthCommentary: () => true,
 	getCommentary: (context) => {
 		const role = getLeaderRole(context) ?? 'Unknown';
-		return `${getRoleEmoji(role)}${role} ${context.proposal.proposer} proposed an all good team without Percival.`;
+		return `${getRoleEmoji(role)} ${role} ${context.proposal.proposer} proposed an all good team without Percival.`;
 	},
 };
 
@@ -521,7 +521,7 @@ export const NoDreamTeamPredicate: ProposalPredicate = {
 	isWorthCommentary: () => true,
 	getCommentary: (context) => {
 		const role = getLeaderRole(context) ?? 'Unknown';
-		return `${getRoleEmoji(role)}${role} ${context.proposal.proposer} didn't propose the dream team.`;
+		return `${getRoleEmoji(role)} ${role} ${context.proposal.proposer} didn't propose the dream team.`;
 	},
 };
 
