@@ -143,6 +143,7 @@ function MissionSection({annotatedMission, showSecrets, game}: MissionSectionPro
 								annotatedProposal={annotatedProposal}
 								showSecrets={showSecrets}
 								missionVotes={index === lastProposalIndex ? missionVotes : undefined}
+								missionVoteAnnotations={index === lastProposalIndex ? missionVoteAnnotations : []}
 								team={mission.team}
 							/>
 						))}
@@ -175,10 +176,17 @@ interface ProposalSectionProps {
 	annotatedProposal: AnnotatedProposal;
 	showSecrets: boolean;
 	missionVotes?: Record<string, boolean>;
+	missionVoteAnnotations: Annotation[];
 	team: string[];
 }
 
-function ProposalSection({annotatedProposal, showSecrets, missionVotes, team}: ProposalSectionProps) {
+function ProposalSection({
+	annotatedProposal,
+	showSecrets,
+	missionVotes,
+	missionVoteAnnotations,
+	team,
+}: ProposalSectionProps) {
 	const {proposalNumber, annotations, playerRows} = annotatedProposal;
 
 	return (
@@ -192,6 +200,9 @@ function ProposalSection({annotatedProposal, showSecrets, missionVotes, team}: P
 					const isOnFinalTeam = team.includes(row.playerName);
 					const missionVote =
 						missionVotes && isOnFinalTeam ? {votedSuccess: missionVotes[row.playerName]} : undefined;
+					const playerMissionVoteAnnotations = missionVoteAnnotations.filter(
+						(annotation) => annotation.playerName === row.playerName,
+					);
 					return (
 						<PlayerRow
 							key={row.playerName}
@@ -199,6 +210,7 @@ function ProposalSection({annotatedProposal, showSecrets, missionVotes, team}: P
 							showSecrets={showSecrets}
 							isEven={index % 2 === 0}
 							missionVote={missionVote}
+							missionVoteAnnotations={playerMissionVoteAnnotations}
 							proposalNumber={proposalNumber}
 							proposalAnnotations={annotations}
 						/>
@@ -232,15 +244,18 @@ function ProposalSection({annotatedProposal, showSecrets, missionVotes, team}: P
 // 👤 Player Row
 // ============================================================================
 
+interface MissionVote {
+	votedSuccess: boolean | undefined;
+}
+
 interface PlayerRowProps {
 	row: AnnotatedPlayerRow;
 	showSecrets: boolean;
 	isEven: boolean;
+	missionVote?: MissionVote;
+	missionVoteAnnotations: Annotation[];
+	proposalNumber: number;
 	proposalAnnotations: Annotation[];
-}
-
-interface MissionVote {
-	votedSuccess: boolean | undefined;
 }
 
 function PlayerRow({
@@ -248,18 +263,21 @@ function PlayerRow({
 	showSecrets,
 	isEven,
 	missionVote,
+	missionVoteAnnotations,
 	proposalNumber,
 	proposalAnnotations,
-}: PlayerRowProps & {missionVote?: MissionVote; proposalNumber: number}) {
-	const {playerName, playerRole, isLeader, isHammer, isOnTeam, votedYes} = row;
+}: PlayerRowProps) {
+	const {playerName, playerRole, isLeader, isHammer, isOnTeam, votedYes, voteAnnotations} = row;
 	const crownColor = proposalNumber < 5 ? '#fcfc00' : '#cc0808';
-	const hasAnnotations = showSecrets && isLeader && proposalAnnotations.length > 0;
+	const hasProposalAnnotations = showSecrets && isLeader && proposalAnnotations.length > 0;
+	const hasVoteAnnotations = showSecrets && voteAnnotations.length > 0;
+	const hasMissionVoteAnnotations = showSecrets && missionVoteAnnotations.length > 0;
 
 	return (
 		<div className={`${styles.playerRow} ${isEven ? styles.playerRowEven : styles.playerRowOdd}`}>
 			<span className={styles.statusCell}>
 				{isLeader && (
-					<span className={hasAnnotations ? styles.crownTooltipWrapper : undefined}>
+					<span className={hasProposalAnnotations ? styles.crownTooltipWrapper : undefined}>
 						<span className="fa-layers fa-fw">
 							<FontAwesomeIcon
 								icon={faCrown}
@@ -272,7 +290,7 @@ function PlayerRow({
 								{proposalNumber}
 							</span>
 						</span>
-						{hasAnnotations && (
+						{hasProposalAnnotations && (
 							<span className={styles.crownTooltip}>
 								<strong>Team proposal notes:</strong>
 								{proposalAnnotations.map((annotation, index) => (
@@ -299,32 +317,66 @@ function PlayerRow({
 				</span>
 			)}
 			<span className={styles.proposalCell}>
-				<span className="fa-layers fa-fw">
-					{isOnTeam && (
-						<FontAwesomeIcon
-							icon={faCircleRegular}
-							transform="grow-13"
-							className="fa-solid"
-							color="#629ec1"
-						/>
-					)}
-					{votedYes !== null && (
-						<FontAwesomeIcon
-							icon={votedYes ? faThumbsUp : faThumbsDown}
-							transform="right-1"
-							color={votedYes ? 'green' : '#ed1515'}
-						/>
+				<span className={hasVoteAnnotations ? styles.proposalVoteTooltipWrapper : undefined}>
+					<span className="fa-layers fa-fw">
+						{isOnTeam && (
+							<FontAwesomeIcon
+								icon={faCircleRegular}
+								transform="grow-13"
+								className="fa-solid"
+								color="#629ec1"
+							/>
+						)}
+						{votedYes !== null && (
+							<FontAwesomeIcon
+								icon={votedYes ? faThumbsUp : faThumbsDown}
+								transform="right-1"
+								color={votedYes ? 'green' : '#ed1515'}
+							/>
+						)}
+					</span>
+					{hasVoteAnnotations && (
+						<span className={styles.proposalVoteTooltip}>
+							<strong>Vote notes:</strong>
+							{voteAnnotations.map((annotation, index) => (
+								<span
+									key={index}
+									className={styles.tooltipLine}
+								>
+									{annotation.commentary}{' '}
+									<span className={styles.tooltipPredicateName}>({annotation.predicateName})</span>
+								</span>
+							))}
+						</span>
 					)}
 				</span>
 			</span>
 			{missionVote && missionVote.votedSuccess !== undefined && (
 				<span className={styles.missionResultCell}>
-					<span className="fa-layers fa-fw">
-						<FontAwesomeIcon
-							icon={missionVote.votedSuccess ? faCheckCircle : faTimesCircle}
-							size="lg"
-							color={missionVote.votedSuccess ? 'green' : 'red'}
-						/>
+					<span className={hasMissionVoteAnnotations ? styles.missionVoteTooltipWrapper : undefined}>
+						<span className="fa-layers fa-fw">
+							<FontAwesomeIcon
+								icon={missionVote.votedSuccess ? faCheckCircle : faTimesCircle}
+								size="lg"
+								color={missionVote.votedSuccess ? 'green' : 'red'}
+							/>
+						</span>
+						{hasMissionVoteAnnotations && (
+							<span className={styles.missionVoteTooltip}>
+								<strong>Mission vote notes:</strong>
+								{missionVoteAnnotations.map((annotation, index) => (
+									<span
+										key={index}
+										className={styles.tooltipLine}
+									>
+										{annotation.commentary}{' '}
+										<span className={styles.tooltipPredicateName}>
+											({annotation.predicateName})
+										</span>
+									</span>
+								))}
+							</span>
+						)}
 					</span>
 				</span>
 			)}
