@@ -13,7 +13,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faCheckCircle, faTimesCircle, faCrown, faHammer} from '@fortawesome/free-solid-svg-icons';
 import {faThumbsUp, faThumbsDown, faCircle as faCircleRegular} from '@fortawesome/free-regular-svg-icons';
 import type {Game} from '../models/game';
-import type {AnnotatedMission, AnnotatedPlayerRow, AnnotatedProposal} from '../models/annotations';
+import type {Annotation, AnnotatedMission, AnnotatedPlayerRow, AnnotatedProposal} from '../models/annotations';
 import {annotateGame, formatRoleWithEmoji} from '../models/gameAnnotator';
 import {MissionProgressBarComponent} from './MissionProgressBar';
 import {GameConclusionComponent} from './GameConclusion';
@@ -200,6 +200,7 @@ function ProposalSection({annotatedProposal, showSecrets, missionVotes, team}: P
 							isEven={index % 2 === 0}
 							missionVote={missionVote}
 							proposalNumber={proposalNumber}
+							proposalAnnotations={annotations}
 						/>
 					);
 				})}
@@ -235,6 +236,7 @@ interface PlayerRowProps {
 	row: AnnotatedPlayerRow;
 	showSecrets: boolean;
 	isEven: boolean;
+	proposalAnnotations: Annotation[];
 }
 
 interface MissionVote {
@@ -247,25 +249,45 @@ function PlayerRow({
 	isEven,
 	missionVote,
 	proposalNumber,
+	proposalAnnotations,
 }: PlayerRowProps & {missionVote?: MissionVote; proposalNumber: number}) {
 	const {playerName, playerRole, isLeader, isHammer, isOnTeam, votedYes} = row;
 	const crownColor = proposalNumber < 5 ? '#fcfc00' : '#cc0808';
+	const hasAnnotations = showSecrets && isLeader && proposalAnnotations.length > 0;
 
 	return (
 		<div className={`${styles.playerRow} ${isEven ? styles.playerRowEven : styles.playerRowOdd}`}>
 			<span className={styles.statusCell}>
 				{isLeader && (
-					<span className="fa-layers fa-fw">
-						<FontAwesomeIcon
-							icon={faCrown}
-							color={crownColor}
-						/>
-						<span
-							className="fa-layers-text"
-							style={{fontSize: '0.5em', fontWeight: 'bold'}}
-						>
-							{proposalNumber}
+					<span className={hasAnnotations ? styles.crownTooltipWrapper : undefined}>
+						<span className="fa-layers fa-fw">
+							<FontAwesomeIcon
+								icon={faCrown}
+								color={crownColor}
+							/>
+							<span
+								className="fa-layers-text"
+								style={{fontSize: '0.5em', fontWeight: 'bold'}}
+							>
+								{proposalNumber}
+							</span>
 						</span>
+						{hasAnnotations && (
+							<span className={styles.crownTooltip}>
+								<strong>Team proposal notes:</strong>
+								{proposalAnnotations.map((annotation, index) => (
+									<span
+										key={index}
+										className={styles.tooltipLine}
+									>
+										{annotation.commentary}{' '}
+										<span className={styles.tooltipPredicateName}>
+											({annotation.predicateName})
+										</span>
+									</span>
+								))}
+							</span>
+						)}
 					</span>
 				)}
 				{isHammer && !isLeader && <FontAwesomeIcon icon={faHammer} />}
