@@ -15,7 +15,6 @@ import {faThumbsUp, faThumbsDown, faCircle as faCircleRegular} from '@fortawesom
 import type {Game} from '../models/game';
 import type {AnnotatedMission, AnnotatedPlayerRow, AnnotatedProposal} from '../models/annotations';
 import {annotateGame, formatRoleWithEmoji} from '../models/gameAnnotator';
-import {isEvilRole, getPlayerRole, createGameContext} from '../models/annotations';
 import {MissionProgressBarComponent} from './MissionProgressBar';
 import {GameConclusionComponent} from './GameConclusion';
 import styles from './AnnotatedGameTimeline.module.css';
@@ -117,6 +116,7 @@ function MissionSection({annotatedMission, showSecrets, game}: MissionSectionPro
 	const missionVotes = game.outcome?.votes?.[missionNumber - 1];
 	const isDoubleFail = mission.failsRequired === 2;
 	const missionNotPlayed = state === 'PENDING' && proposals.length === 0;
+	const lastProposalIndex = proposals.length - 1;
 
 	return (
 		<div className={`${styles.missionSection} ${isDoubleFail ? styles.doubleFailMission : ''}`}>
@@ -141,22 +141,15 @@ function MissionSection({annotatedMission, showSecrets, game}: MissionSectionPro
 					</div>
 				) : (
 					<>
-						{proposals.map((annotatedProposal) => (
+						{proposals.map((annotatedProposal, index) => (
 							<ProposalSection
 								key={annotatedProposal.proposalNumber}
 								annotatedProposal={annotatedProposal}
 								showSecrets={showSecrets}
+								missionVotes={index === lastProposalIndex ? missionVotes : undefined}
+								team={mission.team}
 							/>
 						))}
-
-						{missionVotes && mission.team.length > 0 && (
-							<MissionVoteResults
-								missionVotes={missionVotes}
-								team={mission.team}
-								game={game}
-								showSecrets={showSecrets}
-							/>
-						)}
 
 						{showSecrets && missionVoteAnnotations.length > 0 && (
 							<div className={styles.annotationBox}>
@@ -185,9 +178,11 @@ function MissionSection({annotatedMission, showSecrets, game}: MissionSectionPro
 interface ProposalSectionProps {
 	annotatedProposal: AnnotatedProposal;
 	showSecrets: boolean;
+	missionVotes?: Record<string, boolean>;
+	team: string[];
 }
 
-function ProposalSection({annotatedProposal, showSecrets}: ProposalSectionProps) {
+function ProposalSection({annotatedProposal, showSecrets, missionVotes, team}: ProposalSectionProps) {
 	const {proposalNumber, annotations, playerRows} = annotatedProposal;
 
 	return (
@@ -197,14 +192,20 @@ function ProposalSection({annotatedProposal, showSecrets}: ProposalSectionProps)
 			</div>
 
 			<div className={styles.playerGrid}>
-				{playerRows.map((row, index) => (
-					<PlayerRow
-						key={row.playerName}
-						row={row}
-						showSecrets={showSecrets}
-						isEven={index % 2 === 0}
-					/>
-				))}
+				{playerRows.map((row, index) => {
+					const isOnFinalTeam = team.includes(row.playerName);
+					const missionVote =
+						missionVotes && isOnFinalTeam ? {votedSuccess: missionVotes[row.playerName]} : undefined;
+					return (
+						<PlayerRow
+							key={row.playerName}
+							row={row}
+							showSecrets={showSecrets}
+							isEven={index % 2 === 0}
+							missionVote={missionVote}
+						/>
+					);
+				})}
 			</div>
 
 			{showSecrets && annotations.length > 0 && (
@@ -239,17 +240,21 @@ interface PlayerRowProps {
 	isEven: boolean;
 }
 
-function PlayerRow({row, showSecrets, isEven}: PlayerRowProps) {
+interface MissionVote {
+	votedSuccess: boolean | undefined;
+}
+
+function PlayerRow({row, showSecrets, isEven, missionVote}: PlayerRowProps & {missionVote?: MissionVote}) {
 	const {playerName, playerRole, isLeader, isOnTeam, votedYes} = row;
 
 	return (
 		<div className={`${styles.playerRow} ${isEven ? styles.playerRowEven : styles.playerRowOdd}`}>
+			<span className={styles.nameCell}>{toTitleCase(playerName)}</span>
 			{showSecrets && (
 				<span className={styles.roleCell}>
 					{formatRoleWithEmoji(playerRole ? toTitleCase(playerRole) : playerRole)}
 				</span>
 			)}
-			<span className={styles.nameCell}>{toTitleCase(playerName)}</span>
 			<span className={styles.proposalCell}>
 				<span className="fa-layers fa-fw">
 					{isLeader && (
@@ -276,6 +281,17 @@ function PlayerRow({row, showSecrets, isEven}: PlayerRowProps) {
 					)}
 				</span>
 			</span>
+			{missionVote && missionVote.votedSuccess !== undefined && (
+				<span className={styles.missionResultCell}>
+					<span className="fa-layers fa-fw">
+						<FontAwesomeIcon
+							icon={missionVote.votedSuccess ? faCheckCircle : faTimesCircle}
+							size="lg"
+							color={missionVote.votedSuccess ? 'green' : 'red'}
+						/>
+					</span>
+				</span>
+			)}
 		</div>
 	);
 }
@@ -306,92 +322,6 @@ function VoteAnnotations({playerRows}: VoteAnnotationsProps) {
 					</div>
 				)),
 			)}
-		</div>
-	);
-}
-
-// ============================================================================
-// 🎯 Mission Vote Results
-// ============================================================================
-
-interface MissionVoteResultsProps {
-	missionVotes: Record<string, boolean>;
-	team: string[];
-	game: Game;
-	showSecrets: boolean;
-}
-
-function MissionVoteResults({missionVotes, team, game, showSecrets}: MissionVoteResultsProps) {
-	const gameContext = createGameContext(game);
-
-	const voteResults = team.map((playerName) => {
-		const votedSuccess = missionVotes[playerName];
-		const role = getPlayerRole(gameContext, playerName);
-		const isEvil = isEvilRole(role);
-
-		let voteType: 'success' | 'fail' | 'duck' = 'success';
-		if (votedSuccess === false) {
-			voteType = 'fail';
-		} else if (votedSuccess === true && isEvil) {
-			voteType = 'duck';
-		}
-
-		return {
-			playerName,
-			role,
-			isEvil,
-			votedSuccess,
-			voteType,
-		};
-	});
-
-	const successCount = voteResults.filter((v) => v.votedSuccess === true).length;
-	const failCount = voteResults.filter((v) => v.votedSuccess === false).length;
-
-	return (
-		<div className={styles.missionVoteResults}>
-			<div className={styles.missionVoteSummary}>
-				<span className={styles.missionVoteCount}>
-					<FontAwesomeIcon
-						icon={faCheckCircle}
-						color="green"
-					/>{' '}
-					{successCount} Success
-				</span>
-				<span className={styles.missionVoteCount}>
-					<FontAwesomeIcon
-						icon={faTimesCircle}
-						color="red"
-					/>{' '}
-					{failCount} Fail
-				</span>
-			</div>
-			<div className={styles.missionVoteGrid}>
-				{voteResults.map((result) => (
-					<div
-						key={result.playerName}
-						className={styles.missionVoteRow}
-					>
-						<span className={styles.missionVoteIcon}>
-							<FontAwesomeIcon
-								icon={result.votedSuccess ? faCheckCircle : faTimesCircle}
-								size="lg"
-								color={result.votedSuccess ? 'green' : 'red'}
-							/>
-						</span>
-						{showSecrets && result.role && (
-							<span className={styles.missionVoteRole}>
-								{formatRoleWithEmoji(toTitleCase(result.role))}
-							</span>
-						)}
-						<span className={styles.missionVoteName}>{toTitleCase(result.playerName)}</span>
-						{showSecrets && result.voteType === 'duck' && <span className={styles.duckBadge}>DUCKED</span>}
-						{showSecrets && result.voteType === 'fail' && result.isEvil && (
-							<span className={styles.failedBadge}>FAILED</span>
-						)}
-					</div>
-				))}
-			</div>
 		</div>
 	);
 }

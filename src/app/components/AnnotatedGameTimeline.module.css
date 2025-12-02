@@ -154,8 +154,6 @@
 	border-radius: 6px;
 	padding: 12px 16px;
 	margin-bottom: 12px;
-	border-left: 2px solid;
-	border-right: 2px solid;
 }
 
 .proposalHeader {
@@ -168,7 +166,6 @@
 
 /* Player Grid - table-like layout matching MissionSummaryTable */
 .playerGrid {
-	font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 	font-size: 13px;
 }
 
@@ -180,7 +177,7 @@
 }
 
 .playerRowEven {
-	background-color: transparent;
+	background-color: Gainsboro;
 }
 
 .playerRowOdd {
@@ -193,20 +190,29 @@
 	padding: 0 4px;
 }
 
+.nameCell {
+	border-left: 2px solid;
+	min-width: 100px;
+	font-weight: 500;
+	flex-shrink: 0;
+	padding-left: 8px;
+	padding-right: 8px;
+}
+
 .roleCell {
+	border-right: 2px solid;
 	min-width: 160px;
 	white-space: nowrap;
 	flex-shrink: 0;
 	padding-left: 8px;
 	padding-right: 8px;
-	border-right: 2px solid;
 }
 
-.nameCell {
-	min-width: 100px;
-	font-weight: 500;
-	flex-shrink: 0;
-	padding-left: 8px;
+.missionResultCell {
+	border-right: 2px solid;
+	text-align: center;
+	padding: 0 4px;
+	margin-left: auto;
 }
 
 /* Annotation Box */
@@ -228,86 +234,6 @@
 	color: #92400e;
 	font-size: 11px;
 	font-style: italic;
-}
-
-/* Mission Vote Results - styled like MissionSummaryTable */
-.missionVoteResults {
-	background-color: bisque;
-	border-radius: 6px;
-	padding: 12px 16px;
-	margin-bottom: 16px;
-	border-left: 2px solid;
-	border-right: 2px solid;
-}
-
-.missionVoteSummary {
-	display: flex;
-	gap: 16px;
-	margin-bottom: 8px;
-	font-weight: 600;
-	font-size: 14px;
-	padding-bottom: 8px;
-	border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-.missionVoteCount {
-	display: flex;
-	align-items: center;
-	gap: 4px;
-}
-
-.missionVoteGrid {
-	font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-	font-size: 13px;
-}
-
-.missionVoteRow {
-	display: flex;
-	align-items: center;
-	height: 2.3em;
-	gap: 8px;
-}
-
-.missionVoteIcon {
-	width: 24px;
-	text-align: center;
-	flex-shrink: 0;
-}
-
-.missionVoteRole {
-	min-width: 160px;
-	white-space: nowrap;
-	flex-shrink: 0;
-	padding-left: 8px;
-	padding-right: 8px;
-	border-right: 2px solid;
-}
-
-.missionVoteName {
-	min-width: 100px;
-	font-weight: 500;
-	flex-shrink: 0;
-	padding-left: 8px;
-}
-
-.duckBadge {
-	background-color: #fef3c7;
-	color: #92400e;
-	padding: 2px 6px;
-	border-radius: 4px;
-	font-size: 10px;
-	font-weight: 600;
-	margin-left: 8px;
-}
-
-.failedBadge {
-	background-color: #fee2e2;
-	color: #991b1b;
-	padding: 2px 6px;
-	border-radius: 4px;
-	font-size: 10px;
-	font-weight: 600;
-	margin-left: 8px;
 }
 
 /* Game Conclusion wrapper */
