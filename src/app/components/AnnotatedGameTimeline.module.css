@@ -163,7 +163,7 @@
 .playerGrid::before {
 	content: "";
 	position: absolute;
-	left: calc(2em + 8px + 4px);
+	left: calc(1.7em + 8px + 4px);
 	top: 0;
 	bottom: 0;
 	width: 2px;
@@ -186,7 +186,7 @@
 }
 
 .statusCell {
-	min-width: 2em;
+	width: 1.7em;
 	text-align: center;
 	font-size: 1.2em;
 	padding: 0 4px;
@@ -197,7 +197,7 @@
 
 .proposalCell {
 	text-align: center;
-	min-width: 2em;
+	width: 1.7em;
 	padding: 0 4px;
 }
 
@@ -219,6 +219,7 @@
 }
 
 .missionResultCell {
+	width: 1.7em;
 	border-right: 2px solid;
 	text-align: center;
 	padding: 0 4px;
