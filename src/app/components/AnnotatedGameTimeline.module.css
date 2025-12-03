@@ -157,6 +157,7 @@
 .playerGrid {
 	font-size: 16px;
 	position: relative;
+	border: 2px solid black;
 }
 
 /* Continuous vertical bar between icon column and player name */
