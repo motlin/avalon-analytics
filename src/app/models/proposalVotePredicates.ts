@@ -18,6 +18,7 @@ import {
 	isAllGoodTeam,
 	isEvilRole,
 	isKnownEvil,
+	isSeenEvil,
 	teamIncludesPlayer,
 	teamIncludesRole,
 } from './annotations';
@@ -106,6 +107,18 @@ function playerSeesPlayer(context: ProposalVoteContext, viewerName: string, targ
  */
 function voterSeesAnyEvilOnTeam(context: ProposalVoteContext): boolean {
 	return context.proposal.team.some((teamMember) => playerSeesPlayer(context, context.voterName, teamMember));
+}
+
+/**
+ * Counts the number of evil players on the team that Merlin can see.
+ * Merlin can see all evil players EXCEPT Mordred.
+ * Uses isSeenEvil which returns true for Morgana, Assassin, Oberon, Evil, Evil Minion, Minion of Mordred.
+ */
+function countMerlinVisibleEvilOnTeam(context: ProposalVoteContext): number {
+	return context.proposal.team.filter((name) => {
+		const role = getPlayerRole(context, name);
+		return isSeenEvil(role);
+	}).length;
 }
 
 /**
@@ -247,6 +260,25 @@ export const MerlinVotedForMorganaPredicate: ProposalVotePredicate = {
 	isWorthCommentary: () => true,
 	getCommentary: (context) => {
 		return `🧙 Merlin ${context.voterName} voted for a team including Morgana.`;
+	},
+};
+
+// 🧙 Merlin Approved Team With Multiple Visible Evil
+export const MerlinApprovedMultipleVisibleEvilPredicate: ProposalVotePredicate = {
+	name: 'MerlinApprovedMultipleVisibleEvilProposalVotePredicate',
+	isRelevant: (context) => {
+		if (isEvilHammerWin(context)) return false;
+		if (isHammer(context)) return false;
+		const voterRole = getPlayerRole(context, context.voterName);
+		if (voterRole !== 'Merlin') return false;
+		// Team must have 2+ evil players visible to Merlin (excludes Mordred)
+		return countMerlinVisibleEvilOnTeam(context) >= 2;
+	},
+	isWeird: (context) => context.votedYes,
+	isWorthCommentary: () => true,
+	getCommentary: (context) => {
+		const visibleEvilCount = countMerlinVisibleEvilOnTeam(context);
+		return `🧙 Merlin ${context.voterName} approved a team with ${visibleEvilCount} visible evil players.`;
 	},
 };
 
@@ -725,6 +757,7 @@ export const PROPOSAL_VOTE_PREDICATES: ProposalVotePredicate[] = [
 	ProtestVoteEvilTeamPredicate, // 2179 fires
 	PercivalVotedForBothPredicate, // 2233 fires
 	PercivalProtestVotedMultipleEvilPredicate, // new - no fire count data yet
+	MerlinApprovedMultipleVisibleEvilPredicate, // new - no fire count data yet
 	OffTeamApproveOneEvilProposalVotePredicate, // 4449 fires
 	EvilVotedAgainstEvilPredicate, // 7764 fires
 	MerlinVotedForMorganaPredicate, // 8440 fires
