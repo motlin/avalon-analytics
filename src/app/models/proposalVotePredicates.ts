@@ -11,6 +11,7 @@ import {
 	alreadySucceededTwo,
 	countEvilOnTeam,
 	countSeenEvilOnTeam,
+	gameIncludesRole,
 	getMaxTeamSize,
 	getPlayerRole,
 	getRoleEmoji,
@@ -105,6 +106,18 @@ function playerSeesPlayer(context: ProposalVoteContext, viewerName: string, targ
  */
 function voterSeesAnyEvilOnTeam(context: ProposalVoteContext): boolean {
 	return context.proposal.team.some((teamMember) => playerSeesPlayer(context, context.voterName, teamMember));
+}
+
+/**
+ * Finds the player name with a given role in the game.
+ */
+function findPlayerWithRole(context: ProposalVoteContext, targetRole: string): string | null {
+	for (const [playerName, role] of context.rolesByName.entries()) {
+		if (role.toLowerCase() === targetRole.toLowerCase()) {
+			return playerName;
+		}
+	}
+	return null;
 }
 
 function getEarlierProposalWithSameTeam(context: ProposalVoteContext): EarlierProposalInfo | null {
@@ -266,6 +279,38 @@ export const PercivalVotedForBothPredicate: ProposalVotePredicate = {
 	isWorthCommentary: () => true,
 	getCommentary: (context) => {
 		return `🧔 Percival ${context.voterName} voted for a team including both Merlin and Morgana.`;
+	},
+};
+
+// 🧔 Percival Protest Voted Multiple Evil Team
+export const PercivalProtestVotedMultipleEvilPredicate: ProposalVotePredicate = {
+	name: 'PercivalProtestVotedMultipleEvilProposalVotePredicate',
+	isRelevant: (context) => {
+		// Voter must be Percival
+		const voterRole = getPlayerRole(context, context.voterName);
+		if (voterRole !== 'Percival') return false;
+
+		// No Morgana in the game (so Percival knows Merlin with certainty)
+		if (gameIncludesRole(context, 'Morgana')) return false;
+
+		// Find Merlin
+		const merlinName = findPlayerWithRole(context, 'Merlin');
+		if (!merlinName) return false;
+
+		// Neither Merlin nor Percival is on the team
+		if (teamIncludesPlayer(context, context.voterName)) return false;
+		if (teamIncludesPlayer(context, merlinName)) return false;
+
+		// Team size equals (total players - 2), meaning everyone except Merlin and Percival
+		// Therefore both evil players must be on the team
+		const totalPlayers = context.game.players.length;
+		const teamSize = context.mission.teamSize;
+		return teamSize === totalPlayers - 2;
+	},
+	isWeird: (context) => !context.votedYes,
+	isWorthCommentary: () => true,
+	getCommentary: (context) => {
+		return `🧔 Percival ${context.voterName} protest voted knowing multiple evil players must be on the team through arithmetic deduction.`;
 	},
 };
 
@@ -679,6 +724,7 @@ export const PROPOSAL_VOTE_PREDICATES: ProposalVotePredicate[] = [
 	ProtestVoteGoodTeamPredicate, // 836 fires
 	ProtestVoteEvilTeamPredicate, // 2179 fires
 	PercivalVotedForBothPredicate, // 2233 fires
+	PercivalProtestVotedMultipleEvilPredicate, // new - no fire count data yet
 	OffTeamApproveOneEvilProposalVotePredicate, // 4449 fires
 	EvilVotedAgainstEvilPredicate, // 7764 fires
 	MerlinVotedForMorganaPredicate, // 8440 fires
