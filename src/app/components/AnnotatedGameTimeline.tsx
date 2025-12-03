@@ -30,6 +30,32 @@ function toTitleCase(text: string): string {
 		.join(' ');
 }
 
+/**
+ * Strips the player name/role prefix from annotation commentary for tooltip display.
+ * Commentary format is typically: "emoji Role PlayerName did something"
+ * This function removes "emoji Role PlayerName " prefix and capitalizes the first letter.
+ *
+ * @param commentary - The full commentary text
+ * @param playerName - The player's name to strip from the prefix
+ * @returns The commentary without the player prefix, with first letter capitalized
+ */
+function stripPlayerPrefix(commentary: string, playerName: string): string {
+	// Find the player name in the commentary and remove everything before and including it
+	const playerIndex = commentary.indexOf(playerName);
+	if (playerIndex === -1) {
+		return commentary;
+	}
+
+	// Extract the action part (everything after player name)
+	const afterPlayerName = commentary.slice(playerIndex + playerName.length).trim();
+	if (!afterPlayerName) {
+		return commentary;
+	}
+
+	// Capitalize the first letter
+	return afterPlayerName.charAt(0).toUpperCase() + afterPlayerName.slice(1);
+}
+
 interface AnnotatedGameTimelineProps {
 	game: Game;
 	showSecrets?: boolean;
@@ -302,7 +328,7 @@ function PlayerRow({
 										key={index}
 										className={styles.tooltipLine}
 									>
-										{annotation.commentary}{' '}
+										{stripPlayerPrefix(annotation.commentary, annotation.playerName)}{' '}
 										<span className={styles.tooltipPredicateName}>
 											({annotation.predicateName})
 										</span>
@@ -360,7 +386,7 @@ function PlayerRow({
 									key={index}
 									className={styles.tooltipLine}
 								>
-									{annotation.commentary}{' '}
+									{stripPlayerPrefix(annotation.commentary, annotation.playerName)}{' '}
 									<span className={styles.tooltipPredicateName}>({annotation.predicateName})</span>
 								</span>
 							))}
@@ -392,7 +418,7 @@ function PlayerRow({
 										key={index}
 										className={styles.tooltipLine}
 									>
-										{annotation.commentary}{' '}
+										{stripPlayerPrefix(annotation.commentary, annotation.playerName)}{' '}
 										<span className={styles.tooltipPredicateName}>
 											({annotation.predicateName})
 										</span>
