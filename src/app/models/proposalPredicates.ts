@@ -399,7 +399,13 @@ export const TooManyEvilPlayersPredicate: ProposalPredicate = {
 // 🔨 Hammer Pandering (including the hammer player on proposals 1-4)
 export const HammerPanderingPredicate: ProposalPredicate = {
 	name: 'HammerPanderingProposalPredicate',
-	isRelevant: (context) => context.proposalNumber < 4, // proposals 1-4 (0-indexed: 0-3)
+	isRelevant: (context) => {
+		// Not relevant for the 5th proposal (hammer proposal)
+		if (context.proposalNumber >= 4) return false;
+		// Not relevant at maximum team size - limited player choices make including hammer less noteworthy
+		if (context.mission.teamSize === getMaxTeamSize(context.game)) return false;
+		return true;
+	},
 	isWeird: (context) => {
 		const hammer = getHammerPlayer(context);
 		return hammer !== null && teamIncludesPlayer(context, hammer);
