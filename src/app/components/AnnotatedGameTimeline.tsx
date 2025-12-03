@@ -15,6 +15,7 @@ import {faThumbsUp, faThumbsDown, faCircle as faCircleRegular} from '@fortawesom
 import type {Game} from '../models/game';
 import type {Annotation, AnnotatedMission, AnnotatedPlayerRow, AnnotatedProposal} from '../models/annotations';
 import {annotateGame, formatRoleWithEmoji} from '../models/gameAnnotator';
+import {getPredicateRarityCssColor} from '../models/predicateRarity';
 import {MissionProgressBarComponent} from './MissionProgressBar';
 import {GameConclusionComponent} from './GameConclusion';
 import styles from './AnnotatedGameTimeline.module.css';
@@ -183,7 +184,13 @@ function MissionSection({annotatedMission, showSecrets, game}: MissionSectionPro
 										key={index}
 										className={styles.annotationLine}
 									>
-										{annotation.commentary}
+										{annotation.commentary}{' '}
+										<span
+											className={styles.predicateName}
+											style={{color: getPredicateRarityCssColor(annotation.predicateName)}}
+										>
+											({annotation.predicateName})
+										</span>
 									</div>
 								))}
 							</div>
@@ -259,7 +266,12 @@ function ProposalSection({
 							className={styles.annotationLine}
 						>
 							{annotation.commentary}{' '}
-							<span className={styles.predicateName}>({annotation.predicateName})</span>
+							<span
+								className={styles.predicateName}
+								style={{color: getPredicateRarityCssColor(annotation.predicateName)}}
+							>
+								({annotation.predicateName})
+							</span>
 						</div>
 					))}
 				</div>
@@ -336,7 +348,10 @@ function PlayerRow({
 										className={styles.tooltipLine}
 									>
 										{stripPlayerPrefix(annotation.commentary, annotation.playerName)}{' '}
-										<span className={styles.tooltipPredicateName}>
+										<span
+											className={styles.tooltipPredicateName}
+											style={{color: getPredicateRarityCssColor(annotation.predicateName)}}
+										>
 											({annotation.predicateName})
 										</span>
 									</span>
@@ -393,7 +408,12 @@ function PlayerRow({
 									className={styles.tooltipLine}
 								>
 									{stripPlayerPrefix(annotation.commentary, annotation.playerName)}{' '}
-									<span className={styles.tooltipPredicateName}>({annotation.predicateName})</span>
+									<span
+										className={styles.tooltipPredicateName}
+										style={{color: getPredicateRarityCssColor(annotation.predicateName)}}
+									>
+										({annotation.predicateName})
+									</span>
 								</span>
 							))}
 						</span>
@@ -424,7 +444,10 @@ function PlayerRow({
 										className={styles.tooltipLine}
 									>
 										{stripPlayerPrefix(annotation.commentary, annotation.playerName)}{' '}
-										<span className={styles.tooltipPredicateName}>
+										<span
+											className={styles.tooltipPredicateName}
+											style={{color: getPredicateRarityCssColor(annotation.predicateName)}}
+										>
 											({annotation.predicateName})
 										</span>
 									</span>
@@ -460,7 +483,12 @@ function VoteAnnotations({playerRows}: VoteAnnotationsProps) {
 						className={styles.annotationLine}
 					>
 						{annotation.commentary}{' '}
-						<span className={styles.predicateName}>({annotation.predicateName})</span>
+						<span
+							className={styles.predicateName}
+							style={{color: getPredicateRarityCssColor(annotation.predicateName)}}
+						>
+							({annotation.predicateName})
+						</span>
 					</div>
 				)),
 			)}
