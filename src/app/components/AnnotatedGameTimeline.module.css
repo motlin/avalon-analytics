@@ -153,28 +153,18 @@
 	border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-/* Player Grid - table-like layout matching MissionSummaryTable */
+/* Player Grid - table layout matching MissionSummaryTable */
 .playerGrid {
+	border-collapse: collapse;
 	font-size: 16px;
-	position: relative;
-	border: 2px solid black;
 }
 
-/* Continuous vertical bar between icon column and player name */
-.playerGrid::before {
-	content: "";
-	position: absolute;
-	left: calc(1.7em + 8px);
-	top: 0;
-	bottom: 0;
-	width: 2px;
-	background-color: black;
-}
-
-.playerRow {
-	display: flex;
-	align-items: center;
+.playerGrid tr {
 	height: 2.3em;
+}
+
+.playerGrid td {
+	width: 1.7em;
 }
 
 .playerRowEven {
@@ -189,9 +179,22 @@
 	width: 1.7em;
 	text-align: center;
 	padding: 0 4px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
+}
+
+.nameCell {
+	border-left: 2px solid;
+	padding-left: 8px;
+	padding-right: 8px;
+	width: auto;
+	font-weight: 500;
+}
+
+.roleCell {
+	border-right: 2px solid;
+	white-space: nowrap;
+	padding-left: 8px;
+	padding-right: 8px;
+	width: auto;
 }
 
 .proposalCell {
@@ -200,66 +203,19 @@
 	padding: 0 4px;
 }
 
-.nameCell {
-	min-width: 100px;
-	font-weight: 500;
-	flex-shrink: 0;
-	padding-left: 10px;
-	padding-right: 8px;
-}
-
-.roleCell {
-	position: relative;
-	min-width: 160px;
-	white-space: nowrap;
-	flex-shrink: 0;
-	padding-left: 8px;
-	padding-right: 8px;
-	/* Explicit height for continuous bar alignment */
-	height: 2.3em;
-	display: flex;
-	align-items: center;
-}
-
-/* Continuous vertical bar after roleCell */
-.roleCell::after {
-	content: "";
-	position: absolute;
-	right: 0;
-	top: 0;
-	bottom: 0;
-	width: 2px;
-	background-color: black;
-}
-
 .missionResultCell {
-	position: relative;
+	border-right: 2px solid;
 	text-align: center;
 	padding: 0 4px;
-	/* Explicit height for continuous bar alignment */
-	height: 2.3em;
-	display: flex;
-	align-items: center;
-	justify-content: center;
 }
 
-/* Continuous vertical bar after missionResultCell */
-.missionResultCell::after {
-	content: "";
-	position: absolute;
-	right: 0;
-	top: 0;
-	bottom: 0;
-	width: 2px;
-	background-color: black;
-}
-
-.roleCell + .proposalCell {
+.roleCell + td {
 	padding-left: 8px;
 }
 
-.missionResultCell + span {
+.missionResultCell + td {
 	padding-left: 8px;
+	border-left: 2px solid;
 }
 
 /* Annotation Box */

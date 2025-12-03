@@ -233,29 +233,31 @@ function ProposalSection({
 				</strong>
 			</div>
 
-			<div className={styles.playerGrid}>
-				{playerRows.map((row, index) => {
-					const isOnFinalTeam = team.includes(row.playerName);
-					const missionVote =
-						missionVotes && isOnFinalTeam ? {votedSuccess: missionVotes[row.playerName]} : undefined;
-					const playerMissionVoteAnnotations = missionVoteAnnotations.filter(
-						(annotation) => annotation.playerName === row.playerName,
-					);
-					return (
-						<PlayerRow
-							key={row.playerName}
-							row={row}
-							showSecrets={showSecrets}
-							isEven={index % 2 === 0}
-							hasMissionVotes={missionVotes !== undefined}
-							missionVote={missionVote}
-							missionVoteAnnotations={playerMissionVoteAnnotations}
-							proposalNumber={proposalNumber}
-							proposalAnnotations={annotations}
-						/>
-					);
-				})}
-			</div>
+			<table className={styles.playerGrid}>
+				<tbody>
+					{playerRows.map((row, index) => {
+						const isOnFinalTeam = team.includes(row.playerName);
+						const missionVote =
+							missionVotes && isOnFinalTeam ? {votedSuccess: missionVotes[row.playerName]} : undefined;
+						const playerMissionVoteAnnotations = missionVoteAnnotations.filter(
+							(annotation) => annotation.playerName === row.playerName,
+						);
+						return (
+							<PlayerRow
+								key={row.playerName}
+								row={row}
+								showSecrets={showSecrets}
+								isEven={index % 2 === 0}
+								hasMissionVotes={missionVotes !== undefined}
+								missionVote={missionVote}
+								missionVoteAnnotations={playerMissionVoteAnnotations}
+								proposalNumber={proposalNumber}
+								proposalAnnotations={annotations}
+							/>
+						);
+					})}
+				</tbody>
+			</table>
 
 			{showSecrets && annotations.length > 0 && (
 				<div className={styles.annotationBox}>
@@ -320,8 +322,8 @@ function PlayerRow({
 	const hasMissionVoteAnnotations = showSecrets && missionVoteAnnotations.length > 0;
 
 	return (
-		<div className={`${styles.playerRow} ${isEven ? styles.playerRowEven : styles.playerRowOdd}`}>
-			<span className={styles.statusCell}>
+		<tr className={isEven ? styles.playerRowEven : styles.playerRowOdd}>
+			<td className={styles.statusCell}>
 				{isLeader && (
 					<span
 						className={
@@ -361,14 +363,14 @@ function PlayerRow({
 					</span>
 				)}
 				{isHammer && !isLeader && <FontAwesomeIcon icon={faHammer} />}
-			</span>
-			<span className={styles.nameCell}>{playerName}</span>
+			</td>
+			<td className={styles.nameCell}>{playerName}</td>
 			{showSecrets && (
-				<span className={styles.roleCell}>
+				<td className={styles.roleCell}>
 					{formatRoleWithEmoji(playerRole ? toTitleCase(playerRole) : playerRole)}
-				</span>
+				</td>
 			)}
-			<span className={styles.proposalCell}>
+			<td className={styles.proposalCell}>
 				<span
 					className={
 						hasVoteAnnotations ? `${styles.proposalVoteTooltipWrapper} ${styles.hasAnnotation}` : undefined
@@ -419,8 +421,8 @@ function PlayerRow({
 						</span>
 					)}
 				</span>
-			</span>
-			<span className={styles.missionResultCell}>
+			</td>
+			<td className={styles.missionResultCell}>
 				{hasMissionVotes && missionVote && missionVote.votedSuccess !== undefined && (
 					<span
 						className={
@@ -456,8 +458,8 @@ function PlayerRow({
 						)}
 					</span>
 				)}
-			</span>
-		</div>
+			</td>
+		</tr>
 	);
 }
 
