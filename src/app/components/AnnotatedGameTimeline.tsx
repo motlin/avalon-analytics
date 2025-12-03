@@ -400,42 +400,40 @@ function PlayerRow({
 					)}
 				</span>
 			</span>
-			{hasMissionVotes && (
-				<span className={styles.missionResultCell}>
-					{missionVote && missionVote.votedSuccess !== undefined && (
-						<span
-							className={
-								hasMissionVoteAnnotations
-									? `${styles.missionVoteTooltipWrapper} ${styles.hasAnnotation}`
-									: undefined
-							}
-						>
-							<span className="fa-layers fa-fw">
-								<FontAwesomeIcon
-									icon={missionVote.votedSuccess ? faCheckCircle : faTimesCircle}
-									size="lg"
-									color={missionVote.votedSuccess ? 'green' : 'red'}
-								/>
-							</span>
-							{hasMissionVoteAnnotations && (
-								<span className={styles.missionVoteTooltip}>
-									{missionVoteAnnotations.map((annotation, index) => (
-										<span
-											key={index}
-											className={styles.tooltipLine}
-										>
-											{stripPlayerPrefix(annotation.commentary, annotation.playerName)}{' '}
-											<span className={styles.tooltipPredicateName}>
-												({annotation.predicateName})
-											</span>
-										</span>
-									))}
-								</span>
-							)}
+			<span className={styles.missionResultCell}>
+				{hasMissionVotes && missionVote && missionVote.votedSuccess !== undefined && (
+					<span
+						className={
+							hasMissionVoteAnnotations
+								? `${styles.missionVoteTooltipWrapper} ${styles.hasAnnotation}`
+								: undefined
+						}
+					>
+						<span className="fa-layers fa-fw">
+							<FontAwesomeIcon
+								icon={missionVote.votedSuccess ? faCheckCircle : faTimesCircle}
+								size="lg"
+								color={missionVote.votedSuccess ? 'green' : 'red'}
+							/>
 						</span>
-					)}
-				</span>
-			)}
+						{hasMissionVoteAnnotations && (
+							<span className={styles.missionVoteTooltip}>
+								{missionVoteAnnotations.map((annotation, index) => (
+									<span
+										key={index}
+										className={styles.tooltipLine}
+									>
+										{stripPlayerPrefix(annotation.commentary, annotation.playerName)}{' '}
+										<span className={styles.tooltipPredicateName}>
+											({annotation.predicateName})
+										</span>
+									</span>
+								))}
+							</span>
+						)}
+					</span>
+				)}
+			</span>
 		</div>
 	);
 }
