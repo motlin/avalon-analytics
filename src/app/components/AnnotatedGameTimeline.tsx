@@ -168,6 +168,7 @@ function MissionSection({annotatedMission, showSecrets, game}: MissionSectionPro
 								key={annotatedProposal.proposalNumber}
 								annotatedProposal={annotatedProposal}
 								showSecrets={showSecrets}
+								missionNumber={missionNumber}
 								missionVotes={index === lastProposalIndex ? missionVotes : undefined}
 								missionVoteAnnotations={index === lastProposalIndex ? missionVoteAnnotations : []}
 								team={mission.team}
@@ -201,6 +202,7 @@ function MissionSection({annotatedMission, showSecrets, game}: MissionSectionPro
 interface ProposalSectionProps {
 	annotatedProposal: AnnotatedProposal;
 	showSecrets: boolean;
+	missionNumber: number;
 	missionVotes?: Record<string, boolean>;
 	missionVoteAnnotations: Annotation[];
 	team: string[];
@@ -209,6 +211,7 @@ interface ProposalSectionProps {
 function ProposalSection({
 	annotatedProposal,
 	showSecrets,
+	missionNumber,
 	missionVotes,
 	missionVoteAnnotations,
 	team,
@@ -218,7 +221,9 @@ function ProposalSection({
 	return (
 		<div className={styles.proposalCard}>
 			<div className={styles.proposalHeader}>
-				<strong>Proposal {proposalNumber}</strong>
+				<strong>
+					Mission {missionNumber}: Proposal {proposalNumber}
+				</strong>
 			</div>
 
 			<div className={styles.playerGrid}>
