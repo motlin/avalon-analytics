@@ -212,19 +212,50 @@
 }
 
 .roleCell {
-	border-right: 2px solid;
+	position: relative;
 	min-width: 160px;
 	white-space: nowrap;
 	flex-shrink: 0;
 	padding-left: 8px;
 	padding-right: 8px;
+	/* Explicit height for continuous bar alignment */
+	height: 2.3em;
+	display: flex;
+	align-items: center;
+}
+
+/* Continuous vertical bar after roleCell */
+.roleCell::after {
+	content: "";
+	position: absolute;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	width: 2px;
+	background-color: black;
 }
 
 .missionResultCell {
+	position: relative;
 	width: 1.7em;
-	border-right: 2px solid;
 	text-align: center;
 	padding: 0 4px;
+	/* Explicit height for continuous bar alignment */
+	height: 2.3em;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+/* Continuous vertical bar after missionResultCell */
+.missionResultCell::after {
+	content: "";
+	position: absolute;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	width: 2px;
+	background-color: black;
 }
 
 .roleCell + .proposalCell {
@@ -233,7 +264,6 @@
 
 .missionResultCell + span {
 	padding-left: 8px;
-	border-left: 2px solid;
 }
 
 /* Annotation Box */
