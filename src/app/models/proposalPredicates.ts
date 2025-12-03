@@ -114,7 +114,10 @@ export const FirstAllGoodTeamOfMaxSizePredicate: ProposalPredicate = {
 	},
 };
 
-// 🧙 Percival Proposing Merlin (without Morgana)
+/**
+ * Percival correctly identified and proposed Merlin without also proposing Morgana.
+ * This indicates Percival successfully distinguished between Merlin and Morgana.
+ */
 export const PercivalProposingMerlinPredicate: ProposalPredicate = {
 	name: 'PercivalProposingMerlinProposalPredicate',
 	isRelevant: (context) => getLeaderRole(context) === 'Percival',
@@ -125,7 +128,10 @@ export const PercivalProposingMerlinPredicate: ProposalPredicate = {
 	},
 };
 
-// 😈 Percival Proposing Morgana (without Merlin)
+/**
+ * Percival incorrectly proposed Morgana without Merlin.
+ * This indicates Percival was fooled by Morgana.
+ */
 export const PercivalProposingMorganaPredicate: ProposalPredicate = {
 	name: 'PercivalProposingMorganaProposalPredicate',
 	isRelevant: (context) => getLeaderRole(context) === 'Percival',
@@ -136,7 +142,10 @@ export const PercivalProposingMorganaPredicate: ProposalPredicate = {
 	},
 };
 
-// 🎭 Percival Proposing Both Merlin and Morgana
+/**
+ * Percival proposed both Merlin and Morgana, hedging their bet.
+ * This is notably safer than guessing wrong.
+ */
 export const PercivalProposingMerlinAndMorganaPredicate: ProposalPredicate = {
 	name: 'PercivalProposingMerlinAndMorganaProposalPredicate',
 	isRelevant: (context) => getLeaderRole(context) === 'Percival',
@@ -182,18 +191,17 @@ export const MerlinProposingMorganaPredicate: ProposalPredicate = {
 	},
 };
 
-// 😈 Morgana/Percival Proposing Merlin
-export const ProposedMerlinPredicate: ProposalPredicate = {
-	name: 'ProposedMerlinProposalPredicate',
-	isRelevant: (context) => {
-		const role = getLeaderRole(context);
-		return role === 'Morgana' || role === 'Percival';
-	},
+/**
+ * Morgana proposed Merlin on their team.
+ * Morgana knows who Merlin is, so this is a deliberate inclusion.
+ */
+export const MorganaProposingMerlinPredicate: ProposalPredicate = {
+	name: 'MorganaProposingMerlinProposalPredicate',
+	isRelevant: (context) => getLeaderRole(context) === 'Morgana',
 	isWeird: (context) => teamIncludesRole(context, 'Merlin'),
 	isWorthCommentary: () => true,
 	getCommentary: (context) => {
-		const role = getLeaderRole(context) ?? 'Unknown';
-		return `${getRoleEmoji(role)} ${role} ${context.proposal.proposer} proposed a team with Merlin.`;
+		return `🧙 Morgana ${context.proposal.proposer} proposed a team with Merlin.`;
 	},
 };
 
@@ -549,7 +557,7 @@ export const PROPOSAL_PREDICATES: ProposalPredicate[] = [
 	PercivalProposingMerlinAndMorganaPredicate,
 	PercivalExcludingMerlinWithoutMorganaPredicate,
 	MerlinProposingMorganaPredicate,
-	ProposedMerlinPredicate,
+	MorganaProposingMerlinPredicate,
 	MerlinMorganaTwoPredicate,
 	MerlinMorganaSelfPredicate,
 	ProposedTwoOtherPlayersPredicate,
