@@ -1,6 +1,3 @@
-'use client';
-
-import {useState} from 'react';
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faCheckCircle, faTimesCircle, faCircle} from '@fortawesome/free-solid-svg-icons';
@@ -13,7 +10,6 @@ import styles from './CombinedAnnotatedTable.module.css';
 
 interface CombinedAnnotatedTableProps {
 	game: Game;
-	showSecrets?: boolean;
 }
 
 function toTitleCase(text: string): string {
@@ -32,8 +28,7 @@ function stripPlayerPrefix(commentary: string, playerName: string): string {
 	return afterPlayerName.charAt(0).toUpperCase() + afterPlayerName.slice(1);
 }
 
-export function CombinedAnnotatedTable({game, showSecrets: initialShowSecrets = false}: CombinedAnnotatedTableProps) {
-	const [showSecrets, setShowSecrets] = useState(initialShowSecrets);
+export function CombinedAnnotatedTable({game}: CombinedAnnotatedTableProps) {
 	const annotatedGame = annotateGame(game);
 	const players = game.players;
 	const missionVotes = game.outcome?.votes?.reduce(
@@ -46,13 +41,6 @@ export function CombinedAnnotatedTable({game, showSecrets: initialShowSecrets = 
 
 	return (
 		<div className={styles.container}>
-			<button
-				className={`${styles.revealButton} ${showSecrets ? styles.revealButtonActive : ''}`}
-				onClick={() => setShowSecrets(!showSecrets)}
-			>
-				{showSecrets ? 'Hide Secrets' : 'Reveal Secrets'}
-			</button>
-
 			<div className={styles.tableWrapper}>
 				<table className={styles.table}>
 					<tbody>
@@ -67,7 +55,7 @@ export function CombinedAnnotatedTable({game, showSecrets: initialShowSecrets = 
 									<td className={styles.playerName}>
 										<span className={styles.fontWeightMedium}>{player.name}</span>
 									</td>
-									{showSecrets && playerRole && (
+									{playerRole && (
 										<td className={styles.role}>{formatRoleWithEmoji(toTitleCase(playerRole))}</td>
 									)}
 									{annotatedGame.missions.flatMap((annotatedMission, missionIndex) => {
@@ -89,8 +77,7 @@ export function CombinedAnnotatedTable({game, showSecrets: initialShowSecrets = 
 												(r) => r.playerName === player.name,
 											);
 											const voteAnnotations = playerRow?.voteAnnotations || [];
-											const proposalAnnotations =
-												isProposer && showSecrets ? annotatedProposal.annotations : [];
+											const proposalAnnotations = isProposer ? annotatedProposal.annotations : [];
 
 											return (
 												<td
@@ -102,7 +89,6 @@ export function CombinedAnnotatedTable({game, showSecrets: initialShowSecrets = 
 														isOnTeam={isOnTeam}
 														votedYes={votedYes}
 														isPending={isPending}
-														showSecrets={showSecrets}
 														voteAnnotations={voteAnnotations}
 														proposalAnnotations={proposalAnnotations}
 													/>
@@ -118,7 +104,6 @@ export function CombinedAnnotatedTable({game, showSecrets: initialShowSecrets = 
 												{mission.team.includes(player.name) && missionVotes && (
 													<MissionVoteIcon
 														votedSuccess={missionVotes[missionIndex]?.[player.name]}
-														showSecrets={showSecrets}
 														annotations={annotatedMission.missionVoteAnnotations.filter(
 															(a) => a.playerName === player.name,
 														)}
@@ -144,7 +129,6 @@ interface CellContentProps {
 	isOnTeam: boolean;
 	votedYes: boolean;
 	isPending: boolean;
-	showSecrets: boolean;
 	voteAnnotations: Annotation[];
 	proposalAnnotations: Annotation[];
 }
@@ -154,12 +138,11 @@ function CellContent({
 	isOnTeam,
 	votedYes,
 	isPending,
-	showSecrets,
 	voteAnnotations,
 	proposalAnnotations,
 }: CellContentProps) {
 	const allAnnotations = [...proposalAnnotations, ...voteAnnotations];
-	const hasAnyAnnotations = showSecrets && allAnnotations.length > 0;
+	const hasAnyAnnotations = allAnnotations.length > 0;
 
 	return (
 		<span className={hasAnyAnnotations ? `${styles.tooltipWrapper} ${styles.hasAnnotation}` : undefined}>
@@ -213,14 +196,13 @@ function CellContent({
 
 interface MissionVoteIconProps {
 	votedSuccess: boolean | undefined;
-	showSecrets: boolean;
 	annotations: Annotation[];
 }
 
-function MissionVoteIcon({votedSuccess, showSecrets, annotations}: MissionVoteIconProps) {
+function MissionVoteIcon({votedSuccess, annotations}: MissionVoteIconProps) {
 	if (votedSuccess === undefined) return null;
 
-	const hasAnnotations = showSecrets && annotations.length > 0;
+	const hasAnnotations = annotations.length > 0;
 
 	return (
 		<span className={hasAnnotations ? `${styles.tooltipWrapper} ${styles.hasAnnotation}` : undefined}>
