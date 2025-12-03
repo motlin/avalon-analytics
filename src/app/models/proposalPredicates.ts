@@ -332,14 +332,14 @@ export const OneEvilTeamPredicate: ProposalPredicate = {
 	},
 };
 
-// 📋 Same Team as Previous Proposal
-export const SameTeamPredicate: ProposalPredicate = {
-	name: 'SameTeamProposalPredicate',
+// 📋 Same Team as Previously Approved Proposal
+export const SameTeamApprovedProposalPredicate: ProposalPredicate = {
+	name: 'SameTeamApprovedProposalPredicate',
 	isRelevant: () => true,
 	isWeird: (context) => {
 		const currentTeam = [...context.proposal.team].sort();
 
-		// Look through all previous proposals
+		// Look through all previous proposals for approved ones
 		for (let missionIndex = 0; missionIndex <= context.missionNumber; missionIndex++) {
 			const mission = context.game.missions[missionIndex];
 			const proposalLimit =
@@ -347,6 +347,7 @@ export const SameTeamPredicate: ProposalPredicate = {
 
 			for (let proposalIndex = 0; proposalIndex < proposalLimit; proposalIndex++) {
 				const previousProposal = mission.proposals[proposalIndex];
+				if (previousProposal.state !== 'APPROVED') continue;
 				const previousTeam = [...previousProposal.team].sort();
 				if (JSON.stringify(currentTeam) === JSON.stringify(previousTeam)) {
 					return true;
@@ -360,7 +361,7 @@ export const SameTeamPredicate: ProposalPredicate = {
 		const role = getLeaderRole(context) ?? 'Unknown';
 		const currentTeam = [...context.proposal.team].sort();
 
-		// Find the previous matching proposal
+		// Find the previous matching approved proposal
 		for (let missionIndex = 0; missionIndex <= context.missionNumber; missionIndex++) {
 			const mission = context.game.missions[missionIndex];
 			const proposalLimit =
@@ -368,13 +369,62 @@ export const SameTeamPredicate: ProposalPredicate = {
 
 			for (let proposalIndex = 0; proposalIndex < proposalLimit; proposalIndex++) {
 				const previousProposal = mission.proposals[proposalIndex];
+				if (previousProposal.state !== 'APPROVED') continue;
 				const previousTeam = [...previousProposal.team].sort();
 				if (JSON.stringify(currentTeam) === JSON.stringify(previousTeam)) {
-					return `${getRoleEmoji(role)} ${role} ${context.proposal.proposer} proposed the same team from mission ${missionIndex + 1} proposal ${proposalIndex + 1}.`;
+					return `${getRoleEmoji(role)} ${role} ${context.proposal.proposer} copied the approved team from mission ${missionIndex + 1}.`;
 				}
 			}
 		}
-		return `${getRoleEmoji(role)} ${role} ${context.proposal.proposer} proposed a duplicate team.`;
+		return `${getRoleEmoji(role)} ${role} ${context.proposal.proposer} copied a previously approved team.`;
+	},
+};
+
+// 📋 Same Team as Previously Rejected Proposal
+export const SameTeamRejectedProposalPredicate: ProposalPredicate = {
+	name: 'SameTeamRejectedProposalPredicate',
+	isRelevant: () => true,
+	isWeird: (context) => {
+		const currentTeam = [...context.proposal.team].sort();
+
+		// Look through all previous proposals for rejected ones
+		for (let missionIndex = 0; missionIndex <= context.missionNumber; missionIndex++) {
+			const mission = context.game.missions[missionIndex];
+			const proposalLimit =
+				missionIndex === context.missionNumber ? context.proposalNumber : mission.proposals.length;
+
+			for (let proposalIndex = 0; proposalIndex < proposalLimit; proposalIndex++) {
+				const previousProposal = mission.proposals[proposalIndex];
+				if (previousProposal.state !== 'REJECTED') continue;
+				const previousTeam = [...previousProposal.team].sort();
+				if (JSON.stringify(currentTeam) === JSON.stringify(previousTeam)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	},
+	isWorthCommentary: () => true,
+	getCommentary: (context) => {
+		const role = getLeaderRole(context) ?? 'Unknown';
+		const currentTeam = [...context.proposal.team].sort();
+
+		// Find the previous matching rejected proposal
+		for (let missionIndex = 0; missionIndex <= context.missionNumber; missionIndex++) {
+			const mission = context.game.missions[missionIndex];
+			const proposalLimit =
+				missionIndex === context.missionNumber ? context.proposalNumber : mission.proposals.length;
+
+			for (let proposalIndex = 0; proposalIndex < proposalLimit; proposalIndex++) {
+				const previousProposal = mission.proposals[proposalIndex];
+				if (previousProposal.state !== 'REJECTED') continue;
+				const previousTeam = [...previousProposal.team].sort();
+				if (JSON.stringify(currentTeam) === JSON.stringify(previousTeam)) {
+					return `${getRoleEmoji(role)} ${role} ${context.proposal.proposer} re-proposed the rejected team from mission ${missionIndex + 1} proposal ${proposalIndex + 1}.`;
+				}
+			}
+		}
+		return `${getRoleEmoji(role)} ${role} ${context.proposal.proposer} re-proposed a previously rejected team.`;
 	},
 };
 
@@ -572,7 +622,8 @@ export const PROPOSAL_PREDICATES: ProposalPredicate[] = [
 	RiskingLossPredicate,
 	OneEvilTeamFirstPredicate,
 	OneEvilTeamPredicate,
-	SameTeamPredicate,
+	SameTeamApprovedProposalPredicate,
+	SameTeamRejectedProposalPredicate,
 	NoDreamTeamPlusSelfPredicate,
 	NoDreamTeamPredicate,
 	FinalAllGoodTeamDoesNotIncludeMerlinPredicate,
