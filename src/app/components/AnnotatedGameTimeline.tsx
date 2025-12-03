@@ -320,11 +320,10 @@ function PlayerRow({
 							<FontAwesomeIcon
 								icon={faCrown}
 								color={crownColor}
-								transform="grow-4"
 							/>
 							<span
 								className="fa-layers-text"
-								style={{fontSize: '0.6em', fontWeight: 'bold'}}
+								style={{fontSize: '0.5em', fontWeight: 'bold'}}
 							>
 								{proposalNumber}
 							</span>
