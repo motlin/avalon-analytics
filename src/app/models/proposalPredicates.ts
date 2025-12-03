@@ -8,6 +8,7 @@
 import type {Annotation, GameContext, ProposalContext} from './annotations';
 import {
 	countSeenEvilOnTeam,
+	gameIncludesRole,
 	getHammerPlayer,
 	getLeaderRole,
 	getMaxTeamSize,
@@ -143,6 +144,17 @@ export const PercivalProposingMerlinAndMorganaPredicate: ProposalPredicate = {
 	isWorthCommentary: () => true,
 	getCommentary: (context) => {
 		return `🧔 Percival ${context.proposal.proposer} proposed both Merlin and Morgana.`;
+	},
+};
+
+// 🧔 Percival Excluding Merlin (without Morgana in game)
+export const PercivalExcludingMerlinWithoutMorganaPredicate: ProposalPredicate = {
+	name: 'PercivalExcludingMerlinWithoutMorganaProposalPredicate',
+	isRelevant: (context) => getLeaderRole(context) === 'Percival' && !gameIncludesRole(context, 'Morgana'),
+	isWeird: (context) => !teamIncludesRole(context, 'Merlin'),
+	isWorthCommentary: () => true,
+	getCommentary: (context) => {
+		return `🧔 Percival ${context.proposal.proposer} excluded Merlin despite knowing who Merlin is.`;
 	},
 };
 
@@ -535,6 +547,7 @@ export const PROPOSAL_PREDICATES: ProposalPredicate[] = [
 	PercivalProposingMerlinPredicate,
 	PercivalProposingMorganaPredicate,
 	PercivalProposingMerlinAndMorganaPredicate,
+	PercivalExcludingMerlinWithoutMorganaPredicate,
 	MerlinProposingMorganaPredicate,
 	ProposedMerlinPredicate,
 	MerlinMorganaTwoPredicate,

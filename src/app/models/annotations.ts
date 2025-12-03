@@ -168,6 +168,15 @@ export function teamIncludesRole(context: ProposalContext, targetRole: string): 
 	});
 }
 
+export function gameIncludesRole(context: GameContext, targetRole: string): boolean {
+	for (const role of context.rolesByName.values()) {
+		if (role.toLowerCase() === targetRole.toLowerCase()) {
+			return true;
+		}
+	}
+	return false;
+}
+
 export function countEvilOnTeam(context: ProposalContext): number {
 	return context.proposal.team.filter((name) => {
 		const role = getPlayerRole(context, name);
