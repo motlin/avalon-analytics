@@ -1,0 +1,177 @@
+/* CombinedAnnotatedTable CSS Module
+ * Based on MissionSummaryTable with annotation tooltips
+ */
+
+.container {
+	width: 100%;
+}
+
+.revealButton {
+	background-color: #00838f;
+	color: white;
+	border: none;
+	border-radius: 4px;
+	padding: 8px 16px;
+	font-size: 14px;
+	font-weight: 500;
+	cursor: pointer;
+	margin-bottom: 16px;
+	box-shadow:
+		0 3px 1px -2px rgba(0, 0, 0, 0.2),
+		0 2px 2px 0 rgba(0, 0, 0, 0.14),
+		0 1px 5px 0 rgba(0, 0, 0, 0.12);
+	transition: background-color 0.2s ease;
+}
+
+.revealButton:hover {
+	background-color: #006064;
+}
+
+.revealButtonActive {
+	background-color: #c62828;
+}
+
+.revealButtonActive:hover {
+	background-color: #b71c1c;
+}
+
+.tableWrapper {
+	overflow-x: auto;
+	width: 100%;
+	display: flex;
+	justify-content: center;
+}
+
+.table {
+	border-collapse: collapse;
+}
+
+.table tr {
+	height: 2.3em;
+}
+
+.table td {
+	width: 1.7em;
+}
+
+.evenRow {
+	background-color: Gainsboro;
+}
+
+.oddRow {
+	background-color: bisque;
+}
+
+.playerName {
+	border-left: 2px solid;
+	padding-left: 8px;
+	padding-right: 8px;
+	width: auto;
+}
+
+.fontWeightMedium {
+	font-weight: 500;
+}
+
+.role {
+	border-right: 2px solid;
+	white-space: nowrap;
+	padding-left: 8px;
+	padding-right: 8px;
+	width: auto;
+}
+
+.proposalCell {
+	text-align: center;
+	min-width: 2em;
+	padding: 0 4px;
+}
+
+.role + td {
+	padding-left: 8px;
+}
+
+.missionResult {
+	border-right: 2px solid;
+	text-align: center;
+	padding: 0 4px;
+}
+
+.missionResult + td {
+	padding-left: 8px;
+	border-left: 2px solid;
+}
+
+/* Tooltip styles */
+.tooltipWrapper {
+	position: relative;
+	display: inline-block;
+	cursor: help;
+}
+
+.tooltip {
+	visibility: hidden;
+	opacity: 0;
+	position: absolute;
+	left: 50%;
+	transform: translateX(-50%);
+	top: 100%;
+	margin-top: 8px;
+	background-color: #fef3c7;
+	border: 1px solid #fcd34d;
+	border-radius: 4px;
+	padding: 8px 12px;
+	font-size: 12px;
+	max-width: 300px;
+	width: max-content;
+	overflow-wrap: break-word;
+	z-index: 1000;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+	transition:
+		visibility 0s linear 0.1s,
+		opacity 0.1s ease-in-out;
+}
+
+.tooltipWrapper:hover .tooltip {
+	visibility: visible;
+	opacity: 1;
+	transition-delay: 0s;
+}
+
+.tooltipLine {
+	display: block;
+	margin-top: 4px;
+	text-align: left;
+}
+
+.tooltipLine:first-child {
+	margin-top: 0;
+}
+
+.tooltipPredicateName {
+	font-size: 11px;
+	font-style: italic;
+}
+
+/* Proposer icon - yellow circle behind thumb icons */
+.proposerIcon {
+	/* Wrapper for the yellow proposer indicator circle */
+}
+
+/* Annotation indicator - small dot to show hover notes are available */
+.hasAnnotation {
+	position: relative;
+}
+
+.hasAnnotation::after {
+	content: "";
+	position: absolute;
+	top: -2px;
+	right: -2px;
+	width: 6px;
+	height: 6px;
+	background-color: #f59e0b;
+	border-radius: 50%;
+	border: 1px solid #fef3c7;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}

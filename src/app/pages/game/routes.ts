@@ -1,4 +1,5 @@
 import {route} from 'rwsdk/router';
+import {GameCombined} from './GameCombined';
 import {GameDetail} from './GameDetail';
 import {GamesList} from './GamesList';
 import {GameSummary} from './GameSummary';
@@ -7,4 +8,5 @@ export const gameRoutes = [
 	route('/games', [GamesList]),
 	route('/game/:gameId', [GameDetail]),
 	route('/game/:gameId/summary', [GameSummary]),
+	route('/game/:gameId/combined', [GameCombined]),
 ];

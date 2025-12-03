@@ -1,0 +1,256 @@
+'use client';
+
+import {useState} from 'react';
+import '@fortawesome/fontawesome-svg-core/styles.css';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faCheckCircle, faTimesCircle, faCircle} from '@fortawesome/free-solid-svg-icons';
+import {faThumbsUp, faThumbsDown, faCircle as faCircleRegular} from '@fortawesome/free-regular-svg-icons';
+import type {Game} from '../models/game';
+import type {Annotation} from '../models/annotations';
+import {annotateGame, formatRoleWithEmoji} from '../models/gameAnnotator';
+import {getPredicateRarityCssColor} from '../models/predicateRarity';
+import styles from './CombinedAnnotatedTable.module.css';
+
+interface CombinedAnnotatedTableProps {
+	game: Game;
+	showSecrets?: boolean;
+}
+
+function toTitleCase(text: string): string {
+	return text
+		.toLowerCase()
+		.split(' ')
+		.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+		.join(' ');
+}
+
+function stripPlayerPrefix(commentary: string, playerName: string): string {
+	const playerIndex = commentary.indexOf(playerName);
+	if (playerIndex === -1) return commentary;
+	const afterPlayerName = commentary.slice(playerIndex + playerName.length).trim();
+	if (!afterPlayerName) return commentary;
+	return afterPlayerName.charAt(0).toUpperCase() + afterPlayerName.slice(1);
+}
+
+export function CombinedAnnotatedTable({game, showSecrets: initialShowSecrets = false}: CombinedAnnotatedTableProps) {
+	const [showSecrets, setShowSecrets] = useState(initialShowSecrets);
+	const annotatedGame = annotateGame(game);
+	const players = game.players;
+	const missionVotes = game.outcome?.votes?.reduce(
+		(acc, vote, index) => {
+			acc[index] = vote;
+			return acc;
+		},
+		{} as Record<number, Record<string, boolean>>,
+	);
+
+	return (
+		<div className={styles.container}>
+			<button
+				className={`${styles.revealButton} ${showSecrets ? styles.revealButtonActive : ''}`}
+				onClick={() => setShowSecrets(!showSecrets)}
+			>
+				{showSecrets ? 'Hide Secrets' : 'Reveal Secrets'}
+			</button>
+
+			<div className={styles.tableWrapper}>
+				<table className={styles.table}>
+					<tbody>
+						{players.map((player, playerIndex) => {
+							const playerRole = game.outcome?.roles?.find((r) => r.name === player.name)?.role;
+
+							return (
+								<tr
+									key={player.name}
+									className={playerIndex % 2 === 0 ? styles.evenRow : styles.oddRow}
+								>
+									<td className={styles.playerName}>
+										<span className={styles.fontWeightMedium}>{player.name}</span>
+									</td>
+									{showSecrets && playerRole && (
+										<td className={styles.role}>{formatRoleWithEmoji(toTitleCase(playerRole))}</td>
+									)}
+									{annotatedGame.missions.flatMap((annotatedMission, missionIndex) => {
+										const mission = annotatedMission.mission;
+										const validProposals = annotatedMission.proposals.filter(
+											(p) => p.proposal.team.length > 0,
+										);
+
+										const proposalCells = validProposals.map((annotatedProposal) => {
+											const proposal = annotatedProposal.proposal;
+											const proposalIndex = annotatedProposal.proposalNumber - 1;
+											const isProposer = proposal.proposer === player.name;
+											const isOnTeam = proposal.team.includes(player.name);
+											const votedYes = proposal.votes.includes(player.name);
+											const isPending = proposal.state === 'PENDING';
+
+											// Get annotations for this player in this proposal
+											const playerRow = annotatedProposal.playerRows.find(
+												(r) => r.playerName === player.name,
+											);
+											const voteAnnotations = playerRow?.voteAnnotations || [];
+											const proposalAnnotations =
+												isProposer && showSecrets ? annotatedProposal.annotations : [];
+
+											return (
+												<td
+													key={`${player.name}_m${missionIndex}_p${proposalIndex}`}
+													className={styles.proposalCell}
+												>
+													<CellContent
+														isProposer={isProposer}
+														isOnTeam={isOnTeam}
+														votedYes={votedYes}
+														isPending={isPending}
+														showSecrets={showSecrets}
+														voteAnnotations={voteAnnotations}
+														proposalAnnotations={proposalAnnotations}
+													/>
+												</td>
+											);
+										});
+
+										const missionVoteCell = (
+											<td
+												key={`${player.name}_mission${missionIndex}`}
+												className={styles.missionResult}
+											>
+												{mission.team.includes(player.name) && missionVotes && (
+													<MissionVoteIcon
+														votedSuccess={missionVotes[missionIndex]?.[player.name]}
+														showSecrets={showSecrets}
+														annotations={annotatedMission.missionVoteAnnotations.filter(
+															(a) => a.playerName === player.name,
+														)}
+													/>
+												)}
+											</td>
+										);
+
+										return [...proposalCells, missionVoteCell];
+									})}
+								</tr>
+							);
+						})}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	);
+}
+
+interface CellContentProps {
+	isProposer: boolean;
+	isOnTeam: boolean;
+	votedYes: boolean;
+	isPending: boolean;
+	showSecrets: boolean;
+	voteAnnotations: Annotation[];
+	proposalAnnotations: Annotation[];
+}
+
+function CellContent({
+	isProposer,
+	isOnTeam,
+	votedYes,
+	isPending,
+	showSecrets,
+	voteAnnotations,
+	proposalAnnotations,
+}: CellContentProps) {
+	const allAnnotations = [...proposalAnnotations, ...voteAnnotations];
+	const hasAnyAnnotations = showSecrets && allAnnotations.length > 0;
+
+	return (
+		<span className={hasAnyAnnotations ? `${styles.tooltipWrapper} ${styles.hasAnnotation}` : undefined}>
+			<span className="fa-layers fa-fw">
+				{isProposer && (
+					<span className={styles.proposerIcon}>
+						<FontAwesomeIcon
+							icon={faCircle}
+							color="yellow"
+							transform="grow-13"
+						/>
+					</span>
+				)}
+				{isOnTeam && (
+					<FontAwesomeIcon
+						icon={faCircleRegular}
+						transform="grow-13"
+						className="fa-solid"
+						color="#629ec1"
+					/>
+				)}
+				{!isPending && (
+					<FontAwesomeIcon
+						icon={votedYes ? faThumbsUp : faThumbsDown}
+						transform="right-1"
+						color={votedYes ? 'green' : '#ed1515'}
+					/>
+				)}
+			</span>
+			{hasAnyAnnotations && (
+				<span className={styles.tooltip}>
+					{allAnnotations.map((annotation, index) => (
+						<span
+							key={index}
+							className={styles.tooltipLine}
+						>
+							{stripPlayerPrefix(annotation.commentary, annotation.playerName)}{' '}
+							<span
+								className={styles.tooltipPredicateName}
+								style={{color: getPredicateRarityCssColor(annotation.predicateName)}}
+							>
+								({annotation.predicateName})
+							</span>
+						</span>
+					))}
+				</span>
+			)}
+		</span>
+	);
+}
+
+interface MissionVoteIconProps {
+	votedSuccess: boolean | undefined;
+	showSecrets: boolean;
+	annotations: Annotation[];
+}
+
+function MissionVoteIcon({votedSuccess, showSecrets, annotations}: MissionVoteIconProps) {
+	if (votedSuccess === undefined) return null;
+
+	const hasAnnotations = showSecrets && annotations.length > 0;
+
+	return (
+		<span className={hasAnnotations ? `${styles.tooltipWrapper} ${styles.hasAnnotation}` : undefined}>
+			<span className="fa-layers fa-fw">
+				<FontAwesomeIcon
+					icon={votedSuccess ? faCheckCircle : faTimesCircle}
+					size="lg"
+					color={votedSuccess ? 'green' : 'red'}
+				/>
+			</span>
+			{hasAnnotations && (
+				<span className={styles.tooltip}>
+					{annotations.map((annotation, index) => (
+						<span
+							key={index}
+							className={styles.tooltipLine}
+						>
+							{stripPlayerPrefix(annotation.commentary, annotation.playerName)}{' '}
+							<span
+								className={styles.tooltipPredicateName}
+								style={{color: getPredicateRarityCssColor(annotation.predicateName)}}
+							>
+								({annotation.predicateName})
+							</span>
+						</span>
+					))}
+				</span>
+			)}
+		</span>
+	);
+}
+
+export default CombinedAnnotatedTable;
