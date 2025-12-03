@@ -120,7 +120,7 @@ export const FirstAllGoodTeamOfMaxSizePredicate: ProposalPredicate = {
  */
 export const PercivalProposingMerlinPredicate: ProposalPredicate = {
 	name: 'PercivalProposingMerlinProposalPredicate',
-	isRelevant: (context) => getLeaderRole(context) === 'Percival',
+	isRelevant: (context) => getLeaderRole(context) === 'Percival' && gameIncludesRole(context, 'Morgana'),
 	isWeird: (context) => teamIncludesRole(context, 'Merlin') && !teamIncludesRole(context, 'Morgana'),
 	isWorthCommentary: () => true,
 	getCommentary: (context) => {
@@ -134,7 +134,7 @@ export const PercivalProposingMerlinPredicate: ProposalPredicate = {
  */
 export const PercivalProposingMorganaPredicate: ProposalPredicate = {
 	name: 'PercivalProposingMorganaProposalPredicate',
-	isRelevant: (context) => getLeaderRole(context) === 'Percival',
+	isRelevant: (context) => getLeaderRole(context) === 'Percival' && gameIncludesRole(context, 'Morgana'),
 	isWeird: (context) => teamIncludesRole(context, 'Morgana') && !teamIncludesRole(context, 'Merlin'),
 	isWorthCommentary: () => true,
 	getCommentary: (context) => {
@@ -148,7 +148,7 @@ export const PercivalProposingMorganaPredicate: ProposalPredicate = {
  */
 export const PercivalProposingMerlinAndMorganaPredicate: ProposalPredicate = {
 	name: 'PercivalProposingMerlinAndMorganaProposalPredicate',
-	isRelevant: (context) => getLeaderRole(context) === 'Percival',
+	isRelevant: (context) => getLeaderRole(context) === 'Percival' && gameIncludesRole(context, 'Morgana'),
 	isWeird: (context) => teamIncludesRole(context, 'Merlin') && teamIncludesRole(context, 'Morgana'),
 	isWorthCommentary: () => true,
 	getCommentary: (context) => {
