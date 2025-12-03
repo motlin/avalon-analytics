@@ -155,7 +155,7 @@
 
 /* Player Grid - table-like layout matching MissionSummaryTable */
 .playerGrid {
-	font-size: 13px;
+	font-size: 16px;
 	position: relative;
 }
 
@@ -188,7 +188,6 @@
 .statusCell {
 	width: 1.7em;
 	text-align: center;
-	font-size: 1.2em;
 	padding: 0 4px;
 	display: flex;
 	align-items: center;
