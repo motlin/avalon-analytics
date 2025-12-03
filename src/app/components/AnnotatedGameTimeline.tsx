@@ -330,7 +330,6 @@ function PlayerRow({
 						</span>
 						{hasProposalAnnotations && (
 							<span className={styles.crownTooltip}>
-								<strong>Team proposal notes:</strong>
 								{proposalAnnotations.map((annotation, index) => (
 									<span
 										key={index}
@@ -388,7 +387,6 @@ function PlayerRow({
 					</span>
 					{hasVoteAnnotations && (
 						<span className={styles.proposalVoteTooltip}>
-							<strong>Vote notes:</strong>
 							{voteAnnotations.map((annotation, index) => (
 								<span
 									key={index}
@@ -421,7 +419,6 @@ function PlayerRow({
 							</span>
 							{hasMissionVoteAnnotations && (
 								<span className={styles.missionVoteTooltip}>
-									<strong>Mission vote notes:</strong>
 									{missionVoteAnnotations.map((annotation, index) => (
 										<span
 											key={index}
