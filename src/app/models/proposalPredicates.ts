@@ -647,34 +647,38 @@ export const NoDreamTeamPredicate: ProposalPredicate = {
 // 📋 All Proposal Predicates
 // ============================================================================
 
+// Ordered by rarity (rarest first = most interesting)
+// Run `npx tsx src/scripts/analyze-predicates.ts` to regenerate frequency data
 export const PROPOSAL_PREDICATES: ProposalPredicate[] = [
-	FirstAllGoodTeamPredicate,
-	FirstAllGoodTeamOfMaxSizePredicate,
-	PercivalProposingMerlinPredicate,
-	PercivalProposingMorganaPredicate,
-	PercivalProposingMerlinAndMorganaPredicate,
-	PercivalExcludingMerlinWithoutMorganaPredicate,
-	MerlinProposingMorganaPredicate,
-	MorganaProposingMerlinPredicate,
-	MerlinMorganaTwoPredicate,
-	MerlinMorganaSelfPredicate,
-	ProposedTwoOtherPlayersPredicate,
-	AllGoodTeamWithoutSelfPredicate,
-	ProposalWithoutSelfPredicate,
-	RiskingLossPredicate,
-	OneEvilTeamFirstPredicate,
-	OneEvilTeamPredicate,
-	SameTeamSucceededMissionProposalPredicate,
-	SameTeamFailedMissionProposalPredicate,
-	SameTeamRejectedProposalPredicate,
-	NoDreamTeamPlusSelfPredicate,
-	NoDreamTeamPredicate,
-	FinalAllGoodTeamDoesNotIncludeMerlinPredicate,
-	FinalAllGoodTeamDoesNotIncludePercivalPredicate,
-	TooManyEvilPlayersPredicate,
-	HammerPanderingPredicate,
-	KnownEvilHammerPredicate,
+	// Tracking only (isWorthCommentary returns false)
 	IsHammerPredicate,
+	// Rarest first (based on historical analysis of 12,910 games)
+	PercivalExcludingMerlinWithoutMorganaPredicate, // 109 fires
+	FinalAllGoodTeamDoesNotIncludeMerlinPredicate, // 316 fires
+	SameTeamFailedMissionProposalPredicate, // 337 fires
+	KnownEvilHammerPredicate, // 394 fires
+	PercivalProposingMerlinAndMorganaPredicate, // 586 fires
+	MerlinMorganaTwoPredicate, // 765 fires
+	FinalAllGoodTeamDoesNotIncludePercivalPredicate, // 864 fires
+	OneEvilTeamPredicate, // 955 fires
+	MerlinMorganaSelfPredicate, // 1001 fires
+	MerlinProposingMorganaPredicate, // 2257 fires
+	OneEvilTeamFirstPredicate, // 2554 fires
+	PercivalProposingMorganaPredicate, // 2701 fires
+	AllGoodTeamWithoutSelfPredicate, // 2930 fires
+	ProposedTwoOtherPlayersPredicate, // 3268 fires
+	NoDreamTeamPredicate, // 4123 fires
+	MorganaProposingMerlinPredicate, // 4292 fires
+	PercivalProposingMerlinPredicate, // 5043 fires
+	SameTeamSucceededMissionProposalPredicate, // 5080 fires
+	RiskingLossPredicate, // 5487 fires
+	FirstAllGoodTeamOfMaxSizePredicate, // 6180 fires
+	ProposalWithoutSelfPredicate, // 7261 fires
+	SameTeamRejectedProposalPredicate, // 8229 fires
+	TooManyEvilPlayersPredicate, // 8230 fires
+	NoDreamTeamPlusSelfPredicate, // 8786 fires
+	FirstAllGoodTeamPredicate, // 10342 fires
+	HammerPanderingPredicate, // 17389 fires
 ];
 
 // ============================================================================

@@ -666,30 +666,34 @@ export const FirstAllGoodTeamOfMaxSizeVotePredicate: ProposalVotePredicate = {
 // 📋 All Proposal Vote Predicates
 // ============================================================================
 
+// Ordered by rarity (rarest first = most interesting)
+// Run `npx tsx src/scripts/analyze-predicates.ts` to regenerate frequency data
 export const PROPOSAL_VOTE_PREDICATES: ProposalVotePredicate[] = [
+	// Tracking only (isWorthCommentary returns false)
 	EarlyOffTeamApprovalPredicate,
 	LateOffTeamApprovalPredicate,
-	ProtestVotePredicate,
-	ProtestVoteEvilTeamPredicate,
-	ProtestVoteGoodTeamPredicate,
-	MerlinVotedForMorganaPredicate,
-	MorganaVotedForMerlinPredicate,
-	PercivalVotedForBothPredicate,
-	VoteAgainstOwnProposalPredicate,
-	RiskingGoodLossPredicate,
-	RiskingEvilLossPredicate,
-	OffTeamApproveAllGoodTeamPredicate,
-	OffTeamApproveMaxSizePredicate,
-	EvilVotedAgainstEvilPredicate,
-	ApproveWhenNextLeaderProposalVotePredicate,
 	OnProposalButDidntVoteForItEarlyGameProposalVotePredicate,
-	SwitchedVoteProposalVotePredicate,
-	TrustedMoreThanMaxTeamSizePlayersOnLastMissionProposalVotePredicate,
-	OffTeamApproveOneEvilProposalVotePredicate,
-	FirstAllGoodTeamVotePredicate,
-	FirstAllGoodTeamOfMaxSizeVotePredicate,
-	ApprovingProposalWithTeammatesFromFailedMissionProposalVotePredicate,
-	DidNotProtestVoteWhenGoodWasAboutToWinProposalVotePredicate,
+	// Rarest first (based on historical analysis of 12,910 games)
+	DidNotProtestVoteWhenGoodWasAboutToWinProposalVotePredicate, // 385 fires
+	ProtestVotePredicate, // 836 fires
+	ProtestVoteGoodTeamPredicate, // 836 fires
+	ProtestVoteEvilTeamPredicate, // 2179 fires
+	PercivalVotedForBothPredicate, // 2233 fires
+	OffTeamApproveOneEvilProposalVotePredicate, // 4449 fires
+	EvilVotedAgainstEvilPredicate, // 7764 fires
+	MerlinVotedForMorganaPredicate, // 8440 fires
+	ApprovingProposalWithTeammatesFromFailedMissionProposalVotePredicate, // 8521 fires
+	VoteAgainstOwnProposalPredicate, // 8743 fires
+	RiskingEvilLossPredicate, // 9238 fires
+	MorganaVotedForMerlinPredicate, // 17089 fires
+	SwitchedVoteProposalVotePredicate, // 18381 fires
+	RiskingGoodLossPredicate, // 21343 fires
+	FirstAllGoodTeamOfMaxSizeVotePredicate, // 24121 fires
+	OffTeamApproveMaxSizePredicate, // 25326 fires
+	TrustedMoreThanMaxTeamSizePlayersOnLastMissionProposalVotePredicate, // 25830 fires
+	OffTeamApproveAllGoodTeamPredicate, // 38070 fires
+	FirstAllGoodTeamVotePredicate, // 43966 fires
+	ApproveWhenNextLeaderProposalVotePredicate, // 44433 fires
 ];
 
 // ============================================================================

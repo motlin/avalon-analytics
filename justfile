@@ -84,3 +84,7 @@ storybook-tests: install
 # `npx wrangler deploy --config dist/worker/wrangler.json`
 deploy: build
     npx wrangler deploy --config dist/worker/wrangler.json
+
+# Analyze predicate frequency across all historical games
+analyze-predicates:
+    npx tsx src/scripts/analyze-predicates.ts

@@ -238,13 +238,15 @@ function getDistanceFromLeader(context: MissionContext, playerName: string, lead
 // 📋 All Mission Vote Predicates
 // ============================================================================
 
+// Ordered by rarity (rarest first = most interesting)
+// Run `npx tsx src/scripts/analyze-predicates.ts` to regenerate frequency data
 export const MISSION_VOTE_PREDICATES: MissionVotePredicate[] = [
-	DuckingWhenGoodWonTwoPredicate,
-	DuckingWhenEvilWonTwoPredicate,
-	OberonDuckedPredicate,
-	EvilDuckedPredicate,
-	FailureToCoordinatePredicate,
-	EvilNotClosestFailedPredicate,
+	OberonDuckedPredicate, // 855 fires
+	FailureToCoordinatePredicate, // 918 fires
+	DuckingWhenEvilWonTwoPredicate, // 1103 fires
+	DuckingWhenGoodWonTwoPredicate, // 2239 fires
+	EvilNotClosestFailedPredicate, // 4243 fires
+	EvilDuckedPredicate, // 14814 fires
 ];
 
 // ============================================================================
