@@ -240,6 +240,7 @@ function ProposalSection({
 							row={row}
 							showSecrets={showSecrets}
 							isEven={index % 2 === 0}
+							hasMissionVotes={missionVotes !== undefined}
 							missionVote={missionVote}
 							missionVoteAnnotations={playerMissionVoteAnnotations}
 							proposalNumber={proposalNumber}
@@ -283,6 +284,7 @@ interface PlayerRowProps {
 	row: AnnotatedPlayerRow;
 	showSecrets: boolean;
 	isEven: boolean;
+	hasMissionVotes: boolean;
 	missionVote?: MissionVote;
 	missionVoteAnnotations: Annotation[];
 	proposalNumber: number;
@@ -293,6 +295,7 @@ function PlayerRow({
 	row,
 	showSecrets,
 	isEven,
+	hasMissionVotes,
 	missionVote,
 	missionVoteAnnotations,
 	proposalNumber,
@@ -399,39 +402,41 @@ function PlayerRow({
 					)}
 				</span>
 			</span>
-			{missionVote && missionVote.votedSuccess !== undefined && (
+			{hasMissionVotes && (
 				<span className={styles.missionResultCell}>
-					<span
-						className={
-							hasMissionVoteAnnotations
-								? `${styles.missionVoteTooltipWrapper} ${styles.hasAnnotation}`
-								: undefined
-						}
-					>
-						<span className="fa-layers fa-fw">
-							<FontAwesomeIcon
-								icon={missionVote.votedSuccess ? faCheckCircle : faTimesCircle}
-								size="lg"
-								color={missionVote.votedSuccess ? 'green' : 'red'}
-							/>
-						</span>
-						{hasMissionVoteAnnotations && (
-							<span className={styles.missionVoteTooltip}>
-								<strong>Mission vote notes:</strong>
-								{missionVoteAnnotations.map((annotation, index) => (
-									<span
-										key={index}
-										className={styles.tooltipLine}
-									>
-										{stripPlayerPrefix(annotation.commentary, annotation.playerName)}{' '}
-										<span className={styles.tooltipPredicateName}>
-											({annotation.predicateName})
-										</span>
-									</span>
-								))}
+					{missionVote && missionVote.votedSuccess !== undefined && (
+						<span
+							className={
+								hasMissionVoteAnnotations
+									? `${styles.missionVoteTooltipWrapper} ${styles.hasAnnotation}`
+									: undefined
+							}
+						>
+							<span className="fa-layers fa-fw">
+								<FontAwesomeIcon
+									icon={missionVote.votedSuccess ? faCheckCircle : faTimesCircle}
+									size="lg"
+									color={missionVote.votedSuccess ? 'green' : 'red'}
+								/>
 							</span>
-						)}
-					</span>
+							{hasMissionVoteAnnotations && (
+								<span className={styles.missionVoteTooltip}>
+									<strong>Mission vote notes:</strong>
+									{missionVoteAnnotations.map((annotation, index) => (
+										<span
+											key={index}
+											className={styles.tooltipLine}
+										>
+											{stripPlayerPrefix(annotation.commentary, annotation.playerName)}{' '}
+											<span className={styles.tooltipPredicateName}>
+												({annotation.predicateName})
+											</span>
+										</span>
+									))}
+								</span>
+							)}
+						</span>
+					)}
 				</span>
 			)}
 		</div>
