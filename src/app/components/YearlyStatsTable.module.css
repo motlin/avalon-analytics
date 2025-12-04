@@ -1,0 +1,63 @@
+.container {
+	margin-bottom: 2rem;
+}
+
+.title {
+	margin: 0 0 1rem 0;
+	font-size: 1.25rem;
+	font-weight: 600;
+}
+
+.tableWrapper {
+	overflow-x: auto;
+}
+
+.table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 0.875rem;
+}
+
+.table th,
+.table td {
+	padding: 0.5rem 0.75rem;
+	text-align: left;
+	border-bottom: 1px solid #e0e0e0;
+}
+
+.headerYear {
+	font-weight: 600;
+	background-color: #f5f5f5;
+	text-align: left;
+}
+
+.headerNum {
+	font-weight: 600;
+	background-color: #f5f5f5;
+	text-align: right;
+}
+
+.dataRow:hover {
+	background-color: #f9f9f9;
+}
+
+.yearCell {
+	font-weight: 600;
+}
+
+.numCell {
+	text-align: right;
+	font-variant-numeric: tabular-nums;
+}
+
+.numCellGood {
+	text-align: right;
+	font-variant-numeric: tabular-nums;
+	color: #2e7d32;
+}
+
+.numCellEvil {
+	text-align: right;
+	font-variant-numeric: tabular-nums;
+	color: #c62828;
+}

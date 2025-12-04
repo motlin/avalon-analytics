@@ -1,0 +1,84 @@
+.container {
+	margin-bottom: 2rem;
+}
+
+.title {
+	margin: 0 0 1rem 0;
+	font-size: 1.25rem;
+	font-weight: 600;
+}
+
+.cardsContainer {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+	gap: 1rem;
+}
+
+.card {
+	padding: 1rem;
+	background-color: #f9f9f9;
+	border-radius: 8px;
+	border: 1px solid #e0e0e0;
+}
+
+.cardTitle {
+	margin: 0 0 1rem 0;
+	font-size: 1rem;
+	font-weight: 600;
+	padding-bottom: 0.5rem;
+	border-bottom: 2px solid #e0e0e0;
+}
+
+.merlinIcon {
+	color: #2e7d32;
+}
+
+.assassinIcon {
+	color: #c62828;
+}
+
+.statGrid {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 0.75rem;
+}
+
+.statItem {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+}
+
+.statLabel {
+	font-size: 0.75rem;
+	color: #666;
+	text-transform: uppercase;
+	letter-spacing: 0.025em;
+}
+
+.statValue {
+	font-size: 1.25rem;
+	font-weight: 600;
+	font-variant-numeric: tabular-nums;
+}
+
+.statValueHighlight {
+	font-size: 1.25rem;
+	font-weight: 600;
+	font-variant-numeric: tabular-nums;
+	color: #1976d2;
+}
+
+.statValueSuccess {
+	font-size: 1.25rem;
+	font-weight: 600;
+	font-variant-numeric: tabular-nums;
+	color: #2e7d32;
+}
+
+.statValueDanger {
+	font-size: 1.25rem;
+	font-weight: 600;
+	font-variant-numeric: tabular-nums;
+	color: #c62828;
+}
