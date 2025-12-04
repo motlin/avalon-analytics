@@ -1,0 +1,92 @@
+.container {
+	background-color: #b2ebf2; /* cyan lighten-4 */
+	min-height: 100vh;
+}
+
+.header {
+	background-color: #80deea; /* cyan lighten-2 */
+	padding: 16px 30px;
+	text-align: center;
+}
+
+.header h1 {
+	margin: 0;
+	font-size: 1.5rem;
+	font-weight: bold;
+}
+
+.subtitle {
+	margin: 8px 0 0 0;
+	font-size: 0.9rem;
+	color: #455a64;
+}
+
+.content {
+	padding: 16px;
+	max-width: 900px;
+	margin: 0 auto;
+}
+
+.noPlayers {
+	text-align: center;
+}
+
+.tableWrapper {
+	overflow-x: auto;
+}
+
+.table {
+	width: 100%;
+	border-collapse: collapse;
+	background-color: #fff;
+	border-radius: 4px;
+	box-shadow:
+		0 2px 1px -1px rgba(0, 0, 0, 0.2),
+		0 1px 1px 0 rgba(0, 0, 0, 0.14),
+		0 1px 3px 0 rgba(0, 0, 0, 0.12);
+	overflow: hidden;
+}
+
+.table thead {
+	background-color: #4dd0e1; /* cyan lighten-1 */
+}
+
+.table th {
+	padding: 12px 8px;
+	text-align: left;
+	font-weight: bold;
+	font-size: 0.85rem;
+	border-bottom: 2px solid #00acc1;
+}
+
+.table td {
+	padding: 10px 8px;
+	border-bottom: 1px solid #e0e0e0;
+	font-size: 0.875rem;
+}
+
+.table tbody tr:hover {
+	background-color: #e0f7fa;
+}
+
+.table tbody tr:last-child td {
+	border-bottom: none;
+}
+
+.nameColumn {
+	min-width: 120px;
+}
+
+.numberColumn {
+	text-align: center !important;
+	min-width: 60px;
+}
+
+.playerLink {
+	color: #0066cc;
+	text-decoration: none;
+}
+
+.playerLink:hover {
+	text-decoration: underline;
+}

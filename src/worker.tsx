@@ -6,6 +6,7 @@ import {setCommonHeaders} from '@/app/headers';
 import {gameRoutes} from '@/app/pages/game/routes';
 import {Home} from '@/app/pages/Home';
 import {HomePage} from '@/app/pages/HomePage';
+import {playersRoutes} from '@/app/pages/players/routes';
 import {uidRoutes} from '@/app/pages/uid/routes';
 import {userRoutes} from '@/app/pages/user/routes';
 import {setupFirestoreRestService} from '@/app/services/firestore-rest';
@@ -81,6 +82,7 @@ export default defineApp([
 		]),
 		prefix('/user', userRoutes),
 		...gameRoutes,
+		...playersRoutes,
 		...uidRoutes,
 	]),
 ]);
