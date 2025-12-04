@@ -3,10 +3,14 @@ import {Breadcrumb} from '../../components/Breadcrumb';
 import type {Game} from '../../models/game';
 import {isEvilRole} from '../../models/annotations';
 import {getFirestoreRestService} from '../../services/firestore-rest';
+import {getPersonService} from '../../services/person';
 import styles from './PlayersPage.module.css';
 
 interface PlayerStats {
-	uid: string;
+	/** For mapped people, this is the person ID. For unmapped UIDs, this is the UID. */
+	id: string;
+	/** All UIDs associated with this player (may be multiple for mapped people) */
+	uids: string[];
 	name: string;
 	gamesPlayed: number;
 	wins: number;
@@ -14,9 +18,15 @@ interface PlayerStats {
 	goodWins: number;
 	evilGames: number;
 	evilWins: number;
+	/** Whether this player is mapped to a person in the database */
+	isMapped: boolean;
 }
 
-function calculatePlayerStats(games: Game[]): PlayerStats[] {
+function calculatePlayerStats(
+	games: Game[],
+	uidToPersonId: Map<string, string>,
+	uidToPersonName: Map<string, string>,
+): PlayerStats[] {
 	const statsMap = new Map<string, PlayerStats>();
 
 	for (const game of games) {
@@ -32,23 +42,32 @@ function calculatePlayerStats(games: Game[]): PlayerStats[] {
 
 			const playerWon = (playerIsEvil && !isGoodWin) || (!playerIsEvil && isGoodWin);
 
-			let stats = statsMap.get(player.uid);
+			// Use person ID if mapped, otherwise use UID
+			const personId = uidToPersonId.get(player.uid);
+			const statsKey = personId ?? player.uid;
+			const isMapped = personId !== undefined;
+
+			let stats = statsMap.get(statsKey);
 			if (!stats) {
+				const displayName = uidToPersonName.get(player.uid) ?? player.name;
 				stats = {
-					uid: player.uid,
-					name: player.name,
+					id: statsKey,
+					uids: [player.uid],
+					name: displayName,
 					gamesPlayed: 0,
 					wins: 0,
 					goodGames: 0,
 					goodWins: 0,
 					evilGames: 0,
 					evilWins: 0,
+					isMapped,
 				};
-				statsMap.set(player.uid, stats);
+				statsMap.set(statsKey, stats);
+			} else if (!stats.uids.includes(player.uid)) {
+				// Track additional UIDs for the same person
+				stats.uids.push(player.uid);
 			}
 
-			// Update name to most recent
-			stats.name = player.name;
 			stats.gamesPlayed++;
 
 			if (playerWon) {
@@ -82,6 +101,21 @@ export async function PlayersPage({}: RequestInfo) {
 	let allGames: Game[] = [];
 	let error: string | null = null;
 
+	// Initialize person service and build UID maps
+	const personService = getPersonService();
+	await personService.initialize();
+
+	// Build maps for UID resolution
+	const uidToPersonId = new Map<string, string>();
+	const uidToPersonName = new Map<string, string>();
+	const allPeople = await personService.getAllPeople();
+	for (const person of allPeople) {
+		for (const uid of person.uids) {
+			uidToPersonId.set(uid, person.id);
+			uidToPersonName.set(uid, person.name);
+		}
+	}
+
 	try {
 		const firestoreRestService = getFirestoreRestService();
 		let pageToken: string | undefined;
@@ -101,7 +135,7 @@ export async function PlayersPage({}: RequestInfo) {
 		return <div>Error: {error}</div>;
 	}
 
-	const playerStats = calculatePlayerStats(allGames);
+	const playerStats = calculatePlayerStats(allGames, uidToPersonId, uidToPersonName);
 
 	return (
 		<div className={styles.container}>
@@ -132,10 +166,12 @@ export async function PlayersPage({}: RequestInfo) {
 							</thead>
 							<tbody>
 								{playerStats.map((player) => (
-									<tr key={player.uid}>
+									<tr key={player.id}>
 										<td className={styles.nameColumn}>
 											<a
-												href={`/uid/${player.uid}`}
+												href={
+													player.isMapped ? `/person/${player.id}` : `/uid/${player.uids[0]}`
+												}
 												className={styles.playerLink}
 											>
 												{player.name}

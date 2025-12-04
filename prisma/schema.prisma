@@ -57,11 +57,21 @@ model RawGameData {
 }
 
 model Person {
-  id   String @id @default(uuid())
-  name String @unique
-  uid  String @unique
-  createdAt DateTime @default(now())
+  id        String      @id @default(uuid())
+  name      String      @unique
+  createdAt DateTime    @default(now())
+  uids      PersonUid[]
 
   @@index([name])
+}
+
+model PersonUid {
+  id        String   @id @default(uuid())
+  uid       String   @unique
+  personId  String
+  person    Person   @relation(fields: [personId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
   @@index([uid])
+  @@index([personId])
 }
