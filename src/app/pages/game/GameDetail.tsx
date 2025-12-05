@@ -2,8 +2,8 @@ import type {RequestInfo} from 'rwsdk/worker';
 import {AnnotatedGameTimelineComponent} from '../../components/AnnotatedGameTimeline';
 import {Breadcrumb} from '../../components/Breadcrumb';
 import {LocalTimestamp} from '../../components/LocalTimestamp';
-import type {Game} from '../../models/game';
-import {getFirestoreRestService} from '../../services/firestore-rest';
+import {type Game, GameSchema} from '../../models/game';
+import {db} from '@/db';
 
 export async function GameDetail({params, request}: RequestInfo) {
 	const gameId = params.gameId;
@@ -13,8 +13,17 @@ export async function GameDetail({params, request}: RequestInfo) {
 	let error: string | null = null;
 
 	try {
-		const firestoreRestService = getFirestoreRestService();
-		game = await firestoreRestService.getGameLogById(gameId);
+		const rawGame = await db.rawGameData.findUnique({
+			where: {firebaseKey: gameId},
+		});
+		if (rawGame) {
+			const parsed = GameSchema.safeParse(rawGame.gameJson);
+			if (parsed.success) {
+				game = parsed.data;
+			} else {
+				error = 'Failed to parse game data';
+			}
+		}
 	} catch (err) {
 		error = err instanceof Error ? err.message : 'Failed to load game';
 	}
