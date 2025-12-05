@@ -5,8 +5,8 @@ import {GameSummaryContent} from '../../components/GameSummaryContent';
 import {LocalTimestamp} from '../../components/LocalTimestamp';
 import {MissionSummaryTable} from '../../components/MissionSummaryTable';
 import type {AvalonApi} from '../../components/types';
-import type {Game} from '../../models/game';
-import {getFirestoreRestService} from '../../services/firestore-rest';
+import {type Game, GameSchema} from '../../models/game';
+import {db} from '@/db';
 
 const ROLE_MAP: Record<string, {name: string; team: 'good' | 'evil'; description: string}> = {
 	MERLIN: {name: 'MERLIN', team: 'good', description: 'Sees evil'},
@@ -41,8 +41,17 @@ export async function GameSummary({params, request}: RequestInfo) {
 	let error: string | null = null;
 
 	try {
-		const firestoreRestService = getFirestoreRestService();
-		game = await firestoreRestService.getGameLogById(gameId);
+		const rawGame = await db.rawGameData.findUnique({
+			where: {firebaseKey: gameId},
+		});
+		if (rawGame) {
+			const parsed = GameSchema.safeParse(rawGame.gameJson);
+			if (parsed.success) {
+				game = parsed.data;
+			} else {
+				error = 'Failed to parse game data';
+			}
+		}
 	} catch (err) {
 		error = err instanceof Error ? err.message : 'Failed to load game';
 	}
