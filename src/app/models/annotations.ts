@@ -130,7 +130,9 @@ export function createGameContext(game: Game): GameContext {
 	// Also check outcome roles if available
 	if (game.outcome?.roles) {
 		for (const role of game.outcome.roles) {
-			rolesByName.set(role.name, role.role);
+			// If this player was the assassin, display "Assassin" instead of their base role
+			const displayRole = role.assassin ? 'Assassin' : role.role;
+			rolesByName.set(role.name, displayRole);
 		}
 	}
 
