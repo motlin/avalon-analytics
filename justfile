@@ -104,3 +104,7 @@ analyze-predicates:
 # Import game files from local disk into D1 database
 import-games *args:
     npx tsx src/scripts/import-games.ts {{ args }}
+
+# Ingest new games from Firestore into D1 database
+ingest-firestore *args:
+    npx tsx src/scripts/ingest-firestore.ts {{ args }}
