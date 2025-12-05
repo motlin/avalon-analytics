@@ -17,6 +17,13 @@ const LOGS_DIR = '/Users/craig/projects/avalonlogs/logs';
 const DATABASE_NAME = 'avalon-analytics-juicy-tyrannosaurus';
 const BATCH_SIZE = 100; // Insert this many games per wrangler command
 
+let interrupted = false;
+process.on('SIGINT', () => {
+	console.log('\nInterrupted by user, exiting...');
+	interrupted = true;
+	process.exit(1);
+});
+
 interface Args {
 	dryRun: boolean;
 	limit: number | null;
@@ -97,6 +104,8 @@ async function main() {
 	const statements: string[] = [];
 
 	for (let i = 0; i < files.length; i++) {
+		if (interrupted) break;
+
 		const filename = files[i];
 		const filePath = path.join(LOGS_DIR, filename);
 
@@ -114,16 +123,16 @@ async function main() {
 
 			statements.push(buildInsertSQL(firebaseKey, gameJson, createdAt));
 			successCount++;
-
-			// Execute batch when we reach BATCH_SIZE
-			if (statements.length >= BATCH_SIZE) {
-				console.log(`Executing batch ${Math.floor(i / BATCH_SIZE) + 1} (${successCount} games so far)...`);
-				executeSQLBatch(statements, args.dryRun);
-				statements.length = 0;
-			}
 		} catch (error) {
-			console.error(`Error processing ${filename}:`, error);
+			console.error(`Error reading/parsing ${filename}:`, error);
 			errorCount++;
+		}
+
+		// Execute batch when we reach BATCH_SIZE
+		if (statements.length >= BATCH_SIZE) {
+			console.log(`Executing batch ${Math.floor(i / BATCH_SIZE) + 1} (${successCount} games so far)...`);
+			executeSQLBatch(statements, args.dryRun);
+			statements.length = 0;
 		}
 	}
 

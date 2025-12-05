@@ -16,6 +16,13 @@ import {z} from 'zod';
 const DATABASE_NAME = 'avalon-analytics-juicy-tyrannosaurus';
 const BATCH_SIZE = 100;
 
+let interrupted = false;
+process.on('SIGINT', () => {
+	console.log('\nInterrupted by user, exiting...');
+	interrupted = true;
+	process.exit(1);
+});
+
 const FIREBASE_PROJECT_ID = 'georgyo-avalon';
 const FIREBASE_API_KEY = 'AIzaSyCwhCvO8NbTusBaHmHHnNT7yC0_11UL2RI';
 const FIRESTORE_BASE_URL = `https://firestore.googleapis.com/v1/projects/${FIREBASE_PROJECT_ID}/databases/(default)/documents`;
@@ -236,6 +243,8 @@ async function main() {
 	const statements: string[] = [];
 
 	for (let index = 0; index < newGames.length; index++) {
+		if (interrupted) break;
+
 		const game = newGames[index];
 		const gameId = game.id as string;
 
