@@ -1,9 +1,8 @@
 import type {RequestInfo} from 'rwsdk/worker';
 import {Breadcrumb} from '../../components/Breadcrumb';
 import {Pagination} from '../../components/Pagination';
-import type {Game} from '../../models/game';
-import {getFirestoreRestService} from '../../services/firestore-rest';
-import {gameIngestionService} from '../../services/game-ingestion';
+import {type Game, GameSchema} from '../../models/game';
+import {db} from '@/db';
 import styles from './GamesList.module.css';
 
 function formatGameDate(date: Date): {dateString: string; timeString: string} {
@@ -22,21 +21,27 @@ function formatGameDate(date: Date): {dateString: string; timeString: string} {
 export async function GamesList({request}: RequestInfo) {
 	let games: Game[] = [];
 	let error: string | null = null;
-	let nextPageToken: string | undefined;
+	let totalGames = 0;
 
 	const url = new URL(request.url);
-	const pageTokenParam = url.searchParams.get('pageToken');
 	const pageParam = url.searchParams.get('page');
 	const currentPage = pageParam ? Math.max(1, parseInt(pageParam, 10)) : 1;
 	const pageSize = 20;
 
 	try {
-		const firestoreRestService = getFirestoreRestService();
-		const result = await firestoreRestService.getGameLogs(pageSize, pageTokenParam || undefined);
-		games = result.games;
-		nextPageToken = result.nextPageToken;
+		totalGames = await db.rawGameData.count();
+		const rawGames = await db.rawGameData.findMany({
+			orderBy: {createdAt: 'desc'},
+			skip: (currentPage - 1) * pageSize,
+			take: pageSize,
+		});
 
-		await gameIngestionService.ingestGamesIfNeeded(games);
+		for (const rawGame of rawGames) {
+			const parsed = GameSchema.safeParse(rawGame.gameJson);
+			if (parsed.success) {
+				games.push(parsed.data);
+			}
+		}
 	} catch (err) {
 		error = err instanceof Error ? err.message : 'Failed to load games';
 	}
@@ -84,11 +89,10 @@ export async function GamesList({request}: RequestInfo) {
 						<div className={styles.pagination}>
 							<Pagination
 								currentPage={currentPage}
-								totalPages={0}
+								totalPages={Math.ceil(totalGames / pageSize)}
 								baseUrl="/games"
-								hasNext={!!nextPageToken}
+								hasNext={currentPage * pageSize < totalGames}
 								hasPrevious={currentPage > 1}
-								nextPageToken={nextPageToken}
 							/>
 						</div>
 					</>
