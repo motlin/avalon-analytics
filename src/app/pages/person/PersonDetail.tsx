@@ -1,9 +1,9 @@
 import type {RequestInfo} from 'rwsdk/worker';
 import {Breadcrumb} from '../../components/Breadcrumb';
 import {LocalTimestamp} from '../../components/LocalTimestamp';
-import type {Game} from '../../models/game';
-import {getFirestoreRestService} from '../../services/firestore-rest';
+import {type Game, GameSchema} from '../../models/game';
 import {getPersonService} from '../../services/person';
+import {db} from '@/db';
 
 export async function PersonDetail({params}: RequestInfo) {
 	const personId = params.personId;
@@ -35,23 +35,20 @@ export async function PersonDetail({params}: RequestInfo) {
 	personUids = person.uids;
 
 	try {
-		const firestoreRestService = getFirestoreRestService();
+		const rawGames = await db.rawGameData.findMany();
+		const uidSet = new Set(personUids);
 
-		// Fetch games for all UIDs belonging to this person
-		const gamesPromises = personUids.map((uid) => firestoreRestService.getGamesByPlayerUid(uid));
-		const gamesArrays = await Promise.all(gamesPromises);
-
-		// Combine and deduplicate games (a person might play multiple accounts in same game)
-		const gameMap = new Map<string, Game>();
-		for (const gamesArray of gamesArrays) {
-			for (const game of gamesArray) {
-				if (!gameMap.has(game.id)) {
-					gameMap.set(game.id, game);
+		for (const rawGame of rawGames) {
+			const parsed = GameSchema.safeParse(rawGame.gameJson);
+			if (parsed.success) {
+				const game = parsed.data;
+				if (game.players.some((p) => uidSet.has(p.uid))) {
+					games.push(game);
 				}
 			}
 		}
 
-		games = Array.from(gameMap.values()).sort((a, b) => b.timeCreated.getTime() - a.timeCreated.getTime());
+		games.sort((a, b) => b.timeCreated.getTime() - a.timeCreated.getTime());
 	} catch (err) {
 		error = err instanceof Error ? err.message : 'Failed to load games for person';
 	}

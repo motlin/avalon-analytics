@@ -65,6 +65,7 @@ describe.skip('Game Ingestion Service', () => {
 			data: {
 				firebaseKey: existingGameKey,
 				gameJson: {id: existingGameKey, original: true},
+				createdAt: new Date(),
 			},
 		});
 

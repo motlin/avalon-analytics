@@ -85,6 +85,22 @@ storybook-tests: install
 deploy: build
     npx wrangler deploy --config dist/worker/wrangler.json
 
+# `npx wrangler d1 migrations apply avalon-analytics-juicy-tyrannosaurus --remote`
+migrate-remote:
+    npx wrangler d1 migrations apply avalon-analytics-juicy-tyrannosaurus --remote
+
+# `npx wrangler d1 migrations apply avalon-analytics-juicy-tyrannosaurus --local`
+migrate-local:
+    npx wrangler d1 migrations apply avalon-analytics-juicy-tyrannosaurus --local
+
+# Build and deploy with migrations
+deploy-full: build migrate-remote
+    npx wrangler deploy --config dist/worker/wrangler.json
+
 # Analyze predicate frequency across all historical games
 analyze-predicates:
     npx tsx src/scripts/analyze-predicates.ts
+
+# Import game files from local disk into D1 database
+import-games *args:
+    npx tsx src/scripts/import-games.ts {{ args }}

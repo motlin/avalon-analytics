@@ -30,6 +30,7 @@ describe.skip('Raw Game Data', () => {
 			data: {
 				firebaseKey,
 				gameJson: gameData,
+				createdAt: new Date(),
 			},
 		});
 
@@ -77,6 +78,7 @@ describe.skip('Raw Game Data', () => {
 			data: {
 				firebaseKey,
 				gameJson: complexGameData,
+				createdAt: new Date(),
 			},
 		});
 
@@ -97,6 +99,7 @@ describe.skip('Raw Game Data', () => {
 				data: {
 					firebaseKey,
 					gameJson: gameData,
+					createdAt: new Date(),
 				},
 			});
 
@@ -105,6 +108,7 @@ describe.skip('Raw Game Data', () => {
 					data: {
 						firebaseKey,
 						gameJson: {id: 'game2'},
+						createdAt: new Date(),
 					},
 				}),
 			).rejects.toThrow();
@@ -131,6 +135,7 @@ describe.skip('Raw Game Data', () => {
 			data: {
 				firebaseKey,
 				gameJson: rawData,
+				createdAt: new Date(),
 			},
 		});
 

@@ -1,9 +1,9 @@
 import type {RequestInfo} from 'rwsdk/worker';
 import {Breadcrumb} from '../../components/Breadcrumb';
-import type {Game} from '../../models/game';
+import {type Game, GameSchema} from '../../models/game';
 import {isEvilRole} from '../../models/annotations';
-import {getFirestoreRestService} from '../../services/firestore-rest';
 import {getPersonService} from '../../services/person';
+import {db} from '@/db';
 import styles from './PlayersPage.module.css';
 
 interface PlayerStats {
@@ -117,16 +117,13 @@ export async function PlayersPage({}: RequestInfo) {
 	}
 
 	try {
-		const firestoreRestService = getFirestoreRestService();
-		let pageToken: string | undefined;
-		const pageSize = 100;
-
-		// Fetch all games by paginating through
-		do {
-			const result = await firestoreRestService.getGameLogs(pageSize, pageToken);
-			allGames = allGames.concat(result.games);
-			pageToken = result.nextPageToken;
-		} while (pageToken);
+		const rawGames = await db.rawGameData.findMany();
+		for (const rawGame of rawGames) {
+			const parsed = GameSchema.safeParse(rawGame.gameJson);
+			if (parsed.success) {
+				allGames.push(parsed.data);
+			}
+		}
 	} catch (err) {
 		error = err instanceof Error ? err.message : 'Failed to load games';
 	}

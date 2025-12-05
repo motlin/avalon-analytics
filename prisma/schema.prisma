@@ -24,7 +24,7 @@ datasource db {
 model User {
   id          String      @id @default(uuid()) // User ID (UUID-based)
   username    String      @unique
-  createdAt   DateTime    @default(now())
+  createdAt   DateTime
 
   credentials Credential[] // Relationship: One user can have many credentials
 }
@@ -33,7 +33,7 @@ model Credential {
   id            String   @id @default(uuid()) // Internal DB ID
   userId        String   @unique // Every credential is linked to a specific user
   user          User     @relation(fields: [userId], references: [id])
-  createdAt     DateTime @default(now())
+  createdAt     DateTime
   credentialId  String   @unique // WebAuthn credential identifier
   publicKey     Bytes
   counter       Int      @default(0)
@@ -51,7 +51,7 @@ model GameIngestionState {
 model RawGameData {
   firebaseKey String @id
   gameJson    Json
-  createdAt   DateTime @default(now())
+  createdAt   DateTime
 
   @@index([createdAt])
 }
@@ -59,7 +59,7 @@ model RawGameData {
 model Person {
   id        String      @id @default(uuid())
   name      String      @unique
-  createdAt DateTime    @default(now())
+  createdAt DateTime
   uids      PersonUid[]
 
   @@index([name])
@@ -70,7 +70,7 @@ model PersonUid {
   uid       String   @unique
   personId  String
   person    Person   @relation(fields: [personId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
+  createdAt DateTime
 
   @@index([uid])
   @@index([personId])

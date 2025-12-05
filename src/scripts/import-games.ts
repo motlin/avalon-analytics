@@ -1,0 +1,141 @@
+#!/usr/bin/env npx tsx
+/**
+ * Import game files from local disk into D1 database.
+ *
+ * Usage:
+ *   npx tsx src/scripts/import-games.ts [--dry-run] [--limit N]
+ *
+ * This script reads game JSON files from /Users/craig/projects/avalonlogs/logs
+ * and inserts them into the RawGameData table via wrangler d1 execute.
+ */
+
+import {execSync} from 'child_process';
+import * as fs from 'fs';
+import * as path from 'path';
+
+const LOGS_DIR = '/Users/craig/projects/avalonlogs/logs';
+const DATABASE_NAME = 'avalon-analytics-juicy-tyrannosaurus';
+const BATCH_SIZE = 100; // Insert this many games per wrangler command
+
+interface Args {
+	dryRun: boolean;
+	limit: number | null;
+}
+
+function parseArgs(): Args {
+	const args = process.argv.slice(2);
+	const result: Args = {dryRun: false, limit: null};
+
+	for (let i = 0; i < args.length; i++) {
+		if (args[i] === '--dry-run') {
+			result.dryRun = true;
+		} else if (args[i] === '--limit' && args[i + 1]) {
+			result.limit = parseInt(args[i + 1], 10);
+			i++;
+		}
+	}
+
+	return result;
+}
+
+function escapeSQL(str: string): string {
+	// Escape single quotes by doubling them
+	return str.replace(/'/g, "''");
+}
+
+function getGameFiles(limit: number | null): string[] {
+	const files = fs.readdirSync(LOGS_DIR).filter((f) => !f.startsWith('.'));
+
+	// Sort by filename (which is timestamp-based) for consistent ordering
+	files.sort();
+
+	if (limit !== null) {
+		return files.slice(0, limit);
+	}
+
+	return files;
+}
+
+function buildInsertSQL(firebaseKey: string, gameJson: object, createdAt: Date): string {
+	const jsonStr = escapeSQL(JSON.stringify(gameJson));
+	const createdAtStr = createdAt.toISOString();
+	return `INSERT OR IGNORE INTO "RawGameData" ("firebaseKey", "gameJson", "createdAt") VALUES ('${escapeSQL(firebaseKey)}', '${jsonStr}', '${createdAtStr}');`;
+}
+
+function executeSQLBatch(statements: string[], dryRun: boolean): void {
+	const sql = statements.join('\n');
+
+	if (dryRun) {
+		console.log('Would execute SQL:');
+		console.log(sql.substring(0, 500) + (sql.length > 500 ? '...' : ''));
+		return;
+	}
+
+	// Write SQL to a temp file to avoid command line length limits
+	const tempFile = `/tmp/avalon-import-${Date.now()}.sql`;
+	fs.writeFileSync(tempFile, sql);
+
+	try {
+		execSync(`npx wrangler d1 execute ${DATABASE_NAME} --remote --file="${tempFile}"`, {
+			stdio: 'inherit',
+		});
+	} finally {
+		fs.unlinkSync(tempFile);
+	}
+}
+
+async function main() {
+	const args = parseArgs();
+	console.log(`Import games from ${LOGS_DIR}`);
+	console.log(`Options: dryRun=${args.dryRun}, limit=${args.limit ?? 'none'}`);
+
+	const files = getGameFiles(args.limit);
+	console.log(`Found ${files.length} game files to import`);
+
+	let successCount = 0;
+	let errorCount = 0;
+	const statements: string[] = [];
+
+	for (let i = 0; i < files.length; i++) {
+		const filename = files[i];
+		const filePath = path.join(LOGS_DIR, filename);
+
+		try {
+			const content = fs.readFileSync(filePath, 'utf-8');
+			const gameJson = JSON.parse(content);
+
+			// Extract timestamp from filename for createdAt
+			// Format: 2019-03-13T22:31:15.519Z_WJE
+			const timestampMatch = filename.match(/^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z)/);
+			const createdAt = timestampMatch ? new Date(timestampMatch[1]) : new Date();
+
+			// Use filename as the firebaseKey
+			const firebaseKey = filename;
+
+			statements.push(buildInsertSQL(firebaseKey, gameJson, createdAt));
+			successCount++;
+
+			// Execute batch when we reach BATCH_SIZE
+			if (statements.length >= BATCH_SIZE) {
+				console.log(`Executing batch ${Math.floor(i / BATCH_SIZE) + 1} (${successCount} games so far)...`);
+				executeSQLBatch(statements, args.dryRun);
+				statements.length = 0;
+			}
+		} catch (error) {
+			console.error(`Error processing ${filename}:`, error);
+			errorCount++;
+		}
+	}
+
+	// Execute remaining statements
+	if (statements.length > 0) {
+		console.log(`Executing final batch (${statements.length} games)...`);
+		executeSQLBatch(statements, args.dryRun);
+	}
+
+	console.log(`\nImport complete:`);
+	console.log(`  Success: ${successCount}`);
+	console.log(`  Errors: ${errorCount}`);
+}
+
+main().catch(console.error);

@@ -20,6 +20,7 @@ export class GameIngestionService {
 						data: {
 							firebaseKey: game.id,
 							gameJson: game as any,
+							createdAt: new Date(),
 						},
 					});
 					console.log(`Ingested new game: ${game.id}`);

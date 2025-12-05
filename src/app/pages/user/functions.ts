@@ -84,9 +84,11 @@ export async function finishPasskeyRegistration(username: string, registration: 
 
 	await sessions.save(headers, {challenge: null});
 
+	const now = new Date();
 	const user = await db.user.create({
 		data: {
 			username,
+			createdAt: now,
 		},
 	});
 
@@ -96,6 +98,7 @@ export async function finishPasskeyRegistration(username: string, registration: 
 			credentialId: verification.registrationInfo.credential.id,
 			publicKey: verification.registrationInfo.credential.publicKey,
 			counter: verification.registrationInfo.credential.counter,
+			createdAt: now,
 		},
 	});
 

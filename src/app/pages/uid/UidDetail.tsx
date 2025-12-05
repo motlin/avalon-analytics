@@ -5,9 +5,9 @@ import {LossReasonStats} from '../../components/LossReasonStats';
 import {RoleStatsTable} from '../../components/RoleStatsTable';
 import {SpecialRoleStats} from '../../components/SpecialRoleStats';
 import {YearlyStatsTable} from '../../components/YearlyStatsTable';
-import type {Game} from '../../models/game';
+import {type Game, GameSchema} from '../../models/game';
 import {calculatePlayerStats} from '../../models/player-statistics';
-import {getFirestoreRestService} from '../../services/firestore-rest';
+import {db} from '@/db';
 
 export async function UidDetail({params}: RequestInfo) {
 	const uid = params.uid;
@@ -15,8 +15,16 @@ export async function UidDetail({params}: RequestInfo) {
 	let error: string | null = null;
 
 	try {
-		const firestoreRestService = getFirestoreRestService();
-		games = await firestoreRestService.getGamesByPlayerUid(uid);
+		const rawGames = await db.rawGameData.findMany();
+		for (const rawGame of rawGames) {
+			const parsed = GameSchema.safeParse(rawGame.gameJson);
+			if (parsed.success) {
+				const game = parsed.data;
+				if (game.players.some((p) => p.uid === uid)) {
+					games.push(game);
+				}
+			}
+		}
 	} catch (err) {
 		error = err instanceof Error ? err.message : 'Failed to load games for player';
 	}

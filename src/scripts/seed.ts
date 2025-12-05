@@ -14,6 +14,7 @@ export default defineScript(async () => {
 		data: {
 			id: '1',
 			username: 'testuser',
+			createdAt: new Date(),
 		},
 	});
 

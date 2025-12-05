@@ -345,6 +345,7 @@ export default defineScript(async () => {
 							data: {
 								uid,
 								personId: existingPerson.id,
+								createdAt: new Date(),
 							},
 						});
 						console.log(`Added UID ${uid} to ${person.fullName}`);
@@ -357,11 +358,13 @@ export default defineScript(async () => {
 		}
 
 		// Create new person with all UIDs
+		const now = new Date();
 		await db.person.create({
 			data: {
 				name: person.fullName,
+				createdAt: now,
 				uids: {
-					create: person.uuids.map((uid) => ({uid})),
+					create: person.uuids.map((uid) => ({uid, createdAt: now})),
 				},
 			},
 		});
