@@ -3,7 +3,7 @@
  * Ingest new games from Firestore into D1 database.
  *
  * Usage:
- *   npx tsx src/scripts/ingest-firestore.ts [--dry-run] [--limit N]
+ *   npx tsx src/scripts/ingest-firestore.ts [--dry-run] [--limit N] [--batch-size N]
  *
  * This script fetches games from Firestore that aren't yet in D1
  * and inserts them via wrangler d1 execute.
@@ -14,7 +14,7 @@ import * as fs from 'fs';
 import {z} from 'zod';
 
 const DATABASE_NAME = 'avalon-analytics-juicy-tyrannosaurus';
-const BATCH_SIZE = 1000;
+const DEFAULT_BATCH_SIZE = 1000;
 
 let interrupted = false;
 process.on('SIGINT', () => {
@@ -30,6 +30,7 @@ const FIRESTORE_BASE_URL = `https://firestore.googleapis.com/v1/projects/${FIREB
 interface Args {
 	dryRun: boolean;
 	limit: number | null;
+	batchSize: number;
 }
 
 interface FirestoreValue {
@@ -56,13 +57,16 @@ interface FirestoreListResponse {
 
 function parseArgs(): Args {
 	const args = process.argv.slice(2);
-	const result: Args = {dryRun: false, limit: null};
+	const result: Args = {dryRun: false, limit: null, batchSize: DEFAULT_BATCH_SIZE};
 
 	for (let index = 0; index < args.length; index++) {
 		if (args[index] === '--dry-run') {
 			result.dryRun = true;
 		} else if (args[index] === '--limit' && args[index + 1]) {
 			result.limit = parseInt(args[index + 1], 10);
+			index++;
+		} else if (args[index] === '--batch-size' && args[index + 1]) {
+			result.batchSize = parseInt(args[index + 1], 10);
 			index++;
 		}
 	}
@@ -229,7 +233,7 @@ function extractTimeCreated(game: Record<string, unknown>): Date {
 async function main() {
 	const args = parseArgs();
 	console.log('Ingest games from Firestore to D1');
-	console.log(`Options: dryRun=${args.dryRun}, limit=${args.limit ?? 'none'}`);
+	console.log(`Options: dryRun=${args.dryRun}, limit=${args.limit ?? 'none'}, batchSize=${args.batchSize}`);
 
 	const existingIds = await getExistingGameIds();
 	const firestoreGames = await fetchGamesFromFirestore(args.limit);
@@ -260,8 +264,8 @@ async function main() {
 		statements.push(buildInsertSQL(gameId, game, createdAt));
 		successCount++;
 
-		if (statements.length >= BATCH_SIZE) {
-			console.log(`Executing batch ${Math.floor(index / BATCH_SIZE) + 1} (${successCount} games so far)...`);
+		if (statements.length >= args.batchSize) {
+			console.log(`Executing batch ${Math.floor(index / args.batchSize) + 1} (${successCount} games so far)...`);
 			executeSQLBatch(statements, args.dryRun);
 			statements.length = 0;
 		}

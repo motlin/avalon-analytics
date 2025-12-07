@@ -3,7 +3,7 @@
  * Import game files from local disk into D1 database.
  *
  * Usage:
- *   npx tsx src/scripts/import-games.ts [--dry-run] [--limit N]
+ *   npx tsx src/scripts/import-games.ts [--dry-run] [--limit N] [--batch-size N]
  *
  * This script reads game JSON files from /Users/craig/projects/avalonlogs/logs
  * and inserts them into the RawGameData table via wrangler d1 execute.
@@ -15,7 +15,7 @@ import * as path from 'path';
 
 const LOGS_DIR = '/Users/craig/projects/avalonlogs/logs';
 const DATABASE_NAME = 'avalon-analytics-juicy-tyrannosaurus';
-const BATCH_SIZE = 1000; // Insert this many games per wrangler command
+const DEFAULT_BATCH_SIZE = 1000;
 
 let interrupted = false;
 process.on('SIGINT', () => {
@@ -27,17 +27,21 @@ process.on('SIGINT', () => {
 interface Args {
 	dryRun: boolean;
 	limit: number | null;
+	batchSize: number;
 }
 
 function parseArgs(): Args {
 	const args = process.argv.slice(2);
-	const result: Args = {dryRun: false, limit: null};
+	const result: Args = {dryRun: false, limit: null, batchSize: DEFAULT_BATCH_SIZE};
 
 	for (let i = 0; i < args.length; i++) {
 		if (args[i] === '--dry-run') {
 			result.dryRun = true;
 		} else if (args[i] === '--limit' && args[i + 1]) {
 			result.limit = parseInt(args[i + 1], 10);
+			i++;
+		} else if (args[i] === '--batch-size' && args[i + 1]) {
+			result.batchSize = parseInt(args[i + 1], 10);
 			i++;
 		}
 	}
@@ -101,7 +105,7 @@ function executeSQLBatch(statements: string[], dryRun: boolean): void {
 async function main() {
 	const args = parseArgs();
 	console.log(`Import games from ${LOGS_DIR}`);
-	console.log(`Options: dryRun=${args.dryRun}, limit=${args.limit ?? 'none'}`);
+	console.log(`Options: dryRun=${args.dryRun}, limit=${args.limit ?? 'none'}, batchSize=${args.batchSize}`);
 
 	const files = getGameFiles(args.limit);
 	console.log(`Found ${files.length} game files to import`);
@@ -135,9 +139,9 @@ async function main() {
 			errorCount++;
 		}
 
-		// Execute batch when we reach BATCH_SIZE
-		if (statements.length >= BATCH_SIZE) {
-			console.log(`Executing batch ${Math.floor(i / BATCH_SIZE) + 1} (${successCount} games so far)...`);
+		// Execute batch when we reach batchSize
+		if (statements.length >= args.batchSize) {
+			console.log(`Executing batch ${Math.floor(i / args.batchSize) + 1} (${successCount} games so far)...`);
 			executeSQLBatch(statements, args.dryRun);
 			statements.length = 0;
 		}
