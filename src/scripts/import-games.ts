@@ -15,7 +15,7 @@ import * as path from 'path';
 
 const LOGS_DIR = '/Users/craig/projects/avalonlogs/logs';
 const DATABASE_NAME = 'avalon-analytics-juicy-tyrannosaurus';
-const BATCH_SIZE = 100; // Insert this many games per wrangler command
+const BATCH_SIZE = 1000; // Insert this many games per wrangler command
 
 let interrupted = false;
 process.on('SIGINT', () => {
@@ -86,9 +86,16 @@ function executeSQLBatch(statements: string[], dryRun: boolean): void {
 		execSync(`npx wrangler d1 execute ${DATABASE_NAME} --remote --yes --file="${tempFile}"`, {
 			stdio: 'inherit',
 		});
-	} finally {
+	} catch (error) {
 		fs.unlinkSync(tempFile);
+		// Check if killed by SIGINT
+		if (error && typeof error === 'object' && 'signal' in error && error.signal === 'SIGINT') {
+			console.log('\nInterrupted by user, exiting...');
+			process.exit(1);
+		}
+		throw error;
 	}
+	fs.unlinkSync(tempFile);
 }
 
 async function main() {

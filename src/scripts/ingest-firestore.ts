@@ -14,7 +14,7 @@ import * as fs from 'fs';
 import {z} from 'zod';
 
 const DATABASE_NAME = 'avalon-analytics-juicy-tyrannosaurus';
-const BATCH_SIZE = 100;
+const BATCH_SIZE = 1000;
 
 let interrupted = false;
 process.on('SIGINT', () => {
@@ -203,10 +203,18 @@ function executeSQLBatch(statements: string[], dryRun: boolean): void {
 	const tempFile = `/tmp/avalon-ingest-${Date.now()}.sql`;
 	fs.writeFileSync(tempFile, sql);
 
-	execSync(`npx wrangler d1 execute ${DATABASE_NAME} --remote --yes --file="${tempFile}"`, {
-		stdio: 'inherit',
-	});
-
+	try {
+		execSync(`npx wrangler d1 execute ${DATABASE_NAME} --remote --yes --file="${tempFile}"`, {
+			stdio: 'inherit',
+		});
+	} catch (error) {
+		fs.unlinkSync(tempFile);
+		if (error && typeof error === 'object' && 'signal' in error && error.signal === 'SIGINT') {
+			console.log('\nInterrupted by user, exiting...');
+			process.exit(1);
+		}
+		throw error;
+	}
 	fs.unlinkSync(tempFile);
 }
 
