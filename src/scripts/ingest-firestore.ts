@@ -114,7 +114,7 @@ async function getExistingGameIds(): Promise<Set<string>> {
 	const tempFile = `/tmp/avalon-query-${Date.now()}.sql`;
 	fs.writeFileSync(tempFile, sql);
 
-	const output = execSync(`npx wrangler d1 execute ${DATABASE_NAME} --remote --file="${tempFile}" --json`, {
+	const output = execSync(`npx wrangler d1 execute ${DATABASE_NAME} --remote --yes --file="${tempFile}" --json`, {
 		encoding: 'utf-8',
 	});
 
@@ -203,7 +203,7 @@ function executeSQLBatch(statements: string[], dryRun: boolean): void {
 	const tempFile = `/tmp/avalon-ingest-${Date.now()}.sql`;
 	fs.writeFileSync(tempFile, sql);
 
-	execSync(`npx wrangler d1 execute ${DATABASE_NAME} --remote --file="${tempFile}"`, {
+	execSync(`npx wrangler d1 execute ${DATABASE_NAME} --remote --yes --file="${tempFile}"`, {
 		stdio: 'inherit',
 	});
 

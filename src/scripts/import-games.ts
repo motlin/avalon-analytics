@@ -83,7 +83,7 @@ function executeSQLBatch(statements: string[], dryRun: boolean): void {
 	fs.writeFileSync(tempFile, sql);
 
 	try {
-		execSync(`npx wrangler d1 execute ${DATABASE_NAME} --remote --file="${tempFile}"`, {
+		execSync(`npx wrangler d1 execute ${DATABASE_NAME} --remote --yes --file="${tempFile}"`, {
 			stdio: 'inherit',
 		});
 	} finally {
