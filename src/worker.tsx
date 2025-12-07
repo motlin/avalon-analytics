@@ -26,8 +26,7 @@ export default defineApp([
 	setCommonHeaders(),
 	async ({ctx, request, response}) => {
 		console.log('🔍 Worker env keys:', Object.keys(env));
-		// Note: setupDb() is NOT called here to avoid Prisma WASM loading issues
-		// It will be called lazily when db access is actually needed
+		await setupDb(env);
 		setupFirestoreRestService(env);
 
 		// Only set up sessions if AUTH_SECRET_KEY is configured
@@ -53,9 +52,7 @@ export default defineApp([
 		}
 
 		if (ctx.session?.userId) {
-			// Lazy initialize Prisma only when we need to look up the user
 			try {
-				await setupDb(env);
 				ctx.user = await db.user.findUnique({
 					where: {
 						id: ctx.session.userId,
