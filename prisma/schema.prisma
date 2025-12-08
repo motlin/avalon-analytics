@@ -6,14 +6,8 @@
 
 generator client {
   provider = "prisma-client"
-
-  runtime                = "workerd"
-  moduleFormat           = "esm"
-  generatedFileExtension = "ts"
-  importFileExtension    = "ts"
-
-  output          = "../generated/prisma"
-  previewFeatures = ["queryCompiler", "driverAdapters"]
+  runtime  = "cloudflare"
+  output   = "../generated/prisma"
 }
 
 datasource db {

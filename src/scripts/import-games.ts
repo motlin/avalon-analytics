@@ -131,6 +131,7 @@ async function main() {
 
 			// Use filename as the firebaseKey
 			const firebaseKey = filename;
+			gameJson.id = firebaseKey;
 
 			statements.push(buildInsertSQL(firebaseKey, gameJson, createdAt));
 			successCount++;

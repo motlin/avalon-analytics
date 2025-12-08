@@ -47,7 +47,9 @@ export async function GameSummary({params, request}: RequestInfo) {
 			where: {firebaseKey: gameId},
 		});
 		if (rawGame) {
-			const parsed = GameSchema.safeParse(rawGame.gameJson);
+			const gameData = typeof rawGame.gameJson === 'string' ? JSON.parse(rawGame.gameJson) : rawGame.gameJson;
+			gameData.id = rawGame.firebaseKey;
+			const parsed = GameSchema.safeParse(gameData);
 			if (parsed.success) {
 				game = parsed.data;
 			} else {
