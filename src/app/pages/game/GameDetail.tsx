@@ -42,22 +42,10 @@ export async function GameDetail({params, request}: RequestInfo) {
 	return (
 		<div style={{padding: '1rem'}}>
 			<Breadcrumb
-				items={[{label: 'Home', href: '/'}, {label: 'All Games', href: '/games'}, {label: 'Game Timeline'}]}
+				items={[{label: 'Home', href: '/'}, {label: 'All Games', href: '/games'}, {label: 'Detailed Timeline'}]}
 			/>
 			<div style={{marginBottom: '1rem', fontSize: '0.875rem', color: '#6b7280'}}>
 				<LocalTimestamp isoString={game.timeCreated.toISOString()} />
-			</div>
-			<div style={{marginBottom: '1rem', textAlign: 'right'}}>
-				<a
-					href={`/game/${gameId}/summary`}
-					style={{
-						color: '#3b82f6',
-						textDecoration: 'underline',
-						fontSize: '0.875rem',
-					}}
-				>
-					View summary table →
-				</a>
 			</div>
 			<AnnotatedGameTimelineComponent
 				game={game}

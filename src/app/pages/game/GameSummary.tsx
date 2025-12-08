@@ -144,20 +144,6 @@ export async function GameSummary({params, request}: RequestInfo) {
 					achievements={<Achievements avalon={avalonApi} />}
 					initialRevealed={showSecrets}
 				/>
-
-				{/* Link to detailed timeline */}
-				<div style={{marginTop: '2rem'}}>
-					<a
-						href={`/game/${gameId}`}
-						style={{
-							color: '#1976d2',
-							textDecoration: 'underline',
-							fontSize: '0.875rem',
-						}}
-					>
-						View detailed game timeline →
-					</a>
-				</div>
 			</div>
 		</div>
 	);

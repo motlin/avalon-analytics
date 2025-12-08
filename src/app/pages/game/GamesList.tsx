@@ -73,7 +73,7 @@ export async function GamesList({request}: RequestInfo) {
 								return (
 									<a
 										key={game.id}
-										href={`/game/${game.id}/summary`}
+										href={`/game/${game.id}`}
 										className={styles.gameCard}
 									>
 										<div className={styles.gameCardHeader}>

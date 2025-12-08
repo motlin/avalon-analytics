@@ -6,7 +6,7 @@ import {GameSummary} from './GameSummary';
 
 export const gameRoutes = [
 	route('/games', [GamesList]),
-	route('/game/:gameId', [GameDetail]),
-	route('/game/:gameId/summary', [GameSummary]),
+	route('/game/:gameId', [GameSummary]),
+	route('/game/:gameId/detailed', [GameDetail]),
 	route('/game/:gameId/annotated', [GameCombined]),
 ];

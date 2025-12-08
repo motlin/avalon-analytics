@@ -131,29 +131,6 @@ export async function GameCombined({params}: RequestInfo) {
 				<CombinedAnnotatedTable game={game} />
 
 				<Achievements avalon={avalonApi} />
-
-				<div style={{marginTop: '2rem', display: 'flex', gap: '2rem'}}>
-					<a
-						href={`/game/${gameId}`}
-						style={{
-							color: '#1976d2',
-							textDecoration: 'underline',
-							fontSize: '0.875rem',
-						}}
-					>
-						← View detailed timeline
-					</a>
-					<a
-						href={`/game/${gameId}/summary`}
-						style={{
-							color: '#1976d2',
-							textDecoration: 'underline',
-							fontSize: '0.875rem',
-						}}
-					>
-						View summary table →
-					</a>
-				</div>
 			</div>
 		</div>
 	);
