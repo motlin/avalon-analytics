@@ -7,6 +7,7 @@
 	"private": true,
 	"scripts": {
 		"build": "vite build",
+		"postbuild": "cp ./dist/client/assets/query_engine_bg-*.wasm dist/worker/assets/ 2>/dev/null || true",
 		"build:cf": "prisma generate && mkdir -p .wrangler/state/v3/d1 && RWSDK_DEPLOY=1 vite build",
 		"dev": "vite dev",
 		"dev:init": "rw-scripts dev-init",
