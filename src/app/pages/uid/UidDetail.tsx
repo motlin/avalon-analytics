@@ -1,3 +1,4 @@
+import {env} from 'cloudflare:workers';
 import type {RequestInfo} from 'rwsdk/worker';
 import {Breadcrumb} from '../../components/Breadcrumb';
 import {LocalTimestamp} from '../../components/LocalTimestamp';
@@ -7,7 +8,7 @@ import {SpecialRoleStats} from '../../components/SpecialRoleStats';
 import {YearlyStatsTable} from '../../components/YearlyStatsTable';
 import {type Game, GameSchema} from '../../models/game';
 import {calculatePlayerStats} from '../../models/player-statistics';
-import {db} from '@/db';
+import {db, setupDb} from '@/db';
 
 export async function UidDetail({params}: RequestInfo) {
 	const uid = params.uid;
@@ -15,6 +16,7 @@ export async function UidDetail({params}: RequestInfo) {
 	let error: string | null = null;
 
 	try {
+		await setupDb(env);
 		const rawGames = await db.rawGameData.findMany();
 		for (const rawGame of rawGames) {
 			const parsed = GameSchema.safeParse(rawGame.gameJson);

@@ -1,8 +1,9 @@
+import {env} from 'cloudflare:workers';
 import type {RequestInfo} from 'rwsdk/worker';
 import {Breadcrumb} from '../../components/Breadcrumb';
 import {Pagination} from '../../components/Pagination';
 import {type Game, GameSchema} from '../../models/game';
-import {db} from '@/db';
+import {db, setupDb} from '@/db';
 import styles from './GamesList.module.css';
 
 function formatGameDate(date: Date): {dateString: string; timeString: string} {
@@ -29,6 +30,7 @@ export async function GamesList({request}: RequestInfo) {
 	const pageSize = 20;
 
 	try {
+		await setupDb(env);
 		totalGames = await db.rawGameData.count();
 		const rawGames = await db.rawGameData.findMany({
 			orderBy: {createdAt: 'desc'},

@@ -1,9 +1,10 @@
+import {env} from 'cloudflare:workers';
 import type {RequestInfo} from 'rwsdk/worker';
 import {Breadcrumb} from '../../components/Breadcrumb';
 import {type Game, GameSchema} from '../../models/game';
 import {isEvilRole} from '../../models/annotations';
 import {getPersonService} from '../../services/person';
-import {db} from '@/db';
+import {db, setupDb} from '@/db';
 import styles from './PlayersPage.module.css';
 
 interface PlayerStats {
@@ -117,6 +118,7 @@ export async function PlayersPage({}: RequestInfo) {
 	}
 
 	try {
+		await setupDb(env);
 		const rawGames = await db.rawGameData.findMany();
 		for (const rawGame of rawGames) {
 			const parsed = GameSchema.safeParse(rawGame.gameJson);

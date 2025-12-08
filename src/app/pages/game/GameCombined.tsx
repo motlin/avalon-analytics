@@ -1,3 +1,4 @@
+import {env} from 'cloudflare:workers';
 import type {RequestInfo} from 'rwsdk/worker';
 import Achievements from '../../components/Achievements';
 import {Breadcrumb} from '../../components/Breadcrumb';
@@ -5,7 +6,7 @@ import {CombinedAnnotatedTable} from '../../components/CombinedAnnotatedTable';
 import {LocalTimestamp} from '../../components/LocalTimestamp';
 import type {AvalonApi} from '../../components/types';
 import {type Game, GameSchema} from '../../models/game';
-import {db} from '@/db';
+import {db, setupDb} from '@/db';
 
 const ROLE_MAP: Record<string, {name: string; team: 'good' | 'evil'; description: string}> = {
 	MERLIN: {name: 'MERLIN', team: 'good', description: 'Sees evil'},
@@ -38,6 +39,7 @@ export async function GameCombined({params}: RequestInfo) {
 	let error: string | null = null;
 
 	try {
+		await setupDb(env);
 		const rawGame = await db.rawGameData.findUnique({
 			where: {firebaseKey: gameId},
 		});

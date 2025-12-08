@@ -1,9 +1,10 @@
+import {env} from 'cloudflare:workers';
 import type {RequestInfo} from 'rwsdk/worker';
 import {AnnotatedGameTimelineComponent} from '../../components/AnnotatedGameTimeline';
 import {Breadcrumb} from '../../components/Breadcrumb';
 import {LocalTimestamp} from '../../components/LocalTimestamp';
 import {type Game, GameSchema} from '../../models/game';
-import {db} from '@/db';
+import {db, setupDb} from '@/db';
 
 export async function GameDetail({params, request}: RequestInfo) {
 	const gameId = params.gameId;
@@ -13,6 +14,7 @@ export async function GameDetail({params, request}: RequestInfo) {
 	let error: string | null = null;
 
 	try {
+		await setupDb(env);
 		const rawGame = await db.rawGameData.findUnique({
 			where: {firebaseKey: gameId},
 		});

@@ -1,9 +1,10 @@
+import {env} from 'cloudflare:workers';
 import type {RequestInfo} from 'rwsdk/worker';
 import {Breadcrumb} from '../../components/Breadcrumb';
 import {LocalTimestamp} from '../../components/LocalTimestamp';
 import {type Game, GameSchema} from '../../models/game';
 import {getPersonService} from '../../services/person';
-import {db} from '@/db';
+import {db, setupDb} from '@/db';
 
 export async function PersonDetail({params}: RequestInfo) {
 	const personId = params.personId;
@@ -35,6 +36,7 @@ export async function PersonDetail({params}: RequestInfo) {
 	personUids = person.uids;
 
 	try {
+		await setupDb(env);
 		const rawGames = await db.rawGameData.findMany();
 		const uidSet = new Set(personUids);
 
