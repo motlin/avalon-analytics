@@ -20,7 +20,6 @@ export async function GameDetail({params, request}: RequestInfo) {
 		});
 		if (rawGame) {
 			const gameData = typeof rawGame.gameJson === 'string' ? JSON.parse(rawGame.gameJson) : rawGame.gameJson;
-			gameData.id = rawGame.firebaseKey;
 			const parsed = GameSchema.safeParse(gameData);
 			if (parsed.success) {
 				game = parsed.data;

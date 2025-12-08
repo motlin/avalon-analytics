@@ -20,7 +20,6 @@ export async function UidDetail({params}: RequestInfo) {
 		const rawGames = await db.rawGameData.findMany();
 		for (const rawGame of rawGames) {
 			const gameData = typeof rawGame.gameJson === 'string' ? JSON.parse(rawGame.gameJson) : rawGame.gameJson;
-			gameData.id = rawGame.firebaseKey;
 			const parsed = GameSchema.safeParse(gameData);
 			if (parsed.success) {
 				const game = parsed.data;
