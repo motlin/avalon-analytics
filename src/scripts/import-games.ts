@@ -3,7 +3,13 @@
  * Import game files from local disk into D1 database.
  *
  * Usage:
- *   npx tsx src/scripts/import-games.ts [--dry-run] [--limit N] [--batch-size N]
+ *   npx tsx src/scripts/import-games.ts [--local] [--dry-run] [--limit N] [--batch-size N]
+ *
+ * Options:
+ *   --local       Use local D1 database instead of remote (default: remote)
+ *   --dry-run     Show what would be done without executing
+ *   --limit N     Limit number of games to import
+ *   --batch-size N  Number of games per SQL batch (default: 1000)
  *
  * This script reads game JSON files from /Users/craig/projects/avalonlogs/logs
  * and inserts them into the RawGameData table via wrangler d1 execute.
@@ -28,15 +34,18 @@ interface Args {
 	dryRun: boolean;
 	limit: number | null;
 	batchSize: number;
+	local: boolean;
 }
 
 function parseArgs(): Args {
 	const args = process.argv.slice(2);
-	const result: Args = {dryRun: false, limit: null, batchSize: DEFAULT_BATCH_SIZE};
+	const result: Args = {dryRun: false, limit: null, batchSize: DEFAULT_BATCH_SIZE, local: false};
 
 	for (let i = 0; i < args.length; i++) {
 		if (args[i] === '--dry-run') {
 			result.dryRun = true;
+		} else if (args[i] === '--local') {
+			result.local = true;
 		} else if (args[i] === '--limit' && args[i + 1]) {
 			result.limit = parseInt(args[i + 1], 10);
 			i++;
@@ -73,7 +82,7 @@ function buildInsertSQL(firebaseKey: string, gameJson: object, createdAt: Date):
 	return `INSERT OR IGNORE INTO "RawGameData" ("firebaseKey", "gameJson", "createdAt") VALUES ('${escapeSQL(firebaseKey)}', '${jsonStr}', '${createdAtStr}');`;
 }
 
-function executeSQLBatch(statements: string[], dryRun: boolean): void {
+function executeSQLBatch(statements: string[], dryRun: boolean, local: boolean): void {
 	const sql = statements.join('\n');
 
 	if (dryRun) {
@@ -86,8 +95,9 @@ function executeSQLBatch(statements: string[], dryRun: boolean): void {
 	const tempFile = `/tmp/avalon-import-${Date.now()}.sql`;
 	fs.writeFileSync(tempFile, sql);
 
+	const locationFlag = local ? '--local' : '--remote';
 	try {
-		execSync(`npx wrangler d1 execute ${DATABASE_NAME} --remote --yes --file="${tempFile}"`, {
+		execSync(`npx wrangler d1 execute ${DATABASE_NAME} ${locationFlag} --yes --file="${tempFile}"`, {
 			stdio: 'inherit',
 		});
 	} catch (error) {
@@ -104,8 +114,11 @@ function executeSQLBatch(statements: string[], dryRun: boolean): void {
 
 async function main() {
 	const args = parseArgs();
-	console.log(`Import games from ${LOGS_DIR}`);
-	console.log(`Options: dryRun=${args.dryRun}, limit=${args.limit ?? 'none'}, batchSize=${args.batchSize}`);
+	const target = args.local ? 'local' : 'remote';
+	console.log(`Import games from ${LOGS_DIR} to D1 (${target})`);
+	console.log(
+		`Options: dryRun=${args.dryRun}, limit=${args.limit ?? 'none'}, batchSize=${args.batchSize}, local=${args.local}`,
+	);
 
 	const files = getGameFiles(args.limit);
 	console.log(`Found ${files.length} game files to import`);
@@ -143,7 +156,7 @@ async function main() {
 		// Execute batch when we reach batchSize
 		if (statements.length >= args.batchSize) {
 			console.log(`Executing batch ${Math.floor(i / args.batchSize) + 1} (${successCount} games so far)...`);
-			executeSQLBatch(statements, args.dryRun);
+			executeSQLBatch(statements, args.dryRun, args.local);
 			statements.length = 0;
 		}
 	}
@@ -151,7 +164,7 @@ async function main() {
 	// Execute remaining statements
 	if (statements.length > 0) {
 		console.log(`Executing final batch (${statements.length} games)...`);
-		executeSQLBatch(statements, args.dryRun);
+		executeSQLBatch(statements, args.dryRun, args.local);
 	}
 
 	console.log(`\nImport complete:`);

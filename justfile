@@ -23,7 +23,7 @@ clean:
     rm -rf dist .wrangler node_modules/.vite node_modules/.cache
 
 # `npm run dev`
-dev: install ingest-firestore-local
+dev: install import-games-local
     npm run dev
 
 # `npm run format`
@@ -101,9 +101,13 @@ deploy-full: build migrate-remote
 analyze-predicates:
     npx tsx src/scripts/analyze-predicates.ts
 
-# Import game files from local disk into D1 database
-import-games *args:
+# Import game files from local disk into remote D1 database
+import-games *args: migrate-remote
     npx tsx src/scripts/import-games.ts {{ args }}
+
+# Import game files from local disk into local D1 database
+import-games-local *args: migrate-local
+    npx tsx src/scripts/import-games.ts --local {{ args }}
 
 # Ingest new games from Firestore into remote D1 database
 ingest-firestore *args: migrate-remote
