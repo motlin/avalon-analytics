@@ -18,6 +18,7 @@
 import {execSync} from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
+import {z} from 'zod';
 
 const LOGS_DIR = '/Users/craig/projects/avalonlogs/logs';
 const DATABASE_NAME = 'avalon-analytics-juicy-tyrannosaurus';
@@ -82,6 +83,42 @@ function buildInsertSQL(firebaseKey: string, gameJson: object, createdAt: Date):
 	return `INSERT OR IGNORE INTO "RawGameData" ("firebaseKey", "gameJson", "createdAt") VALUES ('${escapeSQL(firebaseKey)}', '${jsonStr}', '${createdAtStr}');`;
 }
 
+function getExistingGameIds(local: boolean): Set<string> {
+	const target = local ? 'local' : 'remote';
+	console.log(`Fetching existing game IDs from D1 (${target})...`);
+
+	const sql = 'SELECT firebaseKey FROM RawGameData';
+	const tempFile = `/tmp/avalon-query-${Date.now()}.sql`;
+	fs.writeFileSync(tempFile, sql);
+
+	const locationFlag = local ? '--local' : '--remote';
+	const output = execSync(
+		`npx wrangler d1 execute ${DATABASE_NAME} ${locationFlag} --yes --file="${tempFile}" --json`,
+		{
+			encoding: 'utf-8',
+		},
+	);
+
+	fs.unlinkSync(tempFile);
+
+	const QueryResultSchema = z.array(
+		z.object({
+			results: z.array(z.object({firebaseKey: z.string()})),
+		}),
+	);
+
+	const parsed = QueryResultSchema.parse(JSON.parse(output));
+	const existingIds = new Set<string>();
+	for (const result of parsed) {
+		for (const row of result.results) {
+			existingIds.add(row.firebaseKey);
+		}
+	}
+
+	console.log(`Found ${existingIds.size} existing games in D1`);
+	return existingIds;
+}
+
 function executeSQLBatch(statements: string[], dryRun: boolean, local: boolean): void {
 	const sql = statements.join('\n');
 
@@ -120,29 +157,34 @@ async function main() {
 		`Options: dryRun=${args.dryRun}, limit=${args.limit ?? 'none'}, batchSize=${args.batchSize}, local=${args.local}`,
 	);
 
-	const files = getGameFiles(args.limit);
-	console.log(`Found ${files.length} game files to import`);
+	const existingIds = getExistingGameIds(args.local);
+	const allFiles = getGameFiles(args.limit);
+	const files = allFiles.filter((filename) => !existingIds.has(filename));
+
+	console.log(`Found ${allFiles.length} game files, ${files.length} new to import`);
+
+	if (files.length === 0) {
+		console.log('No new games to import');
+		return;
+	}
 
 	let successCount = 0;
 	let errorCount = 0;
 	const statements: string[] = [];
 
-	for (let i = 0; i < files.length; i++) {
+	for (let index = 0; index < files.length; index++) {
 		if (interrupted) break;
 
-		const filename = files[i];
+		const filename = files[index];
 		const filePath = path.join(LOGS_DIR, filename);
 
 		try {
 			const content = fs.readFileSync(filePath, 'utf-8');
 			const gameJson = JSON.parse(content);
 
-			// Extract timestamp from filename for createdAt
-			// Format: 2019-03-13T22:31:15.519Z_WJE
 			const timestampMatch = filename.match(/^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z)/);
 			const createdAt = timestampMatch ? new Date(timestampMatch[1]) : new Date();
 
-			// Use filename as the firebaseKey
 			const firebaseKey = filename;
 			gameJson.id = firebaseKey;
 
@@ -153,15 +195,13 @@ async function main() {
 			errorCount++;
 		}
 
-		// Execute batch when we reach batchSize
 		if (statements.length >= args.batchSize) {
-			console.log(`Executing batch ${Math.floor(i / args.batchSize) + 1} (${successCount} games so far)...`);
+			console.log(`Executing batch ${Math.floor(index / args.batchSize) + 1} (${successCount} games so far)...`);
 			executeSQLBatch(statements, args.dryRun, args.local);
 			statements.length = 0;
 		}
 	}
 
-	// Execute remaining statements
 	if (statements.length > 0) {
 		console.log(`Executing final batch (${statements.length} games)...`);
 		executeSQLBatch(statements, args.dryRun, args.local);

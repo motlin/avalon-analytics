@@ -1,4 +1,3 @@
-import '@fortawesome/fontawesome-svg-core/styles.css';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faCheckCircle, faTimesCircle, faCircle} from '@fortawesome/free-solid-svg-icons';
 import {faThumbsUp, faThumbsDown, faCircle as faCircleRegular} from '@fortawesome/free-regular-svg-icons';

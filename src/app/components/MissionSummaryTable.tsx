@@ -1,5 +1,4 @@
 import React from 'react';
-import '@fortawesome/fontawesome-svg-core/styles.css';
 import styles from './MissionSummaryTable.module.css';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faCheckCircle, faTimesCircle, faCircle} from '@fortawesome/free-solid-svg-icons';
