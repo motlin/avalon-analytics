@@ -169,9 +169,7 @@ export async function PlayersPage({}: RequestInfo) {
 									<tr key={player.id}>
 										<td className={styles.nameColumn}>
 											<a
-												href={
-													player.isMapped ? `/person/${player.id}` : `/uid/${player.uids[0]}`
-												}
+												href={`/players/${player.id}`}
 												className={styles.playerLink}
 											>
 												{player.name}
