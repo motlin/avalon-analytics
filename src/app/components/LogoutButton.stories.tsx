@@ -2,6 +2,7 @@ import type {Meta, StoryObj} from '@storybook/react-vite';
 import LogoutButton from './LogoutButton';
 
 const meta: Meta<typeof LogoutButton> = {
+	title: 'Authentication/LogoutButton',
 	component: LogoutButton,
 	parameters: {
 		layout: 'centered',

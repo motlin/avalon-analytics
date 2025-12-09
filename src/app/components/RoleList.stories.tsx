@@ -2,6 +2,7 @@ import type {Meta, StoryObj} from '@storybook/react-vite';
 import RoleList from './RoleList';
 
 const meta: Meta<typeof RoleList> = {
+	title: 'Lobby/RoleList',
 	component: RoleList,
 	parameters: {
 		layout: 'centered',

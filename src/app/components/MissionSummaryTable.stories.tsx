@@ -3,6 +3,7 @@ import MissionSummaryTable from './MissionSummaryTable';
 import {realGame, sampleGame} from '../test-data/realGameData';
 
 const meta: Meta<typeof MissionSummaryTable> = {
+	title: 'Game/Display/MissionSummaryTable',
 	component: MissionSummaryTable,
 	parameters: {
 		layout: 'centered',

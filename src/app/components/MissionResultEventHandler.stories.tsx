@@ -3,7 +3,7 @@ import {useState} from 'react';
 import MissionResultEventHandler from './MissionResultEventHandler';
 
 const meta: Meta<typeof MissionResultEventHandler> = {
-	title: 'Events/MissionResultEventHandler',
+	title: 'Game/Events/MissionResultEventHandler',
 	component: MissionResultEventHandler,
 	parameters: {
 		layout: 'centered',

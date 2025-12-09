@@ -2,6 +2,7 @@ import type {Meta, StoryObj} from '@storybook/react-vite';
 import Lobby from './Lobby';
 
 const meta: Meta<typeof Lobby> = {
+	title: 'Lobby/Lobby',
 	component: Lobby,
 	parameters: {
 		layout: 'fullscreen',

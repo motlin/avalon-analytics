@@ -2,7 +2,7 @@ import type {Meta, StoryObj} from '@storybook/react-vite';
 import LobbyPlayerList from './LobbyPlayerList';
 
 const meta: Meta<typeof LobbyPlayerList> = {
-	title: 'Lobby/LobbyPlayerList',
+	title: 'Lobby/PlayerList',
 	component: LobbyPlayerList,
 	parameters: {
 		layout: 'centered',

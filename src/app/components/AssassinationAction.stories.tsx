@@ -2,6 +2,7 @@ import type {Meta, StoryObj} from '@storybook/react-vite';
 import AssassinationAction from './AssassinationAction';
 
 const meta: Meta<typeof AssassinationAction> = {
+	title: 'Game/Actions/AssassinationAction',
 	component: AssassinationAction,
 	parameters: {
 		layout: 'centered',

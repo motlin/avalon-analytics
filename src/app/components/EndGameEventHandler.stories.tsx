@@ -2,7 +2,7 @@ import type {Meta, StoryObj} from '@storybook/react-vite';
 import EndGameEventHandler from './EndGameEventHandler';
 
 const meta: Meta<typeof EndGameEventHandler> = {
-	title: 'Components/EndGameEventHandler',
+	title: 'Game/Events/EndGameEventHandler',
 	component: EndGameEventHandler,
 	parameters: {
 		layout: 'fullscreen',

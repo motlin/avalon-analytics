@@ -3,6 +3,7 @@ import {useState} from 'react';
 import ViewRoleButton from './ViewRoleButton';
 
 const meta: Meta<typeof ViewRoleButton> = {
+	title: 'UI/ViewRoleButton',
 	component: ViewRoleButton,
 	parameters: {
 		layout: 'centered',
