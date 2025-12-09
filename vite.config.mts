@@ -24,11 +24,9 @@ export default defineConfig({
     rollupOptions: {
       output: {
         assetFileNames: (assetInfo) => {
-          // Use stable names for CSS files (no hash)
-          if (assetInfo.name?.endsWith('.css')) {
+          if (assetInfo.name?.endsWith('.css') || assetInfo.name?.endsWith('.wasm')) {
             return 'assets/[name][extname]';
           }
-          // Keep hashes for other assets
           return 'assets/[name]-[hash][extname]';
         },
       },
