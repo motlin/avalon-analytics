@@ -3,7 +3,7 @@ import {useState} from 'react';
 import StartGameEventHandler from './StartGameEventHandler';
 
 const meta: Meta<typeof StartGameEventHandler> = {
-	title: 'Game/Events/StartGameEventHandler',
+	title: 'Lobby/StartGameEventHandler',
 	component: StartGameEventHandler,
 	parameters: {
 		layout: 'centered',

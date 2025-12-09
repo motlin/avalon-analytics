@@ -2,7 +2,7 @@ import type {Meta, StoryObj} from '@storybook/react-vite';
 import GameInterface from './GameInterface';
 
 const meta: Meta<typeof GameInterface> = {
-	title: 'Game/GameInterface',
+	title: 'Gameplay/GameInterface',
 	component: GameInterface,
 	parameters: {
 		layout: 'fullscreen',

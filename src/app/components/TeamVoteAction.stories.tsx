@@ -2,7 +2,7 @@ import type {Meta, StoryObj} from '@storybook/react-vite';
 import TeamVoteAction from './TeamVoteAction';
 
 const meta = {
-	title: 'Game/Actions/TeamVoteAction',
+	title: 'Gameplay/TeamVoteAction',
 	component: TeamVoteAction,
 	parameters: {
 		layout: 'centered',

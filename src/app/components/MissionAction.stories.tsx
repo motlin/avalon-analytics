@@ -2,7 +2,7 @@ import type {Meta, StoryObj} from '@storybook/react-vite';
 import MissionAction from './MissionAction';
 
 const meta = {
-	title: 'Game/Actions/MissionAction',
+	title: 'Gameplay/MissionAction',
 	component: MissionAction,
 	parameters: {
 		layout: 'centered',

@@ -2,7 +2,7 @@ import type {Meta, StoryObj} from '@storybook/react-vite';
 import GameParticipants from './GameParticipants';
 
 const meta: Meta<typeof GameParticipants> = {
-	title: 'Game/Display/Participants',
+	title: 'Lobby/Participants',
 	component: GameParticipants,
 	parameters: {
 		layout: 'centered',

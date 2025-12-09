@@ -2,7 +2,7 @@ import type {Meta, StoryObj} from '@storybook/react-vite';
 import TeamProposalAction from './TeamProposalAction';
 
 const meta: Meta<typeof TeamProposalAction> = {
-	title: 'Game/Actions/TeamProposalAction',
+	title: 'Gameplay/TeamProposalAction',
 	component: TeamProposalAction,
 	parameters: {
 		layout: 'centered',

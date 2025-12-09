@@ -2,7 +2,7 @@ import type {Meta, StoryObj} from '@storybook/react-vite';
 import ActionPane from './ActionPane';
 
 const meta: Meta<typeof ActionPane> = {
-	title: 'Game/Actions/ActionPane',
+	title: 'Gameplay/ActionPane',
 	component: ActionPane,
 	parameters: {
 		layout: 'centered',

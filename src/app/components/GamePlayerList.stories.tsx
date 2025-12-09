@@ -2,7 +2,7 @@ import type {Meta, StoryObj} from '@storybook/react-vite';
 import GamePlayerList from './GamePlayerList';
 
 const meta: Meta<typeof GamePlayerList> = {
-	title: 'Game/Display/PlayerList',
+	title: 'Gameplay/PlayerList',
 	component: GamePlayerList,
 	parameters: {
 		layout: 'centered',

@@ -2,7 +2,7 @@ import type {Meta, StoryObj} from '@storybook/react-vite';
 import Achievements from './Achievements';
 
 const meta: Meta<typeof Achievements> = {
-	title: 'Game/Display/Achievements',
+	title: 'Endgame/Achievements',
 	component: Achievements,
 	parameters: {
 		layout: 'centered',
