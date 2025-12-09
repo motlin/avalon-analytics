@@ -3,7 +3,13 @@
  * Ingest new games from Firestore into D1 database.
  *
  * Usage:
- *   npx tsx src/scripts/ingest-firestore.ts [--dry-run] [--limit N] [--batch-size N]
+ *   npx tsx src/scripts/ingest-firestore.ts [--local] [--dry-run] [--limit N] [--batch-size N]
+ *
+ * Options:
+ *   --local       Use local D1 database instead of remote (default: remote)
+ *   --dry-run     Show what would be done without executing
+ *   --limit N     Limit number of games to fetch from Firestore
+ *   --batch-size N  Number of games per SQL batch (default: 1000)
  *
  * This script fetches games from Firestore that aren't yet in D1
  * and inserts them via wrangler d1 execute.
@@ -31,6 +37,7 @@ interface Args {
 	dryRun: boolean;
 	limit: number | null;
 	batchSize: number;
+	local: boolean;
 }
 
 interface FirestoreValue {
@@ -57,11 +64,13 @@ interface FirestoreListResponse {
 
 function parseArgs(): Args {
 	const args = process.argv.slice(2);
-	const result: Args = {dryRun: false, limit: null, batchSize: DEFAULT_BATCH_SIZE};
+	const result: Args = {dryRun: false, limit: null, batchSize: DEFAULT_BATCH_SIZE, local: false};
 
 	for (let index = 0; index < args.length; index++) {
 		if (args[index] === '--dry-run') {
 			result.dryRun = true;
+		} else if (args[index] === '--local') {
+			result.local = true;
 		} else if (args[index] === '--limit' && args[index + 1]) {
 			result.limit = parseInt(args[index + 1], 10);
 			index++;
@@ -111,16 +120,21 @@ function convertDocumentToObject(doc: FirestoreDocument): Record<string, unknown
 	return result;
 }
 
-async function getExistingGameIds(): Promise<Set<string>> {
-	console.log('Fetching existing game IDs from D1...');
+async function getExistingGameIds(local: boolean): Promise<Set<string>> {
+	const target = local ? 'local' : 'remote';
+	console.log(`Fetching existing game IDs from D1 (${target})...`);
 
 	const sql = 'SELECT firebaseKey FROM RawGameData';
 	const tempFile = `/tmp/avalon-query-${Date.now()}.sql`;
 	fs.writeFileSync(tempFile, sql);
 
-	const output = execSync(`npx wrangler d1 execute ${DATABASE_NAME} --remote --yes --file="${tempFile}" --json`, {
-		encoding: 'utf-8',
-	});
+	const locationFlag = local ? '--local' : '--remote';
+	const output = execSync(
+		`npx wrangler d1 execute ${DATABASE_NAME} ${locationFlag} --yes --file="${tempFile}" --json`,
+		{
+			encoding: 'utf-8',
+		},
+	);
 
 	fs.unlinkSync(tempFile);
 
@@ -195,7 +209,7 @@ function buildInsertSQL(firebaseKey: string, gameJson: Record<string, unknown>, 
 	return `INSERT OR IGNORE INTO "RawGameData" ("firebaseKey", "gameJson", "createdAt") VALUES ('${escapeSQL(firebaseKey)}', '${jsonStr}', '${createdAtStr}');`;
 }
 
-function executeSQLBatch(statements: string[], dryRun: boolean): void {
+function executeSQLBatch(statements: string[], dryRun: boolean, local: boolean): void {
 	const sql = statements.join('\n');
 
 	if (dryRun) {
@@ -207,8 +221,9 @@ function executeSQLBatch(statements: string[], dryRun: boolean): void {
 	const tempFile = `/tmp/avalon-ingest-${Date.now()}.sql`;
 	fs.writeFileSync(tempFile, sql);
 
+	const locationFlag = local ? '--local' : '--remote';
 	try {
-		execSync(`npx wrangler d1 execute ${DATABASE_NAME} --remote --yes --file="${tempFile}"`, {
+		execSync(`npx wrangler d1 execute ${DATABASE_NAME} ${locationFlag} --yes --file="${tempFile}"`, {
 			stdio: 'inherit',
 		});
 	} catch (error) {
@@ -232,10 +247,13 @@ function extractTimeCreated(game: Record<string, unknown>): Date {
 
 async function main() {
 	const args = parseArgs();
-	console.log('Ingest games from Firestore to D1');
-	console.log(`Options: dryRun=${args.dryRun}, limit=${args.limit ?? 'none'}, batchSize=${args.batchSize}`);
+	const target = args.local ? 'local' : 'remote';
+	console.log(`Ingest games from Firestore to D1 (${target})`);
+	console.log(
+		`Options: dryRun=${args.dryRun}, limit=${args.limit ?? 'none'}, batchSize=${args.batchSize}, local=${args.local}`,
+	);
 
-	const existingIds = await getExistingGameIds();
+	const existingIds = await getExistingGameIds(args.local);
 	const firestoreGames = await fetchGamesFromFirestore(args.limit);
 
 	const newGames = firestoreGames.filter((game) => {
@@ -266,14 +284,14 @@ async function main() {
 
 		if (statements.length >= args.batchSize) {
 			console.log(`Executing batch ${Math.floor(index / args.batchSize) + 1} (${successCount} games so far)...`);
-			executeSQLBatch(statements, args.dryRun);
+			executeSQLBatch(statements, args.dryRun, args.local);
 			statements.length = 0;
 		}
 	}
 
 	if (statements.length > 0) {
 		console.log(`Executing final batch (${statements.length} games)...`);
-		executeSQLBatch(statements, args.dryRun);
+		executeSQLBatch(statements, args.dryRun, args.local);
 	}
 
 	console.log(`\nIngestion complete:`);
