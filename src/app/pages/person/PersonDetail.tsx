@@ -13,30 +13,31 @@ export async function PersonDetail({params}: RequestInfo) {
 	let personName: string | null = null;
 	let personUids: string[] = [];
 
-	// Get person info and their UIDs from the service
-	const personService = getPersonService();
-	await personService.initialize();
-
-	const allPeople = await personService.getAllPeople();
-	const person = allPeople.find((p) => p.id === personId);
-
-	if (!person) {
-		return (
-			<div style={{padding: '1rem'}}>
-				<Breadcrumb
-					items={[{label: 'Home', href: '/'}, {label: 'Players', href: '/players'}, {label: 'Not Found'}]}
-				/>
-				<h1>Person Not Found</h1>
-				<p>No person found with ID: {personId}</p>
-			</div>
-		);
-	}
-
-	personName = person.name;
-	personUids = person.uids;
-
 	try {
 		await setupDb(env);
+
+		// Get person info and their UIDs from the service
+		const personService = getPersonService();
+		await personService.initialize();
+
+		const allPeople = await personService.getAllPeople();
+		const person = allPeople.find((p) => p.id === personId);
+
+		if (!person) {
+			return (
+				<div style={{padding: '1rem'}}>
+					<Breadcrumb
+						items={[{label: 'Home', href: '/'}, {label: 'Players', href: '/players'}, {label: 'Not Found'}]}
+					/>
+					<h1>Person Not Found</h1>
+					<p>No person found with ID: {personId}</p>
+				</div>
+			);
+		}
+
+		personName = person.name;
+		personUids = person.uids;
+
 		const rawGames = await db.rawGameData.findMany();
 		const uidSet = new Set(personUids);
 
@@ -63,7 +64,7 @@ export async function PersonDetail({params}: RequestInfo) {
 	return (
 		<div style={{padding: '1rem'}}>
 			<Breadcrumb
-				items={[{label: 'Home', href: '/'}, {label: 'Players', href: '/players'}, {label: personName}]}
+				items={[{label: 'Home', href: '/'}, {label: 'Players', href: '/players'}, {label: personName!}]}
 			/>
 			<h1>Games for {personName}</h1>
 			<p>

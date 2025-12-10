@@ -24,6 +24,11 @@ const GAMES_PER_PAGE = 20;
  * Query parameters:
  * - page: Page number for game history (default: 1)
  */
+interface PersonOption {
+	id: string;
+	name: string;
+}
+
 export async function PlayerDetailPage({params, request}: RequestInfo) {
 	const playerId = params.playerId;
 	const url = new URL(request.url);
@@ -35,6 +40,7 @@ export async function PlayerDetailPage({params, request}: RequestInfo) {
 	let playerName: string | null = null;
 	let playerUids: string[] = [];
 	let isMapped = false;
+	let allPeopleForMapping: PersonOption[] = [];
 
 	try {
 		await setupDb(env);
@@ -45,6 +51,9 @@ export async function PlayerDetailPage({params, request}: RequestInfo) {
 
 		const allPeople = await personService.getAllPeople();
 		const person = allPeople.find((p) => p.id === playerId);
+
+		// Store all people for the mapping dropdown
+		allPeopleForMapping = allPeople.map((p) => ({id: p.id, name: p.name}));
 
 		if (person) {
 			// This is a mapped person
@@ -141,6 +150,15 @@ export async function PlayerDetailPage({params, request}: RequestInfo) {
 					<p style={{margin: 0, color: '#666', fontSize: '0.875rem'}}>UID: {playerId}</p>
 				)}
 			</div>
+
+			{/* Mapping Section for Unmapped Players */}
+			{!isMapped && (
+				<MappingSection
+					uid={playerId}
+					playerName={playerName}
+					allPeople={allPeopleForMapping}
+				/>
+			)}
 
 			{/* Overview Summary */}
 			<div
@@ -437,6 +455,146 @@ function GameHistorySection({games, playerUids, playerId, currentPage, gamesPerP
 					)}
 				</div>
 			)}
+		</div>
+	);
+}
+
+interface MappingSectionProps {
+	uid: string;
+	playerName: string | null;
+	allPeople: PersonOption[];
+}
+
+function MappingSection({uid, playerName, allPeople}: MappingSectionProps) {
+	return (
+		<div
+			style={{
+				marginBottom: '2rem',
+				padding: '1.5rem',
+				backgroundColor: '#fff3cd',
+				border: '1px solid #ffc107',
+				borderRadius: '8px',
+			}}
+		>
+			<h3 style={{margin: '0 0 1rem 0', color: '#856404'}}>Unmapped Player</h3>
+			<p style={{margin: '0 0 1rem 0', color: '#856404'}}>
+				This player is not linked to a known person. You can map this UID to an existing person or create a new
+				one.
+			</p>
+
+			<div style={{display: 'flex', flexDirection: 'column', gap: '1rem'}}>
+				{/* Map to existing person */}
+				<details style={{backgroundColor: '#fff', padding: '1rem', borderRadius: '4px'}}>
+					<summary style={{cursor: 'pointer', fontWeight: 'bold', marginBottom: '0.5rem'}}>
+						Map to existing person
+					</summary>
+					<div style={{marginTop: '1rem'}}>
+						{allPeople.length === 0 ? (
+							<p style={{color: '#666'}}>No people in the database yet.</p>
+						) : (
+							<div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
+								{allPeople.map((person) => (
+									<form
+										key={person.id}
+										method="POST"
+										action="/admin/map-uid"
+										style={{display: 'inline'}}
+									>
+										<input
+											type="hidden"
+											name="uid"
+											value={uid}
+										/>
+										<input
+											type="hidden"
+											name="personId"
+											value={person.id}
+										/>
+										<input
+											type="hidden"
+											name="redirectTo"
+											value={`/person/${person.id}`}
+										/>
+										<button
+											type="submit"
+											style={{
+												background: 'none',
+												border: '1px solid #ddd',
+												borderRadius: '4px',
+												padding: '0.5rem 1rem',
+												cursor: 'pointer',
+												width: '100%',
+												textAlign: 'left',
+											}}
+										>
+											{person.name}
+										</button>
+									</form>
+								))}
+							</div>
+						)}
+					</div>
+				</details>
+
+				{/* Create new person */}
+				<details style={{backgroundColor: '#fff', padding: '1rem', borderRadius: '4px'}}>
+					<summary style={{cursor: 'pointer', fontWeight: 'bold', marginBottom: '0.5rem'}}>
+						Create new person
+					</summary>
+					<form
+						method="POST"
+						action="/admin/map-uid"
+						style={{marginTop: '1rem'}}
+					>
+						<input
+							type="hidden"
+							name="uid"
+							value={uid}
+						/>
+						<input
+							type="hidden"
+							name="redirectTo"
+							value={`/players/${uid}`}
+						/>
+						<div style={{marginBottom: '0.5rem'}}>
+							<label
+								htmlFor="newPersonName"
+								style={{display: 'block', marginBottom: '0.25rem'}}
+							>
+								Person Name:
+							</label>
+							<input
+								type="text"
+								id="newPersonName"
+								name="newPersonName"
+								defaultValue={playerName || ''}
+								placeholder="Enter person name"
+								required
+								style={{
+									width: '100%',
+									padding: '0.5rem',
+									border: '1px solid #ddd',
+									borderRadius: '4px',
+									boxSizing: 'border-box',
+								}}
+							/>
+						</div>
+						<button
+							type="submit"
+							style={{
+								backgroundColor: '#28a745',
+								color: '#fff',
+								border: 'none',
+								borderRadius: '4px',
+								padding: '0.5rem 1rem',
+								cursor: 'pointer',
+							}}
+						>
+							Create Person & Map
+						</button>
+					</form>
+				</details>
+			</div>
 		</div>
 	);
 }

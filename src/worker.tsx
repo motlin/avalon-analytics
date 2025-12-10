@@ -3,6 +3,7 @@ import {prefix, render, route} from 'rwsdk/router';
 import {defineApp, ErrorResponse} from 'rwsdk/worker';
 import {Document} from '@/app/Document';
 import {setCommonHeaders} from '@/app/headers';
+import {adminRoutes} from '@/app/pages/admin/routes';
 import {gameRoutes} from '@/app/pages/game/routes';
 import {Home} from '@/app/pages/Home';
 import {HomePage} from '@/app/pages/HomePage';
@@ -82,6 +83,7 @@ export default defineApp([
 			Home,
 		]),
 		prefix('/user', userRoutes),
+		...adminRoutes,
 		...gameRoutes,
 		...personRoutes,
 		...playersRoutes,

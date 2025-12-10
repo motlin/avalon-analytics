@@ -7,8 +7,14 @@ import {annotateGame, formatRoleWithEmoji} from '../models/gameAnnotator';
 import {getPredicateRarityCssColor} from '../models/predicateRarity';
 import styles from './CombinedAnnotatedTable.module.css';
 
+interface PersonMapping {
+	personId: string;
+	personName: string;
+}
+
 interface CombinedAnnotatedTableProps {
 	game: Game;
+	uidToPersonMap?: Map<string, PersonMapping>;
 }
 
 function toTitleCase(text: string): string {
@@ -27,7 +33,7 @@ function stripPlayerPrefix(commentary: string, playerName: string): string {
 	return afterPlayerName.charAt(0).toUpperCase() + afterPlayerName.slice(1);
 }
 
-export function CombinedAnnotatedTable({game}: CombinedAnnotatedTableProps) {
+export function CombinedAnnotatedTable({game, uidToPersonMap}: CombinedAnnotatedTableProps) {
 	const annotatedGame = annotateGame(game);
 	const players = game.players;
 	const missionVotes = game.outcome?.votes?.reduce(
@@ -52,12 +58,27 @@ export function CombinedAnnotatedTable({game}: CombinedAnnotatedTableProps) {
 									className={playerIndex % 2 === 0 ? styles.evenRow : styles.oddRow}
 								>
 									<td className={styles.playerName}>
-										<a
-											href={`/players/${player.uid}`}
-											className={`${styles.fontWeightMedium} ${styles.playerLink}`}
-										>
-											{player.name}
-										</a>
+										{(() => {
+											const personMapping = uidToPersonMap?.get(player.uid);
+											if (personMapping) {
+												return (
+													<a
+														href={`/person/${personMapping.personId}`}
+														className={`${styles.fontWeightMedium} ${styles.playerLink}`}
+													>
+														{player.name}
+													</a>
+												);
+											}
+											return (
+												<a
+													href={`/players/${player.uid}`}
+													className={`${styles.fontWeightMedium} ${styles.playerLink} ${styles.unmappedPlayer}`}
+												>
+													{player.name}
+												</a>
+											);
+										})()}
 									</td>
 									{playerRole && (
 										<td className={styles.role}>{formatRoleWithEmoji(toTitleCase(playerRole))}</td>

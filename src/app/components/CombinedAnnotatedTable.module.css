@@ -54,6 +54,11 @@
 	text-decoration: underline;
 }
 
+.unmappedPlayer {
+	color: #888;
+	font-style: italic;
+}
+
 .role {
 	border-right: 2px solid;
 	white-space: nowrap;

@@ -52,10 +52,11 @@ model RawGameData {
 }
 
 model Person {
-  id        String      @id @default(uuid())
-  name      String      @unique
-  createdAt DateTime
-  uids      PersonUid[]
+  id         String            @id @default(uuid())
+  name       String            @unique
+  createdAt  DateTime
+  uids       PersonUid[]
+  dateRanges PersonDateRange[]
 
   @@index([name])
 }
@@ -99,4 +100,15 @@ model PlayerStats {
 
   @@index([playerId])
   @@index([gamesPlayed(sort: Desc)])
+}
+
+model PersonDateRange {
+  id        String   @id @default(uuid())
+  personId  String
+  person    Person   @relation(fields: [personId], references: [id], onDelete: Cascade)
+  startDate String
+  endDate   String?
+  createdAt DateTime
+
+  @@index([personId])
 }

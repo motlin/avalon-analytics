@@ -33,13 +33,31 @@ function buildAvalonApi(game: Game): AvalonApi {
 	};
 }
 
+interface PersonMapping {
+	personId: string;
+	personName: string;
+}
+
 export async function GameCombined({params}: RequestInfo) {
 	const gameId = params.gameId;
 	let game: Game | null = null;
 	let error: string | null = null;
+	const uidToPersonMap = new Map<string, PersonMapping>();
 
 	try {
 		await setupDb(env);
+
+		// Load person mappings
+		const personUids = await db.personUid.findMany({
+			include: {person: true},
+		});
+		for (const pu of personUids) {
+			uidToPersonMap.set(pu.uid, {
+				personId: pu.person.id,
+				personName: pu.person.name,
+			});
+		}
+
 		const rawGame = await db.rawGameData.findUnique({
 			where: {firebaseKey: gameId},
 		});
@@ -128,7 +146,10 @@ export async function GameCombined({params}: RequestInfo) {
 					</p>
 				)}
 
-				<CombinedAnnotatedTable game={game} />
+				<CombinedAnnotatedTable
+					game={game}
+					uidToPersonMap={uidToPersonMap}
+				/>
 
 				<Achievements avalon={avalonApi} />
 			</div>
