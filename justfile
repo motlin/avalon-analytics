@@ -116,7 +116,3 @@ ingest-firestore *args: migrate-remote
 # Ingest new games from Firestore into local D1 database
 ingest-firestore-local *args: migrate-local
     npx tsx src/scripts/ingest-firestore.ts --local {{ args }}
-
-# Populate PlayerGame table from existing games in remote D1 database
-populate-player-games *args: migrate-remote
-    npx tsx src/scripts/populate-player-games.ts {{ args }}
