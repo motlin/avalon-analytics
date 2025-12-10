@@ -36,25 +36,26 @@ export async function PlayerDetailPage({params, request}: RequestInfo) {
 	let playerUids: string[] = [];
 	let isMapped = false;
 
-	// Initialize person service and check if this is a mapped person
-	const personService = getPersonService();
-	await personService.initialize();
-
-	const allPeople = await personService.getAllPeople();
-	const person = allPeople.find((p) => p.id === playerId);
-
-	if (person) {
-		// This is a mapped person
-		isMapped = true;
-		playerName = person.name;
-		playerUids = person.uids;
-	} else {
-		// Treat as a UID (unmapped player)
-		playerUids = [playerId];
-	}
-
 	try {
 		await setupDb(env);
+
+		// Initialize person service and check if this is a mapped person
+		const personService = getPersonService();
+		await personService.initialize();
+
+		const allPeople = await personService.getAllPeople();
+		const person = allPeople.find((p) => p.id === playerId);
+
+		if (person) {
+			// This is a mapped person
+			isMapped = true;
+			playerName = person.name;
+			playerUids = person.uids;
+		} else {
+			// Treat as a UID (unmapped player)
+			playerUids = [playerId];
+		}
+
 		const uidSet = new Set(playerUids);
 
 		// Use PlayerGame join table to efficiently fetch only games for this player

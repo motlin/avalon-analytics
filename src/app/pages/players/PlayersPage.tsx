@@ -102,23 +102,25 @@ export async function PlayersPage({}: RequestInfo) {
 	let allGames: Game[] = [];
 	let error: string | null = null;
 
-	// Initialize person service and build UID maps
-	const personService = getPersonService();
-	await personService.initialize();
-
 	// Build maps for UID resolution
 	const uidToPersonId = new Map<string, string>();
 	const uidToPersonName = new Map<string, string>();
-	const allPeople = await personService.getAllPeople();
-	for (const person of allPeople) {
-		for (const uid of person.uids) {
-			uidToPersonId.set(uid, person.id);
-			uidToPersonName.set(uid, person.name);
-		}
-	}
 
 	try {
 		await setupDb(env);
+
+		// Initialize person service and build UID maps
+		const personService = getPersonService();
+		await personService.initialize();
+
+		const allPeople = await personService.getAllPeople();
+		for (const person of allPeople) {
+			for (const uid of person.uids) {
+				uidToPersonId.set(uid, person.id);
+				uidToPersonName.set(uid, person.name);
+			}
+		}
+
 		const rawGames = await db.rawGameData.findMany();
 		for (const rawGame of rawGames) {
 			const gameData = typeof rawGame.gameJson === 'string' ? JSON.parse(rawGame.gameJson) : rawGame.gameJson;
