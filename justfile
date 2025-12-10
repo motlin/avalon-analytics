@@ -50,9 +50,9 @@ hooks:
 build: install
     op run -- npm run build
 
-# `npm run build`
+# `RWSDK_DEPLOY=1 npm run build`
 build-ci: generate-ci
-    npm run build
+    RWSDK_DEPLOY=1 npm run build
 
 # `npm run format`
 format: install
