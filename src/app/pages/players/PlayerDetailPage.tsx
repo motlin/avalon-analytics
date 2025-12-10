@@ -55,17 +55,31 @@ export async function PlayerDetailPage({params, request}: RequestInfo) {
 
 	try {
 		await setupDb(env);
-		const rawGames = await db.rawGameData.findMany();
 		const uidSet = new Set(playerUids);
 
-		for (const rawGame of rawGames) {
-			const gameData = typeof rawGame.gameJson === 'string' ? JSON.parse(rawGame.gameJson) : rawGame.gameJson;
+		// Use PlayerGame join table to efficiently fetch only games for this player
+		const playerGameRecords = await db.playerGame.findMany({
+			where: {
+				playerUid: {in: playerUids},
+			},
+			include: {
+				rawGameData: true,
+			},
+		});
+
+		// Deduplicate by firebaseKey (a mapped person with multiple UIDs might have duplicates)
+		const seenKeys = new Set<string>();
+		for (const record of playerGameRecords) {
+			if (seenKeys.has(record.firebaseKey)) continue;
+			seenKeys.add(record.firebaseKey);
+
+			const gameData =
+				typeof record.rawGameData.gameJson === 'string'
+					? JSON.parse(record.rawGameData.gameJson)
+					: record.rawGameData.gameJson;
 			const parsed = GameSchema.safeParse(gameData);
 			if (parsed.success) {
-				const game = parsed.data;
-				if (game.players.some((p) => uidSet.has(p.uid))) {
-					games.push(game);
-				}
+				games.push(parsed.data);
 			}
 		}
 

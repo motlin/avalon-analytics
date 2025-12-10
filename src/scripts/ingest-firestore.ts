@@ -203,10 +203,34 @@ function escapeSQL(str: string): string {
 	return str.replace(/'/g, "''");
 }
 
-function buildInsertSQL(firebaseKey: string, gameJson: Record<string, unknown>, createdAt: Date): string {
+function extractPlayerUids(game: Record<string, unknown>): string[] {
+	const players = game.players;
+	if (!Array.isArray(players)) {
+		return [];
+	}
+	return players
+		.map((p: {uid?: string}) => p.uid)
+		.filter((uid: string | undefined): uid is string => typeof uid === 'string');
+}
+
+function buildInsertSQL(firebaseKey: string, gameJson: Record<string, unknown>, createdAt: Date): string[] {
 	const jsonStr = escapeSQL(JSON.stringify(gameJson));
 	const createdAtStr = createdAt.toISOString();
-	return `INSERT OR IGNORE INTO "RawGameData" ("firebaseKey", "gameJson", "createdAt") VALUES ('${escapeSQL(firebaseKey)}', '${jsonStr}', '${createdAtStr}');`;
+	const statements: string[] = [];
+
+	statements.push(
+		`INSERT OR IGNORE INTO "RawGameData" ("firebaseKey", "gameJson", "createdAt") VALUES ('${escapeSQL(firebaseKey)}', '${jsonStr}', '${createdAtStr}');`,
+	);
+
+	const playerUids = extractPlayerUids(gameJson);
+	for (const uid of playerUids) {
+		const id = crypto.randomUUID();
+		statements.push(
+			`INSERT OR IGNORE INTO "PlayerGame" ("id", "playerUid", "firebaseKey", "createdAt") VALUES ('${escapeSQL(id)}', '${escapeSQL(uid)}', '${escapeSQL(firebaseKey)}', '${createdAtStr}');`,
+		);
+	}
+
+	return statements;
 }
 
 function executeSQLBatch(statements: string[], dryRun: boolean, local: boolean): void {
@@ -279,7 +303,7 @@ async function main() {
 		const gameId = game.id as string;
 
 		const createdAt = extractTimeCreated(game);
-		statements.push(buildInsertSQL(gameId, game, createdAt));
+		statements.push(...buildInsertSQL(gameId, game, createdAt));
 		successCount++;
 
 		if (statements.length >= args.batchSize) {

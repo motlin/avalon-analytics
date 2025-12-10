@@ -43,9 +43,10 @@ model GameIngestionState {
 }
 
 model RawGameData {
-  firebaseKey String @id
+  firebaseKey String       @id
   gameJson    Json
   createdAt   DateTime
+  playerGames PlayerGame[]
 
   @@index([createdAt])
 }
@@ -68,4 +69,16 @@ model PersonUid {
 
   @@index([uid])
   @@index([personId])
+}
+
+model PlayerGame {
+  id          String      @id @default(uuid())
+  playerUid   String
+  firebaseKey String
+  rawGameData RawGameData @relation(fields: [firebaseKey], references: [firebaseKey], onDelete: Cascade)
+  createdAt   DateTime
+
+  @@unique([playerUid, firebaseKey])
+  @@index([playerUid])
+  @@index([firebaseKey])
 }

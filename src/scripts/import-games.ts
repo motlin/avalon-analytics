@@ -60,8 +60,15 @@ function parseArgs(): Args {
 }
 
 function escapeSQL(str: string): string {
-	// Escape single quotes by doubling them
 	return str.replace(/'/g, "''");
+}
+
+function extractPlayerUids(game: object): string[] {
+	const gameObj = game as {players?: Array<{uid?: string}>};
+	if (!Array.isArray(gameObj.players)) {
+		return [];
+	}
+	return gameObj.players.map((p) => p.uid).filter((uid): uid is string => typeof uid === 'string');
 }
 
 function getGameFiles(limit: number | null): string[] {
@@ -77,10 +84,24 @@ function getGameFiles(limit: number | null): string[] {
 	return files;
 }
 
-function buildInsertSQL(firebaseKey: string, gameJson: object, createdAt: Date): string {
+function buildInsertSQL(firebaseKey: string, gameJson: object, createdAt: Date): string[] {
 	const jsonStr = escapeSQL(JSON.stringify(gameJson));
 	const createdAtStr = createdAt.toISOString();
-	return `INSERT OR IGNORE INTO "RawGameData" ("firebaseKey", "gameJson", "createdAt") VALUES ('${escapeSQL(firebaseKey)}', '${jsonStr}', '${createdAtStr}');`;
+	const statements: string[] = [];
+
+	statements.push(
+		`INSERT OR IGNORE INTO "RawGameData" ("firebaseKey", "gameJson", "createdAt") VALUES ('${escapeSQL(firebaseKey)}', '${jsonStr}', '${createdAtStr}');`,
+	);
+
+	const playerUids = extractPlayerUids(gameJson);
+	for (const uid of playerUids) {
+		const id = crypto.randomUUID();
+		statements.push(
+			`INSERT OR IGNORE INTO "PlayerGame" ("id", "playerUid", "firebaseKey", "createdAt") VALUES ('${escapeSQL(id)}', '${escapeSQL(uid)}', '${escapeSQL(firebaseKey)}', '${createdAtStr}');`,
+		);
+	}
+
+	return statements;
 }
 
 function getExistingGameIds(local: boolean): Set<string> {
@@ -188,7 +209,7 @@ async function main() {
 			const firebaseKey = filename;
 			gameJson.id = firebaseKey;
 
-			statements.push(buildInsertSQL(firebaseKey, gameJson, createdAt));
+			statements.push(...buildInsertSQL(firebaseKey, gameJson, createdAt));
 			successCount++;
 		} catch (error) {
 			console.error(`Error reading/parsing ${filename}:`, error);
