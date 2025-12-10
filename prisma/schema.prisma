@@ -82,3 +82,21 @@ model PlayerGame {
   @@index([playerUid])
   @@index([firebaseKey])
 }
+
+model PlayerStats {
+  id          String   @id @default(uuid())
+  playerId    String   @unique
+  name        String
+  isMapped    Boolean  @default(false)
+  gamesPlayed Int      @default(0)
+  wins        Int      @default(0)
+  goodGames   Int      @default(0)
+  goodWins    Int      @default(0)
+  evilGames   Int      @default(0)
+  evilWins    Int      @default(0)
+  createdAt   DateTime
+  updatedAt   DateTime @updatedAt
+
+  @@index([playerId])
+  @@index([gamesPlayed(sort: Desc)])
+}

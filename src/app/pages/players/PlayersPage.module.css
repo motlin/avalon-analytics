@@ -90,3 +90,39 @@
 .playerLink:hover {
 	text-decoration: underline;
 }
+
+.pagination {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 0.5rem;
+	margin-top: 1.5rem;
+	flex-wrap: wrap;
+}
+
+.pageLink {
+	padding: 0.5rem 0.75rem;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	text-decoration: none;
+	color: #0066cc;
+	background-color: #fff;
+}
+
+.pageLink:hover {
+	background-color: #e0f7fa;
+}
+
+.currentPage {
+	color: #fff;
+	background-color: #00acc1;
+	border-color: #00acc1;
+}
+
+.currentPage:hover {
+	background-color: #00acc1;
+}
+
+.ellipsis {
+	padding: 0 0.25rem;
+}

@@ -1,96 +1,22 @@
 import {env} from 'cloudflare:workers';
 import type {RequestInfo} from 'rwsdk/worker';
 import {Breadcrumb} from '../../components/Breadcrumb';
-import {type Game, GameSchema} from '../../models/game';
-import {isEvilRole} from '../../models/annotations';
-import {getPersonService} from '../../services/person';
 import {db, setupDb} from '@/db';
 import styles from './PlayersPage.module.css';
 
-interface PlayerStats {
-	/** For mapped people, this is the person ID. For unmapped UIDs, this is the UID. */
-	id: string;
-	/** All UIDs associated with this player (may be multiple for mapped people) */
-	uids: string[];
+interface PlayerStatsRow {
+	playerId: string;
 	name: string;
+	isMapped: boolean;
 	gamesPlayed: number;
 	wins: number;
 	goodGames: number;
 	goodWins: number;
 	evilGames: number;
 	evilWins: number;
-	/** Whether this player is mapped to a person in the database */
-	isMapped: boolean;
 }
 
-function calculatePlayerStats(
-	games: Game[],
-	uidToPersonId: Map<string, string>,
-	uidToPersonName: Map<string, string>,
-): PlayerStats[] {
-	const statsMap = new Map<string, PlayerStats>();
-
-	for (const game of games) {
-		if (!game.outcome) continue;
-
-		const outcome = game.outcome;
-		const isGoodWin = outcome.state === 'GOOD_WIN';
-
-		for (const player of game.players) {
-			const roleData = outcome.roles?.find((r) => r.name === player.name);
-			const role = roleData?.role;
-			const playerIsEvil = isEvilRole(role);
-
-			const playerWon = (playerIsEvil && !isGoodWin) || (!playerIsEvil && isGoodWin);
-
-			// Use person ID if mapped, otherwise use UID
-			const personId = uidToPersonId.get(player.uid);
-			const statsKey = personId ?? player.uid;
-			const isMapped = personId !== undefined;
-
-			let stats = statsMap.get(statsKey);
-			if (!stats) {
-				const displayName = uidToPersonName.get(player.uid) ?? player.name;
-				stats = {
-					id: statsKey,
-					uids: [player.uid],
-					name: displayName,
-					gamesPlayed: 0,
-					wins: 0,
-					goodGames: 0,
-					goodWins: 0,
-					evilGames: 0,
-					evilWins: 0,
-					isMapped,
-				};
-				statsMap.set(statsKey, stats);
-			} else if (!stats.uids.includes(player.uid)) {
-				// Track additional UIDs for the same person
-				stats.uids.push(player.uid);
-			}
-
-			stats.gamesPlayed++;
-
-			if (playerWon) {
-				stats.wins++;
-			}
-
-			if (playerIsEvil) {
-				stats.evilGames++;
-				if (playerWon) {
-					stats.evilWins++;
-				}
-			} else {
-				stats.goodGames++;
-				if (playerWon) {
-					stats.goodWins++;
-				}
-			}
-		}
-	}
-
-	return Array.from(statsMap.values()).sort((a, b) => b.gamesPlayed - a.gamesPlayed);
-}
+const PLAYERS_PER_PAGE = 100;
 
 function formatWinRate(wins: number, games: number): string {
 	if (games === 0) return '-';
@@ -98,46 +24,53 @@ function formatWinRate(wins: number, games: number): string {
 	return `${rate.toFixed(0)}%`;
 }
 
-export async function PlayersPage({}: RequestInfo) {
-	let allGames: Game[] = [];
-	let error: string | null = null;
+export async function PlayersPage({request}: RequestInfo) {
+	const url = new URL(request.url);
+	const pageParam = url.searchParams.get('page');
+	const currentPage = Math.max(1, parseInt(pageParam || '1', 10) || 1);
 
-	// Build maps for UID resolution
-	const uidToPersonId = new Map<string, string>();
-	const uidToPersonName = new Map<string, string>();
+	let playerStats: PlayerStatsRow[] = [];
+	let totalPlayers = 0;
+	let totalGames = 0;
+	let error: string | null = null;
 
 	try {
 		await setupDb(env);
 
-		// Initialize person service and build UID maps
-		const personService = getPersonService();
-		await personService.initialize();
+		// Get counts first (these are fast aggregate queries)
+		const [statsCount, gamesCount] = await Promise.all([db.playerStats.count(), db.rawGameData.count()]);
+		totalPlayers = statsCount;
+		totalGames = gamesCount;
 
-		const allPeople = await personService.getAllPeople();
-		for (const person of allPeople) {
-			for (const uid of person.uids) {
-				uidToPersonId.set(uid, person.id);
-				uidToPersonName.set(uid, person.name);
-			}
-		}
+		// Fetch paginated stats from PlayerStats table
+		const skip = (currentPage - 1) * PLAYERS_PER_PAGE;
+		const stats = await db.playerStats.findMany({
+			orderBy: {gamesPlayed: 'desc'},
+			skip,
+			take: PLAYERS_PER_PAGE,
+		});
 
-		const rawGames = await db.rawGameData.findMany();
-		for (const rawGame of rawGames) {
-			const gameData = typeof rawGame.gameJson === 'string' ? JSON.parse(rawGame.gameJson) : rawGame.gameJson;
-			const parsed = GameSchema.safeParse(gameData);
-			if (parsed.success) {
-				allGames.push(parsed.data);
-			}
-		}
+		playerStats = stats.map((s) => ({
+			playerId: s.playerId,
+			name: s.name,
+			isMapped: s.isMapped,
+			gamesPlayed: s.gamesPlayed,
+			wins: s.wins,
+			goodGames: s.goodGames,
+			goodWins: s.goodWins,
+			evilGames: s.evilGames,
+			evilWins: s.evilWins,
+		}));
 	} catch (err) {
-		error = err instanceof Error ? err.message : 'Failed to load games';
+		error = err instanceof Error ? err.message : 'Failed to load player stats';
 	}
 
 	if (error) {
 		return <div>Error: {error}</div>;
 	}
 
-	const playerStats = calculatePlayerStats(allGames, uidToPersonId, uidToPersonName);
+	const totalPages = Math.ceil(totalPlayers / PLAYERS_PER_PAGE);
+	const startIndex = (currentPage - 1) * PLAYERS_PER_PAGE;
 
 	return (
 		<div className={styles.container}>
@@ -145,7 +78,8 @@ export async function PlayersPage({}: RequestInfo) {
 			<div className={styles.header}>
 				<h1>Players</h1>
 				<p className={styles.subtitle}>
-					{playerStats.length} players across {allGames.length} games
+					Showing {startIndex + 1}-{Math.min(startIndex + playerStats.length, totalPlayers)} of {totalPlayers}{' '}
+					players across {totalGames} games
 				</p>
 			</div>
 			<div className={styles.content}>
@@ -168,10 +102,10 @@ export async function PlayersPage({}: RequestInfo) {
 							</thead>
 							<tbody>
 								{playerStats.map((player) => (
-									<tr key={player.id}>
+									<tr key={player.playerId}>
 										<td className={styles.nameColumn}>
 											<a
-												href={`/players/${player.id}`}
+												href={`/players/${player.playerId}`}
 												className={styles.playerLink}
 											>
 												{player.name}
@@ -198,6 +132,43 @@ export async function PlayersPage({}: RequestInfo) {
 								))}
 							</tbody>
 						</table>
+					</div>
+				)}
+				{/* Pagination Controls */}
+				{totalPages > 1 && (
+					<div className={styles.pagination}>
+						{currentPage > 1 && (
+							<a
+								href={`/players?page=${currentPage - 1}`}
+								className={styles.pageLink}
+							>
+								← Previous
+							</a>
+						)}
+						{Array.from({length: totalPages}, (_, i) => i + 1)
+							.filter((page) => page === 1 || page === totalPages || Math.abs(page - currentPage) <= 2)
+							.map((page, index, filtered) => {
+								const showEllipsis = index > 0 && page - filtered[index - 1] > 1;
+								return (
+									<span key={page}>
+										{showEllipsis && <span className={styles.ellipsis}>…</span>}
+										<a
+											href={`/players?page=${page}`}
+											className={`${styles.pageLink} ${page === currentPage ? styles.currentPage : ''}`}
+										>
+											{page}
+										</a>
+									</span>
+								);
+							})}
+						{currentPage < totalPages && (
+							<a
+								href={`/players?page=${currentPage + 1}`}
+								className={styles.pageLink}
+							>
+								Next →
+							</a>
+						)}
 					</div>
 				)}
 			</div>
