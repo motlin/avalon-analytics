@@ -45,6 +45,15 @@
 	font-weight: 500;
 }
 
+.playerLink {
+	color: #0066cc;
+	text-decoration: none;
+}
+
+.playerLink:hover {
+	text-decoration: underline;
+}
+
 .role {
 	border-right: 2px solid;
 	white-space: nowrap;

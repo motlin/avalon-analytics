@@ -52,7 +52,12 @@ export function CombinedAnnotatedTable({game}: CombinedAnnotatedTableProps) {
 									className={playerIndex % 2 === 0 ? styles.evenRow : styles.oddRow}
 								>
 									<td className={styles.playerName}>
-										<span className={styles.fontWeightMedium}>{player.name}</span>
+										<a
+											href={`/players/${player.uid}`}
+											className={`${styles.fontWeightMedium} ${styles.playerLink}`}
+										>
+											{player.name}
+										</a>
 									</td>
 									{playerRole && (
 										<td className={styles.role}>{formatRoleWithEmoji(toTitleCase(playerRole))}</td>
