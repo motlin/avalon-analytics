@@ -4,7 +4,7 @@ import {faThumbsUp, faThumbsDown, faCircle as faCircleRegular} from '@fortawesom
 import type {Game} from '../models/game';
 import type {Annotation} from '../models/annotations';
 import {annotateGame, formatRoleWithEmoji} from '../models/gameAnnotator';
-import {getPredicateRarityCssColor} from '../models/predicateRarity';
+import {getPredicateRarityCssColor, getRarestPredicateCssColor} from '../models/predicateRarity';
 import styles from './CombinedAnnotatedTable.module.css';
 
 interface PersonMapping {
@@ -168,9 +168,15 @@ function CellContent({
 }: CellContentProps) {
 	const allAnnotations = [...proposalAnnotations, ...voteAnnotations];
 	const hasAnyAnnotations = allAnnotations.length > 0;
+	const dotColor = hasAnyAnnotations
+		? getRarestPredicateCssColor(allAnnotations.map((a) => a.predicateName))
+		: undefined;
 
 	return (
-		<span className={hasAnyAnnotations ? `${styles.tooltipWrapper} ${styles.hasAnnotation}` : undefined}>
+		<span
+			className={hasAnyAnnotations ? `${styles.tooltipWrapper} ${styles.hasAnnotation}` : undefined}
+			style={dotColor ? ({'--annotation-dot-color': dotColor} as React.CSSProperties) : undefined}
+		>
 			<span className="fa-layers fa-fw">
 				{isProposer && (
 					<span className={styles.proposerIcon}>
@@ -228,9 +234,13 @@ function MissionVoteIcon({votedSuccess, annotations}: MissionVoteIconProps) {
 	if (votedSuccess === undefined) return null;
 
 	const hasAnnotations = annotations.length > 0;
+	const dotColor = hasAnnotations ? getRarestPredicateCssColor(annotations.map((a) => a.predicateName)) : undefined;
 
 	return (
-		<span className={hasAnnotations ? `${styles.tooltipWrapper} ${styles.hasAnnotation}` : undefined}>
+		<span
+			className={hasAnnotations ? `${styles.tooltipWrapper} ${styles.hasAnnotation}` : undefined}
+			style={dotColor ? ({'--annotation-dot-color': dotColor} as React.CSSProperties) : undefined}
+		>
 			<span className="fa-layers fa-fw">
 				<FontAwesomeIcon
 					icon={votedSuccess ? faCheckCircle : faTimesCircle}

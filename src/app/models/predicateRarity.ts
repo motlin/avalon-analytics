@@ -116,3 +116,26 @@ export function getPredicateRarityCssColor(predicateName: string): string {
 	const rarityColor = getPredicateRarityColor(predicateName);
 	return RARITY_CSS_COLORS[rarityColor];
 }
+
+/**
+ * Get the rarest (lowest fire count) CSS color from a list of predicate names.
+ * Returns the color of the rarest predicate to highlight the most notable annotation.
+ */
+export function getRarestPredicateCssColor(predicateNames: string[]): string {
+	if (predicateNames.length === 0) {
+		return RARITY_CSS_COLORS.violet;
+	}
+
+	let rarestName = predicateNames[0];
+	let lowestFireCount = PREDICATE_FIRE_COUNTS[rarestName] ?? Infinity;
+
+	for (const name of predicateNames) {
+		const fireCount = PREDICATE_FIRE_COUNTS[name] ?? Infinity;
+		if (fireCount < lowestFireCount) {
+			lowestFireCount = fireCount;
+			rarestName = name;
+		}
+	}
+
+	return getPredicateRarityCssColor(rarestName);
+}
