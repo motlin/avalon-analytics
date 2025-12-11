@@ -81,10 +81,6 @@ storybook: install
 storybook-tests: install
     pnpm run storybook:test
 
-# `pnpm exec wrangler deploy --config dist/worker/wrangler.json`
-deploy: build
-    pnpm exec wrangler deploy --config dist/worker/wrangler.json
-
 # `pnpm exec wrangler d1 migrations apply avalon-analytics-juicy-tyrannosaurus --remote`
 migrate-remote:
     pnpm exec wrangler d1 migrations apply avalon-analytics-juicy-tyrannosaurus --remote
@@ -93,9 +89,14 @@ migrate-remote:
 migrate-local:
     pnpm exec wrangler d1 migrations apply avalon-analytics-juicy-tyrannosaurus --local
 
-# Build and deploy with migrations
-deploy-full: build migrate-remote
+# Populate Person tables from hardcoded config
+populate-people:
+    pnpm run populate-people
+
+# Build, deploy, and run migrations
+deploy: build
     pnpm exec wrangler deploy --config dist/worker/wrangler.json
+    pnpm exec wrangler d1 migrations apply avalon-analytics-juicy-tyrannosaurus --remote
 
 # Analyze predicate frequency across all historical games
 analyze-predicates:

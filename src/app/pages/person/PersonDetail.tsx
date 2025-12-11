@@ -38,17 +38,21 @@ export async function PersonDetail({params}: RequestInfo) {
 		personName = person.name;
 		personUids = person.uids;
 
-		const rawGames = await db.rawGameData.findMany();
-		const uidSet = new Set(personUids);
+		// Use PlayerGame junction table with proper JOIN (indexed on playerUid)
+		const uidPlaceholders = personUids.map(() => '?').join(', ');
+		const rawGames = await db.$queryRawUnsafe<Array<{firebaseKey: string; gameJson: string}>>(
+			`SELECT DISTINCT r.firebaseKey, r.gameJson
+			 FROM RawGameData r
+			 INNER JOIN PlayerGame pg ON r.firebaseKey = pg.firebaseKey
+			 WHERE pg.playerUid IN (${uidPlaceholders})`,
+			...personUids,
+		);
 
 		for (const rawGame of rawGames) {
 			const gameData = typeof rawGame.gameJson === 'string' ? JSON.parse(rawGame.gameJson) : rawGame.gameJson;
 			const parsed = GameSchema.safeParse(gameData);
 			if (parsed.success) {
-				const game = parsed.data;
-				if (game.players.some((p) => uidSet.has(p.uid))) {
-					games.push(game);
-				}
+				games.push(parsed.data);
 			}
 		}
 

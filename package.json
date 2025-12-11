@@ -17,6 +17,8 @@
 		"release": "rw-scripts ensure-deploy-env && pnpm run clean && pnpm run build && wrangler deploy",
 		"migrate:dev": "prisma generate && wrangler d1 migrations apply DB --local",
 		"migrate:prd": "wrangler d1 migrations apply DB --remote",
+		"populate-people": "npx tsx src/scripts/populate-people.ts",
+		"deploy:cf": "wrangler deploy --config dist/worker/wrangler.json && pnpm run migrate:prd",
 		"migrate:new": "rw-scripts migrate-new",
 		"seed": "pnpm run worker:run ./src/scripts/seed.ts",
 		"generate": "rw-scripts ensure-env && prisma generate && wrangler types",
