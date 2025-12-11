@@ -249,6 +249,8 @@ export interface Annotation {
 	commentary: string;
 	playerName: string;
 	playerRole?: string;
+	/** Hidden annotations are tracked for stats but not rendered in the UI */
+	hidden?: boolean;
 }
 
 export interface AnnotatedProposal {

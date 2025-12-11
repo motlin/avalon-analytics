@@ -167,14 +167,15 @@ function CellContent({
 	proposalAnnotations,
 }: CellContentProps) {
 	const allAnnotations = [...proposalAnnotations, ...voteAnnotations];
-	const hasAnyAnnotations = allAnnotations.length > 0;
-	const dotColor = hasAnyAnnotations
-		? getRarestPredicateCssColor(allAnnotations.map((a) => a.predicateName))
+	const visibleAnnotations = allAnnotations.filter((a) => !a.hidden);
+	const hasVisibleAnnotations = visibleAnnotations.length > 0;
+	const dotColor = hasVisibleAnnotations
+		? getRarestPredicateCssColor(visibleAnnotations.map((a) => a.predicateName))
 		: undefined;
 
 	return (
 		<span
-			className={hasAnyAnnotations ? `${styles.tooltipWrapper} ${styles.hasAnnotation}` : undefined}
+			className={hasVisibleAnnotations ? `${styles.tooltipWrapper} ${styles.hasAnnotation}` : undefined}
 			style={dotColor ? ({'--annotation-dot-color': dotColor} as React.CSSProperties) : undefined}
 		>
 			<span className="fa-layers fa-fw">
@@ -203,9 +204,9 @@ function CellContent({
 					/>
 				)}
 			</span>
-			{hasAnyAnnotations && (
+			{hasVisibleAnnotations && (
 				<span className={styles.tooltip}>
-					{allAnnotations.map((annotation, index) => (
+					{visibleAnnotations.map((annotation, index) => (
 						<span
 							key={index}
 							className={styles.tooltipLine}
@@ -233,12 +234,15 @@ interface MissionVoteIconProps {
 function MissionVoteIcon({votedSuccess, annotations}: MissionVoteIconProps) {
 	if (votedSuccess === undefined) return null;
 
-	const hasAnnotations = annotations.length > 0;
-	const dotColor = hasAnnotations ? getRarestPredicateCssColor(annotations.map((a) => a.predicateName)) : undefined;
+	const visibleAnnotations = annotations.filter((a) => !a.hidden);
+	const hasVisibleAnnotations = visibleAnnotations.length > 0;
+	const dotColor = hasVisibleAnnotations
+		? getRarestPredicateCssColor(visibleAnnotations.map((a) => a.predicateName))
+		: undefined;
 
 	return (
 		<span
-			className={hasAnnotations ? `${styles.tooltipWrapper} ${styles.hasAnnotation}` : undefined}
+			className={hasVisibleAnnotations ? `${styles.tooltipWrapper} ${styles.hasAnnotation}` : undefined}
 			style={dotColor ? ({'--annotation-dot-color': dotColor} as React.CSSProperties) : undefined}
 		>
 			<span className="fa-layers fa-fw">
@@ -248,9 +252,9 @@ function MissionVoteIcon({votedSuccess, annotations}: MissionVoteIconProps) {
 					color={votedSuccess ? 'green' : 'red'}
 				/>
 			</span>
-			{hasAnnotations && (
+			{hasVisibleAnnotations && (
 				<span className={styles.tooltip}>
-					{annotations.map((annotation, index) => (
+					{visibleAnnotations.map((annotation, index) => (
 						<span
 							key={index}
 							className={styles.tooltipLine}

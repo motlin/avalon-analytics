@@ -25,6 +25,8 @@ export interface MissionVotePredicate {
 	isWeird: (context: MissionVoteContext) => boolean;
 	isWorthCommentary: (context: MissionVoteContext) => boolean;
 	getCommentary: (context: MissionVoteContext) => string;
+	/** Hidden predicates are tracked for stats but not rendered in the UI */
+	hidden?: boolean;
 }
 
 // ============================================================================
@@ -264,6 +266,7 @@ export function evaluateMissionVote(context: MissionVoteContext): Annotation[] {
 				commentary: predicate.getCommentary(context),
 				playerName: context.voterName,
 				playerRole: getPlayerRole(context, context.voterName),
+				hidden: predicate.hidden,
 			});
 		}
 	}

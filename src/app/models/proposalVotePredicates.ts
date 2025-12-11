@@ -33,6 +33,8 @@ export interface ProposalVotePredicate {
 	isWeird: (context: ProposalVoteContext) => boolean;
 	isWorthCommentary: (context: ProposalVoteContext) => boolean;
 	getCommentary: (context: ProposalVoteContext) => string;
+	/** Hidden predicates are tracked for stats but not rendered in the UI */
+	hidden?: boolean;
 }
 
 // ============================================================================
@@ -459,6 +461,7 @@ export const EvilVotedAgainstEvilPredicate: ProposalVotePredicate = {
 // 🗳️ Approve When Next Leader
 export const ApproveWhenNextLeaderProposalVotePredicate: ProposalVotePredicate = {
 	name: 'ApproveWhenNextLeaderProposalVotePredicate',
+	hidden: true,
 	isRelevant: (context) => {
 		if (isHammer(context)) return false;
 
@@ -790,6 +793,7 @@ export function evaluateProposalVote(context: ProposalVoteContext): Annotation[]
 				commentary: predicate.getCommentary(context),
 				playerName: context.voterName,
 				playerRole: getPlayerRole(context, context.voterName),
+				hidden: predicate.hidden,
 			});
 		}
 	}

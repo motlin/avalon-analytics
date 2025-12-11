@@ -32,6 +32,8 @@ export interface ProposalPredicate {
 	isWeird: (context: ProposalContext) => boolean;
 	isWorthCommentary: (context: ProposalContext) => boolean;
 	getCommentary: (context: ProposalContext) => string;
+	/** Hidden predicates are tracked for stats but not rendered in the UI */
+	hidden?: boolean;
 }
 
 // ============================================================================
@@ -491,6 +493,7 @@ export const TooManyEvilPlayersPredicate: ProposalPredicate = {
 // 🔨 Hammer Pandering (including the hammer player on proposals 1-4)
 export const HammerPanderingPredicate: ProposalPredicate = {
 	name: 'HammerPanderingProposalPredicate',
+	hidden: true,
 	isRelevant: (context) => {
 		// Not relevant for the 5th proposal (hammer proposal)
 		if (context.proposalNumber >= 4) return false;
@@ -696,6 +699,7 @@ export function evaluateProposal(context: ProposalContext): Annotation[] {
 				commentary: predicate.getCommentary(context),
 				playerName: context.proposal.proposer,
 				playerRole: getLeaderRole(context),
+				hidden: predicate.hidden,
 			});
 		}
 	}
