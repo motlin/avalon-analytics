@@ -6,6 +6,7 @@
  */
 
 import type {Game, Mission, Player, Proposal} from './game';
+import type {Rarity} from './predicateRarity';
 
 // ============================================================================
 // 🔧 Utility Functions
@@ -246,6 +247,7 @@ export function getHammerPlayer(context: ProposalContext): string | null {
 export interface Annotation {
 	type: 'proposal' | 'proposalVote' | 'missionVote';
 	predicateName: string;
+	rarity: Rarity;
 	commentary: string;
 	playerName: string;
 	playerRole?: string;

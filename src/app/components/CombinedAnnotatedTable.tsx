@@ -4,7 +4,7 @@ import {faThumbsUp, faThumbsDown, faCircle as faCircleRegular} from '@fortawesom
 import type {Game} from '../models/game';
 import type {Annotation} from '../models/annotations';
 import {annotateGame, formatRoleWithEmoji} from '../models/gameAnnotator';
-import {getPredicateRarityCssColor, getRarestPredicateCssColor} from '../models/predicateRarity';
+import {RARITY_CSS_COLORS, RARITY_ORDER} from '../models/predicateRarity';
 import styles from './CombinedAnnotatedTable.module.css';
 
 interface PersonMapping {
@@ -167,11 +167,11 @@ function CellContent({
 	proposalAnnotations,
 }: CellContentProps) {
 	const allAnnotations = [...proposalAnnotations, ...voteAnnotations];
-	const visibleAnnotations = allAnnotations.filter((a) => !a.hidden);
+	const visibleAnnotations = allAnnotations
+		.filter((a) => !a.hidden)
+		.sort((a, b) => RARITY_ORDER[a.rarity] - RARITY_ORDER[b.rarity]);
 	const hasVisibleAnnotations = visibleAnnotations.length > 0;
-	const dotColor = hasVisibleAnnotations
-		? getRarestPredicateCssColor(visibleAnnotations.map((a) => a.predicateName))
-		: undefined;
+	const dotColor = hasVisibleAnnotations ? RARITY_CSS_COLORS[visibleAnnotations[0].rarity] : undefined;
 
 	return (
 		<span
@@ -214,7 +214,7 @@ function CellContent({
 							{stripPlayerPrefix(annotation.commentary, annotation.playerName)}{' '}
 							<span
 								className={styles.tooltipPredicateName}
-								style={{color: getPredicateRarityCssColor(annotation.predicateName)}}
+								style={{color: RARITY_CSS_COLORS[annotation.rarity]}}
 							>
 								({annotation.predicateName})
 							</span>
@@ -234,11 +234,11 @@ interface MissionVoteIconProps {
 function MissionVoteIcon({votedSuccess, annotations}: MissionVoteIconProps) {
 	if (votedSuccess === undefined) return null;
 
-	const visibleAnnotations = annotations.filter((a) => !a.hidden);
+	const visibleAnnotations = annotations
+		.filter((a) => !a.hidden)
+		.sort((a, b) => RARITY_ORDER[a.rarity] - RARITY_ORDER[b.rarity]);
 	const hasVisibleAnnotations = visibleAnnotations.length > 0;
-	const dotColor = hasVisibleAnnotations
-		? getRarestPredicateCssColor(visibleAnnotations.map((a) => a.predicateName))
-		: undefined;
+	const dotColor = hasVisibleAnnotations ? RARITY_CSS_COLORS[visibleAnnotations[0].rarity] : undefined;
 
 	return (
 		<span
@@ -262,7 +262,7 @@ function MissionVoteIcon({votedSuccess, annotations}: MissionVoteIconProps) {
 							{stripPlayerPrefix(annotation.commentary, annotation.playerName)}{' '}
 							<span
 								className={styles.tooltipPredicateName}
-								style={{color: getPredicateRarityCssColor(annotation.predicateName)}}
+								style={{color: RARITY_CSS_COLORS[annotation.rarity]}}
 							>
 								({annotation.predicateName})
 							</span>

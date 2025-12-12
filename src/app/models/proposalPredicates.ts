@@ -6,6 +6,7 @@
  */
 
 import type {Annotation, GameContext, ProposalContext} from './annotations';
+import type {Rarity} from './predicateRarity';
 import {
 	countSeenEvilOnTeam,
 	gameIncludesRole,
@@ -28,6 +29,7 @@ import {
 
 export interface ProposalPredicate {
 	name: string;
+	rarity: Rarity;
 	isRelevant: (context: ProposalContext) => boolean;
 	isWeird: (context: ProposalContext) => boolean;
 	isWorthCommentary: (context: ProposalContext) => boolean;
@@ -82,6 +84,7 @@ function findFirstProposalMatching(
 // 🌟 First All Good Team
 export const FirstAllGoodTeamPredicate: ProposalPredicate = {
 	name: 'FirstAllGoodTeamProposalPredicate',
+	rarity: 'common',
 	isRelevant: (context) => {
 		if (!isAllGoodTeam(context)) return false;
 		const first = findFirstProposalMatching(context, isAllGoodTeam);
@@ -98,6 +101,7 @@ export const FirstAllGoodTeamPredicate: ProposalPredicate = {
 // 🌟 First All Good Team of Max Size
 export const FirstAllGoodTeamOfMaxSizePredicate: ProposalPredicate = {
 	name: 'FirstAllGoodTeamOfMaxSizeProposalPredicate',
+	rarity: 'common',
 	isRelevant: (context) => {
 		const maxSize = getMaxTeamSize(context.game);
 		if (context.mission.teamSize !== maxSize) return false;
@@ -122,6 +126,7 @@ export const FirstAllGoodTeamOfMaxSizePredicate: ProposalPredicate = {
  */
 export const PercivalProposingMerlinPredicate: ProposalPredicate = {
 	name: 'PercivalProposingMerlinProposalPredicate',
+	rarity: 'uncommon',
 	isRelevant: (context) => getLeaderRole(context) === 'Percival' && gameIncludesRole(context, 'Morgana'),
 	isWeird: (context) => teamIncludesRole(context, 'Merlin') && !teamIncludesRole(context, 'Morgana'),
 	isWorthCommentary: () => true,
@@ -136,6 +141,7 @@ export const PercivalProposingMerlinPredicate: ProposalPredicate = {
  */
 export const PercivalProposingMorganaPredicate: ProposalPredicate = {
 	name: 'PercivalProposingMorganaProposalPredicate',
+	rarity: 'uncommon',
 	isRelevant: (context) => getLeaderRole(context) === 'Percival' && gameIncludesRole(context, 'Morgana'),
 	isWeird: (context) => teamIncludesRole(context, 'Morgana') && !teamIncludesRole(context, 'Merlin'),
 	isWorthCommentary: () => true,
@@ -150,6 +156,7 @@ export const PercivalProposingMorganaPredicate: ProposalPredicate = {
  */
 export const PercivalProposingMerlinAndMorganaPredicate: ProposalPredicate = {
 	name: 'PercivalProposingMerlinAndMorganaProposalPredicate',
+	rarity: 'epic',
 	isRelevant: (context) => getLeaderRole(context) === 'Percival' && gameIncludesRole(context, 'Morgana'),
 	isWeird: (context) => teamIncludesRole(context, 'Merlin') && teamIncludesRole(context, 'Morgana'),
 	isWorthCommentary: () => true,
@@ -161,6 +168,7 @@ export const PercivalProposingMerlinAndMorganaPredicate: ProposalPredicate = {
 // 🧔 Percival Excluding Merlin (without Morgana in game)
 export const PercivalExcludingMerlinWithoutMorganaPredicate: ProposalPredicate = {
 	name: 'PercivalExcludingMerlinWithoutMorganaProposalPredicate',
+	rarity: 'legendary',
 	isRelevant: (context) => getLeaderRole(context) === 'Percival' && !gameIncludesRole(context, 'Morgana'),
 	isWeird: (context) => !teamIncludesRole(context, 'Merlin'),
 	isWorthCommentary: () => true,
@@ -172,6 +180,7 @@ export const PercivalExcludingMerlinWithoutMorganaPredicate: ProposalPredicate =
 // 🧙 Merlin Proposing Morgana
 export const MerlinProposingMorganaPredicate: ProposalPredicate = {
 	name: 'ProposedMorganaProposalPredicate',
+	rarity: 'rare',
 	isRelevant: (context) => {
 		const role = getLeaderRole(context);
 		return role === 'Merlin' || role === 'Percival';
@@ -199,6 +208,7 @@ export const MerlinProposingMorganaPredicate: ProposalPredicate = {
  */
 export const MorganaProposingMerlinPredicate: ProposalPredicate = {
 	name: 'MorganaProposingMerlinProposalPredicate',
+	rarity: 'uncommon',
 	isRelevant: (context) => getLeaderRole(context) === 'Morgana',
 	isWeird: (context) => teamIncludesRole(context, 'Merlin'),
 	isWorthCommentary: () => true,
@@ -210,6 +220,7 @@ export const MorganaProposingMerlinPredicate: ProposalPredicate = {
 // 🎭 Merlin-Morgana Two Person Team
 export const MerlinMorganaTwoPredicate: ProposalPredicate = {
 	name: 'MerlinMorganaProposalPredicate',
+	rarity: 'epic',
 	isRelevant: (context) => context.mission.teamSize === 2,
 	isWeird: (context) => teamIncludesRole(context, 'Merlin') && teamIncludesRole(context, 'Morgana'),
 	isWorthCommentary: () => true,
@@ -222,6 +233,7 @@ export const MerlinMorganaTwoPredicate: ProposalPredicate = {
 // 🎯 Proposed Two Other Players (not including self)
 export const ProposedTwoOtherPlayersPredicate: ProposalPredicate = {
 	name: 'ProposedTwoOtherPlayersProposalPredicate',
+	rarity: 'uncommon',
 	isRelevant: (context) => context.mission.teamSize === 2,
 	isWeird: (context) => !teamIncludesPlayer(context, context.proposal.proposer),
 	isWorthCommentary: () => true,
@@ -234,6 +246,7 @@ export const ProposedTwoOtherPlayersPredicate: ProposalPredicate = {
 // 🎭 Merlin-Morgana-Self Three Person Team
 export const MerlinMorganaSelfPredicate: ProposalPredicate = {
 	name: 'MerlinMorganaSelfProposalPredicate',
+	rarity: 'rare',
 	isRelevant: (context) => {
 		const leaderRole = getLeaderRole(context);
 		return (
@@ -254,6 +267,7 @@ export const MerlinMorganaSelfPredicate: ProposalPredicate = {
 // 🚫 Proposal Without Self
 export const ProposalWithoutSelfPredicate: ProposalPredicate = {
 	name: 'ProposalWithoutSelfProposalPredicate',
+	rarity: 'common',
 	isRelevant: () => true,
 	isWeird: (context) => !teamIncludesPlayer(context, context.proposal.proposer),
 	isWorthCommentary: (context) => {
@@ -272,6 +286,7 @@ export const ProposalWithoutSelfPredicate: ProposalPredicate = {
 // 😇 All Good Team Without Self
 export const AllGoodTeamWithoutSelfPredicate: ProposalPredicate = {
 	name: 'EntirelyGoodTeamWithoutSelfProposalPredicate',
+	rarity: 'uncommon',
 	isRelevant: () => true,
 	isWeird: (context) => isAllGoodTeam(context) && !teamIncludesPlayer(context, context.proposal.proposer),
 	isWorthCommentary: () => true,
@@ -284,6 +299,7 @@ export const AllGoodTeamWithoutSelfPredicate: ProposalPredicate = {
 // ⚠️ Risking Loss (proposing evil when 2 have already failed)
 export const RiskingLossPredicate: ProposalPredicate = {
 	name: 'RiskingLossProposalPredicate',
+	rarity: 'uncommon',
 	isRelevant: (context) => alreadyFailedTwo(context),
 	isWeird: (context) => countSeenEvilOnTeam(context) > 0,
 	isWorthCommentary: (context) => {
@@ -305,6 +321,7 @@ export const RiskingLossPredicate: ProposalPredicate = {
 // 🎯 One Evil Team when 2 Fails Required (first occurrence)
 export const OneEvilTeamFirstPredicate: ProposalPredicate = {
 	name: 'OneEvilTeamFirstProposalPredicate',
+	rarity: 'uncommon',
 	isRelevant: (context) => {
 		if (context.mission.failsRequired !== 2) return false;
 		if (countSeenEvilOnTeam(context) !== 1) return false;
@@ -325,6 +342,7 @@ export const OneEvilTeamFirstPredicate: ProposalPredicate = {
 // 🎯 One Evil Team when 2 Fails Required (general case, not first)
 export const OneEvilTeamPredicate: ProposalPredicate = {
 	name: 'OneEvilTeamProposalPredicate',
+	rarity: 'epic',
 	isRelevant: (context) => context.mission.failsRequired === 2,
 	isWeird: (context) => countSeenEvilOnTeam(context) === 1,
 	isWorthCommentary: (context) => !OneEvilTeamFirstPredicate.isRelevant(context),
@@ -337,6 +355,7 @@ export const OneEvilTeamPredicate: ProposalPredicate = {
 // 📋 Same Team as Previously Succeeded Mission
 export const SameTeamSucceededMissionProposalPredicate: ProposalPredicate = {
 	name: 'SameTeamSucceededMissionProposalPredicate',
+	rarity: 'uncommon',
 	isRelevant: () => true,
 	isWeird: (context) => {
 		const currentTeam = [...context.proposal.team].sort();
@@ -382,6 +401,7 @@ export const SameTeamSucceededMissionProposalPredicate: ProposalPredicate = {
 // 📋 Same Team as Previously Failed Mission
 export const SameTeamFailedMissionProposalPredicate: ProposalPredicate = {
 	name: 'SameTeamFailedMissionProposalPredicate',
+	rarity: 'legendary',
 	isRelevant: () => true,
 	isWeird: (context) => {
 		const currentTeam = [...context.proposal.team].sort();
@@ -427,6 +447,7 @@ export const SameTeamFailedMissionProposalPredicate: ProposalPredicate = {
 // 📋 Same Team as Previously Rejected Proposal
 export const SameTeamRejectedProposalPredicate: ProposalPredicate = {
 	name: 'SameTeamRejectedProposalPredicate',
+	rarity: 'common',
 	isRelevant: () => true,
 	isWeird: (context) => {
 		const currentTeam = [...context.proposal.team].sort();
@@ -475,6 +496,7 @@ export const SameTeamRejectedProposalPredicate: ProposalPredicate = {
 // 😈 Too Many Evil Players on Team
 export const TooManyEvilPlayersPredicate: ProposalPredicate = {
 	name: 'TooManyEvilPlayersProposalPredicate',
+	rarity: 'common',
 	isRelevant: (context) => {
 		const leaderRole = getLeaderRole(context);
 		return isKnownEvil(leaderRole);
@@ -493,6 +515,7 @@ export const TooManyEvilPlayersPredicate: ProposalPredicate = {
 // 🔨 Hammer Pandering (including the hammer player on proposals 1-4)
 export const HammerPanderingPredicate: ProposalPredicate = {
 	name: 'HammerPanderingProposalPredicate',
+	rarity: 'common',
 	hidden: true,
 	isRelevant: (context) => {
 		// Not relevant for the 5th proposal (hammer proposal)
@@ -517,6 +540,7 @@ export const HammerPanderingPredicate: ProposalPredicate = {
 // 🔨 Is Hammer (5th proposal - always noted)
 export const IsHammerPredicate: ProposalPredicate = {
 	name: 'FirstHammerProposalPredicate',
+	rarity: 'common',
 	isRelevant: (context) => context.proposalNumber === 4, // 0-indexed, so 4 = 5th proposal
 	isWeird: () => true,
 	isWorthCommentary: () => false, // Just for tracking, not commentary
@@ -529,6 +553,7 @@ export const IsHammerPredicate: ProposalPredicate = {
 // 🔨 Known Evil Hammer Adding Known Evil
 export const KnownEvilHammerPredicate: ProposalPredicate = {
 	name: 'KnownEvilHammerProposalPredicate',
+	rarity: 'legendary',
 	isRelevant: (context) => {
 		// Skip if this is an evil hammer win (auto-fail scenario)
 		if (isEvilHammerWin(context)) return false;
@@ -550,6 +575,7 @@ export const KnownEvilHammerPredicate: ProposalPredicate = {
 // 💭 No Dream Team Plus Self (didn't propose dream team + self when team size increased by 1)
 export const NoDreamTeamPlusSelfPredicate: ProposalPredicate = {
 	name: 'NoDreamTeamPlusSelfProposalPredicate',
+	rarity: 'common',
 	isRelevant: (context) => {
 		// Skip if this is an evil hammer win (auto-fail scenario)
 		if (isEvilHammerWin(context)) return false;
@@ -593,6 +619,7 @@ export const NoDreamTeamPlusSelfPredicate: ProposalPredicate = {
 // 🧙 Final All Good Team Does Not Include Merlin
 export const FinalAllGoodTeamDoesNotIncludeMerlinPredicate: ProposalPredicate = {
 	name: 'FinalAllGoodTeamDoesNotIncludeMerlinProposalPredicate',
+	rarity: 'legendary',
 	isRelevant: (context) => context.missionNumber === 4 && isAllGoodTeam(context),
 	isWeird: (context) => !teamIncludesRole(context, 'Merlin'),
 	isWorthCommentary: () => true,
@@ -605,6 +632,7 @@ export const FinalAllGoodTeamDoesNotIncludeMerlinPredicate: ProposalPredicate = 
 // 🧔 Final All Good Team Does Not Include Percival
 export const FinalAllGoodTeamDoesNotIncludePercivalPredicate: ProposalPredicate = {
 	name: 'FinalAllGoodTeamDoesNotIncludePercivalProposalPredicate',
+	rarity: 'epic',
 	isRelevant: (context) => context.missionNumber === 4 && isAllGoodTeam(context),
 	isWeird: (context) => !teamIncludesRole(context, 'Percival'),
 	isWorthCommentary: () => true,
@@ -617,6 +645,7 @@ export const FinalAllGoodTeamDoesNotIncludePercivalPredicate: ProposalPredicate 
 // 💭 No Dream Team (didn't propose the team that succeeded on previous mission of same size)
 export const NoDreamTeamPredicate: ProposalPredicate = {
 	name: 'NoDreamTeamProposalPredicate',
+	rarity: 'uncommon',
 	isRelevant: (context) => {
 		// Skip if this is an evil hammer win (auto-fail scenario)
 		if (isEvilHammerWin(context)) return false;
@@ -696,6 +725,7 @@ export function evaluateProposal(context: ProposalContext): Annotation[] {
 			annotations.push({
 				type: 'proposal',
 				predicateName: predicate.name,
+				rarity: predicate.rarity,
 				commentary: predicate.getCommentary(context),
 				playerName: context.proposal.proposer,
 				playerRole: getLeaderRole(context),

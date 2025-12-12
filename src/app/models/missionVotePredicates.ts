@@ -6,6 +6,7 @@
  */
 
 import type {Annotation, MissionContext, MissionVoteContext} from './annotations';
+import type {Rarity} from './predicateRarity';
 import {
 	alreadyFailedTwo,
 	alreadySucceededTwo,
@@ -21,6 +22,7 @@ import {
 
 export interface MissionVotePredicate {
 	name: string;
+	rarity: Rarity;
 	isRelevant: (context: MissionVoteContext) => boolean;
 	isWeird: (context: MissionVoteContext) => boolean;
 	isWorthCommentary: (context: MissionVoteContext) => boolean;
@@ -71,6 +73,7 @@ function getKnownEvilFailVotes(context: MissionContext): MissionVoteInfo[] {
 // 🦆 Ducking When Good Already Won Two (evil didn't fail)
 export const DuckingWhenGoodWonTwoPredicate: MissionVotePredicate = {
 	name: 'DuckingWhenGoodAlreadyWonTwoMissions',
+	rarity: 'rare',
 	isRelevant: (context) => {
 		const voterRole = getPlayerRole(context, context.voterName);
 		return alreadySucceededTwo(context) && isEvilRole(voterRole);
@@ -86,6 +89,7 @@ export const DuckingWhenGoodWonTwoPredicate: MissionVotePredicate = {
 // 🦆 Ducking When Evil Already Won Two
 export const DuckingWhenEvilWonTwoPredicate: MissionVotePredicate = {
 	name: 'DuckingWhenEvilAlreadyWonTwoMissions',
+	rarity: 'rare',
 	isRelevant: (context) => {
 		const voterRole = getPlayerRole(context, context.voterName);
 		return alreadyFailedTwo(context) && isEvilRole(voterRole);
@@ -101,6 +105,7 @@ export const DuckingWhenEvilWonTwoPredicate: MissionVotePredicate = {
 // 👻 Oberon Ducked
 export const OberonDuckedPredicate: MissionVotePredicate = {
 	name: 'OberonDucked',
+	rarity: 'epic',
 	isRelevant: (context) => {
 		const voterRole = getPlayerRole(context, context.voterName);
 		return voterRole === 'Oberon';
@@ -122,6 +127,7 @@ export const OberonDuckedPredicate: MissionVotePredicate = {
 // 🦆 General Evil Ducked (non-Oberon)
 export const EvilDuckedPredicate: MissionVotePredicate = {
 	name: 'RoleDucked',
+	rarity: 'common',
 	isRelevant: (context) => {
 		const voterRole = getPlayerRole(context, context.voterName);
 		return isEvilRole(voterRole) && voterRole !== 'Oberon';
@@ -144,6 +150,7 @@ export const EvilDuckedPredicate: MissionVotePredicate = {
 // ⚔️ Failure to Coordinate (multiple evil failed when not needed)
 export const FailureToCoordinatePredicate: MissionVotePredicate = {
 	name: 'FailureToCoordinate',
+	rarity: 'epic',
 	isRelevant: (context) => {
 		if (context.votedSuccess) return false;
 		if (alreadyFailedTwo(context)) return false;
@@ -179,6 +186,7 @@ export const FailureToCoordinatePredicate: MissionVotePredicate = {
 // 🎯 Evil Player Not Closest to Leader Failed
 export const EvilNotClosestFailedPredicate: MissionVotePredicate = {
 	name: 'EvilPlayerNotClosestToLeaderFailed',
+	rarity: 'uncommon',
 	isRelevant: (context) => {
 		if (context.votedSuccess) return false;
 		const voterRole = getPlayerRole(context, context.voterName);
@@ -263,6 +271,7 @@ export function evaluateMissionVote(context: MissionVoteContext): Annotation[] {
 			annotations.push({
 				type: 'missionVote',
 				predicateName: predicate.name,
+				rarity: predicate.rarity,
 				commentary: predicate.getCommentary(context),
 				playerName: context.voterName,
 				playerRole: getPlayerRole(context, context.voterName),

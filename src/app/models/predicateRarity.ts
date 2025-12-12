@@ -1,10 +1,11 @@
 /**
- * Predicate Rarity Colors
+ * Predicate Rarity System
  *
- * Maps predicate names to their historical fire counts and rarity colors.
+ * Maps predicate names to their historical fire counts and rarity tiers.
  * Data generated from analysis of 12,910 historical games.
  *
  * Run `just analyze-predicates` to regenerate frequency data.
+ * Run `just analyze-rarities` to see rarity distribution.
  */
 
 // Historical fire counts per predicate (from analyze-predicates.ts)
@@ -68,74 +69,64 @@ export const PREDICATE_FIRE_COUNTS: Record<string, number> = {
 	RoleDucked: 14814,
 };
 
-// Rarity color thresholds (log-scale buckets)
-export type RarityColor = 'red' | 'orange' | 'yellow' | 'green' | 'blue' | 'indigo' | 'violet';
+// Rarity tiers (based on World of Warcraft item rarity system)
+// Thresholds based on historical fire counts across 12,910 games
+export type Rarity = 'legendary' | 'epic' | 'rare' | 'uncommon' | 'common';
 
-const RARITY_THRESHOLDS: {max: number; color: RarityColor}[] = [
-	{max: 500, color: 'red'},
-	{max: 1000, color: 'orange'},
-	{max: 2500, color: 'yellow'},
-	{max: 6000, color: 'green'},
-	{max: 15000, color: 'blue'},
-	{max: 30000, color: 'indigo'},
-	{max: Infinity, color: 'violet'},
+const RARITY_THRESHOLDS: {max: number; rarity: Rarity}[] = [
+	{max: 500, rarity: 'legendary'},
+	{max: 1000, rarity: 'epic'},
+	{max: 2500, rarity: 'rare'},
+	{max: 6000, rarity: 'uncommon'},
+	{max: Infinity, rarity: 'common'},
 ];
 
-// CSS colors for each rarity level
-export const RARITY_CSS_COLORS: Record<RarityColor, string> = {
-	red: '#dc2626',
-	orange: '#ea580c',
-	yellow: '#ca8a04',
-	green: '#16a34a',
-	blue: '#2563eb',
-	indigo: '#4f46e5',
-	violet: '#7c3aed',
+// CSS colors for each rarity level (WoW-style)
+// These could be theme-dependent in the future (light/dark mode)
+export const RARITY_CSS_COLORS: Record<Rarity, string> = {
+	legendary: '#ff8000',
+	epic: '#a335ee',
+	rare: '#0070dd',
+	uncommon: '#1eff00',
+	common: '#000000',
+};
+
+// Order for sorting (lower = rarer = more important)
+export const RARITY_ORDER: Record<Rarity, number> = {
+	legendary: 0,
+	epic: 1,
+	rare: 2,
+	uncommon: 3,
+	common: 4,
 };
 
 /**
- * Get the rarity color for a predicate based on its historical fire count.
+ * Get the rarity tier for a predicate based on its historical fire count.
+ * Used by analysis scripts to suggest rarity assignments for new predicates.
  */
-export function getPredicateRarityColor(predicateName: string): RarityColor {
+export function getPredicateRarity(predicateName: string): Rarity {
 	const fireCount = PREDICATE_FIRE_COUNTS[predicateName];
 	if (fireCount === undefined) {
-		return 'violet'; // Default to most common for unknown predicates
+		return 'common';
 	}
 
 	for (const threshold of RARITY_THRESHOLDS) {
 		if (fireCount < threshold.max) {
-			return threshold.color;
+			return threshold.rarity;
 		}
 	}
-	return 'violet';
+	return 'common';
 }
 
 /**
- * Get the CSS color for a predicate based on its rarity.
+ * Get the rarity tier for a given fire count.
+ * Used by analysis scripts to determine rarity assignments.
  */
-export function getPredicateRarityCssColor(predicateName: string): string {
-	const rarityColor = getPredicateRarityColor(predicateName);
-	return RARITY_CSS_COLORS[rarityColor];
-}
-
-/**
- * Get the rarest (lowest fire count) CSS color from a list of predicate names.
- * Returns the color of the rarest predicate to highlight the most notable annotation.
- */
-export function getRarestPredicateCssColor(predicateNames: string[]): string {
-	if (predicateNames.length === 0) {
-		return RARITY_CSS_COLORS.violet;
-	}
-
-	let rarestName = predicateNames[0];
-	let lowestFireCount = PREDICATE_FIRE_COUNTS[rarestName] ?? Infinity;
-
-	for (const name of predicateNames) {
-		const fireCount = PREDICATE_FIRE_COUNTS[name] ?? Infinity;
-		if (fireCount < lowestFireCount) {
-			lowestFireCount = fireCount;
-			rarestName = name;
+export function getRarityForFireCount(fireCount: number): Rarity {
+	for (const threshold of RARITY_THRESHOLDS) {
+		if (fireCount < threshold.max) {
+			return threshold.rarity;
 		}
 	}
-
-	return getPredicateRarityCssColor(rarestName);
+	return 'common';
 }

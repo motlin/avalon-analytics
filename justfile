@@ -102,6 +102,10 @@ deploy: build
 analyze-predicates:
     pnpm exec tsx src/scripts/analyze-predicates.ts
 
+# pnpm exec tsx src/scripts/analyze-rarities.ts
+analyze-rarities:
+    pnpm exec tsx src/scripts/analyze-rarities.ts
+
 # Import game files from local disk into remote D1 database
 import-games *args: migrate-remote
     pnpm exec tsx src/scripts/import-games.ts {{ args }}
