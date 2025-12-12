@@ -95,9 +95,8 @@ export async function PersonDetail({params, request}: RequestInfo) {
 		);
 	}
 
-	// Calculate stats using the first UID but aggregate across all UIDs
-	const primaryUid = personUids[0];
-	const stats = calculatePlayerStats(primaryUid, games);
+	// Calculate stats aggregating across all UIDs for this person
+	const stats = calculatePlayerStats(personUids, games);
 
 	// Override the player name with the person name
 	stats.playerName = personName!;

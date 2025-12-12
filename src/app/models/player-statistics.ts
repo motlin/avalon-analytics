@@ -206,13 +206,19 @@ function createEmptyRoleStats(): RoleStats {
 }
 
 /**
- * Calculate comprehensive statistics for a player from their games
+ * Calculate comprehensive statistics for a player from their games.
+ * Accepts either a single UID or an array of UIDs (for aggregating a person's multiple accounts).
  */
-export function calculatePlayerStats(uid: string, games: Game[]): PlayerStatistics {
-	const playerName = games.length > 0 ? games[0].players.find((p) => p.uid === uid)?.name || uid : uid;
+export function calculatePlayerStats(uidOrUids: string | string[], games: Game[]): PlayerStatistics {
+	const uids = Array.isArray(uidOrUids) ? uidOrUids : [uidOrUids];
+	const uidSet = new Set(uids);
+	const primaryUid = uids[0];
+
+	const findPlayerInGame = (game: Game) => game.players.find((p) => uidSet.has(p.uid));
+	const playerName = games.length > 0 ? findPlayerInGame(games[0])?.name || primaryUid : primaryUid;
 
 	const stats: PlayerStatistics = {
-		uid,
+		uid: primaryUid,
 		playerName,
 		totalGames: 0,
 		totalWins: 0,
@@ -272,7 +278,7 @@ export function calculatePlayerStats(uid: string, games: Game[]): PlayerStatisti
 	for (const game of games) {
 		if (!game.outcome) continue;
 
-		const playerInGame = game.players.find((p) => p.uid === uid);
+		const playerInGame = findPlayerInGame(game);
 		if (!playerInGame) continue;
 
 		const playerRole = game.outcome.roles?.find((r) => r.name === playerInGame.name);
