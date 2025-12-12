@@ -1,8 +1,8 @@
-import type {PlayerStatistics} from '../models/player-statistics';
+import type {PersonStatistics} from '../models/player-statistics';
 import styles from './YearlyStatsTable.module.css';
 
 interface YearlyStatsTableProps {
-	stats: PlayerStatistics;
+	stats: PersonStatistics;
 }
 
 function formatRate(value: number): string {

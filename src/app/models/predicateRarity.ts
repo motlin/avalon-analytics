@@ -87,7 +87,7 @@ export const RARITY_CSS_COLORS: Record<Rarity, string> = {
 	legendary: '#ff8000',
 	epic: '#a335ee',
 	rare: '#0070dd',
-	uncommon: '#1eff00',
+	uncommon: '#2ecc71',
 	common: '#000000',
 };
 

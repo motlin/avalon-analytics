@@ -7,7 +7,7 @@ import {RoleStatsTable} from '../../components/RoleStatsTable';
 import {SpecialRoleStats} from '../../components/SpecialRoleStats';
 import {YearlyStatsTable} from '../../components/YearlyStatsTable';
 import {type Game, GameSchema} from '../../models/game';
-import {calculatePlayerStats} from '../../models/player-statistics';
+import {calculatePersonStats} from '../../models/player-statistics';
 import {getPersonService} from '../../services/person';
 import {db, setupDb} from '@/db';
 
@@ -119,14 +119,12 @@ export async function PlayerDetailPage({params, request}: RequestInfo) {
 		);
 	}
 
-	// Calculate stats using the first UID (for unmapped) or aggregate across all UIDs (for mapped)
-	// Since the stats calculation works per-UID, we need to filter games for all UIDs
-	const primaryUid = playerUids[0];
-	const stats = calculatePlayerStats(primaryUid, games);
+	// Calculate stats aggregating across all UIDs for this person
+	const stats = calculatePersonStats(playerUids, games);
 
-	// Override the player name if we have a mapped person name
+	// Override the person name if we have a mapped person name
 	if (playerName && isMapped) {
-		stats.playerName = playerName;
+		stats.personName = playerName;
 	}
 
 	return (

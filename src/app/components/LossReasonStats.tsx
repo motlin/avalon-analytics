@@ -1,8 +1,8 @@
-import type {PlayerStatistics} from '../models/player-statistics';
+import type {PersonStatistics} from '../models/player-statistics';
 import styles from './LossReasonStats.module.css';
 
 interface LossReasonStatsProps {
-	stats: PlayerStatistics;
+	stats: PersonStatistics;
 }
 
 function formatPercent(count: number, total: number): string {

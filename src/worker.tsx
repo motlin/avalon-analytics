@@ -7,6 +7,7 @@ import {adminRoutes} from '@/app/pages/admin/routes';
 import {gameRoutes} from '@/app/pages/game/routes';
 import {Home} from '@/app/pages/Home';
 import {HomePage} from '@/app/pages/HomePage';
+import {peopleRoutes} from '@/app/pages/people/routes';
 import {personRoutes} from '@/app/pages/person/routes';
 import {playersRoutes} from '@/app/pages/players/routes';
 import {userRoutes} from '@/app/pages/user/routes';
@@ -84,6 +85,7 @@ export default defineApp([
 		prefix('/user', userRoutes),
 		...adminRoutes,
 		...gameRoutes,
+		...peopleRoutes,
 		...personRoutes,
 		...playersRoutes,
 	]),

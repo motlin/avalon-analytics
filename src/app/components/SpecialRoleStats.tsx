@@ -1,8 +1,8 @@
-import type {PlayerStatistics} from '../models/player-statistics';
+import type {PersonStatistics} from '../models/player-statistics';
 import styles from './SpecialRoleStats.module.css';
 
 interface SpecialRoleStatsProps {
-	stats: PlayerStatistics;
+	stats: PersonStatistics;
 }
 
 function formatRate(numerator: number, denominator: number): string {

@@ -1,9 +1,9 @@
-import type {PlayerStatistics, RoleName} from '../models/player-statistics';
+import type {PersonStatistics, RoleName} from '../models/player-statistics';
 import {ROLE_INFO} from '../models/player-statistics';
 import styles from './RoleStatsTable.module.css';
 
 interface RoleStatsTableProps {
-	stats: PlayerStatistics;
+	stats: PersonStatistics;
 }
 
 function formatRate(value: number): string {

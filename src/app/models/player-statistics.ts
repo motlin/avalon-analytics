@@ -101,11 +101,11 @@ export interface YearStats {
 }
 
 /**
- * Comprehensive player statistics
+ * Comprehensive statistics for a person (aggregated across all their UIDs)
  */
-export interface PlayerStatistics {
-	uid: string;
-	playerName: string;
+export interface PersonStatistics {
+	primaryUid: string;
+	personName: string;
 
 	// Overall stats
 	totalGames: number;
@@ -206,20 +206,19 @@ function createEmptyRoleStats(): RoleStats {
 }
 
 /**
- * Calculate comprehensive statistics for a player from their games.
- * Accepts either a single UID or an array of UIDs (for aggregating a person's multiple accounts).
+ * Calculate comprehensive statistics for a person from their games.
+ * Takes an array of UIDs (all accounts belonging to this person).
  */
-export function calculatePlayerStats(uidOrUids: string | string[], games: Game[]): PlayerStatistics {
-	const uids = Array.isArray(uidOrUids) ? uidOrUids : [uidOrUids];
+export function calculatePersonStats(uids: string[], games: Game[]): PersonStatistics {
 	const uidSet = new Set(uids);
 	const primaryUid = uids[0];
 
 	const findPlayerInGame = (game: Game) => game.players.find((p) => uidSet.has(p.uid));
-	const playerName = games.length > 0 ? findPlayerInGame(games[0])?.name || primaryUid : primaryUid;
+	const personName = games.length > 0 ? findPlayerInGame(games[0])?.name || primaryUid : primaryUid;
 
-	const stats: PlayerStatistics = {
-		uid: primaryUid,
-		playerName,
+	const stats: PersonStatistics = {
+		primaryUid,
+		personName,
 		totalGames: 0,
 		totalWins: 0,
 		totalLosses: 0,

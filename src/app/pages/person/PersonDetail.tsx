@@ -7,7 +7,7 @@ import {RoleStatsTable} from '../../components/RoleStatsTable';
 import {SpecialRoleStats} from '../../components/SpecialRoleStats';
 import {YearlyStatsTable} from '../../components/YearlyStatsTable';
 import {type Game, GameSchema} from '../../models/game';
-import {calculatePlayerStats} from '../../models/player-statistics';
+import {calculatePersonStats} from '../../models/player-statistics';
 import {getPersonService} from '../../services/person';
 import {db, setupDb} from '@/db';
 
@@ -96,10 +96,10 @@ export async function PersonDetail({params, request}: RequestInfo) {
 	}
 
 	// Calculate stats aggregating across all UIDs for this person
-	const stats = calculatePlayerStats(personUids, games);
+	const stats = calculatePersonStats(personUids, games);
 
-	// Override the player name with the person name
-	stats.playerName = personName!;
+	// Override the person name with the known person name
+	stats.personName = personName!;
 
 	return (
 		<div style={{padding: '1rem', maxWidth: '1200px', margin: '0 auto'}}>
