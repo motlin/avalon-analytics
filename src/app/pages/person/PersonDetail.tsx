@@ -7,7 +7,7 @@ import {RoleStatsTable} from '../../components/RoleStatsTable';
 import {SpecialRoleStats} from '../../components/SpecialRoleStats';
 import {YearlyStatsTable} from '../../components/YearlyStatsTable';
 import {type Game, GameSchema} from '../../models/game';
-import {calculatePersonStats} from '../../models/player-statistics';
+import {type PersonStatistics, loadPersonStatsFromDb} from '../../models/player-statistics';
 import {getPersonService} from '../../services/person';
 import {db, setupDb} from '@/db';
 
@@ -30,6 +30,7 @@ export async function PersonDetail({params, request}: RequestInfo) {
 	let error: string | null = null;
 	let personName: string | null = null;
 	let personUids: string[] = [];
+	let stats: PersonStatistics | null = null;
 
 	try {
 		await setupDb(env);
@@ -56,7 +57,10 @@ export async function PersonDetail({params, request}: RequestInfo) {
 		personName = person.name;
 		personUids = person.uids;
 
-		// Use PlayerGame junction table with proper JOIN (indexed on playerUid)
+		// Load pre-computed stats from database
+		stats = await loadPersonStatsFromDb(personId);
+
+		// Fetch games for game history section
 		const uidPlaceholders = personUids.map(() => '?').join(', ');
 		const rawGames = await db.$queryRawUnsafe<Array<{firebaseKey: string; gameJson: string}>>(
 			`SELECT DISTINCT r.firebaseKey, r.gameJson
@@ -83,20 +87,17 @@ export async function PersonDetail({params, request}: RequestInfo) {
 		return <div>Error: {error}</div>;
 	}
 
-	if (games.length === 0) {
+	if (!stats || games.length === 0) {
 		return (
 			<div style={{padding: '1rem'}}>
 				<Breadcrumb
 					items={[{label: 'Home', href: '/'}, {label: 'Players', href: '/players'}, {label: 'Not Found'}]}
 				/>
 				<h1>Person Not Found</h1>
-				<p>No games found for person with ID: {personId}</p>
+				<p>No statistics found for person with ID: {personId}</p>
 			</div>
 		);
 	}
-
-	// Calculate stats aggregating across all UIDs for this person
-	const stats = calculatePersonStats(personUids, games);
 
 	// Override the person name with the known person name
 	stats.personName = personName!;

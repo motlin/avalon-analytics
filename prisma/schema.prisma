@@ -57,6 +57,7 @@ model Person {
   createdAt  DateTime
   uids       PersonUid[]
   dateRanges PersonDateRange[]
+  stats      PersonStats?
 
   @@index([name])
 }
@@ -85,21 +86,158 @@ model PlayerGame {
 }
 
 model PlayerStats {
-  id          String   @id @default(uuid())
-  playerId    String   @unique
+  uid         String   @id
   name        String
-  isMapped    Boolean  @default(false)
-  gamesPlayed Int      @default(0)
-  wins        Int      @default(0)
-  goodGames   Int      @default(0)
-  goodWins    Int      @default(0)
-  evilGames   Int      @default(0)
-  evilWins    Int      @default(0)
+  isMapped    Boolean
+  gamesPlayed Int
+  wins        Int
+  goodGames   Int
+  goodWins    Int
+  evilGames   Int
+  evilWins    Int
   createdAt   DateTime
-  updatedAt   DateTime @updatedAt
+  updatedAt   DateTime
 
-  @@index([playerId])
+  roleStats     PlayerRoleStats[]
+  yearlyStats   PlayerYearlyStats[]
+  lossReasons   PlayerLossReasons?
+  merlinStats   PlayerMerlinStats?
+  assassinStats PlayerAssassinStats?
+
   @@index([gamesPlayed(sort: Desc)])
+}
+
+model PlayerRoleStats {
+  uid                   String
+  player                PlayerStats @relation(fields: [uid], references: [uid], onDelete: Cascade)
+  role                  String
+  games                 Int
+  wins                  Int
+  losses                Int
+  threeMissionFails     Int
+  threeMissionSuccesses Int
+  fiveRejectedProposals Int
+  merlinAssassinated    Int
+  wasAssassinated       Int
+
+  @@id([uid, role])
+}
+
+model PlayerYearlyStats {
+  uid       String
+  player    PlayerStats @relation(fields: [uid], references: [uid], onDelete: Cascade)
+  year      Int
+  games     Int
+  wins      Int
+  goodGames Int
+  goodWins  Int
+  evilGames Int
+  evilWins  Int
+
+  @@id([uid, year])
+}
+
+model PlayerLossReasons {
+  uid                     String      @id
+  player                  PlayerStats @relation(fields: [uid], references: [uid], onDelete: Cascade)
+  threeMissionFails       Int
+  threeMissionSuccessEvil Int
+  fiveRejectedProposals   Int
+  merlinAssassinated      Int
+}
+
+model PlayerMerlinStats {
+  uid                   String      @id
+  player                PlayerStats @relation(fields: [uid], references: [uid], onDelete: Cascade)
+  gamesPlayed           Int
+  wins                  Int
+  timesAssassinated     Int
+  survivedAssassination Int
+}
+
+model PlayerAssassinStats {
+  uid                      String      @id
+  player                   PlayerStats @relation(fields: [uid], references: [uid], onDelete: Cascade)
+  gamesPlayed              Int
+  wins                     Int
+  successfulAssassinations Int
+  failedAssassinations     Int
+}
+
+model PersonStats {
+  personId    String   @id
+  person      Person   @relation(fields: [personId], references: [id], onDelete: Cascade)
+  gamesPlayed Int
+  wins        Int
+  goodGames   Int
+  goodWins    Int
+  evilGames   Int
+  evilWins    Int
+  createdAt   DateTime
+  updatedAt   DateTime
+
+  roleStats     PersonRoleStats[]
+  yearlyStats   PersonYearlyStats[]
+  lossReasons   PersonLossReasons?
+  merlinStats   PersonMerlinStats?
+  assassinStats PersonAssassinStats?
+}
+
+model PersonRoleStats {
+  personId              String
+  personStats           PersonStats @relation(fields: [personId], references: [personId], onDelete: Cascade)
+  role                  String
+  games                 Int
+  wins                  Int
+  losses                Int
+  threeMissionFails     Int
+  threeMissionSuccesses Int
+  fiveRejectedProposals Int
+  merlinAssassinated    Int
+  wasAssassinated       Int
+
+  @@id([personId, role])
+}
+
+model PersonYearlyStats {
+  personId  String
+  personStats PersonStats @relation(fields: [personId], references: [personId], onDelete: Cascade)
+  year      Int
+  games     Int
+  wins      Int
+  goodGames Int
+  goodWins  Int
+  evilGames Int
+  evilWins  Int
+
+  @@id([personId, year])
+}
+
+model PersonLossReasons {
+  personId                String      @id
+  personStats             PersonStats @relation(fields: [personId], references: [personId], onDelete: Cascade)
+  threeMissionFails       Int
+  threeMissionSuccessEvil Int
+  fiveRejectedProposals   Int
+  merlinAssassinated      Int
+}
+
+model PersonMerlinStats {
+  personId              String      @id
+  personStats           PersonStats @relation(fields: [personId], references: [personId], onDelete: Cascade)
+  gamesPlayed           Int
+  wins                  Int
+  timesAssassinated     Int
+  survivedAssassination Int
+}
+
+model PersonAssassinStats {
+  personId                 String      @id
+  personStats              PersonStats @relation(fields: [personId], references: [personId], onDelete: Cascade)
+  gamesPlayed              Int
+  wins                     Int
+  successfulAssassinations Int
+  failedAssassinations     Int
 }
 
 model PersonDateRange {

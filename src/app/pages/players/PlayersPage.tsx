@@ -5,7 +5,7 @@ import {db, setupDb} from '@/db';
 import styles from './PlayersPage.module.css';
 
 interface PlayerStatsRow {
-	playerId: string;
+	uid: string;
 	name: string;
 	isMapped: boolean;
 	gamesPlayed: number;
@@ -51,7 +51,7 @@ export async function PlayersPage({request}: RequestInfo) {
 		});
 
 		playerStats = stats.map((s) => ({
-			playerId: s.playerId,
+			uid: s.uid,
 			name: s.name,
 			isMapped: s.isMapped,
 			gamesPlayed: s.gamesPlayed,
@@ -102,10 +102,10 @@ export async function PlayersPage({request}: RequestInfo) {
 							</thead>
 							<tbody>
 								{playerStats.map((player) => (
-									<tr key={player.playerId}>
+									<tr key={player.uid}>
 										<td className={styles.nameColumn}>
 											<a
-												href={`/players/${player.playerId}`}
+												href={`/players/${player.uid}`}
 												className={styles.playerLink}
 											>
 												{player.name}

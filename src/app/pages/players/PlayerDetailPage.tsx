@@ -7,7 +7,7 @@ import {RoleStatsTable} from '../../components/RoleStatsTable';
 import {SpecialRoleStats} from '../../components/SpecialRoleStats';
 import {YearlyStatsTable} from '../../components/YearlyStatsTable';
 import {type Game, GameSchema} from '../../models/game';
-import {calculatePersonStats} from '../../models/player-statistics';
+import {type PersonStatistics, loadPlayerStatsFromDb, loadPersonStatsFromDb} from '../../models/player-statistics';
 import {getPersonService} from '../../services/person';
 import {db, setupDb} from '@/db';
 
@@ -41,6 +41,7 @@ export async function PlayerDetailPage({params, request}: RequestInfo) {
 	let playerUids: string[] = [];
 	let isMapped = false;
 	let allPeopleForMapping: PersonOption[] = [];
+	let stats: PersonStatistics | null = null;
 
 	try {
 		await setupDb(env);
@@ -56,18 +57,20 @@ export async function PlayerDetailPage({params, request}: RequestInfo) {
 		allPeopleForMapping = allPeople.map((p) => ({id: p.id, name: p.name}));
 
 		if (person) {
-			// This is a mapped person
+			// This is a mapped person - load PersonStats
 			isMapped = true;
 			playerName = person.name;
 			playerUids = person.uids;
+			stats = await loadPersonStatsFromDb(person.id);
 		} else {
-			// Treat as a UID (unmapped player)
+			// Treat as a UID (unmapped player) - load PlayerStats
 			playerUids = [playerId];
+			stats = await loadPlayerStatsFromDb(playerId);
 		}
 
 		const uidSet = new Set(playerUids);
 
-		// Use PlayerGame join table to efficiently fetch only games for this player
+		// Fetch games for game history section
 		const playerGameRecords = await db.playerGame.findMany({
 			where: {
 				playerUid: {in: playerUids},
@@ -107,20 +110,17 @@ export async function PlayerDetailPage({params, request}: RequestInfo) {
 		return <div>Error: {error}</div>;
 	}
 
-	if (games.length === 0) {
+	if (!stats || games.length === 0) {
 		return (
 			<div style={{padding: '1rem'}}>
 				<Breadcrumb
 					items={[{label: 'Home', href: '/'}, {label: 'Players', href: '/players'}, {label: 'Not Found'}]}
 				/>
 				<h1>Player Not Found</h1>
-				<p>No games found for player with ID: {playerId}</p>
+				<p>No statistics found for player with ID: {playerId}</p>
 			</div>
 		);
 	}
-
-	// Calculate stats aggregating across all UIDs for this person
-	const stats = calculatePersonStats(playerUids, games);
 
 	// Override the person name if we have a mapped person name
 	if (playerName && isMapped) {
