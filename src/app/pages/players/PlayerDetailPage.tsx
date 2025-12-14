@@ -63,9 +63,24 @@ export async function PlayerDetailPage({params, request}: RequestInfo) {
 			playerUids = person.uids;
 			stats = await loadPersonStatsFromDb(person.id);
 		} else {
-			// Treat as a UID (unmapped player) - load PlayerStats
+			// Treat as a UID - check if it's mapped to a person
 			playerUids = [playerId];
-			stats = await loadPlayerStatsFromDb(playerId);
+
+			// Check if this UID is already mapped to a person
+			const mappedPersonId = personService.getPersonId(playerId);
+			if (mappedPersonId) {
+				// UID is mapped - load PersonStats and mark as mapped
+				isMapped = true;
+				const mappedPerson = allPeople.find((p) => p.id === mappedPersonId);
+				if (mappedPerson) {
+					playerName = mappedPerson.name;
+					playerUids = mappedPerson.uids;
+				}
+				stats = await loadPersonStatsFromDb(mappedPersonId);
+			} else {
+				// Truly unmapped player - load PlayerStats
+				stats = await loadPlayerStatsFromDb(playerId);
+			}
 		}
 
 		const uidSet = new Set(playerUids);
