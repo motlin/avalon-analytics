@@ -76,7 +76,7 @@ const config: Linter.Config[] = [
 			},
 		},
 	},
-	...storybook.configs['flat/recommended'],
+	...(storybook.configs['flat/recommended'] as Linter.Config[]),
 ];
 
 export default config;
