@@ -31,8 +31,8 @@ export function LossReasonStats({stats}: LossReasonStatsProps) {
 			color: '#e53935',
 		},
 		{
-			label: '3 Mission Successes (Evil)',
-			description: 'Evil won via assassination after 3 successful missions',
+			label: '3 Mission Successes',
+			description: 'Lost as Evil when Good completed 3 successful missions',
 			count: threeMissionSuccessEvil,
 			color: '#8e24aa',
 		},
