@@ -113,7 +113,7 @@ interface GamePlayer {
 
 interface GameOutcome {
 	state: 'GOOD_WIN' | 'EVIL_WIN';
-	roles?: Array<{name: string; role: string}>;
+	roles?: Array<{name: string; role: string; assassin: boolean}>;
 	reason?: string;
 	message?: string;
 	assassinated?: string;
@@ -458,8 +458,10 @@ function processGameForStats(game: GameData, playerUid: string, stats: FullStats
 		}
 	}
 
-	// Assassin stats
-	if (normalizedRole === 'ASSASSIN') {
+	// Assassin stats - check roleData.assassin boolean (handles both old and new schemas)
+	// Old schema: role="EVIL MINION" with assassin=true
+	// New schema: role="ASSASSIN" with assassin=true
+	if (roleData?.assassin === true) {
 		stats.assassinStats.gamesPlayed++;
 		if (playerWon) {
 			stats.assassinStats.wins++;
