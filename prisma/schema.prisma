@@ -37,9 +37,10 @@ model Credential {
 }
 
 model GameIngestionState {
-  id                   Int      @id @default(1)
-  lastIngestedGameTime DateTime @default("1970-01-01T00:00:00Z")
-  updatedAt            DateTime @updatedAt
+  id                     Int      @id @default(1)
+  lastIngestedGameTime   DateTime @default("1970-01-01T00:00:00Z")
+  lastStatsProcessedTime DateTime @default("1970-01-01T00:00:00Z")
+  updatedAt              DateTime @updatedAt
 }
 
 model RawGameData {
