@@ -617,7 +617,13 @@ function processGameForStats(game: GameData, playerUid: string, stats: FullStats
 		}
 		if (outcomeReason === 'Merlin assassinated') {
 			stats.assassinStats.successfulAssassinations++;
-		} else if (outcomeReason === 'Failed to assassinate Merlin') {
+		} else if (
+			game.outcome.state === 'GOOD_WIN' &&
+			game.outcome.assassinated &&
+			outcomeReason === 'Three successful missions'
+		) {
+			// Good won after three successful missions, and someone was assassinated
+			// This means the assassin tried but picked the wrong person
 			stats.assassinStats.failedAssassinations++;
 		}
 	}
