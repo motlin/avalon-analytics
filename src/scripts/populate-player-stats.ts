@@ -388,11 +388,14 @@ function processGameForStats(game: GameData, playerUid: string, stats: FullStats
 	}
 
 	// Role stats
-	if (normalizedRole) {
-		let roleStats = stats.roleStats.get(normalizedRole);
+	// For role stats, use "ASSASSIN" when the player was the designated assassin (assassin=true)
+	// This merges old schema (EVIL MINION with assassin=true) with new schema (ASSASSIN role)
+	const roleForStats = roleData?.assassin === true ? 'ASSASSIN' : normalizedRole;
+	if (roleForStats) {
+		let roleStats = stats.roleStats.get(roleForStats);
 		if (!roleStats) {
 			roleStats = createEmptyRoleStats();
-			stats.roleStats.set(normalizedRole, roleStats);
+			stats.roleStats.set(roleForStats, roleStats);
 		}
 
 		roleStats.games++;
