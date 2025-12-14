@@ -3,15 +3,20 @@
  * Populate statistics tables from existing game data.
  *
  * Usage:
- *   npx tsx src/scripts/populate-player-stats.ts [--local] [--dry-run] [--full]
+ *   npx tsx src/scripts/populate-player-stats.ts [--local] [--dry-run] [--full] [--resume=N]
  *
  * Options:
  *   --local       Use local D1 database instead of remote (default: remote)
  *   --dry-run     Show what would be done without executing
  *   --full        Force full recomputation instead of incremental update
+ *   --resume=N    Resume from batch N, skipping DELETE statements (useful after network failures)
  *
  * By default, this script performs incremental updates - only processing new games
  * since the last run. Use --full to recompute all statistics from scratch.
+ *
+ * Remote execution reliability:
+ *   - Uses retry logic with exponential backoff for failed batches
+ *   - Use --resume=N to continue from a specific batch after network failures
  */
 
 import {execSync} from 'child_process';
@@ -19,12 +24,15 @@ import * as fs from 'fs';
 import {z} from 'zod';
 
 const DATABASE_NAME = 'avalon-analytics-juicy-tyrannosaurus';
-const BATCH_SIZE = 500;
+const BATCH_SIZE = 1000;
+const MAX_RETRIES = 3;
+const INITIAL_RETRY_DELAY_MS = 1000;
 
 interface Args {
 	dryRun: boolean;
 	local: boolean;
 	full: boolean;
+	resumeFromBatch: number | null;
 }
 
 // Role normalization
@@ -212,7 +220,7 @@ function createEmptyYearlyStats(): YearlyStats {
 
 function parseArgs(): Args {
 	const args = process.argv.slice(2);
-	const result: Args = {dryRun: false, local: false, full: false};
+	const result: Args = {dryRun: false, local: false, full: false, resumeFromBatch: null};
 
 	for (const arg of args) {
 		if (arg === '--dry-run') {
@@ -221,10 +229,20 @@ function parseArgs(): Args {
 			result.local = true;
 		} else if (arg === '--full') {
 			result.full = true;
+		} else if (arg.startsWith('--resume=')) {
+			const batchNumber = parseInt(arg.substring('--resume='.length), 10);
+			if (isNaN(batchNumber) || batchNumber < 1) {
+				throw new Error(`Invalid --resume value: ${arg}. Must be a positive integer.`);
+			}
+			result.resumeFromBatch = batchNumber;
 		}
 	}
 
 	return result;
+}
+
+function sleep(milliseconds: number): Promise<void> {
+	return new Promise((resolve) => setTimeout(resolve, milliseconds));
 }
 
 function escapeSQL(str: string): string {
@@ -258,7 +276,12 @@ function executeQuery<T>(sql: string, local: boolean): T[] {
 	return parsed.flatMap((r) => r.results) as T[];
 }
 
-function executeSQLBatch(statements: string[], dryRun: boolean, local: boolean): void {
+async function executeSQLBatchWithRetry(
+	statements: string[],
+	dryRun: boolean,
+	local: boolean,
+	batchNumber: number,
+): Promise<void> {
 	const sql = statements.join('\n');
 
 	if (dryRun) {
@@ -271,10 +294,37 @@ function executeSQLBatch(statements: string[], dryRun: boolean, local: boolean):
 	fs.writeFileSync(tempFile, sql);
 
 	const locationFlag = local ? '--local' : '--remote';
-	execSync(`npx wrangler d1 execute ${DATABASE_NAME} ${locationFlag} --yes --file="${tempFile}"`, {
-		stdio: 'inherit',
-	});
-	fs.unlinkSync(tempFile);
+	let lastError: Error | null = null;
+
+	for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+		try {
+			execSync(`npx wrangler d1 execute ${DATABASE_NAME} ${locationFlag} --yes --file="${tempFile}"`, {
+				stdio: 'inherit',
+			});
+			fs.unlinkSync(tempFile);
+			return;
+		} catch (error) {
+			lastError = error as Error;
+			if (attempt < MAX_RETRIES) {
+				const delayMs = INITIAL_RETRY_DELAY_MS * Math.pow(2, attempt - 1);
+				console.log(
+					`⚠️  Batch ${batchNumber} failed (attempt ${attempt}/${MAX_RETRIES}). Retrying in ${delayMs}ms...`,
+				);
+				await sleep(delayMs);
+			}
+		}
+	}
+
+	// Clean up temp file before throwing
+	try {
+		fs.unlinkSync(tempFile);
+	} catch {
+		// Ignore cleanup errors
+	}
+
+	throw new Error(
+		`Batch ${batchNumber} failed after ${MAX_RETRIES} attempts. Use --resume=${batchNumber} to retry from this batch. Error: ${lastError?.message}`,
+	);
 }
 
 async function getPersonMappings(local: boolean): Promise<{
@@ -695,6 +745,51 @@ function buildPlayerInsertStatements(statsMap: Map<string, FullStats>, now: stri
 	return statements;
 }
 
+function buildPlayerInsertStatementsWithoutDelete(statsMap: Map<string, FullStats>, now: string): string[] {
+	const statements: string[] = [];
+
+	// No DELETE statements - used when resuming after a failed batch
+
+	for (const [uid, stats] of statsMap) {
+		// Base stats (use INSERT OR REPLACE to handle duplicates from previous run)
+		statements.push(
+			`INSERT OR REPLACE INTO PlayerStats (uid, name, isMapped, gamesPlayed, wins, goodGames, goodWins, evilGames, evilWins, createdAt, updatedAt) VALUES ('${escapeSQL(uid)}', '${escapeSQL(stats.name)}', ${stats.isMapped ? 1 : 0}, ${stats.gamesPlayed}, ${stats.wins}, ${stats.goodGames}, ${stats.goodWins}, ${stats.evilGames}, ${stats.evilWins}, '${now}', '${now}');`,
+		);
+
+		// Role stats (for all roles, including ones with 0 games)
+		for (const role of ALL_ROLES) {
+			const roleStats = stats.roleStats.get(role) ?? createEmptyRoleStats();
+			statements.push(
+				`INSERT OR REPLACE INTO PlayerRoleStats (uid, role, games, wins, losses, threeMissionFails, threeMissionSuccesses, fiveRejectedProposals, merlinAssassinated, wasAssassinated) VALUES ('${escapeSQL(uid)}', '${role}', ${roleStats.games}, ${roleStats.wins}, ${roleStats.losses}, ${roleStats.threeMissionFails}, ${roleStats.threeMissionSuccesses}, ${roleStats.fiveRejectedProposals}, ${roleStats.merlinAssassinated}, ${roleStats.wasAssassinated});`,
+			);
+		}
+
+		// Yearly stats
+		for (const [year, yearlyStats] of stats.yearlyStats) {
+			statements.push(
+				`INSERT OR REPLACE INTO PlayerYearlyStats (uid, year, games, wins, goodGames, goodWins, evilGames, evilWins) VALUES ('${escapeSQL(uid)}', ${year}, ${yearlyStats.games}, ${yearlyStats.wins}, ${yearlyStats.goodGames}, ${yearlyStats.goodWins}, ${yearlyStats.evilGames}, ${yearlyStats.evilWins});`,
+			);
+		}
+
+		// Loss reasons
+		statements.push(
+			`INSERT OR REPLACE INTO PlayerLossReasons (uid, threeMissionFails, threeMissionSuccessEvil, fiveRejectedProposals, merlinAssassinated) VALUES ('${escapeSQL(uid)}', ${stats.lossReasons.threeMissionFails}, ${stats.lossReasons.threeMissionSuccessEvil}, ${stats.lossReasons.fiveRejectedProposals}, ${stats.lossReasons.merlinAssassinated});`,
+		);
+
+		// Merlin stats
+		statements.push(
+			`INSERT OR REPLACE INTO PlayerMerlinStats (uid, gamesPlayed, wins, timesAssassinated, survivedAssassination) VALUES ('${escapeSQL(uid)}', ${stats.merlinStats.gamesPlayed}, ${stats.merlinStats.wins}, ${stats.merlinStats.timesAssassinated}, ${stats.merlinStats.survivedAssassination});`,
+		);
+
+		// Assassin stats
+		statements.push(
+			`INSERT OR REPLACE INTO PlayerAssassinStats (uid, gamesPlayed, wins, successfulAssassinations, failedAssassinations) VALUES ('${escapeSQL(uid)}', ${stats.assassinStats.gamesPlayed}, ${stats.assassinStats.wins}, ${stats.assassinStats.successfulAssassinations}, ${stats.assassinStats.failedAssassinations});`,
+		);
+	}
+
+	return statements;
+}
+
 function buildPlayerUpsertStatements(statsMap: Map<string, FullStats>, now: string): string[] {
 	const statements: string[] = [];
 
@@ -792,6 +887,51 @@ function buildPersonInsertStatements(statsMap: Map<string, FullStats>, now: stri
 		// Assassin stats
 		statements.push(
 			`INSERT INTO PersonAssassinStats (personId, gamesPlayed, wins, successfulAssassinations, failedAssassinations) VALUES ('${escapeSQL(personId)}', ${stats.assassinStats.gamesPlayed}, ${stats.assassinStats.wins}, ${stats.assassinStats.successfulAssassinations}, ${stats.assassinStats.failedAssassinations});`,
+		);
+	}
+
+	return statements;
+}
+
+function buildPersonInsertStatementsWithoutDelete(statsMap: Map<string, FullStats>, now: string): string[] {
+	const statements: string[] = [];
+
+	// No DELETE statements - used when resuming after a failed batch
+
+	for (const [personId, stats] of statsMap) {
+		// Base stats (use INSERT OR REPLACE to handle duplicates from previous run)
+		statements.push(
+			`INSERT OR REPLACE INTO PersonStats (personId, gamesPlayed, wins, goodGames, goodWins, evilGames, evilWins, createdAt, updatedAt) VALUES ('${escapeSQL(personId)}', ${stats.gamesPlayed}, ${stats.wins}, ${stats.goodGames}, ${stats.goodWins}, ${stats.evilGames}, ${stats.evilWins}, '${now}', '${now}');`,
+		);
+
+		// Role stats
+		for (const role of ALL_ROLES) {
+			const roleStats = stats.roleStats.get(role) ?? createEmptyRoleStats();
+			statements.push(
+				`INSERT OR REPLACE INTO PersonRoleStats (personId, role, games, wins, losses, threeMissionFails, threeMissionSuccesses, fiveRejectedProposals, merlinAssassinated, wasAssassinated) VALUES ('${escapeSQL(personId)}', '${role}', ${roleStats.games}, ${roleStats.wins}, ${roleStats.losses}, ${roleStats.threeMissionFails}, ${roleStats.threeMissionSuccesses}, ${roleStats.fiveRejectedProposals}, ${roleStats.merlinAssassinated}, ${roleStats.wasAssassinated});`,
+			);
+		}
+
+		// Yearly stats
+		for (const [year, yearlyStats] of stats.yearlyStats) {
+			statements.push(
+				`INSERT OR REPLACE INTO PersonYearlyStats (personId, year, games, wins, goodGames, goodWins, evilGames, evilWins) VALUES ('${escapeSQL(personId)}', ${year}, ${yearlyStats.games}, ${yearlyStats.wins}, ${yearlyStats.goodGames}, ${yearlyStats.goodWins}, ${yearlyStats.evilGames}, ${yearlyStats.evilWins});`,
+			);
+		}
+
+		// Loss reasons
+		statements.push(
+			`INSERT OR REPLACE INTO PersonLossReasons (personId, threeMissionFails, threeMissionSuccessEvil, fiveRejectedProposals, merlinAssassinated) VALUES ('${escapeSQL(personId)}', ${stats.lossReasons.threeMissionFails}, ${stats.lossReasons.threeMissionSuccessEvil}, ${stats.lossReasons.fiveRejectedProposals}, ${stats.lossReasons.merlinAssassinated});`,
+		);
+
+		// Merlin stats
+		statements.push(
+			`INSERT OR REPLACE INTO PersonMerlinStats (personId, gamesPlayed, wins, timesAssassinated, survivedAssassination) VALUES ('${escapeSQL(personId)}', ${stats.merlinStats.gamesPlayed}, ${stats.merlinStats.wins}, ${stats.merlinStats.timesAssassinated}, ${stats.merlinStats.survivedAssassination});`,
+		);
+
+		// Assassin stats
+		statements.push(
+			`INSERT OR REPLACE INTO PersonAssassinStats (personId, gamesPlayed, wins, successfulAssassinations, failedAssassinations) VALUES ('${escapeSQL(personId)}', ${stats.assassinStats.gamesPlayed}, ${stats.assassinStats.wins}, ${stats.assassinStats.successfulAssassinations}, ${stats.assassinStats.failedAssassinations});`,
 		);
 	}
 
@@ -917,7 +1057,10 @@ async function getAllGamesForUids(local: boolean, uids: Set<string>): Promise<Ga
 }
 
 async function runFullRecomputation(args: Args): Promise<void> {
-	console.log('Running FULL statistics recomputation...');
+	const isResuming = args.resumeFromBatch !== null;
+	console.log(
+		`Running FULL statistics recomputation${isResuming ? ` (resuming from batch ${args.resumeFromBatch})` : ''}...`,
+	);
 	const startTime = Date.now();
 
 	// Timing: fetch mappings
@@ -942,23 +1085,36 @@ async function runFullRecomputation(args: Args): Promise<void> {
 
 	// Build SQL statements
 	const now = new Date().toISOString();
-	const playerStatements = buildPlayerInsertStatements(playerStatsMap, now);
-	const personStatements = buildPersonInsertStatements(personStatsMap, now);
+
+	// When resuming, skip DELETE statements (they were already executed in previous run)
+	const playerStatements = isResuming
+		? buildPlayerInsertStatementsWithoutDelete(playerStatsMap, now)
+		: buildPlayerInsertStatements(playerStatsMap, now);
+	const personStatements = isResuming
+		? buildPersonInsertStatementsWithoutDelete(personStatsMap, now)
+		: buildPersonInsertStatements(personStatsMap, now);
 	const allStatements = [...playerStatements, ...personStatements];
 	allStatements.push(updateLastStatsProcessedTime(now));
 
+	const totalBatches = Math.ceil(allStatements.length / BATCH_SIZE);
 	console.log(
-		`Generated ${allStatements.length} SQL statements (${playerStatements.length} player, ${personStatements.length} person)`,
+		`Generated ${allStatements.length} SQL statements (${playerStatements.length} player, ${personStatements.length} person) in ${totalBatches} batches`,
 	);
 
 	// Execute in batches
 	const execStart = Date.now();
-	for (let i = 0; i < allStatements.length; i += BATCH_SIZE) {
+	const startBatch = args.resumeFromBatch ?? 1;
+	const startIndex = (startBatch - 1) * BATCH_SIZE;
+
+	if (isResuming) {
+		console.log(`⏩ Skipping batches 1-${startBatch - 1}, starting from batch ${startBatch}`);
+	}
+
+	for (let i = startIndex; i < allStatements.length; i += BATCH_SIZE) {
+		const batchNumber = Math.floor(i / BATCH_SIZE) + 1;
 		const batch = allStatements.slice(i, i + BATCH_SIZE);
-		console.log(
-			`Executing batch ${Math.floor(i / BATCH_SIZE) + 1}/${Math.ceil(allStatements.length / BATCH_SIZE)} (${batch.length} statements)...`,
-		);
-		executeSQLBatch(batch, args.dryRun, args.local);
+		console.log(`Executing batch ${batchNumber}/${totalBatches} (${batch.length} statements)...`);
+		await executeSQLBatchWithRetry(batch, args.dryRun, args.local, batchNumber);
 	}
 	console.log(`⏱️  Executed SQL in ${Date.now() - execStart}ms`);
 
@@ -1035,18 +1191,18 @@ async function runIncrementalUpdate(args: Args): Promise<void> {
 	const allStatements = [...playerStatements, ...personStatements];
 	allStatements.push(updateLastStatsProcessedTime(now));
 
+	const totalBatches = Math.ceil(allStatements.length / BATCH_SIZE);
 	console.log(
-		`Generated ${allStatements.length} SQL statements (${playerStatements.length} player, ${personStatements.length} person)`,
+		`Generated ${allStatements.length} SQL statements (${playerStatements.length} player, ${personStatements.length} person) in ${totalBatches} batches`,
 	);
 
-	// Execute in batches
+	// Execute in batches with retry logic
 	const execStart = Date.now();
 	for (let i = 0; i < allStatements.length; i += BATCH_SIZE) {
+		const batchNumber = Math.floor(i / BATCH_SIZE) + 1;
 		const batch = allStatements.slice(i, i + BATCH_SIZE);
-		console.log(
-			`Executing batch ${Math.floor(i / BATCH_SIZE) + 1}/${Math.ceil(allStatements.length / BATCH_SIZE)} (${batch.length} statements)...`,
-		);
-		executeSQLBatch(batch, args.dryRun, args.local);
+		console.log(`Executing batch ${batchNumber}/${totalBatches} (${batch.length} statements)...`);
+		await executeSQLBatchWithRetry(batch, args.dryRun, args.local, batchNumber);
 	}
 	console.log(`⏱️  Executed SQL in ${Date.now() - execStart}ms`);
 
@@ -1062,7 +1218,14 @@ async function main() {
 	const target = args.local ? 'local' : 'remote';
 	const mode = args.full ? 'full' : 'incremental';
 	console.log(`Populate statistics tables from games (${target}, ${mode} mode)`);
-	console.log(`Options: dryRun=${args.dryRun}, local=${args.local}, full=${args.full}`);
+	console.log(
+		`Options: dryRun=${args.dryRun}, local=${args.local}, full=${args.full}, resumeFromBatch=${args.resumeFromBatch ?? 'none'}`,
+	);
+
+	// Resume only makes sense with --full mode
+	if (args.resumeFromBatch !== null && !args.full) {
+		throw new Error('--resume flag requires --full mode');
+	}
 
 	if (args.full) {
 		await runFullRecomputation(args);
