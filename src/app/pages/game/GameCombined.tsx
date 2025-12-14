@@ -6,6 +6,7 @@ import {CombinedAnnotatedTable} from '../../components/CombinedAnnotatedTable';
 import {LocalTimestamp} from '../../components/LocalTimestamp';
 import type {AvalonApi} from '../../components/types';
 import {type Game, GameSchema} from '../../models/game';
+import {getPersonService} from '../../services/person';
 import {db, setupDb} from '@/db';
 
 const ROLE_MAP: Record<string, {name: string; team: 'good' | 'evil'; description: string}> = {
@@ -47,15 +48,18 @@ export async function GameCombined({params}: RequestInfo) {
 	try {
 		await setupDb(env);
 
-		// Load person mappings
-		const personUids = await db.personUid.findMany({
-			include: {person: true},
-		});
-		for (const pu of personUids) {
-			uidToPersonMap.set(pu.uid, {
-				personId: pu.person.id,
-				personName: pu.person.name,
-			});
+		// Load person mappings using the PersonService
+		const personService = getPersonService();
+		await personService.initialize();
+
+		const allPeople = await personService.getAllPeople();
+		for (const person of allPeople) {
+			for (const uid of person.uids) {
+				uidToPersonMap.set(uid, {
+					personId: person.id,
+					personName: person.name,
+				});
+			}
 		}
 
 		const rawGame = await db.rawGameData.findUnique({
