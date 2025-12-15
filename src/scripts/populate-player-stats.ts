@@ -23,6 +23,11 @@ import {execSync} from 'child_process';
 import * as fs from 'fs';
 import {z} from 'zod';
 
+import type {Game} from '../app/models/game';
+import {GameSchema} from '../app/models/game';
+import type {Alignment} from '../app/models/predicateEvaluator';
+import {analyzeGameForAnnotationStats} from '../app/models/gameAnnotationStats';
+
 const DATABASE_NAME = 'avalon-analytics-juicy-tyrannosaurus';
 const BATCH_SIZE = 1000;
 const MAX_RETRIES = 3;
@@ -121,6 +126,33 @@ interface GamePlayer {
 	name: string;
 	uid: string;
 }
+
+// ============================================================================
+// Annotation Stats Accumulator Types
+// ============================================================================
+
+interface AlignmentBreakdown {
+	fires: number;
+	opportunities: number;
+}
+
+interface RoleBreakdown {
+	fires: number;
+	opportunities: number;
+}
+
+interface PredicateAnnotationStats {
+	fires: number;
+	opportunities: number;
+	byAlignment: Map<Alignment, AlignmentBreakdown>;
+	byRole: Map<string, RoleBreakdown>;
+}
+
+/**
+ * Accumulates annotation stats for a single person across all predicates.
+ * Map structure: predicateName -> PredicateAnnotationStats
+ */
+type PersonAnnotationStatsAccumulator = Map<string, PredicateAnnotationStats>;
 
 interface GameOutcome {
 	state: 'GOOD_WIN' | 'EVIL_WIN';
@@ -746,6 +778,366 @@ function calculatePersonStats(
 	return statsMap;
 }
 
+// ============================================================================
+// Annotation Stats Processing
+// ============================================================================
+
+function createEmptyPredicateAnnotationStats(): PredicateAnnotationStats {
+	return {
+		fires: 0,
+		opportunities: 0,
+		byAlignment: new Map(),
+		byRole: new Map(),
+	};
+}
+
+/**
+ * Parse raw game JSON into a Game object that can be used with analyzeGameForAnnotationStats.
+ * Returns null if parsing fails or game is incomplete (no missions).
+ */
+function parseGameForAnnotations(gameId: string, gameJson: string): Game | null {
+	try {
+		const parsed = JSON.parse(gameJson);
+		// Add the ID to the parsed object
+		parsed.id = gameId;
+		const result = GameSchema.safeParse(parsed);
+		if (!result.success) {
+			return null;
+		}
+		// Skip games without missions
+		if (result.data.missions.length === 0) {
+			return null;
+		}
+		return result.data;
+	} catch {
+		return null;
+	}
+}
+
+/**
+ * Calculate annotation stats for each person by aggregating stats across all their UIDs.
+ * Only processes games for mapped people (those with personIds).
+ */
+function calculatePersonAnnotationStats(
+	rawGames: Array<{firebaseKey: string; gameJson: string}>,
+	personIdToUids: Map<string, string[]>,
+	uidToPersonId: Map<string, string>,
+): Map<string, PersonAnnotationStatsAccumulator> {
+	const personStats = new Map<string, PersonAnnotationStatsAccumulator>();
+
+	// Initialize accumulators for each person
+	for (const personId of personIdToUids.keys()) {
+		personStats.set(personId, new Map());
+	}
+
+	// Process each game
+	for (const rawGame of rawGames) {
+		const game = parseGameForAnnotations(rawGame.firebaseKey, rawGame.gameJson);
+		if (!game) continue;
+
+		// Analyze the game for annotation stats
+		const gameStats = analyzeGameForAnnotationStats(game);
+
+		// Aggregate by person (map UID -> personId)
+		for (const [predicateName, playerMap] of gameStats) {
+			for (const [playerUid, stats] of playerMap) {
+				// Look up personId for this UID
+				const personId = uidToPersonId.get(playerUid);
+				if (!personId) continue;
+
+				// Get or create the person's accumulator
+				let personAccumulator = personStats.get(personId);
+				if (!personAccumulator) {
+					personAccumulator = new Map();
+					personStats.set(personId, personAccumulator);
+				}
+
+				// Get or create the predicate stats
+				let predicateStats = personAccumulator.get(predicateName);
+				if (!predicateStats) {
+					predicateStats = createEmptyPredicateAnnotationStats();
+					personAccumulator.set(predicateName, predicateStats);
+				}
+
+				// Accumulate overall stats
+				predicateStats.fires += stats.fires;
+				predicateStats.opportunities += stats.opportunities;
+
+				// Accumulate by alignment
+				if (stats.alignment !== 'unknown') {
+					let alignmentStats = predicateStats.byAlignment.get(stats.alignment);
+					if (!alignmentStats) {
+						alignmentStats = {fires: 0, opportunities: 0};
+						predicateStats.byAlignment.set(stats.alignment, alignmentStats);
+					}
+					alignmentStats.fires += stats.fires;
+					alignmentStats.opportunities += stats.opportunities;
+				}
+
+				// Accumulate by role
+				if (stats.role) {
+					const normalizedRole = normalizeRole(stats.role);
+					if (normalizedRole) {
+						let roleStats = predicateStats.byRole.get(normalizedRole);
+						if (!roleStats) {
+							roleStats = {fires: 0, opportunities: 0};
+							predicateStats.byRole.set(normalizedRole, roleStats);
+						}
+						roleStats.fires += stats.fires;
+						roleStats.opportunities += stats.opportunities;
+					}
+				}
+			}
+		}
+	}
+
+	return personStats;
+}
+
+/**
+ * Build SQL INSERT statements for PersonAnnotationStats tables.
+ * Clears existing data first (for full recomputation).
+ */
+function buildPersonAnnotationInsertStatements(
+	statsMap: Map<string, PersonAnnotationStatsAccumulator>,
+	now: string,
+): string[] {
+	const statements: string[] = [];
+
+	// Clear existing annotation data
+	statements.push('DELETE FROM PersonAnnotationRoleStats;');
+	statements.push('DELETE FROM PersonAnnotationAlignmentStats;');
+	statements.push('DELETE FROM PersonAnnotationStats;');
+
+	for (const [personId, predicateMap] of statsMap) {
+		for (const [predicateName, stats] of predicateMap) {
+			// Skip predicates with no opportunities (no data to store)
+			if (stats.opportunities === 0) continue;
+
+			// Generate a UUID for the annotation stats record
+			const annotationId = crypto.randomUUID();
+
+			// Insert main annotation stats
+			statements.push(
+				`INSERT INTO PersonAnnotationStats (id, personId, predicateName, fires, opportunities, createdAt, updatedAt) VALUES ('${annotationId}', '${escapeSQL(personId)}', '${escapeSQL(predicateName)}', ${stats.fires}, ${stats.opportunities}, '${now}', '${now}');`,
+			);
+
+			// Insert alignment breakdown
+			for (const [alignment, alignmentStats] of stats.byAlignment) {
+				if (alignmentStats.opportunities === 0) continue;
+				const alignmentId = crypto.randomUUID();
+				statements.push(
+					`INSERT INTO PersonAnnotationAlignmentStats (id, annotationStatsId, alignment, fires, opportunities) VALUES ('${alignmentId}', '${annotationId}', '${escapeSQL(alignment)}', ${alignmentStats.fires}, ${alignmentStats.opportunities});`,
+				);
+			}
+
+			// Insert role breakdown
+			for (const [role, roleStats] of stats.byRole) {
+				if (roleStats.opportunities === 0) continue;
+				const roleId = crypto.randomUUID();
+				statements.push(
+					`INSERT INTO PersonAnnotationRoleStats (id, annotationStatsId, role, fires, opportunities) VALUES ('${roleId}', '${annotationId}', '${escapeSQL(role)}', ${roleStats.fires}, ${roleStats.opportunities});`,
+				);
+			}
+		}
+	}
+
+	return statements;
+}
+
+/**
+ * Build SQL INSERT statements for PersonAnnotationStats without DELETE (for resume mode).
+ */
+function buildPersonAnnotationInsertStatementsWithoutDelete(
+	statsMap: Map<string, PersonAnnotationStatsAccumulator>,
+	now: string,
+): string[] {
+	const statements: string[] = [];
+
+	// No DELETE statements - used when resuming after a failed batch
+
+	for (const [personId, predicateMap] of statsMap) {
+		for (const [predicateName, stats] of predicateMap) {
+			if (stats.opportunities === 0) continue;
+
+			const annotationId = crypto.randomUUID();
+
+			// Use INSERT OR REPLACE for resumability
+			statements.push(
+				`INSERT OR REPLACE INTO PersonAnnotationStats (id, personId, predicateName, fires, opportunities, createdAt, updatedAt) VALUES ('${annotationId}', '${escapeSQL(personId)}', '${escapeSQL(predicateName)}', ${stats.fires}, ${stats.opportunities}, '${now}', '${now}');`,
+			);
+
+			for (const [alignment, alignmentStats] of stats.byAlignment) {
+				if (alignmentStats.opportunities === 0) continue;
+				const alignmentId = crypto.randomUUID();
+				statements.push(
+					`INSERT OR REPLACE INTO PersonAnnotationAlignmentStats (id, annotationStatsId, alignment, fires, opportunities) VALUES ('${alignmentId}', '${annotationId}', '${escapeSQL(alignment)}', ${alignmentStats.fires}, ${alignmentStats.opportunities});`,
+				);
+			}
+
+			for (const [role, roleStats] of stats.byRole) {
+				if (roleStats.opportunities === 0) continue;
+				const roleId = crypto.randomUUID();
+				statements.push(
+					`INSERT OR REPLACE INTO PersonAnnotationRoleStats (id, annotationStatsId, role, fires, opportunities) VALUES ('${roleId}', '${annotationId}', '${escapeSQL(role)}', ${roleStats.fires}, ${roleStats.opportunities});`,
+				);
+			}
+		}
+	}
+
+	return statements;
+}
+
+/**
+ * Build SQL UPSERT statements for PersonAnnotationStats (for incremental updates).
+ * Deletes existing data for affected people only, then inserts new data.
+ */
+function buildPersonAnnotationUpsertStatements(
+	statsMap: Map<string, PersonAnnotationStatsAccumulator>,
+	now: string,
+): string[] {
+	const statements: string[] = [];
+
+	for (const [personId, predicateMap] of statsMap) {
+		// Delete existing annotation data for this person
+		// First delete child tables, then parent table
+		statements.push(
+			`DELETE FROM PersonAnnotationRoleStats WHERE annotationStatsId IN (SELECT id FROM PersonAnnotationStats WHERE personId = '${escapeSQL(personId)}');`,
+		);
+		statements.push(
+			`DELETE FROM PersonAnnotationAlignmentStats WHERE annotationStatsId IN (SELECT id FROM PersonAnnotationStats WHERE personId = '${escapeSQL(personId)}');`,
+		);
+		statements.push(`DELETE FROM PersonAnnotationStats WHERE personId = '${escapeSQL(personId)}';`);
+
+		for (const [predicateName, stats] of predicateMap) {
+			if (stats.opportunities === 0) continue;
+
+			const annotationId = crypto.randomUUID();
+
+			statements.push(
+				`INSERT INTO PersonAnnotationStats (id, personId, predicateName, fires, opportunities, createdAt, updatedAt) VALUES ('${annotationId}', '${escapeSQL(personId)}', '${escapeSQL(predicateName)}', ${stats.fires}, ${stats.opportunities}, '${now}', '${now}');`,
+			);
+
+			for (const [alignment, alignmentStats] of stats.byAlignment) {
+				if (alignmentStats.opportunities === 0) continue;
+				const alignmentId = crypto.randomUUID();
+				statements.push(
+					`INSERT INTO PersonAnnotationAlignmentStats (id, annotationStatsId, alignment, fires, opportunities) VALUES ('${alignmentId}', '${annotationId}', '${escapeSQL(alignment)}', ${alignmentStats.fires}, ${alignmentStats.opportunities});`,
+				);
+			}
+
+			for (const [role, roleStats] of stats.byRole) {
+				if (roleStats.opportunities === 0) continue;
+				const roleId = crypto.randomUUID();
+				statements.push(
+					`INSERT INTO PersonAnnotationRoleStats (id, annotationStatsId, role, fires, opportunities) VALUES ('${roleId}', '${annotationId}', '${escapeSQL(role)}', ${roleStats.fires}, ${roleStats.opportunities});`,
+				);
+			}
+		}
+	}
+
+	return statements;
+}
+
+/**
+ * Calculate and build SQL for GlobalAnnotationBaseline from accumulated person stats.
+ */
+function buildGlobalAnnotationBaselineStatements(
+	personStatsMap: Map<string, PersonAnnotationStatsAccumulator>,
+	now: string,
+): string[] {
+	const statements: string[] = [];
+
+	// Clear existing global baseline data
+	statements.push('DELETE FROM GlobalAnnotationRoleBaseline;');
+	statements.push('DELETE FROM GlobalAnnotationBaseline;');
+
+	// Aggregate across all people
+	const globalStats = new Map<
+		string,
+		{
+			totalFires: number;
+			totalOpportunities: number;
+			goodFires: number;
+			goodOpportunities: number;
+			evilFires: number;
+			evilOpportunities: number;
+			peopleWithData: Set<string>;
+			byRole: Map<string, {fires: number; opportunities: number}>;
+		}
+	>();
+
+	for (const [personId, predicateMap] of personStatsMap) {
+		for (const [predicateName, stats] of predicateMap) {
+			let global = globalStats.get(predicateName);
+			if (!global) {
+				global = {
+					totalFires: 0,
+					totalOpportunities: 0,
+					goodFires: 0,
+					goodOpportunities: 0,
+					evilFires: 0,
+					evilOpportunities: 0,
+					peopleWithData: new Set(),
+					byRole: new Map(),
+				};
+				globalStats.set(predicateName, global);
+			}
+
+			// Track that this person has data for this predicate
+			if (stats.opportunities > 0) {
+				global.peopleWithData.add(personId);
+			}
+
+			global.totalFires += stats.fires;
+			global.totalOpportunities += stats.opportunities;
+
+			// Alignment breakdown
+			const goodStats = stats.byAlignment.get('good');
+			if (goodStats) {
+				global.goodFires += goodStats.fires;
+				global.goodOpportunities += goodStats.opportunities;
+			}
+			const evilStats = stats.byAlignment.get('evil');
+			if (evilStats) {
+				global.evilFires += evilStats.fires;
+				global.evilOpportunities += evilStats.opportunities;
+			}
+
+			// Role breakdown
+			for (const [role, roleStats] of stats.byRole) {
+				let globalRole = global.byRole.get(role);
+				if (!globalRole) {
+					globalRole = {fires: 0, opportunities: 0};
+					global.byRole.set(role, globalRole);
+				}
+				globalRole.fires += roleStats.fires;
+				globalRole.opportunities += roleStats.opportunities;
+			}
+		}
+	}
+
+	// Insert global baselines
+	for (const [predicateName, stats] of globalStats) {
+		if (stats.totalOpportunities === 0) continue;
+
+		statements.push(
+			`INSERT INTO GlobalAnnotationBaseline (predicateName, totalFires, totalOpportunities, mappedPeopleCount, goodFires, goodOpportunities, evilFires, evilOpportunities, updatedAt) VALUES ('${escapeSQL(predicateName)}', ${stats.totalFires}, ${stats.totalOpportunities}, ${stats.peopleWithData.size}, ${stats.goodFires}, ${stats.goodOpportunities}, ${stats.evilFires}, ${stats.evilOpportunities}, '${now}');`,
+		);
+
+		// Insert role baselines
+		for (const [role, roleStats] of stats.byRole) {
+			if (roleStats.opportunities === 0) continue;
+			const roleBaselineId = crypto.randomUUID();
+			statements.push(
+				`INSERT INTO GlobalAnnotationRoleBaseline (id, predicateName, role, fires, opportunities) VALUES ('${roleBaselineId}', '${escapeSQL(predicateName)}', '${escapeSQL(role)}', ${roleStats.fires}, ${roleStats.opportunities});`,
+			);
+		}
+	}
+
+	return statements;
+}
+
 function buildPlayerInsertStatements(statsMap: Map<string, FullStats>, now: string): string[] {
 	const statements: string[] = [];
 
@@ -1131,6 +1523,67 @@ async function getAllGamesForUids(local: boolean, uids: Set<string>): Promise<Ga
 	return games;
 }
 
+/**
+ * Fetch all raw games for annotation processing.
+ * Returns raw game data with firebaseKey and gameJson string.
+ */
+async function getAllRawGames(local: boolean): Promise<Array<{firebaseKey: string; gameJson: string}>> {
+	console.log('Fetching all raw games for annotation processing...');
+
+	const RawGameSchema = z.object({
+		firebaseKey: z.string(),
+		gameJson: z.string(),
+	});
+
+	const countResult = executeQuery<{count: number}>('SELECT COUNT(*) as count FROM RawGameData', local);
+	const totalCount = countResult[0]?.count ?? 0;
+
+	const rawGames: Array<{firebaseKey: string; gameJson: string}> = [];
+	const batchSize = 500;
+
+	for (let offset = 0; offset < totalCount; offset += batchSize) {
+		console.log(`Fetching raw games ${offset + 1}-${Math.min(offset + batchSize, totalCount)}...`);
+		const sql = `SELECT firebaseKey, gameJson FROM RawGameData LIMIT ${batchSize} OFFSET ${offset}`;
+		const batch = executeQuery<z.infer<typeof RawGameSchema>>(sql, local);
+		rawGames.push(...batch);
+	}
+
+	console.log(`Fetched ${rawGames.length} raw games`);
+	return rawGames;
+}
+
+/**
+ * Fetch raw games for specific firebase keys (used in incremental updates).
+ */
+async function getRawGamesForKeys(
+	local: boolean,
+	firebaseKeys: string[],
+): Promise<Array<{firebaseKey: string; gameJson: string}>> {
+	if (firebaseKeys.length === 0) {
+		return [];
+	}
+
+	const RawGameSchema = z.object({
+		firebaseKey: z.string(),
+		gameJson: z.string(),
+	});
+
+	const rawGames: Array<{firebaseKey: string; gameJson: string}> = [];
+	const batchSize = 500;
+
+	for (let offset = 0; offset < firebaseKeys.length; offset += batchSize) {
+		const batchKeys = firebaseKeys
+			.slice(offset, offset + batchSize)
+			.map((k) => `'${escapeSQL(k)}'`)
+			.join(',');
+		const sql = `SELECT firebaseKey, gameJson FROM RawGameData WHERE firebaseKey IN (${batchKeys})`;
+		const batch = executeQuery<z.infer<typeof RawGameSchema>>(sql, local);
+		rawGames.push(...batch);
+	}
+
+	return rawGames;
+}
+
 async function runFullRecomputation(args: Args): Promise<void> {
 	const isResuming = args.resumeFromBatch !== null;
 	console.log(
@@ -1148,6 +1601,11 @@ async function runFullRecomputation(args: Args): Promise<void> {
 	const games = await getAllGames(args.local);
 	console.log(`⏱️  Fetched games in ${Date.now() - gamesStart}ms`);
 
+	// Timing: fetch raw games for annotation processing
+	const rawGamesStart = Date.now();
+	const rawGames = await getAllRawGames(args.local);
+	console.log(`⏱️  Fetched raw games for annotations in ${Date.now() - rawGamesStart}ms`);
+
 	// Timing: calculate player stats
 	const playerCalcStart = Date.now();
 	const playerStatsMap = calculatePlayerStats(games, uidToPersonId);
@@ -1157,6 +1615,14 @@ async function runFullRecomputation(args: Args): Promise<void> {
 	const personCalcStart = Date.now();
 	const personStatsMap = calculatePersonStats(games, personIdToUids, personIdToName);
 	console.log(`⏱️  Calculated person stats for ${personStatsMap.size} people in ${Date.now() - personCalcStart}ms`);
+
+	// Timing: calculate annotation stats
+	const annotationCalcStart = Date.now();
+	const personAnnotationStats = calculatePersonAnnotationStats(rawGames, personIdToUids, uidToPersonId);
+	const annotationCount = Array.from(personAnnotationStats.values()).reduce((sum, map) => sum + map.size, 0);
+	console.log(
+		`⏱️  Calculated annotation stats (${annotationCount} predicate entries for ${personAnnotationStats.size} people) in ${Date.now() - annotationCalcStart}ms`,
+	);
 
 	// Build SQL statements
 	const now = new Date().toISOString();
@@ -1168,12 +1634,23 @@ async function runFullRecomputation(args: Args): Promise<void> {
 	const personStatements = isResuming
 		? buildPersonInsertStatementsWithoutDelete(personStatsMap, now)
 		: buildPersonInsertStatements(personStatsMap, now);
-	const allStatements = [...playerStatements, ...personStatements];
+	const annotationStatements = isResuming
+		? buildPersonAnnotationInsertStatementsWithoutDelete(personAnnotationStats, now)
+		: buildPersonAnnotationInsertStatements(personAnnotationStats, now);
+	const globalBaselineStatements = isResuming
+		? []
+		: buildGlobalAnnotationBaselineStatements(personAnnotationStats, now);
+	const allStatements = [
+		...playerStatements,
+		...personStatements,
+		...annotationStatements,
+		...globalBaselineStatements,
+	];
 	allStatements.push(updateLastStatsProcessedTime(now));
 
 	const totalBatches = Math.ceil(allStatements.length / BATCH_SIZE);
 	console.log(
-		`Generated ${allStatements.length} SQL statements (${playerStatements.length} player, ${personStatements.length} person) in ${totalBatches} batches`,
+		`Generated ${allStatements.length} SQL statements (${playerStatements.length} player, ${personStatements.length} person, ${annotationStatements.length} annotation, ${globalBaselineStatements.length} global baseline) in ${totalBatches} batches`,
 	);
 
 	// Execute in batches
@@ -1197,6 +1674,7 @@ async function runFullRecomputation(args: Args): Promise<void> {
 	console.log(`\n✅ Full recomputation complete in ${totalTime}ms`);
 	console.log(`   ${playerStatsMap.size} player stats (by UID)`);
 	console.log(`   ${personStatsMap.size} person stats (by person ID)`);
+	console.log(`   ${annotationCount} annotation predicate entries`);
 }
 
 async function runIncrementalUpdate(args: Args): Promise<void> {
@@ -1230,6 +1708,9 @@ async function runIncrementalUpdate(args: Args): Promise<void> {
 	const allGamesForAffected = await getAllGamesForUids(args.local, affectedUids);
 	console.log(`⏱️  Fetched all games for affected players in ${Date.now() - allGamesStart}ms`);
 
+	// Get firebase keys for all games of affected people (for annotation recomputation)
+	const affectedGameKeys = allGamesForAffected.map((g) => g.id);
+
 	// Calculate stats only for affected players
 	const playerCalcStart = Date.now();
 	const playerStatsMap = calculatePlayerStats(allGamesForAffected, uidToPersonId);
@@ -1259,16 +1740,30 @@ async function runIncrementalUpdate(args: Args): Promise<void> {
 		`⏱️  Calculated person stats for ${personStatsMap.size} affected people in ${Date.now() - personCalcStart}ms`,
 	);
 
+	// Calculate annotation stats only for affected people
+	const annotationCalcStart = Date.now();
+	const rawGamesForAffected = await getRawGamesForKeys(args.local, affectedGameKeys);
+	const personAnnotationStats = calculatePersonAnnotationStats(
+		rawGamesForAffected,
+		filteredPersonIdToUids,
+		uidToPersonId,
+	);
+	const annotationCount = Array.from(personAnnotationStats.values()).reduce((sum, map) => sum + map.size, 0);
+	console.log(
+		`⏱️  Calculated annotation stats (${annotationCount} predicate entries for ${personAnnotationStats.size} people) in ${Date.now() - annotationCalcStart}ms`,
+	);
+
 	// Build upsert SQL statements (only for affected players/people)
 	const now = new Date().toISOString();
 	const playerStatements = buildPlayerUpsertStatements(filteredPlayerStats, now);
 	const personStatements = buildPersonUpsertStatements(personStatsMap, now);
-	const allStatements = [...playerStatements, ...personStatements];
+	const annotationStatements = buildPersonAnnotationUpsertStatements(personAnnotationStats, now);
+	const allStatements = [...playerStatements, ...personStatements, ...annotationStatements];
 	allStatements.push(updateLastStatsProcessedTime(now));
 
 	const totalBatches = Math.ceil(allStatements.length / BATCH_SIZE);
 	console.log(
-		`Generated ${allStatements.length} SQL statements (${playerStatements.length} player, ${personStatements.length} person) in ${totalBatches} batches`,
+		`Generated ${allStatements.length} SQL statements (${playerStatements.length} player, ${personStatements.length} person, ${annotationStatements.length} annotation) in ${totalBatches} batches`,
 	);
 
 	// Execute in batches with retry logic
@@ -1286,6 +1781,7 @@ async function runIncrementalUpdate(args: Args): Promise<void> {
 	console.log(`   ${newGames.length} new games processed`);
 	console.log(`   ${filteredPlayerStats.size} player stats updated (by UID)`);
 	console.log(`   ${personStatsMap.size} person stats updated (by person ID)`);
+	console.log(`   ${annotationCount} annotation predicate entries updated`);
 }
 
 async function main() {
