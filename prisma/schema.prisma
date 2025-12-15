@@ -99,11 +99,12 @@ model PlayerStats {
   createdAt   DateTime
   updatedAt   DateTime
 
-  roleStats     PlayerRoleStats[]
-  yearlyStats   PlayerYearlyStats[]
-  lossReasons   PlayerLossReasons?
-  merlinStats   PlayerMerlinStats?
-  assassinStats PlayerAssassinStats?
+  roleStats         PlayerRoleStats[]
+  yearlyStats       PlayerYearlyStats[]
+  lossReasons       PlayerLossReasons?
+  merlinStats       PlayerMerlinStats?
+  assassinStats     PlayerAssassinStats?
+  evilTeammateStats PlayerEvilTeammateStats?
 
   @@index([gamesPlayed(sort: Desc)])
 }
@@ -165,6 +166,15 @@ model PlayerAssassinStats {
   failedAssassinations     Int
 }
 
+model PlayerEvilTeammateStats {
+  uid                      String      @id
+  player                   PlayerStats @relation(fields: [uid], references: [uid], onDelete: Cascade)
+  gamesPlayed              Int
+  wins                     Int
+  successfulAssassinations Int
+  failedAssassinations     Int
+}
+
 model PersonStats {
   personId    String   @id
   person      Person   @relation(fields: [personId], references: [id], onDelete: Cascade)
@@ -177,11 +187,12 @@ model PersonStats {
   createdAt   DateTime
   updatedAt   DateTime
 
-  roleStats     PersonRoleStats[]
-  yearlyStats   PersonYearlyStats[]
-  lossReasons   PersonLossReasons?
-  merlinStats   PersonMerlinStats?
-  assassinStats PersonAssassinStats?
+  roleStats         PersonRoleStats[]
+  yearlyStats       PersonYearlyStats[]
+  lossReasons       PersonLossReasons?
+  merlinStats       PersonMerlinStats?
+  assassinStats     PersonAssassinStats?
+  evilTeammateStats PersonEvilTeammateStats?
 }
 
 model PersonRoleStats {
@@ -233,6 +244,15 @@ model PersonMerlinStats {
 }
 
 model PersonAssassinStats {
+  personId                 String      @id
+  personStats              PersonStats @relation(fields: [personId], references: [personId], onDelete: Cascade)
+  gamesPlayed              Int
+  wins                     Int
+  successfulAssassinations Int
+  failedAssassinations     Int
+}
+
+model PersonEvilTeammateStats {
   personId                 String      @id
   personStats              PersonStats @relation(fields: [personId], references: [personId], onDelete: Cascade)
   gamesPlayed              Int

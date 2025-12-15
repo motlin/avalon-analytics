@@ -37,6 +37,10 @@
 	color: #c62828;
 }
 
+.evilTeammateIcon {
+	color: #7b1fa2;
+}
+
 .statGrid {
 	display: grid;
 	grid-template-columns: repeat(2, 1fr);

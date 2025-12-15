@@ -11,12 +11,13 @@ function formatRate(numerator: number, denominator: number): string {
 }
 
 export function SpecialRoleStats({stats}: SpecialRoleStatsProps) {
-	const {merlinStats, assassinStats} = stats;
+	const {merlinStats, assassinStats, evilTeammateStats} = stats;
 
 	const showMerlin = merlinStats.gamesPlayed > 0;
 	const showAssassin = assassinStats.gamesPlayed > 0;
+	const showEvilTeammate = evilTeammateStats.gamesPlayed > 0;
 
-	if (!showMerlin && !showAssassin) {
+	if (!showMerlin && !showAssassin && !showEvilTeammate) {
 		return null;
 	}
 
@@ -99,6 +100,50 @@ export function SpecialRoleStats({stats}: SpecialRoleStatsProps) {
 									{formatRate(
 										assassinStats.successfulAssassinations,
 										assassinStats.successfulAssassinations + assassinStats.failedAssassinations,
+									)}
+								</span>
+							</div>
+						</div>
+					</div>
+				)}
+
+				{showEvilTeammate && (
+					<div className={styles.card}>
+						<h4 className={styles.cardTitle}>
+							<span className={styles.evilTeammateIcon}>Evil Teammate</span>
+						</h4>
+						<div className={styles.statGrid}>
+							<div className={styles.statItem}>
+								<span className={styles.statLabel}>Games Played</span>
+								<span className={styles.statValue}>{evilTeammateStats.gamesPlayed}</span>
+							</div>
+							<div className={styles.statItem}>
+								<span className={styles.statLabel}>Wins</span>
+								<span className={styles.statValue}>{evilTeammateStats.wins}</span>
+							</div>
+							<div className={styles.statItem}>
+								<span className={styles.statLabel}>Win Rate</span>
+								<span className={styles.statValueHighlight}>
+									{formatRate(evilTeammateStats.wins, evilTeammateStats.gamesPlayed)}
+								</span>
+							</div>
+							<div className={styles.statItem}>
+								<span className={styles.statLabel}>Successful Assassinations</span>
+								<span className={styles.statValueSuccess}>
+									{evilTeammateStats.successfulAssassinations}
+								</span>
+							</div>
+							<div className={styles.statItem}>
+								<span className={styles.statLabel}>Failed Assassinations</span>
+								<span className={styles.statValueDanger}>{evilTeammateStats.failedAssassinations}</span>
+							</div>
+							<div className={styles.statItem}>
+								<span className={styles.statLabel}>Assassination Accuracy</span>
+								<span className={styles.statValue}>
+									{formatRate(
+										evilTeammateStats.successfulAssassinations,
+										evilTeammateStats.successfulAssassinations +
+											evilTeammateStats.failedAssassinations,
 									)}
 								</span>
 							</div>

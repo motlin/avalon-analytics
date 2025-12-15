@@ -6,12 +6,14 @@ import {
 	type PlayerLossReasons as DbPlayerLossReasons,
 	type PlayerMerlinStats as DbPlayerMerlinStats,
 	type PlayerAssassinStats as DbPlayerAssassinStats,
+	type PlayerEvilTeammateStats as DbPlayerEvilTeammateStats,
 	type PersonStats as DbPersonStats,
 	type PersonRoleStats as DbPersonRoleStats,
 	type PersonYearlyStats as DbPersonYearlyStats,
 	type PersonLossReasons as DbPersonLossReasons,
 	type PersonMerlinStats as DbPersonMerlinStats,
 	type PersonAssassinStats as DbPersonAssassinStats,
+	type PersonEvilTeammateStats as DbPersonEvilTeammateStats,
 } from '@/db';
 
 /**
@@ -147,6 +149,14 @@ export interface PersonStatistics {
 		failedAssassinations: number;
 	};
 
+	// Evil teammate stats (non-assassin evil roles)
+	evilTeammateStats: {
+		gamesPlayed: number;
+		wins: number;
+		successfulAssassinations: number;
+		failedAssassinations: number;
+	};
+
 	// Year-by-year breakdown
 	yearlyStats: YearStats[];
 }
@@ -177,6 +187,7 @@ type PlayerStatsWithRelations = DbPlayerStats & {
 	lossReasons: DbPlayerLossReasons | null;
 	merlinStats: DbPlayerMerlinStats | null;
 	assassinStats: DbPlayerAssassinStats | null;
+	evilTeammateStats: DbPlayerEvilTeammateStats | null;
 };
 
 /**
@@ -188,6 +199,7 @@ type PersonStatsWithRelations = DbPersonStats & {
 	lossReasons: DbPersonLossReasons | null;
 	merlinStats: DbPersonMerlinStats | null;
 	assassinStats: DbPersonAssassinStats | null;
+	evilTeammateStats: DbPersonEvilTeammateStats | null;
 };
 
 /**
@@ -281,6 +293,12 @@ function transformDbStatsToPersonStatistics(
 			successfulAssassinations: dbStats.assassinStats?.successfulAssassinations ?? 0,
 			failedAssassinations: dbStats.assassinStats?.failedAssassinations ?? 0,
 		},
+		evilTeammateStats: {
+			gamesPlayed: dbStats.evilTeammateStats?.gamesPlayed ?? 0,
+			wins: dbStats.evilTeammateStats?.wins ?? 0,
+			successfulAssassinations: dbStats.evilTeammateStats?.successfulAssassinations ?? 0,
+			failedAssassinations: dbStats.evilTeammateStats?.failedAssassinations ?? 0,
+		},
 		yearlyStats,
 	};
 }
@@ -297,6 +315,7 @@ export async function loadPlayerStatsFromDb(uid: string): Promise<PersonStatisti
 			lossReasons: true,
 			merlinStats: true,
 			assassinStats: true,
+			evilTeammateStats: true,
 		},
 	});
 
@@ -319,6 +338,7 @@ export async function loadPersonStatsFromDb(personId: string): Promise<PersonSta
 			lossReasons: true,
 			merlinStats: true,
 			assassinStats: true,
+			evilTeammateStats: true,
 		},
 	});
 

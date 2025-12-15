@@ -114,6 +114,7 @@ interface FullStats {
 	lossReasons: LossReasons;
 	merlinStats: MerlinStats;
 	assassinStats: AssassinStats;
+	evilTeammateStats: AssassinStats;
 }
 
 interface GamePlayer {
@@ -123,7 +124,7 @@ interface GamePlayer {
 
 interface GameOutcome {
 	state: 'GOOD_WIN' | 'EVIL_WIN';
-	roles?: Array<{name: string; role: string; assassin: boolean}>;
+	roles?: Array<{name: string; role: string; assassin?: boolean}>;
 	reason?: string;
 	message?: string;
 	assassinated?: string;
@@ -217,6 +218,12 @@ function createEmptyStats(name: string, isMapped: boolean): FullStats {
 			survivedAssassination: 0,
 		},
 		assassinStats: {
+			gamesPlayed: 0,
+			wins: 0,
+			successfulAssassinations: 0,
+			failedAssassinations: 0,
+		},
+		evilTeammateStats: {
 			gamesPlayed: 0,
 			wins: 0,
 			successfulAssassinations: 0,
@@ -649,9 +656,21 @@ function processGameForStats(game: GameData, playerUid: string, stats: FullStats
 			game.outcome.assassinated &&
 			outcomeReason === 'Three successful missions'
 		) {
-			// Good won after three successful missions, and someone was assassinated
-			// This means the assassin tried but picked the wrong person
 			stats.assassinStats.failedAssassinations++;
+		}
+	} else if (isEvil) {
+		stats.evilTeammateStats.gamesPlayed++;
+		if (playerWon) {
+			stats.evilTeammateStats.wins++;
+		}
+		if (outcomeReason === 'Merlin assassinated') {
+			stats.evilTeammateStats.successfulAssassinations++;
+		} else if (
+			game.outcome.state === 'GOOD_WIN' &&
+			game.outcome.assassinated &&
+			outcomeReason === 'Three successful missions'
+		) {
+			stats.evilTeammateStats.failedAssassinations++;
 		}
 	}
 }
@@ -731,6 +750,7 @@ function buildPlayerInsertStatements(statsMap: Map<string, FullStats>, now: stri
 	const statements: string[] = [];
 
 	// Clear existing data
+	statements.push('DELETE FROM PlayerEvilTeammateStats;');
 	statements.push('DELETE FROM PlayerAssassinStats;');
 	statements.push('DELETE FROM PlayerMerlinStats;');
 	statements.push('DELETE FROM PlayerLossReasons;');
@@ -772,6 +792,11 @@ function buildPlayerInsertStatements(statsMap: Map<string, FullStats>, now: stri
 		// Assassin stats
 		statements.push(
 			`INSERT INTO PlayerAssassinStats (uid, gamesPlayed, wins, successfulAssassinations, failedAssassinations) VALUES ('${escapeSQL(uid)}', ${stats.assassinStats.gamesPlayed}, ${stats.assassinStats.wins}, ${stats.assassinStats.successfulAssassinations}, ${stats.assassinStats.failedAssassinations});`,
+		);
+
+		// Evil teammate stats
+		statements.push(
+			`INSERT INTO PlayerEvilTeammateStats (uid, gamesPlayed, wins, successfulAssassinations, failedAssassinations) VALUES ('${escapeSQL(uid)}', ${stats.evilTeammateStats.gamesPlayed}, ${stats.evilTeammateStats.wins}, ${stats.evilTeammateStats.successfulAssassinations}, ${stats.evilTeammateStats.failedAssassinations});`,
 		);
 	}
 
@@ -829,6 +854,7 @@ function buildPlayerUpsertStatements(statsMap: Map<string, FullStats>, now: stri
 	for (const [uid, stats] of statsMap) {
 		// Delete existing related records for this UID before inserting new ones
 		// This ensures clean replacement for the affected players only
+		statements.push(`DELETE FROM PlayerEvilTeammateStats WHERE uid = '${escapeSQL(uid)}';`);
 		statements.push(`DELETE FROM PlayerAssassinStats WHERE uid = '${escapeSQL(uid)}';`);
 		statements.push(`DELETE FROM PlayerMerlinStats WHERE uid = '${escapeSQL(uid)}';`);
 		statements.push(`DELETE FROM PlayerLossReasons WHERE uid = '${escapeSQL(uid)}';`);
@@ -870,6 +896,11 @@ function buildPlayerUpsertStatements(statsMap: Map<string, FullStats>, now: stri
 		statements.push(
 			`INSERT INTO PlayerAssassinStats (uid, gamesPlayed, wins, successfulAssassinations, failedAssassinations) VALUES ('${escapeSQL(uid)}', ${stats.assassinStats.gamesPlayed}, ${stats.assassinStats.wins}, ${stats.assassinStats.successfulAssassinations}, ${stats.assassinStats.failedAssassinations});`,
 		);
+
+		// Evil teammate stats
+		statements.push(
+			`INSERT INTO PlayerEvilTeammateStats (uid, gamesPlayed, wins, successfulAssassinations, failedAssassinations) VALUES ('${escapeSQL(uid)}', ${stats.evilTeammateStats.gamesPlayed}, ${stats.evilTeammateStats.wins}, ${stats.evilTeammateStats.successfulAssassinations}, ${stats.evilTeammateStats.failedAssassinations});`,
+		);
 	}
 
 	return statements;
@@ -879,6 +910,7 @@ function buildPersonInsertStatements(statsMap: Map<string, FullStats>, now: stri
 	const statements: string[] = [];
 
 	// Clear existing data
+	statements.push('DELETE FROM PersonEvilTeammateStats;');
 	statements.push('DELETE FROM PersonAssassinStats;');
 	statements.push('DELETE FROM PersonMerlinStats;');
 	statements.push('DELETE FROM PersonLossReasons;');
@@ -920,6 +952,11 @@ function buildPersonInsertStatements(statsMap: Map<string, FullStats>, now: stri
 		// Assassin stats
 		statements.push(
 			`INSERT INTO PersonAssassinStats (personId, gamesPlayed, wins, successfulAssassinations, failedAssassinations) VALUES ('${escapeSQL(personId)}', ${stats.assassinStats.gamesPlayed}, ${stats.assassinStats.wins}, ${stats.assassinStats.successfulAssassinations}, ${stats.assassinStats.failedAssassinations});`,
+		);
+
+		// Evil teammate stats
+		statements.push(
+			`INSERT INTO PersonEvilTeammateStats (personId, gamesPlayed, wins, successfulAssassinations, failedAssassinations) VALUES ('${escapeSQL(personId)}', ${stats.evilTeammateStats.gamesPlayed}, ${stats.evilTeammateStats.wins}, ${stats.evilTeammateStats.successfulAssassinations}, ${stats.evilTeammateStats.failedAssassinations});`,
 		);
 	}
 
@@ -1017,6 +1054,11 @@ function buildPersonUpsertStatements(statsMap: Map<string, FullStats>, now: stri
 		// Assassin stats
 		statements.push(
 			`INSERT INTO PersonAssassinStats (personId, gamesPlayed, wins, successfulAssassinations, failedAssassinations) VALUES ('${escapeSQL(personId)}', ${stats.assassinStats.gamesPlayed}, ${stats.assassinStats.wins}, ${stats.assassinStats.successfulAssassinations}, ${stats.assassinStats.failedAssassinations});`,
+		);
+
+		// Evil teammate stats
+		statements.push(
+			`INSERT INTO PersonEvilTeammateStats (personId, gamesPlayed, wins, successfulAssassinations, failedAssassinations) VALUES ('${escapeSQL(personId)}', ${stats.evilTeammateStats.gamesPlayed}, ${stats.evilTeammateStats.wins}, ${stats.evilTeammateStats.successfulAssassinations}, ${stats.evilTeammateStats.failedAssassinations});`,
 		);
 	}
 
