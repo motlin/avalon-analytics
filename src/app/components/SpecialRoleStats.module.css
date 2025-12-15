@@ -16,9 +16,9 @@
 
 .card {
 	padding: 1rem;
-	background-color: #f9f9f9;
+	background-color: hsl(var(--accent));
 	border-radius: 8px;
-	border: 1px solid #e0e0e0;
+	border: 1px solid hsl(var(--border));
 }
 
 .cardTitle {
@@ -26,19 +26,19 @@
 	font-size: 1rem;
 	font-weight: 600;
 	padding-bottom: 0.5rem;
-	border-bottom: 2px solid #e0e0e0;
+	border-bottom: 2px solid hsl(var(--border));
 }
 
 .merlinIcon {
-	color: #2e7d32;
+	color: hsl(var(--good-color));
 }
 
 .assassinIcon {
-	color: #c62828;
+	color: hsl(var(--evil-color));
 }
 
 .evilTeammateIcon {
-	color: #7b1fa2;
+	color: hsl(var(--special-color));
 }
 
 .statGrid {
@@ -55,7 +55,7 @@
 
 .statLabel {
 	font-size: 0.75rem;
-	color: #666;
+	color: hsl(var(--muted-foreground));
 	text-transform: uppercase;
 	letter-spacing: 0.025em;
 }
@@ -70,19 +70,19 @@
 	font-size: 1.25rem;
 	font-weight: 600;
 	font-variant-numeric: tabular-nums;
-	color: #1976d2;
+	color: hsl(var(--highlight-color));
 }
 
 .statValueSuccess {
 	font-size: 1.25rem;
 	font-weight: 600;
 	font-variant-numeric: tabular-nums;
-	color: #2e7d32;
+	color: hsl(var(--good-color));
 }
 
 .statValueDanger {
 	font-size: 1.25rem;
 	font-weight: 600;
 	font-variant-numeric: tabular-nums;
-	color: #c62828;
+	color: hsl(var(--evil-color));
 }

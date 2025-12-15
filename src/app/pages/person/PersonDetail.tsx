@@ -10,6 +10,7 @@ import {type Game, GameSchema} from '../../models/game';
 import {type PersonStatistics, loadPersonStatsFromDb} from '../../models/player-statistics';
 import {getPersonService} from '../../services/person';
 import {db, setupDb} from '@/db';
+import styles from './PersonDetail.module.css';
 
 const GAMES_PER_PAGE = 20;
 
@@ -44,7 +45,7 @@ export async function PersonDetail({params, request}: RequestInfo) {
 
 		if (!person) {
 			return (
-				<div style={{padding: '1rem'}}>
+				<div className={styles.notFoundContainer}>
 					<Breadcrumb
 						items={[{label: 'Home', href: '/'}, {label: 'Players', href: '/players'}, {label: 'Not Found'}]}
 					/>
@@ -89,7 +90,7 @@ export async function PersonDetail({params, request}: RequestInfo) {
 
 	if (!stats || games.length === 0) {
 		return (
-			<div style={{padding: '1rem'}}>
+			<div className={styles.notFoundContainer}>
 				<Breadcrumb
 					items={[{label: 'Home', href: '/'}, {label: 'Players', href: '/players'}, {label: 'Not Found'}]}
 				/>
@@ -103,59 +104,41 @@ export async function PersonDetail({params, request}: RequestInfo) {
 	stats.personName = personName!;
 
 	return (
-		<div style={{padding: '1rem', maxWidth: '1200px', margin: '0 auto'}}>
+		<div className={styles.pageContainer}>
 			<Breadcrumb
 				items={[{label: 'Home', href: '/'}, {label: 'Players', href: '/players'}, {label: personName!}]}
 			/>
 
 			{/* Header Section */}
-			<div style={{marginBottom: '2rem'}}>
-				<h1 style={{margin: '0 0 0.5rem 0'}}>Player Statistics: {personName}</h1>
-				<p style={{margin: 0, color: '#666', fontSize: '0.875rem'}}>
+			<div className={styles.headerSection}>
+				<h1 className={styles.pageTitle}>Player Statistics: {personName}</h1>
+				<p className={styles.linkedAccounts}>
 					{personUids.length} linked account{personUids.length !== 1 ? 's' : ''}
 				</p>
 			</div>
 
 			{/* Overview Summary */}
-			<div
-				style={{
-					display: 'grid',
-					gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-					gap: '1rem',
-					marginBottom: '2rem',
-					padding: '1.5rem',
-					backgroundColor: '#f5f5f5',
-					borderRadius: '8px',
-				}}
-			>
-				<div style={{textAlign: 'center'}}>
-					<div style={{fontSize: '2rem', fontWeight: 'bold'}}>{stats.totalGames}</div>
-					<div style={{color: '#666', fontSize: '0.875rem'}}>Total Games</div>
+			<div className={styles.summaryGrid}>
+				<div className={styles.summaryItem}>
+					<div className={styles.summaryValue}>{stats.totalGames}</div>
+					<div className={styles.summaryLabel}>Total Games</div>
 				</div>
-				<div style={{textAlign: 'center'}}>
-					<div style={{fontSize: '2rem', fontWeight: 'bold', color: '#4caf50'}}>{stats.totalWins}</div>
-					<div style={{color: '#666', fontSize: '0.875rem'}}>Wins</div>
+				<div className={styles.summaryItem}>
+					<div className={styles.summaryValueWins}>{stats.totalWins}</div>
+					<div className={styles.summaryLabel}>Wins</div>
 				</div>
-				<div style={{textAlign: 'center'}}>
-					<div style={{fontSize: '2rem', fontWeight: 'bold', color: '#f44336'}}>{stats.totalLosses}</div>
-					<div style={{color: '#666', fontSize: '0.875rem'}}>Losses</div>
+				<div className={styles.summaryItem}>
+					<div className={styles.summaryValueLosses}>{stats.totalLosses}</div>
+					<div className={styles.summaryLabel}>Losses</div>
 				</div>
-				<div style={{textAlign: 'center'}}>
-					<div style={{fontSize: '2rem', fontWeight: 'bold', color: '#1976d2'}}>
-						{stats.overallWinRate.toFixed(0)}%
-					</div>
-					<div style={{color: '#666', fontSize: '0.875rem'}}>Win Rate</div>
+				<div className={styles.summaryItem}>
+					<div className={styles.summaryValueRate}>{stats.overallWinRate.toFixed(0)}%</div>
+					<div className={styles.summaryLabel}>Win Rate</div>
 				</div>
 			</div>
 
 			{/* Detailed Statistics Sections */}
-			<div
-				style={{
-					display: 'grid',
-					gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
-					gap: '2rem',
-				}}
-			>
+			<div className={styles.statsGrid}>
 				<RoleStatsTable stats={stats} />
 				<div>
 					<LossReasonStats stats={stats} />
@@ -194,10 +177,10 @@ function GameHistorySection({games, playerUids, personId, currentPage, gamesPerP
 	const uidSet = new Set(playerUids);
 
 	return (
-		<div style={{marginTop: '2rem'}}>
-			<div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem'}}>
-				<h3 style={{margin: 0}}>Game History</h3>
-				<span style={{color: '#666', fontSize: '0.875rem'}}>
+		<div className={styles.gameHistorySection}>
+			<div className={styles.gameHistoryHeader}>
+				<h3 className={styles.gameHistoryTitle}>Game History</h3>
+				<span className={styles.gameHistoryCount}>
 					Showing {startIndex + 1}-{endIndex} of {totalGames} games
 				</span>
 			</div>
@@ -234,72 +217,43 @@ function GameHistorySection({games, playerUids, personId, currentPage, gamesPerP
 					return outcomeReason ? reasons[outcomeReason] || outcomeReason : null;
 				};
 
+				const gameCardClasses = `${styles.gameCard} ${playerWon ? styles.gameCardWin : styles.gameCardLoss}`;
+
 				return (
 					<div
 						key={game.id}
-						style={{
-							border: '2px solid',
-							borderColor: playerWon ? '#4caf50' : '#f44336',
-							padding: '1rem',
-							marginBottom: '1rem',
-							backgroundColor: playerWon ? '#f8fff8' : '#fff8f8',
-							borderRadius: '8px',
-							boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-						}}
+						className={gameCardClasses}
 					>
-						<div
-							style={{
-								display: 'flex',
-								justifyContent: 'space-between',
-								alignItems: 'flex-start',
-							}}
-						>
-							<div style={{flex: 1}}>
-								<h3 style={{margin: '0 0 0.5rem 0'}}>
+						<div className={styles.gameCardContent}>
+							<div className={styles.gameCardMain}>
+								<h3 className={styles.gameCardTitle}>
 									<a
 										href={`/game/${game.id}`}
-										style={{textDecoration: 'none', color: '#0066cc'}}
+										className={styles.gameCardLink}
 									>
 										<LocalTimestamp isoString={game.timeCreated.toISOString()} />
 									</a>
 								</h3>
 
-								<div
-									style={{
-										display: 'flex',
-										flexWrap: 'wrap',
-										gap: '1rem',
-										fontSize: '0.9rem',
-									}}
-								>
-									<div style={{display: 'flex', alignItems: 'center', gap: '0.5rem'}}>
+								<div className={styles.gameCardDetails}>
+									<div className={styles.gameCardDetail}>
 										<strong>Result:</strong>
-										<span
-											style={{
-												color: playerWon ? '#4caf50' : '#f44336',
-												fontWeight: 'bold',
-											}}
-										>
+										<span className={playerWon ? styles.resultWin : styles.resultLoss}>
 											{playerWon ? 'Victory' : 'Defeat'}
 										</span>
 									</div>
 
 									{playerRole && (
-										<div style={{display: 'flex', alignItems: 'center', gap: '0.5rem'}}>
+										<div className={styles.gameCardDetail}>
 											<strong>Role:</strong>
-											<span
-												style={{
-													color: isEvil ? '#c62828' : '#2e7d32',
-													fontWeight: 'bold',
-												}}
-											>
+											<span className={isEvil ? styles.roleEvil : styles.roleGood}>
 												{playerRole.role}
 											</span>
 										</div>
 									)}
 
 									{game.outcome && (
-										<div style={{display: 'flex', alignItems: 'center', gap: '0.5rem'}}>
+										<div className={styles.gameCardDetail}>
 											<strong>Outcome:</strong>
 											<span>{getOutcomeDescription()}</span>
 										</div>
@@ -308,15 +262,7 @@ function GameHistorySection({games, playerUids, personId, currentPage, gamesPerP
 
 								{(wasAssassinated || wasMerlin) && (
 									<div
-										style={{
-											marginTop: '0.5rem',
-											padding: '0.5rem',
-											backgroundColor: wasAssassinated ? '#fff3cd' : '#e3f2fd',
-											border: '1px solid',
-											borderColor: wasAssassinated ? '#ffeaa7' : '#90caf9',
-											borderRadius: '4px',
-											fontSize: '0.9rem',
-										}}
+										className={`${styles.specialEventBadge} ${wasAssassinated ? styles.assassinatedBadge : styles.survivedBadge}`}
 									>
 										{wasAssassinated && (
 											<span>
@@ -333,7 +279,7 @@ function GameHistorySection({games, playerUids, personId, currentPage, gamesPerP
 							</div>
 						</div>
 
-						<div style={{marginTop: '0.75rem', fontSize: '0.85rem', color: '#666'}}>
+						<div className={styles.playersList}>
 							<strong>Players:</strong> {game.players.map((p) => p.name).join(', ')}
 						</div>
 					</div>
@@ -342,26 +288,11 @@ function GameHistorySection({games, playerUids, personId, currentPage, gamesPerP
 
 			{/* Pagination Controls */}
 			{totalPages > 1 && (
-				<div
-					style={{
-						display: 'flex',
-						justifyContent: 'center',
-						alignItems: 'center',
-						gap: '0.5rem',
-						marginTop: '1.5rem',
-						flexWrap: 'wrap',
-					}}
-				>
+				<div className={styles.pagination}>
 					{currentPage > 1 && (
 						<a
 							href={`/person/${personId}?page=${currentPage - 1}`}
-							style={{
-								padding: '0.5rem 1rem',
-								border: '1px solid #ddd',
-								borderRadius: '4px',
-								textDecoration: 'none',
-								color: '#0066cc',
-							}}
+							className={styles.paginationLink}
 						>
 							← Previous
 						</a>
@@ -374,20 +305,15 @@ function GameHistorySection({games, playerUids, personId, currentPage, gamesPerP
 						})
 						.map((page, index, filtered) => {
 							const showEllipsis = index > 0 && page - filtered[index - 1] > 1;
+							const numberClasses = `${styles.paginationNumber} ${
+								page === currentPage ? styles.paginationNumberActive : styles.paginationNumberInactive
+							}`;
 							return (
 								<span key={page}>
-									{showEllipsis && <span style={{padding: '0 0.25rem'}}>…</span>}
+									{showEllipsis && <span className={styles.paginationEllipsis}>…</span>}
 									<a
 										href={`/person/${personId}?page=${page}`}
-										style={{
-											padding: '0.5rem 0.75rem',
-											border: '1px solid',
-											borderColor: page === currentPage ? '#0066cc' : '#ddd',
-											borderRadius: '4px',
-											textDecoration: 'none',
-											color: page === currentPage ? '#fff' : '#0066cc',
-											backgroundColor: page === currentPage ? '#0066cc' : 'transparent',
-										}}
+										className={numberClasses}
 									>
 										{page}
 									</a>
@@ -398,13 +324,7 @@ function GameHistorySection({games, playerUids, personId, currentPage, gamesPerP
 					{currentPage < totalPages && (
 						<a
 							href={`/person/${personId}?page=${currentPage + 1}`}
-							style={{
-								padding: '0.5rem 1rem',
-								border: '1px solid #ddd',
-								borderRadius: '4px',
-								textDecoration: 'none',
-								color: '#0066cc',
-							}}
+							className={styles.paginationLink}
 						>
 							Next →
 						</a>

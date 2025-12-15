@@ -1,0 +1,233 @@
+.pageContainer {
+	padding: 1rem;
+	max-width: 1200px;
+	margin: 0 auto;
+}
+
+.headerSection {
+	margin-bottom: 2rem;
+}
+
+.pageTitle {
+	margin: 0 0 0.5rem 0;
+}
+
+.linkedAccounts {
+	margin: 0;
+	color: hsl(var(--muted-foreground));
+	font-size: 0.875rem;
+}
+
+/* 📊 Overview Summary Grid */
+.summaryGrid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+	gap: 1rem;
+	margin-bottom: 2rem;
+	padding: 1.5rem;
+	background-color: hsl(var(--muted));
+	border-radius: 8px;
+}
+
+.summaryItem {
+	text-align: center;
+}
+
+.summaryValue {
+	font-size: 2rem;
+	font-weight: bold;
+}
+
+.summaryValueWins {
+	font-size: 2rem;
+	font-weight: bold;
+	color: hsl(var(--good-color));
+}
+
+.summaryValueLosses {
+	font-size: 2rem;
+	font-weight: bold;
+	color: hsl(var(--evil-color));
+}
+
+.summaryValueRate {
+	font-size: 2rem;
+	font-weight: bold;
+	color: hsl(var(--highlight-color));
+}
+
+.summaryLabel {
+	color: hsl(var(--muted-foreground));
+	font-size: 0.875rem;
+}
+
+/* 📋 Stats Grid Layout */
+.statsGrid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+	gap: 2rem;
+}
+
+/* 🎮 Game History Section */
+.gameHistorySection {
+	margin-top: 2rem;
+}
+
+.gameHistoryHeader {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 1rem;
+}
+
+.gameHistoryTitle {
+	margin: 0;
+}
+
+.gameHistoryCount {
+	color: hsl(var(--muted-foreground));
+	font-size: 0.875rem;
+}
+
+/* 🃏 Game Card */
+.gameCard {
+	border: 2px solid;
+	padding: 1rem;
+	margin-bottom: 1rem;
+	border-radius: 8px;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.gameCardWin {
+	border-color: hsl(var(--good-color));
+	background-color: hsl(var(--win-background));
+}
+
+.gameCardLoss {
+	border-color: hsl(var(--evil-color));
+	background-color: hsl(var(--loss-background));
+}
+
+.gameCardContent {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+}
+
+.gameCardMain {
+	flex: 1;
+}
+
+.gameCardTitle {
+	margin: 0 0 0.5rem 0;
+}
+
+.gameCardLink {
+	text-decoration: none;
+	color: hsl(var(--highlight-color));
+}
+
+.gameCardDetails {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 1rem;
+	font-size: 0.9rem;
+}
+
+.gameCardDetail {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.resultWin {
+	color: hsl(var(--good-color));
+	font-weight: bold;
+}
+
+.resultLoss {
+	color: hsl(var(--evil-color));
+	font-weight: bold;
+}
+
+.roleGood {
+	color: hsl(var(--good-color));
+	font-weight: bold;
+}
+
+.roleEvil {
+	color: hsl(var(--evil-color));
+	font-weight: bold;
+}
+
+/* ⚠️ Special Event Badges */
+.specialEventBadge {
+	margin-top: 0.5rem;
+	padding: 0.5rem;
+	border: 1px solid;
+	border-radius: 4px;
+	font-size: 0.9rem;
+}
+
+.assassinatedBadge {
+	background-color: hsl(var(--warning-background));
+	border-color: hsl(var(--warning-border));
+}
+
+.survivedBadge {
+	background-color: hsl(var(--info-background));
+	border-color: hsl(var(--info-border));
+}
+
+/* 👥 Players List */
+.playersList {
+	margin-top: 0.75rem;
+	font-size: 0.85rem;
+	color: hsl(var(--muted-foreground));
+}
+
+/* 📄 Pagination */
+.pagination {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 0.5rem;
+	margin-top: 1.5rem;
+	flex-wrap: wrap;
+}
+
+.paginationLink {
+	padding: 0.5rem 1rem;
+	border: 1px solid hsl(var(--border));
+	border-radius: 4px;
+	text-decoration: none;
+	color: hsl(var(--highlight-color));
+}
+
+.paginationNumber {
+	padding: 0.5rem 0.75rem;
+	border: 1px solid;
+	border-radius: 4px;
+	text-decoration: none;
+}
+
+.paginationNumberActive {
+	border-color: hsl(var(--highlight-color));
+	color: hsl(var(--primary-foreground));
+	background-color: hsl(var(--highlight-color));
+}
+
+.paginationNumberInactive {
+	border-color: hsl(var(--border));
+	color: hsl(var(--highlight-color));
+	background-color: transparent;
+}
+
+.paginationEllipsis {
+	padding: 0 0.25rem;
+}
+
+/* 🚫 Error / Not Found States */
+.notFoundContainer {
+	padding: 1rem;
+}

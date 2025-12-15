@@ -42,5 +42,6 @@ import '@/app/components/StartGameEventHandler.module.css';
 import '@/app/components/ActionPane.module.css';
 import '@/app/pages/game/GamesList.module.css';
 import '@/app/pages/players/PlayersPage.module.css';
+import '@/app/pages/person/PersonDetail.module.css';
 
 initClient();
