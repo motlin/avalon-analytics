@@ -193,6 +193,7 @@ model PersonStats {
   merlinStats       PersonMerlinStats?
   assassinStats     PersonAssassinStats?
   evilTeammateStats PersonEvilTeammateStats?
+  annotationStats   PersonAnnotationStats[]
 }
 
 model PersonRoleStats {
@@ -270,4 +271,68 @@ model PersonDateRange {
   createdAt DateTime
 
   @@index([personId])
+}
+
+model PersonAnnotationStats {
+  id            String      @id @default(uuid())
+  personId      String
+  personStats   PersonStats @relation(fields: [personId], references: [personId], onDelete: Cascade)
+  predicateName String
+  fires         Int         @default(0)
+  opportunities Int         @default(0)
+  createdAt     DateTime
+  updatedAt     DateTime    @updatedAt
+
+  alignmentBreakdown PersonAnnotationAlignmentStats[]
+  roleBreakdown      PersonAnnotationRoleStats[]
+
+  @@unique([personId, predicateName])
+  @@index([predicateName])
+}
+
+model PersonAnnotationAlignmentStats {
+  id                String                @id @default(uuid())
+  annotationStatsId String
+  annotationStats   PersonAnnotationStats @relation(fields: [annotationStatsId], references: [id], onDelete: Cascade)
+  alignment         String
+  fires             Int                   @default(0)
+  opportunities     Int                   @default(0)
+
+  @@unique([annotationStatsId, alignment])
+}
+
+model PersonAnnotationRoleStats {
+  id                String                @id @default(uuid())
+  annotationStatsId String
+  annotationStats   PersonAnnotationStats @relation(fields: [annotationStatsId], references: [id], onDelete: Cascade)
+  role              String
+  fires             Int                   @default(0)
+  opportunities     Int                   @default(0)
+
+  @@unique([annotationStatsId, role])
+}
+
+model GlobalAnnotationBaseline {
+  predicateName      String   @id
+  totalFires         Int      @default(0)
+  totalOpportunities Int      @default(0)
+  mappedPeopleCount  Int      @default(0)
+  goodFires          Int      @default(0)
+  goodOpportunities  Int      @default(0)
+  evilFires          Int      @default(0)
+  evilOpportunities  Int      @default(0)
+  updatedAt          DateTime @updatedAt
+
+  roleBaselines GlobalAnnotationRoleBaseline[]
+}
+
+model GlobalAnnotationRoleBaseline {
+  id            String                   @id @default(uuid())
+  predicateName String
+  baseline      GlobalAnnotationBaseline @relation(fields: [predicateName], references: [predicateName], onDelete: Cascade)
+  role          String
+  fires         Int                      @default(0)
+  opportunities Int                      @default(0)
+
+  @@unique([predicateName, role])
 }
