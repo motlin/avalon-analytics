@@ -1,0 +1,163 @@
+.container {
+	margin-bottom: 2rem;
+}
+
+.title {
+	margin: 0 0 1rem 0;
+	font-size: 1.25rem;
+	font-weight: 600;
+}
+
+.emptyMessage {
+	color: hsl(var(--muted-foreground));
+	font-style: italic;
+}
+
+.summary {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 1rem;
+	margin-bottom: 1rem;
+	padding: 0.75rem;
+	background-color: hsl(var(--muted));
+	border-radius: 0.375rem;
+	font-size: 0.875rem;
+}
+
+.summaryItem {
+	display: flex;
+	align-items: center;
+	gap: 0.25rem;
+}
+
+.aboveCount {
+	color: hsl(0, 70%, 50%);
+	font-weight: 600;
+}
+
+.belowCount {
+	color: hsl(120, 50%, 35%);
+	font-weight: 600;
+}
+
+.significantCount {
+	color: hsl(var(--foreground));
+	font-weight: 600;
+}
+
+.tableWrapper {
+	overflow-x: auto;
+}
+
+.table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 0.875rem;
+}
+
+.table th,
+.table td {
+	padding: 0.5rem 0.75rem;
+	text-align: left;
+	border-bottom: 1px solid hsl(var(--border));
+}
+
+.headerBehavior {
+	font-weight: 600;
+	background-color: hsl(var(--muted));
+	text-align: left;
+}
+
+.headerNum {
+	font-weight: 600;
+	background-color: hsl(var(--muted));
+	text-align: right;
+}
+
+.dataRow:hover {
+	filter: brightness(0.95);
+}
+
+.behaviorCell {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	font-weight: 500;
+}
+
+.rarityDot {
+	display: inline-block;
+	width: 0.5rem;
+	height: 0.5rem;
+	border-radius: 50%;
+	flex-shrink: 0;
+}
+
+.rateCell {
+	text-align: right;
+	font-variant-numeric: tabular-nums;
+}
+
+.smoothedRate {
+	font-weight: 600;
+}
+
+.rawRate {
+	margin-left: 0.5rem;
+	color: hsl(var(--muted-foreground));
+	font-size: 0.75rem;
+}
+
+.baselineCell {
+	text-align: right;
+	font-variant-numeric: tabular-nums;
+}
+
+.baselineRate {
+	color: hsl(var(--muted-foreground));
+}
+
+.directionArrow {
+	margin-left: 0.25rem;
+}
+
+.confidenceCell {
+	text-align: right;
+	font-variant-numeric: tabular-nums;
+	color: hsl(var(--muted-foreground));
+	font-size: 0.75rem;
+}
+
+.rankCell {
+	text-align: right;
+	font-variant-numeric: tabular-nums;
+}
+
+.significanceMarker {
+	color: hsl(var(--foreground));
+	font-weight: 700;
+	margin-left: 0.25rem;
+}
+
+.legend {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 1rem;
+	margin-top: 0.75rem;
+	font-size: 0.75rem;
+	color: hsl(var(--muted-foreground));
+}
+
+.legendItem {
+	display: flex;
+	align-items: center;
+	gap: 0.25rem;
+}
+
+.legendSwatch {
+	display: inline-block;
+	width: 1rem;
+	height: 1rem;
+	border: 1px solid hsl(var(--border));
+	border-radius: 0.125rem;
+}
