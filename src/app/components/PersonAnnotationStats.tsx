@@ -81,7 +81,12 @@ function AnnotationRow({statistic}: {statistic: PersonAnnotationStatistic}) {
 					className={styles.rarityDot}
 					style={{backgroundColor: RARITY_CSS_COLORS[statistic.rarity]}}
 				/>
-				{formatPredicateName(statistic.predicateName)}
+				<a
+					href={`/predicate/${statistic.predicateName}`}
+					className={styles.predicateLink}
+				>
+					{formatPredicateName(statistic.predicateName)}
+				</a>
 			</td>
 			<td className={styles.rateCell}>
 				<span className={styles.smoothedRate}>{formatPercent(statistic.smoothedRate)}</span>

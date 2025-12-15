@@ -85,6 +85,16 @@
 	font-weight: 500;
 }
 
+.predicateLink {
+	color: inherit;
+	text-decoration: none;
+}
+
+.predicateLink:hover {
+	text-decoration: underline;
+	color: hsl(var(--primary));
+}
+
 .rarityDot {
 	display: inline-block;
 	width: 0.5rem;
