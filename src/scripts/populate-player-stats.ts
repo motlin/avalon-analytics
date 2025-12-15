@@ -161,6 +161,37 @@ function getOutcomeReason(outcome: GameOutcome): OutcomeReason | null {
 	return reasonMap[reason] ?? null;
 }
 
+/**
+ * Normalize game data to handle schema evolution.
+ *
+ * Old schema: role="ASSASSIN" without assassin boolean
+ * New schema: role="EVIL MINION" with assassin=true
+ *
+ * This function normalizes assassins to role="ASSASSIN" so all
+ * downstream code can simply check the role.
+ */
+function normalizeGameData(game: GameData): GameData {
+	if (!game.outcome?.roles) {
+		return game;
+	}
+
+	const normalizedRoles = game.outcome.roles.map((roleData) => {
+		const {assassin, ...rest} = roleData;
+		if (assassin === true || normalizeRole(roleData.role) === 'ASSASSIN') {
+			return {...rest, role: 'ASSASSIN'};
+		}
+		return rest;
+	});
+
+	return {
+		...game,
+		outcome: {
+			...game.outcome,
+			roles: normalizedRoles,
+		},
+	};
+}
+
 function createEmptyStats(name: string, isMapped: boolean): FullStats {
 	return {
 		name,
@@ -391,12 +422,13 @@ async function getAllGames(local: boolean): Promise<GameData[]> {
 			try {
 				const parsed = JSON.parse(raw.gameJson);
 				if (parsed.players && Array.isArray(parsed.players)) {
-					games.push({
+					const game: GameData = {
 						id: raw.firebaseKey,
 						players: parsed.players,
 						outcome: parsed.outcome,
 						timeCreated: new Date(raw.createdAt),
-					});
+					};
+					games.push(normalizeGameData(game));
 				}
 			} catch {
 				// Skip invalid games
@@ -463,12 +495,13 @@ async function getGamesSince(local: boolean, since: Date): Promise<GameData[]> {
 			try {
 				const parsed = JSON.parse(raw.gameJson);
 				if (parsed.players && Array.isArray(parsed.players)) {
-					games.push({
+					const game: GameData = {
 						id: raw.firebaseKey,
 						players: parsed.players,
 						outcome: parsed.outcome,
 						timeCreated: new Date(raw.createdAt),
-					});
+					};
+					games.push(normalizeGameData(game));
 				}
 			} catch {
 				// Skip invalid games
@@ -533,11 +566,8 @@ function processGameForStats(game: GameData, playerUid: string, stats: FullStats
 		}
 	}
 
-	// Role stats
-	// For role stats, use "ASSASSIN" when the player was the designated assassin (assassin=true)
-	// This merges old schema (EVIL MINION with assassin=true) with new schema (ASSASSIN role)
-	const roleForStats = roleData?.assassin === true ? 'ASSASSIN' : normalizedRole;
-	if (roleForStats) {
+	if (normalizedRole) {
+		const roleForStats = normalizedRole;
 		let roleStats = stats.roleStats.get(roleForStats);
 		if (!roleStats) {
 			roleStats = createEmptyRoleStats();
@@ -607,10 +637,7 @@ function processGameForStats(game: GameData, playerUid: string, stats: FullStats
 		}
 	}
 
-	// Assassin stats - check roleData.assassin boolean (handles both old and new schemas)
-	// Old schema: role="EVIL MINION" with assassin=true
-	// New schema: role="ASSASSIN" with assassin=true
-	if (roleData?.assassin === true) {
+	if (normalizedRole === 'ASSASSIN') {
 		stats.assassinStats.gamesPlayed++;
 		if (playerWon) {
 			stats.assassinStats.wins++;
