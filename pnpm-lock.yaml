@@ -86,6 +86,9 @@ importers:
       rwsdk:
         specifier: 1.0.0-beta.39
         version: 1.0.0-beta.39(@cloudflare/vite-plugin@1.17.0(vite@7.2.4(@types/node@24.5.2)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.1))(workerd@1.20251202.0)(wrangler@4.53.0(@cloudflare/workers-types@4.20251209.0)))(capnweb@0.2.0)(react-dom@19.3.0-canary-fb2177c1-20251114(react@19.3.0-canary-fb2177c1-20251114))(react-server-dom-webpack@19.3.0-canary-fb2177c1-20251114(react-dom@19.3.0-canary-fb2177c1-20251114(react@19.3.0-canary-fb2177c1-20251114))(react@19.3.0-canary-fb2177c1-20251114)(webpack@5.100.0(esbuild@0.27.1)))(react@19.3.0-canary-fb2177c1-20251114)(typescript@5.9.3)(vite@7.2.4(@types/node@24.5.2)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.1))(wrangler@4.53.0(@cloudflare/workers-types@4.20251209.0))
+      simple-statistics:
+        specifier: ^7.8.8
+        version: 7.8.8
       tailwind-merge:
         specifier: ^3.4.0
         version: 3.4.0
@@ -4648,6 +4651,9 @@ packages:
   signal-exit@4.1.0:
     resolution: {integrity: sha512-bzyZ1e88w9O1iNJbKnOlvYTrWPDl46O1bG0D3XInv+9tkPrxrN8jUUTiFlDkkmKWgn1M6CfIA13SuGqOa9Korw==}
     engines: {node: '>=14'}
+
+  simple-statistics@7.8.8:
+    resolution: {integrity: sha512-CUtP0+uZbcbsFpqEyvNDYjJCl+612fNgjT8GaVuvMG7tBuJg8gXGpsP5M7X658zy0IcepWOZ6nPBu1Qb9ezA1w==}
 
   simple-swizzle@0.2.2:
     resolution: {integrity: sha512-JA//kQgZtbuY83m+xT+tXJkmJncGMTFT+C+g2h2R9uxkYIrE2yy9sgmcLhCnw57/WSD+Eh3J97FPEDFnbXnDUg==}
@@ -10181,6 +10187,8 @@ snapshots:
   signal-exit@3.0.7: {}
 
   signal-exit@4.1.0: {}
+
+  simple-statistics@7.8.8: {}
 
   simple-swizzle@0.2.2:
     dependencies:
