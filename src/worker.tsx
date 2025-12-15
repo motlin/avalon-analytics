@@ -10,6 +10,7 @@ import {HomePage} from '@/app/pages/HomePage';
 import {peopleRoutes} from '@/app/pages/people/routes';
 import {personRoutes} from '@/app/pages/person/routes';
 import {playersRoutes} from '@/app/pages/players/routes';
+import {predicateRoutes} from '@/app/pages/predicate/routes';
 import {userRoutes} from '@/app/pages/user/routes';
 import {setupFirestoreRestService} from '@/app/services/firestore-rest';
 import {db, setupDb, type User} from '@/db';
@@ -88,5 +89,6 @@ export default defineApp([
 		...peopleRoutes,
 		...personRoutes,
 		...playersRoutes,
+		...predicateRoutes,
 	]),
 ]);
