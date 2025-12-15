@@ -6,6 +6,12 @@ import {LossReasonStats} from '../../components/LossReasonStats';
 import {RoleStatsTable} from '../../components/RoleStatsTable';
 import {SpecialRoleStats} from '../../components/SpecialRoleStats';
 import {YearlyStatsTable} from '../../components/YearlyStatsTable';
+import {
+	type PersonAnnotationProfile,
+	computePersonAnnotationProfile,
+	loadGlobalAnnotationBaselines,
+	loadPersonAnnotationStats,
+} from '../../models/annotationStatistics';
 import {type Game, GameSchema} from '../../models/game';
 import {type PersonStatistics, loadPersonStatsFromDb} from '../../models/player-statistics';
 import {getPersonService} from '../../services/person';
@@ -32,6 +38,7 @@ export async function PersonDetail({params, request}: RequestInfo) {
 	let personName: string | null = null;
 	let personUids: string[] = [];
 	let stats: PersonStatistics | null = null;
+	let annotationProfile: PersonAnnotationProfile | null = null;
 
 	try {
 		await setupDb(env);
@@ -60,6 +67,16 @@ export async function PersonDetail({params, request}: RequestInfo) {
 
 		// Load pre-computed stats from database
 		stats = await loadPersonStatsFromDb(personId);
+
+		// Load annotation stats and compute profile
+		const [rawAnnotationStats, baselines] = await Promise.all([
+			loadPersonAnnotationStats(personId, db),
+			loadGlobalAnnotationBaselines(db),
+		]);
+
+		if (rawAnnotationStats.length > 0) {
+			annotationProfile = computePersonAnnotationProfile(rawAnnotationStats, baselines);
+		}
 
 		// Fetch games for game history section
 		const uidPlaceholders = personUids.map(() => '?').join(', ');
@@ -148,6 +165,9 @@ export async function PersonDetail({params, request}: RequestInfo) {
 
 			<YearlyStatsTable stats={stats} />
 
+			{/* Annotation Statistics Section */}
+			{annotationProfile && <AnnotationStatsSummary profile={annotationProfile} />}
+
 			{/* Game History Section */}
 			<GameHistorySection
 				games={games}
@@ -156,6 +176,42 @@ export async function PersonDetail({params, request}: RequestInfo) {
 				currentPage={currentPage}
 				gamesPerPage={GAMES_PER_PAGE}
 			/>
+		</div>
+	);
+}
+
+interface AnnotationStatsSummaryProps {
+	profile: PersonAnnotationProfile;
+}
+
+/**
+ * Summary view of annotation statistics.
+ * This is a placeholder until the full PersonAnnotationStats component is implemented.
+ */
+function AnnotationStatsSummary({profile}: AnnotationStatsSummaryProps) {
+	const {summary} = profile;
+
+	return (
+		<div className={styles.annotationSection}>
+			<h3 className={styles.sectionTitle}>Behavioral Patterns</h3>
+			<div className={styles.annotationSummary}>
+				<div className={styles.annotationSummaryItem}>
+					<span className={styles.annotationSummaryValue}>{summary.totalPredicates}</span>
+					<span className={styles.annotationSummaryLabel}>Behaviors Tracked</span>
+				</div>
+				<div className={styles.annotationSummaryItem}>
+					<span className={styles.annotationSummaryValue}>{summary.significantDeviations}</span>
+					<span className={styles.annotationSummaryLabel}>Significant Deviations</span>
+				</div>
+				<div className={styles.annotationSummaryItem}>
+					<span className={styles.annotationSummaryValueAbove}>{summary.aboveBaseline}</span>
+					<span className={styles.annotationSummaryLabel}>Above Baseline</span>
+				</div>
+				<div className={styles.annotationSummaryItem}>
+					<span className={styles.annotationSummaryValueBelow}>{summary.belowBaseline}</span>
+					<span className={styles.annotationSummaryLabel}>Below Baseline</span>
+				</div>
+			</div>
 		</div>
 	);
 }

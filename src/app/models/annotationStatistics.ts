@@ -233,3 +233,71 @@ function computeSummary(annotations: PersonAnnotationStatistic[]): PersonAnnotat
 		belowBaseline,
 	};
 }
+
+// ============================================================================
+// Data Loading Functions
+// ============================================================================
+
+/**
+ * Loads a person's raw annotation stats from the database.
+ * Returns data in the format expected by computePersonAnnotationProfile().
+ *
+ * @param personId - The person's unique identifier
+ * @param db - The Prisma database client
+ * @returns Array of raw person annotation stats
+ */
+export async function loadPersonAnnotationStats(
+	personId: string,
+	db: {
+		personAnnotationStats: {
+			findMany: (args: {
+				where: {personId: string};
+				select: {predicateName: true; fires: true; opportunities: true};
+			}) => Promise<Array<{predicateName: string; fires: number; opportunities: number}>>;
+		};
+	},
+): Promise<RawPersonAnnotationStat[]> {
+	const dbStats = await db.personAnnotationStats.findMany({
+		where: {personId},
+		select: {
+			predicateName: true,
+			fires: true,
+			opportunities: true,
+		},
+	});
+
+	return dbStats.map((stat) => ({
+		predicateName: stat.predicateName,
+		fires: stat.fires,
+		opportunities: stat.opportunities,
+	}));
+}
+
+/**
+ * Loads all global annotation baselines from the database.
+ * Returns data in the format expected by computePersonAnnotationProfile().
+ *
+ * @param db - The Prisma database client
+ * @returns Array of predicate baselines
+ */
+export async function loadGlobalAnnotationBaselines(db: {
+	globalAnnotationBaseline: {
+		findMany: (args: {
+			select: {predicateName: true; totalFires: true; totalOpportunities: true};
+		}) => Promise<Array<{predicateName: string; totalFires: number; totalOpportunities: number}>>;
+	};
+}): Promise<PredicateBaseline[]> {
+	const dbBaselines = await db.globalAnnotationBaseline.findMany({
+		select: {
+			predicateName: true,
+			totalFires: true,
+			totalOpportunities: true,
+		},
+	});
+
+	return dbBaselines.map((baseline) => ({
+		predicateName: baseline.predicateName,
+		totalFires: baseline.totalFires,
+		totalOpportunities: baseline.totalOpportunities,
+	}));
+}

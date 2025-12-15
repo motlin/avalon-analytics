@@ -227,6 +227,54 @@
 	padding: 0 0.25rem;
 }
 
+/* 📈 Annotation Statistics Section */
+.annotationSection {
+	margin-top: 2rem;
+	padding: 1.5rem;
+	background-color: hsl(var(--muted));
+	border-radius: 8px;
+}
+
+.sectionTitle {
+	margin: 0 0 1rem 0;
+}
+
+.annotationSummary {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+	gap: 1rem;
+}
+
+.annotationSummaryItem {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+}
+
+.annotationSummaryValue {
+	font-size: 1.5rem;
+	font-weight: bold;
+}
+
+.annotationSummaryValueAbove {
+	font-size: 1.5rem;
+	font-weight: bold;
+	color: hsl(var(--evil-color));
+}
+
+.annotationSummaryValueBelow {
+	font-size: 1.5rem;
+	font-weight: bold;
+	color: hsl(var(--good-color));
+}
+
+.annotationSummaryLabel {
+	font-size: 0.75rem;
+	color: hsl(var(--muted-foreground));
+	margin-top: 0.25rem;
+}
+
 /* 🚫 Error / Not Found States */
 .notFoundContainer {
 	padding: 1rem;
