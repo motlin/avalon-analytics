@@ -44,7 +44,24 @@ function formatPercent(value: number): string {
 }
 
 function formatPercentile(value: number): string {
-	return `${value.toFixed(0)}th`;
+	const rounded = Math.round(value);
+	const lastDigit = rounded % 10;
+	const lastTwoDigits = rounded % 100;
+
+	let suffix: string;
+	if (lastTwoDigits >= 11 && lastTwoDigits <= 13) {
+		suffix = 'th';
+	} else if (lastDigit === 1) {
+		suffix = 'st';
+	} else if (lastDigit === 2) {
+		suffix = 'nd';
+	} else if (lastDigit === 3) {
+		suffix = 'rd';
+	} else {
+		suffix = 'th';
+	}
+
+	return `${rounded}${suffix}`;
 }
 
 function getDirectionArrow(direction: 'above' | 'below' | 'neutral'): string {
@@ -89,7 +106,7 @@ function AnnotationRow({statistic}: {statistic: PersonAnnotationStatistic}) {
 				</a>
 			</td>
 			<td className={styles.rateCell}>
-				<span className={styles.smoothedRate}>{formatPercent(statistic.smoothedRate)}</span>
+				<span className={styles.rateValue}>{formatPercent(statistic.rawRate)}</span>
 				<span className={styles.rawRate}>
 					({statistic.fires}/{statistic.opportunities})
 				</span>
@@ -145,7 +162,7 @@ export function PersonAnnotationStats({profile}: PersonAnnotationStatsProps) {
 						<tr>
 							<th className={styles.headerBehavior}>Behavior</th>
 							<th className={styles.headerNum}>Rate</th>
-							<th className={styles.headerNum}>vs Baseline</th>
+							<th className={styles.headerNum}>Baseline</th>
 							<th className={styles.headerNum}>Confidence</th>
 							<th className={styles.headerNum}>Rank</th>
 						</tr>

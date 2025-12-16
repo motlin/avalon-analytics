@@ -44,10 +44,11 @@ model GameIngestionState {
 }
 
 model RawGameData {
-  firebaseKey String       @id
-  gameJson    Json
-  createdAt   DateTime
-  playerGames PlayerGame[]
+  firebaseKey      String                 @id
+  gameJson         Json
+  createdAt        DateTime
+  playerGames      PlayerGame[]
+  annotationGames  PersonAnnotationGame[]
 
   @@index([createdAt])
 }
@@ -285,6 +286,7 @@ model PersonAnnotationStats {
 
   alignmentBreakdown PersonAnnotationAlignmentStats[]
   roleBreakdown      PersonAnnotationRoleStats[]
+  gameInstances      PersonAnnotationGame[]
 
   @@unique([personId, predicateName])
   @@index([predicateName])
@@ -310,6 +312,23 @@ model PersonAnnotationRoleStats {
   opportunities     Int                   @default(0)
 
   @@unique([annotationStatsId, role])
+}
+
+model PersonAnnotationGame {
+  id                String                @id @default(uuid())
+  annotationStatsId String
+  annotationStats   PersonAnnotationStats @relation(fields: [annotationStatsId], references: [id], onDelete: Cascade)
+  firebaseKey       String
+  rawGameData       RawGameData           @relation(fields: [firebaseKey], references: [firebaseKey], onDelete: Cascade)
+  fired             Boolean
+  role              String
+  missionNumber     Int?
+  proposalNumber    Int?
+  createdAt         DateTime
+
+  @@unique([annotationStatsId, firebaseKey])
+  @@index([firebaseKey])
+  @@index([fired])
 }
 
 model GlobalAnnotationBaseline {
