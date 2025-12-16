@@ -141,11 +141,20 @@ interface RoleBreakdown {
 	opportunities: number;
 }
 
+interface GameInstance {
+	firebaseKey: string;
+	fired: boolean;
+	role: string;
+	missionNumber?: number;
+	proposalNumber?: number;
+}
+
 interface PredicateAnnotationStats {
 	fires: number;
 	opportunities: number;
 	byAlignment: Map<Alignment, AlignmentBreakdown>;
 	byRole: Map<string, RoleBreakdown>;
+	gameInstances: GameInstance[];
 }
 
 /**
@@ -813,6 +822,7 @@ function createEmptyPredicateAnnotationStats(): PredicateAnnotationStats {
 		opportunities: 0,
 		byAlignment: new Map(),
 		byRole: new Map(),
+		gameInstances: [],
 	};
 }
 
@@ -888,6 +898,15 @@ function calculatePersonAnnotationStats(
 				predicateStats.fires += stats.fires;
 				predicateStats.opportunities += stats.opportunities;
 
+				// Track game instance (only if there are opportunities)
+				if (stats.opportunities > 0) {
+					predicateStats.gameInstances.push({
+						firebaseKey: rawGame.firebaseKey,
+						fired: stats.fires > 0,
+						role: stats.role || 'unknown',
+					});
+				}
+
 				// Accumulate by alignment
 				if (stats.alignment !== 'unknown') {
 					let alignmentStats = predicateStats.byAlignment.get(stats.alignment);
@@ -930,6 +949,7 @@ function buildPersonAnnotationInsertStatements(
 	const statements: string[] = [];
 
 	// Clear existing annotation data
+	statements.push('DELETE FROM PersonAnnotationGame;');
 	statements.push('DELETE FROM PersonAnnotationRoleStats;');
 	statements.push('DELETE FROM PersonAnnotationAlignmentStats;');
 	statements.push('DELETE FROM PersonAnnotationStats;');
@@ -962,6 +982,14 @@ function buildPersonAnnotationInsertStatements(
 				const roleId = crypto.randomUUID();
 				statements.push(
 					`INSERT INTO PersonAnnotationRoleStats (id, annotationStatsId, role, fires, opportunities) VALUES ('${roleId}', '${annotationId}', '${escapeSQL(role)}', ${roleStats.fires}, ${roleStats.opportunities});`,
+				);
+			}
+
+			// Insert game instances
+			for (const gameInstance of stats.gameInstances) {
+				const gameId = crypto.randomUUID();
+				statements.push(
+					`INSERT INTO PersonAnnotationGame (id, annotationStatsId, firebaseKey, fired, role, createdAt) VALUES ('${gameId}', '${annotationId}', '${escapeSQL(gameInstance.firebaseKey)}', ${gameInstance.fired ? 1 : 0}, '${escapeSQL(gameInstance.role)}', '${now}');`,
 				);
 			}
 		}
@@ -1007,6 +1035,14 @@ function buildPersonAnnotationInsertStatementsWithoutDelete(
 					`INSERT OR REPLACE INTO PersonAnnotationRoleStats (id, annotationStatsId, role, fires, opportunities) VALUES ('${roleId}', '${annotationId}', '${escapeSQL(role)}', ${roleStats.fires}, ${roleStats.opportunities});`,
 				);
 			}
+
+			// Insert game instances
+			for (const gameInstance of stats.gameInstances) {
+				const gameId = crypto.randomUUID();
+				statements.push(
+					`INSERT OR REPLACE INTO PersonAnnotationGame (id, annotationStatsId, firebaseKey, fired, role, createdAt) VALUES ('${gameId}', '${annotationId}', '${escapeSQL(gameInstance.firebaseKey)}', ${gameInstance.fired ? 1 : 0}, '${escapeSQL(gameInstance.role)}', '${now}');`,
+				);
+			}
 		}
 	}
 
@@ -1026,6 +1062,9 @@ function buildPersonAnnotationUpsertStatements(
 	for (const [personId, predicateMap] of statsMap) {
 		// Delete existing annotation data for this person
 		// First delete child tables, then parent table
+		statements.push(
+			`DELETE FROM PersonAnnotationGame WHERE annotationStatsId IN (SELECT id FROM PersonAnnotationStats WHERE personId = '${escapeSQL(personId)}');`,
+		);
 		statements.push(
 			`DELETE FROM PersonAnnotationRoleStats WHERE annotationStatsId IN (SELECT id FROM PersonAnnotationStats WHERE personId = '${escapeSQL(personId)}');`,
 		);
@@ -1056,6 +1095,14 @@ function buildPersonAnnotationUpsertStatements(
 				const roleId = crypto.randomUUID();
 				statements.push(
 					`INSERT INTO PersonAnnotationRoleStats (id, annotationStatsId, role, fires, opportunities) VALUES ('${roleId}', '${annotationId}', '${escapeSQL(role)}', ${roleStats.fires}, ${roleStats.opportunities});`,
+				);
+			}
+
+			// Insert game instances
+			for (const gameInstance of stats.gameInstances) {
+				const gameId = crypto.randomUUID();
+				statements.push(
+					`INSERT INTO PersonAnnotationGame (id, annotationStatsId, firebaseKey, fired, role, createdAt) VALUES ('${gameId}', '${annotationId}', '${escapeSQL(gameInstance.firebaseKey)}', ${gameInstance.fired ? 1 : 0}, '${escapeSQL(gameInstance.role)}', '${now}');`,
 				);
 			}
 		}
