@@ -107,7 +107,7 @@
 	font-variant-numeric: tabular-nums;
 }
 
-.smoothedRate {
+.rateValue {
 	font-weight: 600;
 }
 
@@ -115,11 +115,6 @@
 	margin-left: 0.5rem;
 	color: hsl(var(--muted-foreground));
 	font-size: 0.75rem;
-}
-
-.percentileCell {
-	text-align: right;
-	font-variant-numeric: tabular-nums;
 }
 
 .significanceMarker {
