@@ -8,36 +8,23 @@ interface PersonAnnotationStatsProps {
 }
 
 /**
- * Converts a z-score to a background color using a gradient.
- * z-score -2 -> green (below average)
- * z-score 0 -> white (at average)
- * z-score +2 -> red (above average)
+ * Converts statistical significance to a background color using a blue gradient.
+ * Not significant -> white
+ * Highly significant (|z-score| >= 3) -> saturated blue
  */
-function zScoreToBackgroundColor(zScore: number): string {
-	// Clamp z-score to [-2, 2] range
-	const clampedZScore = Math.max(-2, Math.min(2, zScore));
-
-	// Normalize to [0, 1] where 0 = -2, 0.5 = 0, 1 = +2
-	const normalized = (clampedZScore + 2) / 4;
-
-	if (normalized < 0.5) {
-		// Green to white (z-score -2 to 0)
-		// At 0: full green (0, 128, 0)
-		// At 0.5: white (255, 255, 255)
-		const greenToWhite = normalized * 2; // 0 to 1
-		const red = Math.round(255 * greenToWhite);
-		const green = Math.round(128 + (255 - 128) * greenToWhite);
-		const blue = Math.round(255 * greenToWhite);
-		return `rgba(${red}, ${green}, ${blue}, 0.3)`;
+function significanceToBackgroundColor(isSignificant: boolean, zScore: number): string {
+	if (!isSignificant) {
+		return 'transparent';
 	}
-	// White to red (z-score 0 to +2)
-	// At 0.5: white (255, 255, 255)
-	// At 1: full red (255, 0, 0)
-	const whiteToRed = (normalized - 0.5) * 2; // 0 to 1
-	const red = 255;
-	const green = Math.round(255 * (1 - whiteToRed));
-	const blue = Math.round(255 * (1 - whiteToRed));
-	return `rgba(${red}, ${green}, ${blue}, 0.3)`;
+
+	// Use absolute z-score to determine saturation
+	// |z| = 2 (barely significant) -> light blue
+	// |z| = 3+ (highly significant) -> saturated blue
+	const absZ = Math.abs(zScore);
+	// Map |z| from [2, 3] to [0.15, 0.4] alpha
+	const alpha = Math.min(0.4, 0.15 + (absZ - 2) * 0.25);
+
+	return `rgba(59, 130, 246, ${alpha})`; // Blue color (#3b82f6)
 }
 
 function formatPercent(value: number): string {
@@ -65,17 +52,6 @@ function formatPercentile(value: number): string {
 	return `${rounded}${suffix}`;
 }
 
-function getDirectionArrow(direction: 'above' | 'below' | 'neutral'): string {
-	switch (direction) {
-		case 'above':
-			return '\u2191';
-		case 'below':
-			return '\u2193';
-		default:
-			return '\u2194';
-	}
-}
-
 function formatPredicateName(name: string): string {
 	// Remove common suffixes to make names more readable
 	return name
@@ -87,7 +63,7 @@ function formatPredicateName(name: string): string {
 }
 
 function AnnotationRow({statistic, personId}: {statistic: PersonAnnotationStatistic; personId: string}) {
-	const backgroundColor = zScoreToBackgroundColor(statistic.zScore);
+	const backgroundColor = significanceToBackgroundColor(statistic.isSignificant, statistic.zScore);
 	const gamesUrl = `/person/${personId}/predicate/${statistic.predicateName}/games`;
 
 	return (
@@ -119,7 +95,6 @@ function AnnotationRow({statistic, personId}: {statistic: PersonAnnotationStatis
 			</td>
 			<td className={styles.baselineCell}>
 				<span className={styles.baselineRate}>{formatPercent(statistic.baselineRate)}</span>
-				<span className={styles.directionArrow}>{getDirectionArrow(statistic.deviationDirection)}</span>
 			</td>
 			<td className={styles.confidenceCell}>
 				[{formatPercent(statistic.confidenceInterval.lower)} -{' '}
@@ -189,25 +164,24 @@ export function PersonAnnotationStats({profile, personId}: PersonAnnotationStats
 				<span className={styles.legendItem}>
 					<span
 						className={styles.legendSwatch}
-						style={{backgroundColor: 'rgba(0, 128, 0, 0.3)'}}
+						style={{backgroundColor: 'transparent', border: '1px solid hsl(var(--border))'}}
 					/>
-					Below average
+					Not significant
 				</span>
 				<span className={styles.legendItem}>
 					<span
 						className={styles.legendSwatch}
-						style={{backgroundColor: 'rgba(255, 255, 255, 0.3)'}}
+						style={{backgroundColor: 'rgba(59, 130, 246, 0.15)'}}
 					/>
-					Average
+					Significant (p &lt; 0.05)
 				</span>
 				<span className={styles.legendItem}>
 					<span
 						className={styles.legendSwatch}
-						style={{backgroundColor: 'rgba(255, 0, 0, 0.3)'}}
+						style={{backgroundColor: 'rgba(59, 130, 246, 0.4)'}}
 					/>
-					Above average
+					Highly significant
 				</span>
-				<span className={styles.legendItem}>* = statistically significant (p &lt; 0.05)</span>
 			</div>
 		</div>
 	);

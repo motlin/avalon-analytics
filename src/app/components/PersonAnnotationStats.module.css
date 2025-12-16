@@ -139,10 +139,6 @@
 	color: hsl(var(--muted-foreground));
 }
 
-.directionArrow {
-	margin-left: 0.25rem;
-}
-
 .confidenceCell {
 	text-align: right;
 	font-variant-numeric: tabular-nums;
