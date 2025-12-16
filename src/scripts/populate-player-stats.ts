@@ -319,6 +319,31 @@ function escapeSQL(str: string): string {
 	return str.replace(/'/g, "''");
 }
 
+function applyMigrations(local: boolean): void {
+	const locationFlag = local ? '--local' : '--remote';
+	console.log(`🔄 Applying pending migrations (${local ? 'local' : 'remote'})...`);
+
+	try {
+		const output = execSync(`npx wrangler d1 migrations apply ${DATABASE_NAME} ${locationFlag}`, {
+			encoding: 'utf-8',
+			stdio: ['pipe', 'pipe', 'pipe'],
+		});
+
+		if (output.includes('Migrations to be applied:')) {
+			console.log(output);
+		} else {
+			console.log('✅ No pending migrations');
+		}
+	} catch (error) {
+		const errorOutput = (error as {stderr?: string}).stderr ?? '';
+		if (errorOutput.includes('No migrations to apply')) {
+			console.log('✅ No pending migrations');
+		} else {
+			throw error;
+		}
+	}
+}
+
 function executeQuery<T>(sql: string, local: boolean): T[] {
 	const locationFlag = local ? '--local' : '--remote';
 
@@ -1796,6 +1821,11 @@ async function main() {
 	// Resume only makes sense with --full mode
 	if (args.resumeFromBatch !== null && !args.full) {
 		throw new Error('--resume flag requires --full mode');
+	}
+
+	// Apply any pending migrations before writing to the database
+	if (!args.dryRun) {
+		applyMigrations(args.local);
 	}
 
 	if (args.full) {
