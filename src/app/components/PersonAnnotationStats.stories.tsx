@@ -149,6 +149,7 @@ const manyDeviationsProfile: PersonAnnotationProfile = {
 export const ManySignificantDeviations: Story = {
 	args: {
 		profile: manyDeviationsProfile,
+		personId: 'test-person-id',
 	},
 	parameters: {
 		docs: {
@@ -247,6 +248,7 @@ const averageBehaviorProfile: PersonAnnotationProfile = {
 export const MostlyAverageBehavior: Story = {
 	args: {
 		profile: averageBehaviorProfile,
+		personId: 'test-person-id',
 	},
 	parameters: {
 		docs: {
@@ -345,6 +347,7 @@ const wideConfidenceIntervalsProfile: PersonAnnotationProfile = {
 export const WideConfidenceIntervals: Story = {
 	args: {
 		profile: wideConfidenceIntervalsProfile,
+		personId: 'test-person-id',
 	},
 	parameters: {
 		docs: {
@@ -371,6 +374,7 @@ const emptyProfile: PersonAnnotationProfile = {
 export const NoAnnotationData: Story = {
 	args: {
 		profile: emptyProfile,
+		personId: 'test-person-id',
 	},
 	parameters: {
 		docs: {

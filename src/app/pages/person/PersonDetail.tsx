@@ -167,7 +167,12 @@ export async function PersonDetail({params, request}: RequestInfo) {
 			<YearlyStatsTable stats={stats} />
 
 			{/* Annotation Statistics Section */}
-			{annotationProfile && <PersonAnnotationStats profile={annotationProfile} />}
+			{annotationProfile && (
+				<PersonAnnotationStats
+					profile={annotationProfile}
+					personId={personId}
+				/>
+			)}
 
 			{/* Game History Section */}
 			<GameHistorySection

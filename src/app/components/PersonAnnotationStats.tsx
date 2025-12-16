@@ -4,6 +4,7 @@ import styles from './PersonAnnotationStats.module.css';
 
 interface PersonAnnotationStatsProps {
 	profile: PersonAnnotationProfile;
+	personId: string;
 }
 
 /**
@@ -85,8 +86,9 @@ function formatPredicateName(name: string): string {
 		.replace(/([a-z])([A-Z])/g, '$1 $2');
 }
 
-function AnnotationRow({statistic}: {statistic: PersonAnnotationStatistic}) {
+function AnnotationRow({statistic, personId}: {statistic: PersonAnnotationStatistic; personId: string}) {
 	const backgroundColor = zScoreToBackgroundColor(statistic.zScore);
+	const gamesUrl = `/person/${personId}/predicate/${statistic.predicateName}/games`;
 
 	return (
 		<tr
@@ -107,9 +109,13 @@ function AnnotationRow({statistic}: {statistic: PersonAnnotationStatistic}) {
 			</td>
 			<td className={styles.rateCell}>
 				<span className={styles.rateValue}>{formatPercent(statistic.rawRate)}</span>
-				<span className={styles.rawRate}>
+				<a
+					href={gamesUrl}
+					className={styles.gamesLink}
+					title="View games"
+				>
 					({statistic.fires}/{statistic.opportunities})
-				</span>
+				</a>
 			</td>
 			<td className={styles.baselineCell}>
 				<span className={styles.baselineRate}>{formatPercent(statistic.baselineRate)}</span>
@@ -127,7 +133,7 @@ function AnnotationRow({statistic}: {statistic: PersonAnnotationStatistic}) {
 	);
 }
 
-export function PersonAnnotationStats({profile}: PersonAnnotationStatsProps) {
+export function PersonAnnotationStats({profile, personId}: PersonAnnotationStatsProps) {
 	const {annotations, summary} = profile;
 
 	if (annotations.length === 0) {
@@ -172,6 +178,7 @@ export function PersonAnnotationStats({profile}: PersonAnnotationStatsProps) {
 							<AnnotationRow
 								key={statistic.predicateName}
 								statistic={statistic}
+								personId={personId}
 							/>
 						))}
 					</tbody>

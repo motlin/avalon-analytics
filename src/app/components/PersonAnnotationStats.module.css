@@ -118,6 +118,18 @@
 	font-size: 0.75rem;
 }
 
+.gamesLink {
+	margin-left: 0.5rem;
+	color: hsl(var(--muted-foreground));
+	font-size: 0.75rem;
+	text-decoration: none;
+}
+
+.gamesLink:hover {
+	color: hsl(var(--primary));
+	text-decoration: underline;
+}
+
 .baselineCell {
 	text-align: right;
 	font-variant-numeric: tabular-nums;
