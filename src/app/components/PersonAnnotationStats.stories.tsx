@@ -1,5 +1,10 @@
 import type {Meta, StoryObj} from '@storybook/react-vite';
-import type {PersonAnnotationProfile} from '../models/annotationStatistics';
+import type {
+	AlignmentIndicator,
+	PersonAnnotationProfile,
+	PersonAnnotationStatistic,
+} from '../models/annotationStatistics';
+import type {Rarity} from '../models/predicateRarity';
 import {PersonAnnotationStats} from './PersonAnnotationStats';
 
 const meta: Meta<typeof PersonAnnotationStats> = {
@@ -9,358 +14,160 @@ const meta: Meta<typeof PersonAnnotationStats> = {
 		layout: 'padded',
 		docs: {
 			description: {
-				component: `PersonAnnotationStats displays a player's behavioral patterns compared to population baselines.
+				component: `PersonAnnotationStats displays a player's behavioral tells compared to good/evil baselines.
 
 ## Features
-- Behavioral statistics sorted by rarity (rarest first)
-- Color-coded rows indicating deviation from baseline (green = below, red = above)
-- Wilson score confidence intervals
-- Percentile ranks with significance markers
-- Summary counts of deviations
+- Shows good and evil baseline rates for each behavior
+- Indicates which alignment the behavior suggests (if diagnostic)
+- Color-coded rows: green for "suggests good", red for "suggests evil"
+- Significance marker (*) for behaviors with diagnostic value
 
-## Visual Indicators
-- **Rarity dots**: Color-coded by predicate rarity (legendary, epic, rare, uncommon, common)
-- **Row background**: Green (below average) to white (average) to red (above average)
-- **Direction arrows**: Up arrow for above baseline, down for below
-- **Significance marker**: Asterisk (*) for statistically significant deviations
+## Key Concept: Diagnostic Value
+A behavior has "diagnostic value" if good players do it at a significantly different rate than evil players.
+For example, if good players propose all-good teams 45% of the time but evil players only do it 20% of the time,
+then proposing an all-good team suggests the player is good.
 
 ## Usage
 \`\`\`tsx
 import {PersonAnnotationStats} from './PersonAnnotationStats';
 
 function PlayerProfile({profile}: {profile: PersonAnnotationProfile}) {
-  return <PersonAnnotationStats profile={profile} />;
+  return <PersonAnnotationStats profile={profile} personId="player-123" />;
 }
 \`\`\``,
 			},
 		},
 	},
 	tags: ['autodocs'],
-	argTypes: {
-		profile: {
-			control: 'object',
-			description: 'Complete annotation profile with statistics and summary',
-		},
-	},
 };
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/**
- * Profile with many significant deviations from baseline.
- * Represents a player with distinctive behavioral tells.
- */
-const manyDeviationsProfile: PersonAnnotationProfile = {
+function createStatistic(
+	predicateName: string,
+	rarity: Rarity,
+	fires: number,
+	opportunities: number,
+	goodRate: number,
+	evilRate: number,
+	goodSample: number,
+	evilSample: number,
+	suggestsAlignment: AlignmentIndicator,
+	hasDiagnosticValue: boolean,
+): PersonAnnotationStatistic {
+	const rawRate = opportunities > 0 ? fires / opportunities : 0;
+	return {
+		predicateName,
+		rarity,
+		fires,
+		opportunities,
+		rawRate,
+		goodBaselineRate: goodRate,
+		evilBaselineRate: evilRate,
+		goodBaselineSample: goodSample,
+		evilBaselineSample: evilSample,
+		suggestsAlignment,
+		diagnosticZScore: hasDiagnosticValue ? 2.5 : 0.5,
+		hasDiagnosticValue,
+		smoothedRate: rawRate,
+		confidenceInterval: {lower: rawRate * 0.8, upper: Math.min(1, rawRate * 1.2)},
+		baselineRate: (goodRate + evilRate) / 2,
+		zScore: 0,
+		percentileRank: 50,
+		deviationDirection: 'neutral',
+		isSignificant: false,
+	};
+}
+
+const diagnosticBehaviorsProfile: PersonAnnotationProfile = {
 	annotations: [
-		{
-			predicateName: 'PercivalExcludingMerlinWithoutMorganaProposalPredicate',
-			rarity: 'legendary',
-			fires: 8,
-			opportunities: 12,
-			rawRate: 0.667,
-			smoothedRate: 0.523,
-			confidenceInterval: {lower: 0.354, upper: 0.886},
-			baselineRate: 0.15,
-			zScore: 3.82,
-			percentileRank: 99.9,
-			deviationDirection: 'above',
-			isSignificant: true,
-		},
-		{
-			predicateName: 'KnownEvilHammerProposalPredicate',
-			rarity: 'legendary',
-			fires: 1,
-			opportunities: 18,
-			rawRate: 0.056,
-			smoothedRate: 0.103,
-			confidenceInterval: {lower: 0.003, upper: 0.268},
-			baselineRate: 0.22,
-			zScore: -2.95,
-			percentileRank: 0.2,
-			deviationDirection: 'below',
-			isSignificant: true,
-		},
-		{
-			predicateName: 'ProtestVoteProposalVotePredicate',
-			rarity: 'epic',
-			fires: 25,
-			opportunities: 45,
-			rawRate: 0.556,
-			smoothedRate: 0.487,
-			confidenceInterval: {lower: 0.407, upper: 0.696},
-			baselineRate: 0.28,
-			zScore: 4.12,
-			percentileRank: 99.9,
-			deviationDirection: 'above',
-			isSignificant: true,
-		},
-		{
-			predicateName: 'OberonDucked',
-			rarity: 'epic',
-			fires: 0,
-			opportunities: 8,
-			rawRate: 0.0,
-			smoothedRate: 0.072,
-			confidenceInterval: {lower: 0.0, upper: 0.369},
-			baselineRate: 0.35,
-			zScore: -2.08,
-			percentileRank: 1.9,
-			deviationDirection: 'below',
-			isSignificant: true,
-		},
-		{
-			predicateName: 'EvilVotedAgainstEvilProposalVotePredicate',
-			rarity: 'common',
-			fires: 85,
-			opportunities: 150,
-			rawRate: 0.567,
-			smoothedRate: 0.541,
-			confidenceInterval: {lower: 0.486, upper: 0.643},
-			baselineRate: 0.42,
-			zScore: 3.65,
-			percentileRank: 99.9,
-			deviationDirection: 'above',
-			isSignificant: true,
-		},
-		{
-			predicateName: 'SwitchedVoteProposalVotePredicate',
-			rarity: 'common',
-			fires: 12,
-			opportunities: 180,
-			rawRate: 0.067,
-			smoothedRate: 0.089,
-			confidenceInterval: {lower: 0.035, upper: 0.113},
-			baselineRate: 0.18,
-			zScore: -3.94,
-			percentileRank: 0.0,
-			deviationDirection: 'below',
-			isSignificant: true,
-		},
+		createStatistic('AllGoodTeamWithoutSelfProposalPredicate', 'rare', 15, 36, 0.45, 0.2, 1200, 800, 'good', true),
+		createStatistic('KnownEvilHammerProposalPredicate', 'legendary', 3, 38, 0.05, 0.35, 500, 400, 'evil', true),
+		createStatistic('ProtestVoteProposalVotePredicate', 'epic', 25, 45, 0.28, 0.45, 900, 700, 'evil', true),
+		createStatistic('FirstProposalAllGoodPredicate', 'common', 42, 95, 0.52, 0.38, 1500, 1100, 'good', true),
+		createStatistic('VotedAgainstOwnProposalPredicate', 'uncommon', 8, 120, 0.08, 0.06, 600, 500, 'neither', false),
 	],
 	summary: {
-		totalPredicates: 6,
-		significantDeviations: 6,
-		aboveBaseline: 3,
-		belowBaseline: 3,
+		totalPredicates: 5,
+		significantDeviations: 4,
+		aboveBaseline: 2,
+		belowBaseline: 2,
 	},
 };
 
-export const ManySignificantDeviations: Story = {
+export const DiagnosticBehaviors: Story = {
 	args: {
-		profile: manyDeviationsProfile,
+		profile: diagnosticBehaviorsProfile,
 		personId: 'test-person-id',
 	},
 	parameters: {
 		docs: {
 			description: {
-				story: 'A player with distinctive behavioral tells. Every tracked behavior shows statistically significant deviation from the population baseline, making this player highly predictable to opponents who study their patterns.',
+				story: 'Shows behaviors that have diagnostic value - they help distinguish good from evil players. Green rows suggest the player is good when they do the behavior, red rows suggest evil.',
 			},
 		},
 	},
 };
 
-/**
- * Profile with mostly average behavior.
- * Represents a player who blends in with the population.
- */
-const averageBehaviorProfile: PersonAnnotationProfile = {
+const noDiagnosticValueProfile: PersonAnnotationProfile = {
 	annotations: [
-		{
-			predicateName: 'MerlinMorganaProposalPredicate',
-			rarity: 'epic',
-			fires: 5,
-			opportunities: 22,
-			rawRate: 0.227,
-			smoothedRate: 0.218,
-			confidenceInterval: {lower: 0.077, upper: 0.457},
-			baselineRate: 0.21,
-			zScore: 0.19,
-			percentileRank: 57.5,
-			deviationDirection: 'neutral',
-			isSignificant: false,
-		},
-		{
-			predicateName: 'PercivalVotedForMerlinAndMorganaProposalVotePredicate',
-			rarity: 'rare',
-			fires: 14,
-			opportunities: 62,
-			rawRate: 0.226,
-			smoothedRate: 0.221,
-			confidenceInterval: {lower: 0.131, upper: 0.35},
-			baselineRate: 0.24,
-			zScore: -0.26,
-			percentileRank: 39.7,
-			deviationDirection: 'neutral',
-			isSignificant: false,
-		},
-		{
-			predicateName: 'FirstAllGoodTeamVotePredicate',
-			rarity: 'common',
-			fires: 42,
-			opportunities: 95,
-			rawRate: 0.442,
-			smoothedRate: 0.439,
-			confidenceInterval: {lower: 0.343, upper: 0.545},
-			baselineRate: 0.45,
-			zScore: -0.16,
-			percentileRank: 43.6,
-			deviationDirection: 'neutral',
-			isSignificant: false,
-		},
-		{
-			predicateName: 'ApproveWhenNextLeaderProposalVotePredicate',
-			rarity: 'common',
-			fires: 38,
-			opportunities: 88,
-			rawRate: 0.432,
-			smoothedRate: 0.431,
-			confidenceInterval: {lower: 0.329, upper: 0.54},
-			baselineRate: 0.44,
-			zScore: -0.15,
-			percentileRank: 44.0,
-			deviationDirection: 'neutral',
-			isSignificant: false,
-		},
-		{
-			predicateName: 'HammerPanderingProposalPredicate',
-			rarity: 'common',
-			fires: 18,
-			opportunities: 52,
-			rawRate: 0.346,
-			smoothedRate: 0.342,
-			confidenceInterval: {lower: 0.22, upper: 0.494},
-			baselineRate: 0.35,
-			zScore: -0.06,
-			percentileRank: 47.6,
-			deviationDirection: 'neutral',
-			isSignificant: false,
-		},
+		createStatistic('ApproveWhenNextLeaderPredicate', 'common', 38, 88, 0.44, 0.42, 1000, 900, 'neither', false),
+		createStatistic('HammerPanderingPredicate', 'common', 18, 52, 0.35, 0.33, 800, 700, 'neither', false),
+		createStatistic('VotedForFailedMissionPredicate', 'rare', 5, 22, 0.24, 0.22, 400, 350, 'neither', false),
 	],
 	summary: {
-		totalPredicates: 5,
+		totalPredicates: 3,
 		significantDeviations: 0,
 		aboveBaseline: 0,
 		belowBaseline: 0,
 	},
 };
 
-export const MostlyAverageBehavior: Story = {
+export const NoDiagnosticValue: Story = {
 	args: {
-		profile: averageBehaviorProfile,
+		profile: noDiagnosticValueProfile,
 		personId: 'test-person-id',
 	},
 	parameters: {
 		docs: {
 			description: {
-				story: 'A player whose behavior closely matches the population baseline. No significant deviations detected, making this player difficult to read based on behavioral patterns alone.',
+				story: 'Shows behaviors with no diagnostic value - good and evil players do them at similar rates, so they do not help distinguish alignment.',
 			},
 		},
 	},
 };
 
-/**
- * Profile with few opportunities (wide confidence intervals).
- * Represents a new player or one with limited data.
- */
-const wideConfidenceIntervalsProfile: PersonAnnotationProfile = {
+const mixedProfile: PersonAnnotationProfile = {
 	annotations: [
-		{
-			predicateName: 'SameTeamFailedMissionProposalPredicate',
-			rarity: 'legendary',
-			fires: 1,
-			opportunities: 3,
-			rawRate: 0.333,
-			smoothedRate: 0.227,
-			confidenceInterval: {lower: 0.008, upper: 0.906},
-			baselineRate: 0.18,
-			zScore: 0.56,
-			percentileRank: 71.2,
-			deviationDirection: 'above',
-			isSignificant: false,
-		},
-		{
-			predicateName: 'FailureToCoordinate',
-			rarity: 'epic',
-			fires: 0,
-			opportunities: 2,
-			rawRate: 0.0,
-			smoothedRate: 0.075,
-			confidenceInterval: {lower: 0.0, upper: 0.842},
-			baselineRate: 0.09,
-			zScore: -0.44,
-			percentileRank: 33.0,
-			deviationDirection: 'below',
-			isSignificant: false,
-		},
-		{
-			predicateName: 'OneEvilTeamFirstProposalPredicate',
-			rarity: 'rare',
-			fires: 2,
-			opportunities: 5,
-			rawRate: 0.4,
-			smoothedRate: 0.293,
-			confidenceInterval: {lower: 0.053, upper: 0.853},
-			baselineRate: 0.22,
-			zScore: 0.9,
-			percentileRank: 81.6,
-			deviationDirection: 'above',
-			isSignificant: false,
-		},
-		{
-			predicateName: 'RiskingLossProposalPredicate',
-			rarity: 'uncommon',
-			fires: 1,
-			opportunities: 4,
-			rawRate: 0.25,
-			smoothedRate: 0.207,
-			confidenceInterval: {lower: 0.006, upper: 0.806},
-			baselineRate: 0.17,
-			zScore: 0.4,
-			percentileRank: 65.5,
-			deviationDirection: 'above',
-			isSignificant: false,
-		},
-		{
-			predicateName: 'RiskingGoodLossProposalVotePredicate',
-			rarity: 'common',
-			fires: 3,
-			opportunities: 8,
-			rawRate: 0.375,
-			smoothedRate: 0.309,
-			confidenceInterval: {lower: 0.085, upper: 0.755},
-			baselineRate: 0.26,
-			zScore: 0.67,
-			percentileRank: 74.9,
-			deviationDirection: 'above',
-			isSignificant: false,
-		},
+		createStatistic('PercivalExcludingMerlinPredicate', 'legendary', 8, 12, 0.67, 0.15, 300, 200, 'good', true),
+		createStatistic('OberonDuckedMissionPredicate', 'epic', 0, 8, 0.35, 0.02, 250, 180, 'good', true),
+		createStatistic('SameTeamAfterFailPredicate', 'rare', 1, 3, 0.18, 0.45, 400, 350, 'evil', true),
+		createStatistic('ApproveOwnProposalPredicate', 'common', 85, 95, 0.88, 0.9, 1200, 1000, 'neither', false),
+		createStatistic('FirstVoteRejectPredicate', 'common', 12, 180, 0.07, 0.08, 1100, 900, 'neither', false),
 	],
 	summary: {
 		totalPredicates: 5,
-		significantDeviations: 0,
-		aboveBaseline: 4,
-		belowBaseline: 1,
+		significantDeviations: 3,
+		aboveBaseline: 1,
+		belowBaseline: 2,
 	},
 };
 
-export const WideConfidenceIntervals: Story = {
+export const MixedDiagnosticValue: Story = {
 	args: {
-		profile: wideConfidenceIntervalsProfile,
+		profile: mixedProfile,
 		personId: 'test-person-id',
 	},
 	parameters: {
 		docs: {
 			description: {
-				story: 'A player with limited data (few opportunities per predicate). Wide confidence intervals indicate high uncertainty in the statistics. More games are needed before drawing conclusions about behavioral patterns.',
+				story: 'A realistic mix of behaviors - some with diagnostic value (suggests good or evil), some without.',
 			},
 		},
 	},
 };
 
-/**
- * Empty profile with no annotation data.
- */
 const emptyProfile: PersonAnnotationProfile = {
 	annotations: [],
 	summary: {
@@ -379,7 +186,7 @@ export const NoAnnotationData: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: 'Handles the case where no annotation data is available. This may occur for players who have not been mapped or have no games with annotation data.',
+				story: 'Handles the case where no annotation data is available.',
 			},
 		},
 	},

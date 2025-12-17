@@ -112,10 +112,34 @@
 	font-weight: 600;
 }
 
+.sampleSize {
+	margin-left: 0.5rem;
+	color: hsl(var(--muted-foreground));
+	font-size: 0.75rem;
+}
+
 .rawRate {
 	margin-left: 0.5rem;
 	color: hsl(var(--muted-foreground));
 	font-size: 0.75rem;
+}
+
+.suggestsCell {
+	text-align: center;
+}
+
+.suggestsGood {
+	color: hsl(142, 76%, 36%);
+	font-weight: 600;
+}
+
+.suggestsEvil {
+	color: hsl(0, 72%, 51%);
+	font-weight: 600;
+}
+
+.suggestsNeither {
+	color: hsl(var(--muted-foreground));
 }
 
 .gamesLink {

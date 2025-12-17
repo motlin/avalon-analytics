@@ -146,6 +146,50 @@ export function calculateZScore(observedRate: number, baselineRate: number, samp
 }
 
 // ============================================================================
+// Two-Proportion Z-Test
+// ============================================================================
+
+/**
+ * Calculates the z-score for the difference between two independent proportions.
+ *
+ * This is used to determine if two rates (e.g., good vs evil baseline rates)
+ * are significantly different from each other.
+ *
+ * Uses the pooled proportion method:
+ *   p_pooled = (x1 + x2) / (n1 + n2)
+ *   z = (p1 - p2) / sqrt(p_pooled * (1 - p_pooled) * (1/n1 + 1/n2))
+ *
+ * @param successes1 - Number of successes in group 1
+ * @param trials1 - Number of trials in group 1
+ * @param successes2 - Number of successes in group 2
+ * @param trials2 - Number of trials in group 2
+ * @returns The z-score (positive if group 1 > group 2)
+ */
+export function twoProportionZScore(successes1: number, trials1: number, successes2: number, trials2: number): number {
+	// Handle edge cases
+	if (trials1 === 0 || trials2 === 0) {
+		return 0;
+	}
+
+	const p1 = successes1 / trials1;
+	const p2 = successes2 / trials2;
+
+	// Pooled proportion
+	const pooled = (successes1 + successes2) / (trials1 + trials2);
+
+	// Avoid division by zero
+	if (pooled === 0 || pooled === 1) {
+		if (p1 === p2) {
+			return 0;
+		}
+		return p1 > p2 ? Infinity : -Infinity;
+	}
+
+	const standardError = Math.sqrt(pooled * (1 - pooled) * (1 / trials1 + 1 / trials2));
+	return (p1 - p2) / standardError;
+}
+
+// ============================================================================
 // Percentile Conversion
 // ============================================================================
 

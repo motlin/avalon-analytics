@@ -8,7 +8,13 @@
  */
 
 import {type Rarity, RARITY_ORDER, getPredicateRarity} from './predicateRarity';
-import {calculateZScore, empiricalBayesEstimate, wilsonScoreInterval, zScoreToPercentile} from './statisticalFunctions';
+import {
+	calculateZScore,
+	empiricalBayesEstimate,
+	twoProportionZScore,
+	wilsonScoreInterval,
+	zScoreToPercentile,
+} from './statisticalFunctions';
 
 // ============================================================================
 // Types
@@ -16,22 +22,47 @@ import {calculateZScore, empiricalBayesEstimate, wilsonScoreInterval, zScoreToPe
 
 export type DeviationDirection = 'above' | 'below' | 'neutral';
 
+/** Which alignment does exhibiting this behavior suggest? */
+export type AlignmentIndicator = 'good' | 'evil' | 'neither';
+
 export interface PersonAnnotationStatistic {
 	/** The predicate being measured */
 	predicateName: string;
 	/** Rarity tier based on historical fire counts */
 	rarity: Rarity;
+
+	// Player's overall stats
 	/** Number of times the behavior occurred */
 	fires: number;
 	/** Number of opportunities to exhibit the behavior */
 	opportunities: number;
 	/** Raw rate = fires / opportunities */
 	rawRate: number;
+
+	// Global alignment baselines
+	/** Rate for all good players globally */
+	goodBaselineRate: number;
+	/** Rate for all evil players globally */
+	evilBaselineRate: number;
+	/** Sample size for good baseline */
+	goodBaselineSample: number;
+	/** Sample size for evil baseline */
+	evilBaselineSample: number;
+
+	// Diagnostic value - does this behavior distinguish good from evil?
+	/** Which alignment does doing this behavior suggest? */
+	suggestsAlignment: AlignmentIndicator;
+	/** Z-score for the difference between good and evil baselines */
+	diagnosticZScore: number;
+	/** True if good and evil rates are significantly different */
+	hasDiagnosticValue: boolean;
+
+	// Legacy fields (kept for backwards compatibility during transition)
 	/** Empirical Bayes adjusted rate (shrunk toward population mean) */
 	smoothedRate: number;
 	/** Wilson score confidence interval for the raw rate */
 	confidenceInterval: {lower: number; upper: number};
-	/** Population baseline rate for comparison */
+	/** Population baseline rate for comparison (overall) */
 	baselineRate: number;
 	/** Z-score measuring standard deviations from baseline */
 	zScore: number;
@@ -59,11 +90,19 @@ export interface PersonAnnotationProfile {
 	};
 }
 
+/** Alignment-specific breakdown */
+export interface AlignmentBreakdown {
+	fires: number;
+	opportunities: number;
+}
+
 /** Raw database stats for a person's predicate behavior */
 export interface RawPersonAnnotationStat {
 	predicateName: string;
 	fires: number;
 	opportunities: number;
+	goodStats: AlignmentBreakdown | null;
+	evilStats: AlignmentBreakdown | null;
 }
 
 /** Baseline statistics for a predicate across all mapped people */
@@ -71,6 +110,10 @@ export interface PredicateBaseline {
 	predicateName: string;
 	totalFires: number;
 	totalOpportunities: number;
+	goodFires: number;
+	goodOpportunities: number;
+	evilFires: number;
+	evilOpportunities: number;
 }
 
 // ============================================================================
@@ -148,6 +191,27 @@ function computeSingleStatistic(
 	const baselineRate =
 		baseline && baseline.totalOpportunities > 0 ? baseline.totalFires / baseline.totalOpportunities : rawRate;
 
+	// Alignment-specific baselines
+	const goodFires = baseline?.goodFires ?? 0;
+	const goodOpportunities = baseline?.goodOpportunities ?? 0;
+	const evilFires = baseline?.evilFires ?? 0;
+	const evilOpportunities = baseline?.evilOpportunities ?? 0;
+
+	const goodBaselineRate = goodOpportunities > 0 ? goodFires / goodOpportunities : 0;
+	const evilBaselineRate = evilOpportunities > 0 ? evilFires / evilOpportunities : 0;
+
+	// Compute diagnostic value: does this behavior distinguish good from evil?
+	const diagnosticZScore = twoProportionZScore(goodFires, goodOpportunities, evilFires, evilOpportunities);
+	const hasDiagnosticValue = Math.abs(diagnosticZScore) > SIGNIFICANCE_THRESHOLD && Number.isFinite(diagnosticZScore);
+
+	// Determine which alignment doing this behavior suggests
+	let suggestsAlignment: AlignmentIndicator = 'neither';
+	if (hasDiagnosticValue) {
+		// If good rate > evil rate, doing this suggests the player is good
+		// If evil rate > good rate, doing this suggests the player is evil
+		suggestsAlignment = goodBaselineRate > evilBaselineRate ? 'good' : 'evil';
+	}
+
 	// Smoothed rate using empirical Bayes
 	const smoothedRate = empiricalBayesEstimate(fires, opportunities, baselineRate, SHRINKAGE_STRENGTH);
 
@@ -176,6 +240,13 @@ function computeSingleStatistic(
 		fires,
 		opportunities,
 		rawRate,
+		goodBaselineRate,
+		evilBaselineRate,
+		goodBaselineSample: goodOpportunities,
+		evilBaselineSample: evilOpportunities,
+		suggestsAlignment,
+		diagnosticZScore,
+		hasDiagnosticValue,
 		smoothedRate,
 		confidenceInterval,
 		baselineRate,
@@ -252,8 +323,20 @@ export async function loadPersonAnnotationStats(
 		personAnnotationStats: {
 			findMany: (args: {
 				where: {personId: string};
-				select: {predicateName: true; fires: true; opportunities: true};
-			}) => Promise<Array<{predicateName: string; fires: number; opportunities: number}>>;
+				select: {
+					predicateName: true;
+					fires: true;
+					opportunities: true;
+					alignmentBreakdown: {select: {alignment: true; fires: true; opportunities: true}};
+				};
+			}) => Promise<
+				Array<{
+					predicateName: string;
+					fires: number;
+					opportunities: number;
+					alignmentBreakdown: Array<{alignment: string; fires: number; opportunities: number}>;
+				}>
+			>;
 		};
 	},
 ): Promise<RawPersonAnnotationStat[]> {
@@ -263,14 +346,28 @@ export async function loadPersonAnnotationStats(
 			predicateName: true,
 			fires: true,
 			opportunities: true,
+			alignmentBreakdown: {
+				select: {
+					alignment: true,
+					fires: true,
+					opportunities: true,
+				},
+			},
 		},
 	});
 
-	return dbStats.map((stat) => ({
-		predicateName: stat.predicateName,
-		fires: stat.fires,
-		opportunities: stat.opportunities,
-	}));
+	return dbStats.map((stat) => {
+		const goodBreakdown = stat.alignmentBreakdown.find((b) => b.alignment === 'good');
+		const evilBreakdown = stat.alignmentBreakdown.find((b) => b.alignment === 'evil');
+
+		return {
+			predicateName: stat.predicateName,
+			fires: stat.fires,
+			opportunities: stat.opportunities,
+			goodStats: goodBreakdown ? {fires: goodBreakdown.fires, opportunities: goodBreakdown.opportunities} : null,
+			evilStats: evilBreakdown ? {fires: evilBreakdown.fires, opportunities: evilBreakdown.opportunities} : null,
+		};
+	});
 }
 
 /**
@@ -283,8 +380,26 @@ export async function loadPersonAnnotationStats(
 export async function loadGlobalAnnotationBaselines(db: {
 	globalAnnotationBaseline: {
 		findMany: (args: {
-			select: {predicateName: true; totalFires: true; totalOpportunities: true};
-		}) => Promise<Array<{predicateName: string; totalFires: number; totalOpportunities: number}>>;
+			select: {
+				predicateName: true;
+				totalFires: true;
+				totalOpportunities: true;
+				goodFires: true;
+				goodOpportunities: true;
+				evilFires: true;
+				evilOpportunities: true;
+			};
+		}) => Promise<
+			Array<{
+				predicateName: string;
+				totalFires: number;
+				totalOpportunities: number;
+				goodFires: number;
+				goodOpportunities: number;
+				evilFires: number;
+				evilOpportunities: number;
+			}>
+		>;
 	};
 }): Promise<PredicateBaseline[]> {
 	const dbBaselines = await db.globalAnnotationBaseline.findMany({
@@ -292,6 +407,10 @@ export async function loadGlobalAnnotationBaselines(db: {
 			predicateName: true,
 			totalFires: true,
 			totalOpportunities: true,
+			goodFires: true,
+			goodOpportunities: true,
+			evilFires: true,
+			evilOpportunities: true,
 		},
 	});
 
@@ -299,5 +418,9 @@ export async function loadGlobalAnnotationBaselines(db: {
 		predicateName: baseline.predicateName,
 		totalFires: baseline.totalFires,
 		totalOpportunities: baseline.totalOpportunities,
+		goodFires: baseline.goodFires,
+		goodOpportunities: baseline.goodOpportunities,
+		evilFires: baseline.evilFires,
+		evilOpportunities: baseline.evilOpportunities,
 	}));
 }
