@@ -8,19 +8,11 @@
  */
 
 import {type Rarity, RARITY_ORDER, getPredicateRarity} from './predicateRarity';
-import {
-	calculateZScore,
-	empiricalBayesEstimate,
-	twoProportionZScore,
-	wilsonScoreInterval,
-	zScoreToPercentile,
-} from './statisticalFunctions';
+import {twoProportionZScore, zScoreToConfidence} from './statisticalFunctions';
 
 // ============================================================================
 // Types
 // ============================================================================
-
-export type DeviationDirection = 'above' | 'below' | 'neutral';
 
 /** Which alignment does exhibiting this behavior suggest? */
 export type AlignmentIndicator = 'good' | 'evil' | 'neither';
@@ -49,29 +41,39 @@ export interface PersonAnnotationStatistic {
 	/** Sample size for evil baseline */
 	evilBaselineSample: number;
 
-	// Diagnostic value - does this behavior distinguish good from evil?
+	// Population diagnostic value - does this behavior distinguish good from evil globally?
 	/** Which alignment does doing this behavior suggest? */
-	suggestsAlignment: AlignmentIndicator;
-	/** Z-score for the difference between good and evil baselines */
-	diagnosticZScore: number;
+	popSuggestsAlignment: AlignmentIndicator;
+	/** Confidence percentage (0-100) for population diagnostic value */
+	popConfidence: number;
 	/** True if good and evil rates are significantly different */
-	hasDiagnosticValue: boolean;
+	popHasDiagnosticValue: boolean;
 
-	// Legacy fields (kept for backwards compatibility during transition)
-	/** Empirical Bayes adjusted rate (shrunk toward population mean) */
-	smoothedRate: number;
-	/** Wilson score confidence interval for the raw rate */
-	confidenceInterval: {lower: number; upper: number};
+	// Player's alignment-specific stats
+	/** Player's rate when playing good roles */
+	playerGoodRate: number | null;
+	/** Player's fires when good */
+	playerGoodFires: number;
+	/** Player's opportunities when good */
+	playerGoodOpportunities: number;
+	/** Player's rate when playing evil roles */
+	playerEvilRate: number | null;
+	/** Player's fires when evil */
+	playerEvilFires: number;
+	/** Player's opportunities when evil */
+	playerEvilOpportunities: number;
+
+	// Player's personal tell - does THIS player behave differently when good vs evil?
+	/** Which alignment does this player's behavior suggest? */
+	playerSuggestsAlignment: AlignmentIndicator;
+	/** Confidence percentage (0-100) for player's personal tell */
+	playerConfidence: number;
+	/** True if player's good and evil rates are significantly different */
+	playerHasTell: boolean;
+
+	// Legacy fields (kept for backwards compatibility)
 	/** Population baseline rate for comparison (overall) */
 	baselineRate: number;
-	/** Z-score measuring standard deviations from baseline */
-	zScore: number;
-	/** Percentile rank (0-100) based on z-score */
-	percentileRank: number;
-	/** Direction of deviation from baseline */
-	deviationDirection: DeviationDirection;
-	/** True if |zScore| > 1.96 (95% significance) */
-	isSignificant: boolean;
 }
 
 export interface PersonAnnotationProfile {
@@ -81,12 +83,10 @@ export interface PersonAnnotationProfile {
 	summary: {
 		/** Total number of predicates with any opportunities */
 		totalPredicates: number;
-		/** Number of significant deviations from baseline */
-		significantDeviations: number;
-		/** Number of predicates where person is above baseline */
-		aboveBaseline: number;
-		/** Number of predicates where person is below baseline */
-		belowBaseline: number;
+		/** Number of behaviors with population diagnostic value (≥95% confidence) */
+		popTellCount: number;
+		/** Number of behaviors where this player has a personal tell (≥95% confidence) */
+		playerTellCount: number;
 	};
 }
 
@@ -115,16 +115,6 @@ export interface PredicateBaseline {
 	evilFires: number;
 	evilOpportunities: number;
 }
-
-// ============================================================================
-// Constants
-// ============================================================================
-
-/** Z-score threshold for statistical significance (95% CI) */
-const SIGNIFICANCE_THRESHOLD = 1.96;
-
-/** Shrinkage strength for empirical Bayes estimation */
-const SHRINKAGE_STRENGTH = 10;
 
 // ============================================================================
 // Main Function
@@ -182,54 +172,59 @@ function computeSingleStatistic(
 	raw: RawPersonAnnotationStat,
 	baseline: PredicateBaseline | undefined,
 ): PersonAnnotationStatistic {
-	const {predicateName, fires, opportunities} = raw;
+	const {predicateName, fires, opportunities, goodStats, evilStats} = raw;
 
-	// Raw rate
+	// Raw rate (overall)
 	const rawRate = opportunities > 0 ? fires / opportunities : 0;
 
 	// Get baseline rate (default to raw rate if no baseline)
 	const baselineRate =
 		baseline && baseline.totalOpportunities > 0 ? baseline.totalFires / baseline.totalOpportunities : rawRate;
 
-	// Alignment-specific baselines
-	const goodFires = baseline?.goodFires ?? 0;
-	const goodOpportunities = baseline?.goodOpportunities ?? 0;
-	const evilFires = baseline?.evilFires ?? 0;
-	const evilOpportunities = baseline?.evilOpportunities ?? 0;
+	// Population alignment-specific baselines
+	const popGoodFires = baseline?.goodFires ?? 0;
+	const popGoodOpportunities = baseline?.goodOpportunities ?? 0;
+	const popEvilFires = baseline?.evilFires ?? 0;
+	const popEvilOpportunities = baseline?.evilOpportunities ?? 0;
 
-	const goodBaselineRate = goodOpportunities > 0 ? goodFires / goodOpportunities : 0;
-	const evilBaselineRate = evilOpportunities > 0 ? evilFires / evilOpportunities : 0;
+	const goodBaselineRate = popGoodOpportunities > 0 ? popGoodFires / popGoodOpportunities : 0;
+	const evilBaselineRate = popEvilOpportunities > 0 ? popEvilFires / popEvilOpportunities : 0;
 
-	// Compute diagnostic value: does this behavior distinguish good from evil?
-	const diagnosticZScore = twoProportionZScore(goodFires, goodOpportunities, evilFires, evilOpportunities);
-	const hasDiagnosticValue = Math.abs(diagnosticZScore) > SIGNIFICANCE_THRESHOLD && Number.isFinite(diagnosticZScore);
+	// Population diagnostic value: does this behavior distinguish good from evil globally?
+	const popZScore = twoProportionZScore(popGoodFires, popGoodOpportunities, popEvilFires, popEvilOpportunities);
+	const popConfidence = zScoreToConfidence(popZScore);
+	const popHasDiagnosticValue = popConfidence >= 95;
 
-	// Determine which alignment doing this behavior suggests
-	let suggestsAlignment: AlignmentIndicator = 'neither';
-	if (hasDiagnosticValue) {
-		// If good rate > evil rate, doing this suggests the player is good
-		// If evil rate > good rate, doing this suggests the player is evil
-		suggestsAlignment = goodBaselineRate > evilBaselineRate ? 'good' : 'evil';
+	// Determine which alignment doing this behavior suggests (population level)
+	let popSuggestsAlignment: AlignmentIndicator = 'neither';
+	if (goodBaselineRate !== evilBaselineRate) {
+		popSuggestsAlignment = goodBaselineRate > evilBaselineRate ? 'good' : 'evil';
 	}
 
-	// Smoothed rate using empirical Bayes
-	const smoothedRate = empiricalBayesEstimate(fires, opportunities, baselineRate, SHRINKAGE_STRENGTH);
+	// Player's alignment-specific stats
+	const playerGoodFires = goodStats?.fires ?? 0;
+	const playerGoodOpportunities = goodStats?.opportunities ?? 0;
+	const playerEvilFires = evilStats?.fires ?? 0;
+	const playerEvilOpportunities = evilStats?.opportunities ?? 0;
 
-	// Confidence interval using Wilson score
-	const wilson = wilsonScoreInterval(fires, opportunities);
-	const confidenceInterval = {lower: wilson.lower, upper: wilson.upper};
+	const playerGoodRate = playerGoodOpportunities > 0 ? playerGoodFires / playerGoodOpportunities : null;
+	const playerEvilRate = playerEvilOpportunities > 0 ? playerEvilFires / playerEvilOpportunities : null;
 
-	// Z-score comparing to baseline
-	const zScore = calculateZScore(rawRate, baselineRate, opportunities);
+	// Player's personal tell: does THIS player behave differently when good vs evil?
+	const playerZScore = twoProportionZScore(
+		playerGoodFires,
+		playerGoodOpportunities,
+		playerEvilFires,
+		playerEvilOpportunities,
+	);
+	const playerConfidence = zScoreToConfidence(playerZScore);
+	const playerHasTell = playerConfidence >= 95;
 
-	// Percentile rank from z-score
-	const percentileRank = zScoreToPercentile(zScore);
-
-	// Deviation direction
-	const deviationDirection = determineDeviationDirection(zScore);
-
-	// Statistical significance
-	const isSignificant = Math.abs(zScore) > SIGNIFICANCE_THRESHOLD && Number.isFinite(zScore);
+	// Determine which alignment this player's behavior suggests
+	let playerSuggestsAlignment: AlignmentIndicator = 'neither';
+	if (playerGoodRate !== null && playerEvilRate !== null && playerGoodRate !== playerEvilRate) {
+		playerSuggestsAlignment = playerGoodRate > playerEvilRate ? 'good' : 'evil';
+	}
 
 	// Rarity tier
 	const rarity = getPredicateRarity(predicateName);
@@ -242,66 +237,44 @@ function computeSingleStatistic(
 		rawRate,
 		goodBaselineRate,
 		evilBaselineRate,
-		goodBaselineSample: goodOpportunities,
-		evilBaselineSample: evilOpportunities,
-		suggestsAlignment,
-		diagnosticZScore,
-		hasDiagnosticValue,
-		smoothedRate,
-		confidenceInterval,
+		goodBaselineSample: popGoodOpportunities,
+		evilBaselineSample: popEvilOpportunities,
+		popSuggestsAlignment,
+		popConfidence,
+		popHasDiagnosticValue,
+		playerGoodRate,
+		playerGoodFires,
+		playerGoodOpportunities,
+		playerEvilRate,
+		playerEvilFires,
+		playerEvilOpportunities,
+		playerSuggestsAlignment,
+		playerConfidence,
+		playerHasTell,
 		baselineRate,
-		zScore,
-		percentileRank,
-		deviationDirection,
-		isSignificant,
 	};
-}
-
-/**
- * Determines the deviation direction based on z-score.
- * Uses a small threshold to avoid marking tiny deviations.
- */
-function determineDeviationDirection(zScore: number): DeviationDirection {
-	// Use a small threshold to avoid classifying noise as directional
-	const neutralThreshold = 0.1;
-
-	if (!Number.isFinite(zScore)) {
-		return zScore > 0 ? 'above' : 'below';
-	}
-
-	if (zScore > neutralThreshold) {
-		return 'above';
-	}
-	if (zScore < -neutralThreshold) {
-		return 'below';
-	}
-	return 'neutral';
 }
 
 /**
  * Computes summary statistics across all annotations.
  */
 function computeSummary(annotations: PersonAnnotationStatistic[]): PersonAnnotationProfile['summary'] {
-	let significantDeviations = 0;
-	let aboveBaseline = 0;
-	let belowBaseline = 0;
+	let popTellCount = 0;
+	let playerTellCount = 0;
 
 	for (const annotation of annotations) {
-		if (annotation.isSignificant) {
-			significantDeviations++;
+		if (annotation.popHasDiagnosticValue) {
+			popTellCount++;
 		}
-		if (annotation.deviationDirection === 'above') {
-			aboveBaseline++;
-		} else if (annotation.deviationDirection === 'below') {
-			belowBaseline++;
+		if (annotation.playerHasTell) {
+			playerTellCount++;
 		}
 	}
 
 	return {
 		totalPredicates: annotations.length,
-		significantDeviations,
-		aboveBaseline,
-		belowBaseline,
+		popTellCount,
+		playerTellCount,
 	};
 }
 

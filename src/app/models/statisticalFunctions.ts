@@ -214,3 +214,40 @@ export function zScoreToPercentile(zScore: number): number {
 	const probability = cumulativeStdNormalProbability(zScore);
 	return probability * 100;
 }
+
+// ============================================================================
+// Confidence Conversion
+// ============================================================================
+
+/**
+ * Converts a z-score to a confidence percentage (0-100).
+ *
+ * This represents the statistical confidence that two proportions are different.
+ * Uses a two-tailed test: confidence = 1 - p-value = 2 * CDF(|z|) - 1
+ *
+ * Examples:
+ * - |z| = 1.96 -> 95% confidence (p < 0.05)
+ * - |z| = 2.58 -> 99% confidence (p < 0.01)
+ * - |z| = 1.65 -> 90% confidence (p < 0.10)
+ * - |z| = 0 -> 0% confidence (no difference)
+ *
+ * @param zScore - The z-score from a two-proportion test
+ * @returns Confidence percentage from 0 to 100
+ */
+export function zScoreToConfidence(zScore: number): number {
+	// Handle edge cases
+	if (!Number.isFinite(zScore)) {
+		return 100;
+	}
+
+	const absZ = Math.abs(zScore);
+	if (absZ === 0) {
+		return 0;
+	}
+
+	// Two-tailed confidence: 2 * CDF(|z|) - 1
+	const cdfValue = cumulativeStdNormalProbability(absZ);
+	const confidence = (2 * cdfValue - 1) * 100;
+
+	return Math.max(0, Math.min(100, confidence));
+}

@@ -30,18 +30,13 @@
 	gap: 0.25rem;
 }
 
-.aboveCount {
-	color: hsl(0, 70%, 50%);
+.popTellCount {
+	color: hsl(220, 70%, 50%);
 	font-weight: 600;
 }
 
-.belowCount {
-	color: hsl(120, 50%, 35%);
-	font-weight: 600;
-}
-
-.significantCount {
-	color: hsl(var(--foreground));
+.playerTellCount {
+	color: hsl(280, 60%, 50%);
 	font-weight: 600;
 }
 
@@ -71,7 +66,31 @@
 .headerNum {
 	font-weight: 600;
 	background-color: hsl(var(--muted));
+	text-align: center;
+	border-bottom: none;
+}
+
+.headerSubGood {
+	font-weight: 500;
+	background-color: hsl(var(--muted));
 	text-align: right;
+	font-size: 0.75rem;
+	color: hsl(142, 76%, 36%);
+}
+
+.headerSubEvil {
+	font-weight: 500;
+	background-color: hsl(var(--muted));
+	text-align: right;
+	font-size: 0.75rem;
+	color: hsl(0, 72%, 51%);
+}
+
+.headerSub {
+	font-weight: 500;
+	background-color: hsl(var(--muted));
+	text-align: center;
+	font-size: 0.75rem;
 }
 
 .dataRow:hover {
@@ -124,22 +143,53 @@
 	font-size: 0.75rem;
 }
 
-.suggestsCell {
+.tellNone {
 	text-align: center;
+	color: hsl(var(--muted-foreground));
 }
 
-.suggestsGood {
+.tellGoodStrong {
+	text-align: center;
 	color: hsl(142, 76%, 36%);
 	font-weight: 600;
+	background-color: rgba(34, 197, 94, 0.15);
 }
 
-.suggestsEvil {
+.tellGoodWeak {
+	text-align: center;
+	color: hsl(142, 76%, 36%);
+}
+
+.tellEvilStrong {
+	text-align: center;
 	color: hsl(0, 72%, 51%);
 	font-weight: 600;
+	background-color: rgba(239, 68, 68, 0.15);
 }
 
-.suggestsNeither {
-	color: hsl(var(--muted-foreground));
+.tellEvilWeak {
+	text-align: center;
+	color: hsl(0, 72%, 51%);
+}
+
+.rateLinkGood {
+	color: inherit;
+	text-decoration: none;
+}
+
+.rateLinkGood:hover {
+	color: hsl(142, 76%, 36%);
+	text-decoration: underline;
+}
+
+.rateLinkEvil {
+	color: inherit;
+	text-decoration: none;
+}
+
+.rateLinkEvil:hover {
+	color: hsl(0, 72%, 51%);
+	text-decoration: underline;
 }
 
 .gamesLink {
@@ -201,5 +251,21 @@
 	width: 1rem;
 	height: 1rem;
 	border: 1px solid hsl(var(--border));
+	border-radius: 0.125rem;
+}
+
+.legendLabelGood {
+	color: hsl(142, 76%, 36%);
+	font-weight: 600;
+	background-color: rgba(34, 197, 94, 0.15);
+	padding: 0.125rem 0.25rem;
+	border-radius: 0.125rem;
+}
+
+.legendLabelEvil {
+	color: hsl(0, 72%, 51%);
+	font-weight: 600;
+	background-color: rgba(239, 68, 68, 0.15);
+	padding: 0.125rem 0.25rem;
 	border-radius: 0.125rem;
 }

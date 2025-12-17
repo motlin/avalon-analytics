@@ -11,31 +11,14 @@ interface PersonAnnotationStatsProps {
 	personId: string;
 }
 
-/**
- * Converts diagnostic value to a background color.
- * No diagnostic value -> transparent
- * Has diagnostic value -> light green (suggests good) or light red (suggests evil)
- */
-function diagnosticToBackgroundColor(hasDiagnosticValue: boolean, suggestsAlignment: AlignmentIndicator): string {
-	if (!hasDiagnosticValue) {
-		return 'transparent';
+function formatPercent(value: number | null): string {
+	if (value === null) {
+		return '—';
 	}
-
-	if (suggestsAlignment === 'good') {
-		return 'rgba(34, 197, 94, 0.15)'; // Green
-	}
-	if (suggestsAlignment === 'evil') {
-		return 'rgba(239, 68, 68, 0.15)'; // Red
-	}
-	return 'transparent';
-}
-
-function formatPercent(value: number): string {
-	return `${(value * 100).toFixed(1)}%`;
+	return `${(value * 100).toFixed(0)}%`;
 }
 
 function formatPredicateName(name: string): string {
-	// Remove common suffixes to make names more readable
 	return name
 		.replace(/ProposalVotePredicate$/, '')
 		.replace(/ProposalPredicate$/, '')
@@ -44,26 +27,43 @@ function formatPredicateName(name: string): string {
 		.replace(/([a-z])([A-Z])/g, '$1 $2');
 }
 
-function getSuggestsLabel(suggests: AlignmentIndicator): string {
-	switch (suggests) {
-		case 'good':
-			return 'Good';
-		case 'evil':
-			return 'Evil';
-		default:
-			return '—';
+function formatTellCell(confidence: number, suggests: AlignmentIndicator): string {
+	if (confidence < 80) {
+		return '—';
 	}
+	const alignmentLabel = suggests === 'good' ? 'Good' : suggests === 'evil' ? 'Evil' : '—';
+	return `${alignmentLabel} ${confidence.toFixed(0)}%`;
+}
+
+function getTellCellClass(confidence: number, suggests: AlignmentIndicator): string {
+	if (confidence < 80) {
+		return styles.tellNone;
+	}
+	if (suggests === 'good') {
+		return confidence >= 95 ? styles.tellGoodStrong : styles.tellGoodWeak;
+	}
+	if (suggests === 'evil') {
+		return confidence >= 95 ? styles.tellEvilStrong : styles.tellEvilWeak;
+	}
+	return styles.tellNone;
 }
 
 function AnnotationRow({statistic, personId}: {statistic: PersonAnnotationStatistic; personId: string}) {
-	const backgroundColor = diagnosticToBackgroundColor(statistic.hasDiagnosticValue, statistic.suggestsAlignment);
 	const gamesUrl = `/person/${personId}/predicate/${statistic.predicateName}/games`;
 
+	const popGoodTooltip = `${statistic.goodBaselineSample} opportunities`;
+	const popEvilTooltip = `${statistic.evilBaselineSample} opportunities`;
+	const playerGoodTooltip =
+		statistic.playerGoodOpportunities > 0
+			? `${statistic.playerGoodFires}/${statistic.playerGoodOpportunities} fires`
+			: 'No opportunities';
+	const playerEvilTooltip =
+		statistic.playerEvilOpportunities > 0
+			? `${statistic.playerEvilFires}/${statistic.playerEvilOpportunities} fires`
+			: 'No opportunities';
+
 	return (
-		<tr
-			className={styles.dataRow}
-			style={{backgroundColor}}
-		>
+		<tr className={styles.dataRow}>
 			<td className={styles.behaviorCell}>
 				<span
 					className={styles.rarityDot}
@@ -76,37 +76,45 @@ function AnnotationRow({statistic, personId}: {statistic: PersonAnnotationStatis
 					{formatPredicateName(statistic.predicateName)}
 				</a>
 			</td>
-			<td className={styles.rateCell}>
-				<span className={styles.rateValue}>{formatPercent(statistic.goodBaselineRate)}</span>
-				<span className={styles.sampleSize}>(n={statistic.goodBaselineSample})</span>
+			<td
+				className={styles.rateCell}
+				title={popGoodTooltip}
+			>
+				{formatPercent(statistic.goodBaselineRate)}
 			</td>
-			<td className={styles.rateCell}>
-				<span className={styles.rateValue}>{formatPercent(statistic.evilBaselineRate)}</span>
-				<span className={styles.sampleSize}>(n={statistic.evilBaselineSample})</span>
+			<td
+				className={styles.rateCell}
+				title={popEvilTooltip}
+			>
+				{formatPercent(statistic.evilBaselineRate)}
 			</td>
-			<td className={styles.suggestsCell}>
-				<span
-					className={
-						statistic.suggestsAlignment === 'good'
-							? styles.suggestsGood
-							: statistic.suggestsAlignment === 'evil'
-								? styles.suggestsEvil
-								: styles.suggestsNeither
-					}
-				>
-					{getSuggestsLabel(statistic.suggestsAlignment)}
-				</span>
-				{statistic.hasDiagnosticValue && <span className={styles.significanceMarker}>*</span>}
+			<td className={getTellCellClass(statistic.popConfidence, statistic.popSuggestsAlignment)}>
+				{formatTellCell(statistic.popConfidence, statistic.popSuggestsAlignment)}
 			</td>
-			<td className={styles.rateCell}>
-				<span className={styles.rateValue}>{formatPercent(statistic.rawRate)}</span>
+			<td
+				className={styles.rateCell}
+				title={playerGoodTooltip}
+			>
 				<a
 					href={gamesUrl}
-					className={styles.gamesLink}
-					title="View games"
+					className={styles.rateLinkGood}
 				>
-					({statistic.fires}/{statistic.opportunities})
+					{formatPercent(statistic.playerGoodRate)}
 				</a>
+			</td>
+			<td
+				className={styles.rateCell}
+				title={playerEvilTooltip}
+			>
+				<a
+					href={gamesUrl}
+					className={styles.rateLinkEvil}
+				>
+					{formatPercent(statistic.playerEvilRate)}
+				</a>
+			</td>
+			<td className={getTellCellClass(statistic.playerConfidence, statistic.playerSuggestsAlignment)}>
+				{formatTellCell(statistic.playerConfidence, statistic.playerSuggestsAlignment)}
 			</td>
 		</tr>
 	);
@@ -118,16 +126,11 @@ export function PersonAnnotationStats({profile, personId}: PersonAnnotationStats
 	if (annotations.length === 0) {
 		return (
 			<div className={styles.container}>
-				<h3 className={styles.title}>Annotation Behavior Statistics</h3>
+				<h3 className={styles.title}>Behavioral Tells</h3>
 				<p className={styles.emptyMessage}>No annotation data available for this player.</p>
 			</div>
 		);
 	}
-
-	// Count behaviors with diagnostic value
-	const diagnosticCount = annotations.filter((a) => a.hasDiagnosticValue).length;
-	const suggestsGoodCount = annotations.filter((a) => a.suggestsAlignment === 'good').length;
-	const suggestsEvilCount = annotations.filter((a) => a.suggestsAlignment === 'evil').length;
 
 	return (
 		<div className={styles.container}>
@@ -136,13 +139,10 @@ export function PersonAnnotationStats({profile, personId}: PersonAnnotationStats
 			<div className={styles.summary}>
 				<span className={styles.summaryItem}>{summary.totalPredicates} behaviors tracked</span>
 				<span className={styles.summaryItem}>
-					<span className={styles.significantCount}>{diagnosticCount}</span> with diagnostic value*
+					<span className={styles.popTellCount}>{summary.popTellCount}</span> population tells
 				</span>
 				<span className={styles.summaryItem}>
-					<span className={styles.aboveCount}>{suggestsGoodCount}</span> suggest good
-				</span>
-				<span className={styles.summaryItem}>
-					<span className={styles.belowCount}>{suggestsEvilCount}</span> suggest evil
+					<span className={styles.playerTellCount}>{summary.playerTellCount}</span> personal tells
 				</span>
 			</div>
 
@@ -151,10 +151,27 @@ export function PersonAnnotationStats({profile, personId}: PersonAnnotationStats
 					<thead>
 						<tr>
 							<th className={styles.headerBehavior}>Behavior</th>
-							<th className={styles.headerNum}>Good Rate</th>
-							<th className={styles.headerNum}>Evil Rate</th>
-							<th className={styles.headerNum}>Suggests</th>
-							<th className={styles.headerNum}>Your Rate</th>
+							<th
+								className={styles.headerNum}
+								colSpan={3}
+							>
+								Population
+							</th>
+							<th
+								className={styles.headerNum}
+								colSpan={3}
+							>
+								You
+							</th>
+						</tr>
+						<tr>
+							<th className={styles.headerBehavior} />
+							<th className={styles.headerSubGood}>Good</th>
+							<th className={styles.headerSubEvil}>Evil</th>
+							<th className={styles.headerSub}>Tell</th>
+							<th className={styles.headerSubGood}>Good</th>
+							<th className={styles.headerSubEvil}>Evil</th>
+							<th className={styles.headerSub}>Tell</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -170,26 +187,12 @@ export function PersonAnnotationStats({profile, personId}: PersonAnnotationStats
 			</div>
 
 			<div className={styles.legend}>
+				<span className={styles.legendItem}>Hover over rates to see sample sizes</span>
 				<span className={styles.legendItem}>
-					<span
-						className={styles.legendSwatch}
-						style={{backgroundColor: 'transparent', border: '1px solid hsl(var(--border))'}}
-					/>
-					No diagnostic value
+					<span className={styles.legendLabelGood}>Good 95%+</span> = strong tell suggesting good
 				</span>
 				<span className={styles.legendItem}>
-					<span
-						className={styles.legendSwatch}
-						style={{backgroundColor: 'rgba(34, 197, 94, 0.15)'}}
-					/>
-					Suggests good (p &lt; 0.05)
-				</span>
-				<span className={styles.legendItem}>
-					<span
-						className={styles.legendSwatch}
-						style={{backgroundColor: 'rgba(239, 68, 68, 0.15)'}}
-					/>
-					Suggests evil (p &lt; 0.05)
+					<span className={styles.legendLabelEvil}>Evil 95%+</span> = strong tell suggesting evil
 				</span>
 			</div>
 		</div>
