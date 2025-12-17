@@ -59,10 +59,22 @@ interface StatisticParams {
 	playerConfidence: number;
 }
 
+function computeLikelihoodRatio(goodRate: number | null, evilRate: number | null): number {
+	if (goodRate === null || evilRate === null) return 1;
+	if (goodRate > 0 && evilRate > 0) {
+		return goodRate > evilRate ? goodRate / evilRate : evilRate / goodRate;
+	}
+	if (goodRate > 0 && evilRate === 0) return Number.POSITIVE_INFINITY;
+	if (evilRate > 0 && goodRate === 0) return Number.POSITIVE_INFINITY;
+	return 1;
+}
+
 function createStatistic(params: StatisticParams) {
 	const fires = params.playerGoodFires + params.playerEvilFires;
 	const opportunities = params.playerGoodOpportunities + params.playerEvilOpportunities;
 	const rawRate = opportunities > 0 ? fires / opportunities : 0;
+	const popLikelihoodRatio = computeLikelihoodRatio(params.goodRate, params.evilRate);
+	const playerLikelihoodRatio = computeLikelihoodRatio(params.playerGoodRate, params.playerEvilRate);
 	return {
 		predicateName: params.predicateName,
 		rarity: params.rarity,
@@ -76,6 +88,9 @@ function createStatistic(params: StatisticParams) {
 		popSuggestsAlignment: params.popSuggests,
 		popConfidence: params.popConfidence,
 		popHasDiagnosticValue: params.popConfidence >= 95,
+		popLikelihoodRatio,
+		goodBaselineFires: Math.round(params.goodRate * params.goodSample),
+		evilBaselineFires: Math.round(params.evilRate * params.evilSample),
 		playerGoodRate: params.playerGoodRate,
 		playerGoodFires: params.playerGoodFires,
 		playerGoodOpportunities: params.playerGoodOpportunities,
@@ -85,6 +100,7 @@ function createStatistic(params: StatisticParams) {
 		playerSuggestsAlignment: params.playerSuggests,
 		playerConfidence: params.playerConfidence,
 		playerHasTell: params.playerConfidence >= 95,
+		playerLikelihoodRatio,
 		baselineRate: (params.goodRate + params.evilRate) / 2,
 	};
 }

@@ -27,23 +27,42 @@ function formatPredicateName(name: string): string {
 		.replace(/([a-z])([A-Z])/g, '$1 $2');
 }
 
-function formatTellCell(confidence: number, suggests: AlignmentIndicator): string {
-	if (confidence < 80) {
-		return '—';
+function formatLikelihoodRatio(ratio: number): string {
+	if (!Number.isFinite(ratio)) {
+		return '∞';
 	}
-	const alignmentLabel = suggests === 'good' ? 'Good' : suggests === 'evil' ? 'Evil' : '—';
-	return `${alignmentLabel} ${confidence.toFixed(0)}%`;
+	if (ratio >= 10) {
+		return `${ratio.toFixed(0)}x`;
+	}
+	return `${ratio.toFixed(1)}x`;
 }
 
-function getTellCellClass(confidence: number, suggests: AlignmentIndicator): string {
-	if (confidence < 80) {
+function formatTellCell(likelihoodRatio: number, confidence: number, suggests: AlignmentIndicator): string {
+	if (suggests === 'neither' || likelihoodRatio <= 1) {
+		return '—';
+	}
+	const alignmentLabel = suggests === 'good' ? 'Good' : 'Evil';
+	return `${formatLikelihoodRatio(likelihoodRatio)} ${alignmentLabel}`;
+}
+
+function formatTellTooltip(likelihoodRatio: number, confidence: number, suggests: AlignmentIndicator): string {
+	if (suggests === 'neither' || likelihoodRatio <= 1) {
+		return 'No significant difference between good and evil rates';
+	}
+	const alignmentLabel = suggests === 'good' ? 'good' : 'evil';
+	return `${formatLikelihoodRatio(likelihoodRatio)} more likely when ${alignmentLabel} (${confidence.toFixed(0)}% confidence)`;
+}
+
+function getTellCellClass(likelihoodRatio: number, confidence: number, suggests: AlignmentIndicator): string {
+	if (suggests === 'neither' || likelihoodRatio <= 1) {
 		return styles.tellNone;
 	}
+	const isStrong = confidence >= 95 && likelihoodRatio >= 1.5;
 	if (suggests === 'good') {
-		return confidence >= 95 ? styles.tellGoodStrong : styles.tellGoodWeak;
+		return isStrong ? styles.tellGoodStrong : styles.tellGoodWeak;
 	}
 	if (suggests === 'evil') {
-		return confidence >= 95 ? styles.tellEvilStrong : styles.tellEvilWeak;
+		return isStrong ? styles.tellEvilStrong : styles.tellEvilWeak;
 	}
 	return styles.tellNone;
 }
@@ -51,8 +70,8 @@ function getTellCellClass(confidence: number, suggests: AlignmentIndicator): str
 function AnnotationRow({statistic, personId}: {statistic: PersonAnnotationStatistic; personId: string}) {
 	const gamesUrl = `/person/${personId}/predicate/${statistic.predicateName}/games`;
 
-	const popGoodTooltip = `${statistic.goodBaselineSample} opportunities`;
-	const popEvilTooltip = `${statistic.evilBaselineSample} opportunities`;
+	const popGoodTooltip = `${statistic.goodBaselineFires}/${statistic.goodBaselineSample} fires`;
+	const popEvilTooltip = `${statistic.evilBaselineFires}/${statistic.evilBaselineSample} fires`;
 	const playerGoodTooltip =
 		statistic.playerGoodOpportunities > 0
 			? `${statistic.playerGoodFires}/${statistic.playerGoodOpportunities} fires`
@@ -61,6 +80,16 @@ function AnnotationRow({statistic, personId}: {statistic: PersonAnnotationStatis
 		statistic.playerEvilOpportunities > 0
 			? `${statistic.playerEvilFires}/${statistic.playerEvilOpportunities} fires`
 			: 'No opportunities';
+	const popTellTooltip = formatTellTooltip(
+		statistic.popLikelihoodRatio,
+		statistic.popConfidence,
+		statistic.popSuggestsAlignment,
+	);
+	const playerTellTooltip = formatTellTooltip(
+		statistic.playerLikelihoodRatio,
+		statistic.playerConfidence,
+		statistic.playerSuggestsAlignment,
+	);
 
 	return (
 		<tr className={styles.dataRow}>
@@ -88,8 +117,15 @@ function AnnotationRow({statistic, personId}: {statistic: PersonAnnotationStatis
 			>
 				{formatPercent(statistic.evilBaselineRate)}
 			</td>
-			<td className={getTellCellClass(statistic.popConfidence, statistic.popSuggestsAlignment)}>
-				{formatTellCell(statistic.popConfidence, statistic.popSuggestsAlignment)}
+			<td
+				className={getTellCellClass(
+					statistic.popLikelihoodRatio,
+					statistic.popConfidence,
+					statistic.popSuggestsAlignment,
+				)}
+				title={popTellTooltip}
+			>
+				{formatTellCell(statistic.popLikelihoodRatio, statistic.popConfidence, statistic.popSuggestsAlignment)}
 			</td>
 			<td
 				className={styles.rateCell}
@@ -113,8 +149,19 @@ function AnnotationRow({statistic, personId}: {statistic: PersonAnnotationStatis
 					{formatPercent(statistic.playerEvilRate)}
 				</a>
 			</td>
-			<td className={getTellCellClass(statistic.playerConfidence, statistic.playerSuggestsAlignment)}>
-				{formatTellCell(statistic.playerConfidence, statistic.playerSuggestsAlignment)}
+			<td
+				className={getTellCellClass(
+					statistic.playerLikelihoodRatio,
+					statistic.playerConfidence,
+					statistic.playerSuggestsAlignment,
+				)}
+				title={playerTellTooltip}
+			>
+				{formatTellCell(
+					statistic.playerLikelihoodRatio,
+					statistic.playerConfidence,
+					statistic.playerSuggestsAlignment,
+				)}
 			</td>
 		</tr>
 	);
@@ -187,12 +234,12 @@ export function PersonAnnotationStats({profile, personId}: PersonAnnotationStats
 			</div>
 
 			<div className={styles.legend}>
-				<span className={styles.legendItem}>Hover over rates to see sample sizes</span>
+				<span className={styles.legendItem}>Hover for details</span>
 				<span className={styles.legendItem}>
-					<span className={styles.legendLabelGood}>Good 95%+</span> = strong tell suggesting good
+					<span className={styles.legendLabelGood}>2.0x Good</span> = 2x more likely when good
 				</span>
 				<span className={styles.legendItem}>
-					<span className={styles.legendLabelEvil}>Evil 95%+</span> = strong tell suggesting evil
+					<span className={styles.legendLabelEvil}>1.5x Evil</span> = 1.5x more likely when evil
 				</span>
 			</div>
 		</div>

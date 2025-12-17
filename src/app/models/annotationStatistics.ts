@@ -48,6 +48,12 @@ export interface PersonAnnotationStatistic {
 	popConfidence: number;
 	/** True if good and evil rates are significantly different */
 	popHasDiagnosticValue: boolean;
+	/** Likelihood ratio - how much more likely is one alignment to do this behavior */
+	popLikelihoodRatio: number;
+	/** Total fires for good baseline (for tooltip) */
+	goodBaselineFires: number;
+	/** Total fires for evil baseline (for tooltip) */
+	evilBaselineFires: number;
 
 	// Player's alignment-specific stats
 	/** Player's rate when playing good roles */
@@ -70,6 +76,8 @@ export interface PersonAnnotationStatistic {
 	playerConfidence: number;
 	/** True if player's good and evil rates are significantly different */
 	playerHasTell: boolean;
+	/** Likelihood ratio for this player - how much more likely when one alignment */
+	playerLikelihoodRatio: number;
 
 	// Legacy fields (kept for backwards compatibility)
 	/** Population baseline rate for comparison (overall) */
@@ -197,8 +205,21 @@ function computeSingleStatistic(
 
 	// Determine which alignment doing this behavior suggests (population level)
 	let popSuggestsAlignment: AlignmentIndicator = 'neither';
-	if (goodBaselineRate !== evilBaselineRate) {
-		popSuggestsAlignment = goodBaselineRate > evilBaselineRate ? 'good' : 'evil';
+	let popLikelihoodRatio = 1;
+	if (goodBaselineRate > 0 && evilBaselineRate > 0) {
+		if (goodBaselineRate > evilBaselineRate) {
+			popSuggestsAlignment = 'good';
+			popLikelihoodRatio = goodBaselineRate / evilBaselineRate;
+		} else if (evilBaselineRate > goodBaselineRate) {
+			popSuggestsAlignment = 'evil';
+			popLikelihoodRatio = evilBaselineRate / goodBaselineRate;
+		}
+	} else if (goodBaselineRate > 0 && evilBaselineRate === 0) {
+		popSuggestsAlignment = 'good';
+		popLikelihoodRatio = Number.POSITIVE_INFINITY;
+	} else if (evilBaselineRate > 0 && goodBaselineRate === 0) {
+		popSuggestsAlignment = 'evil';
+		popLikelihoodRatio = Number.POSITIVE_INFINITY;
 	}
 
 	// Player's alignment-specific stats
@@ -222,8 +243,23 @@ function computeSingleStatistic(
 
 	// Determine which alignment this player's behavior suggests
 	let playerSuggestsAlignment: AlignmentIndicator = 'neither';
-	if (playerGoodRate !== null && playerEvilRate !== null && playerGoodRate !== playerEvilRate) {
-		playerSuggestsAlignment = playerGoodRate > playerEvilRate ? 'good' : 'evil';
+	let playerLikelihoodRatio = 1;
+	if (playerGoodRate !== null && playerEvilRate !== null) {
+		if (playerGoodRate > 0 && playerEvilRate > 0) {
+			if (playerGoodRate > playerEvilRate) {
+				playerSuggestsAlignment = 'good';
+				playerLikelihoodRatio = playerGoodRate / playerEvilRate;
+			} else if (playerEvilRate > playerGoodRate) {
+				playerSuggestsAlignment = 'evil';
+				playerLikelihoodRatio = playerEvilRate / playerGoodRate;
+			}
+		} else if (playerGoodRate > 0 && playerEvilRate === 0) {
+			playerSuggestsAlignment = 'good';
+			playerLikelihoodRatio = Number.POSITIVE_INFINITY;
+		} else if (playerEvilRate > 0 && playerGoodRate === 0) {
+			playerSuggestsAlignment = 'evil';
+			playerLikelihoodRatio = Number.POSITIVE_INFINITY;
+		}
 	}
 
 	// Rarity tier
@@ -242,6 +278,9 @@ function computeSingleStatistic(
 		popSuggestsAlignment,
 		popConfidence,
 		popHasDiagnosticValue,
+		popLikelihoodRatio,
+		goodBaselineFires: popGoodFires,
+		evilBaselineFires: popEvilFires,
 		playerGoodRate,
 		playerGoodFires,
 		playerGoodOpportunities,
@@ -251,6 +290,7 @@ function computeSingleStatistic(
 		playerSuggestsAlignment,
 		playerConfidence,
 		playerHasTell,
+		playerLikelihoodRatio,
 		baselineRate,
 	};
 }
