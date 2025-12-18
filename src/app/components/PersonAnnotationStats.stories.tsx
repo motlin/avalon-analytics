@@ -108,7 +108,7 @@ function createStatistic(params: StatisticParams) {
 const diagnosticBehaviorsProfile: PersonAnnotationProfile = {
 	annotations: [
 		createStatistic({
-			predicateName: 'AllGoodTeamWithoutSelfProposalPredicate',
+			predicateName: 'Proposed an all good team without self',
 			rarity: 'rare',
 			goodRate: 0.45,
 			evilRate: 0.2,
@@ -126,7 +126,7 @@ const diagnosticBehaviorsProfile: PersonAnnotationProfile = {
 			playerConfidence: 85,
 		}),
 		createStatistic({
-			predicateName: 'KnownEvilHammerProposalPredicate',
+			predicateName: 'Evil hammer proposed another known evil',
 			rarity: 'legendary',
 			goodRate: 0.05,
 			evilRate: 0.35,
@@ -144,7 +144,7 @@ const diagnosticBehaviorsProfile: PersonAnnotationProfile = {
 			playerConfidence: 96,
 		}),
 		createStatistic({
-			predicateName: 'ProtestVoteProposalVotePredicate',
+			predicateName: 'Protest voted on the 5th proposal',
 			rarity: 'epic',
 			goodRate: 0.28,
 			evilRate: 0.45,
@@ -162,7 +162,7 @@ const diagnosticBehaviorsProfile: PersonAnnotationProfile = {
 			playerConfidence: 5,
 		}),
 		createStatistic({
-			predicateName: 'FirstProposalAllGoodPredicate',
+			predicateName: 'Proposed the first all good team',
 			rarity: 'common',
 			goodRate: 0.52,
 			evilRate: 0.38,
@@ -180,7 +180,7 @@ const diagnosticBehaviorsProfile: PersonAnnotationProfile = {
 			playerConfidence: 99,
 		}),
 		createStatistic({
-			predicateName: 'VotedAgainstOwnProposalPredicate',
+			predicateName: 'Voted against their own proposal',
 			rarity: 'uncommon',
 			goodRate: 0.08,
 			evilRate: 0.06,
@@ -222,7 +222,7 @@ export const DiagnosticBehaviors: Story = {
 const noDiagnosticValueProfile: PersonAnnotationProfile = {
 	annotations: [
 		createStatistic({
-			predicateName: 'ApproveWhenNextLeaderPredicate',
+			predicateName: 'Approved when they are the next leader',
 			rarity: 'common',
 			goodRate: 0.44,
 			evilRate: 0.42,
@@ -240,7 +240,7 @@ const noDiagnosticValueProfile: PersonAnnotationProfile = {
 			playerConfidence: 15,
 		}),
 		createStatistic({
-			predicateName: 'HammerPanderingPredicate',
+			predicateName: 'Pandered to the hammer',
 			rarity: 'common',
 			goodRate: 0.35,
 			evilRate: 0.33,
@@ -258,7 +258,7 @@ const noDiagnosticValueProfile: PersonAnnotationProfile = {
 			playerConfidence: 20,
 		}),
 		createStatistic({
-			predicateName: 'VotedForFailedMissionPredicate',
+			predicateName: 'Voted for a previously failed team',
 			rarity: 'rare',
 			goodRate: 0.24,
 			evilRate: 0.22,
@@ -300,7 +300,7 @@ export const NoDiagnosticValue: Story = {
 const mixedProfile: PersonAnnotationProfile = {
 	annotations: [
 		createStatistic({
-			predicateName: 'PercivalExcludingMerlinPredicate',
+			predicateName: 'Percival excluded Merlin despite knowing who Merlin is',
 			rarity: 'legendary',
 			goodRate: 0.67,
 			evilRate: 0.15,
@@ -318,7 +318,7 @@ const mixedProfile: PersonAnnotationProfile = {
 			playerConfidence: 0,
 		}),
 		createStatistic({
-			predicateName: 'OberonDuckedMissionPredicate',
+			predicateName: 'Oberon ducked',
 			rarity: 'epic',
 			goodRate: 0.35,
 			evilRate: 0.02,
@@ -336,7 +336,7 @@ const mixedProfile: PersonAnnotationProfile = {
 			playerConfidence: 0,
 		}),
 		createStatistic({
-			predicateName: 'SameTeamAfterFailPredicate',
+			predicateName: 'Copied the team from a failed mission',
 			rarity: 'rare',
 			goodRate: 0.18,
 			evilRate: 0.45,
@@ -354,7 +354,7 @@ const mixedProfile: PersonAnnotationProfile = {
 			playerConfidence: 70,
 		}),
 		createStatistic({
-			predicateName: 'ApproveOwnProposalPredicate',
+			predicateName: 'Approved their own proposal',
 			rarity: 'common',
 			goodRate: 0.88,
 			evilRate: 0.9,
@@ -372,7 +372,7 @@ const mixedProfile: PersonAnnotationProfile = {
 			playerConfidence: 20,
 		}),
 		createStatistic({
-			predicateName: 'FirstVoteRejectPredicate',
+			predicateName: 'Rejected the first proposal',
 			rarity: 'common',
 			goodRate: 0.07,
 			evilRate: 0.08,

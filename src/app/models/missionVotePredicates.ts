@@ -72,7 +72,7 @@ function getKnownEvilFailVotes(context: MissionContext): MissionVoteInfo[] {
 
 // 🦆 Ducking When Good Already Won Two (evil didn't fail)
 export const DuckingWhenGoodWonTwoPredicate: MissionVotePredicate = {
-	name: 'DuckingWhenGoodAlreadyWonTwoMissions',
+	name: 'Ducked when good already won two missions',
 	rarity: 'rare',
 	isRelevant: (context) => {
 		const voterRole = getPlayerRole(context, context.voterName);
@@ -88,7 +88,7 @@ export const DuckingWhenGoodWonTwoPredicate: MissionVotePredicate = {
 
 // 🦆 Ducking When Evil Already Won Two
 export const DuckingWhenEvilWonTwoPredicate: MissionVotePredicate = {
-	name: 'DuckingWhenEvilAlreadyWonTwoMissions',
+	name: 'Ducked when evil already won two missions',
 	rarity: 'rare',
 	isRelevant: (context) => {
 		const voterRole = getPlayerRole(context, context.voterName);
@@ -104,7 +104,7 @@ export const DuckingWhenEvilWonTwoPredicate: MissionVotePredicate = {
 
 // 👻 Oberon Ducked
 export const OberonDuckedPredicate: MissionVotePredicate = {
-	name: 'OberonDucked',
+	name: 'Oberon ducked',
 	rarity: 'epic',
 	isRelevant: (context) => {
 		const voterRole = getPlayerRole(context, context.voterName);
@@ -126,7 +126,7 @@ export const OberonDuckedPredicate: MissionVotePredicate = {
 
 // 🦆 General Evil Ducked (non-Oberon)
 export const EvilDuckedPredicate: MissionVotePredicate = {
-	name: 'RoleDucked',
+	name: 'Ducked',
 	rarity: 'common',
 	isRelevant: (context) => {
 		const voterRole = getPlayerRole(context, context.voterName);
@@ -149,7 +149,7 @@ export const EvilDuckedPredicate: MissionVotePredicate = {
 
 // ⚔️ Failure to Coordinate (multiple evil failed when not needed)
 export const FailureToCoordinatePredicate: MissionVotePredicate = {
-	name: 'FailureToCoordinate',
+	name: 'Failed to coordinate',
 	rarity: 'epic',
 	isRelevant: (context) => {
 		if (context.votedSuccess) return false;
@@ -185,7 +185,7 @@ export const FailureToCoordinatePredicate: MissionVotePredicate = {
 
 // 🎯 Evil Player Not Closest to Leader Failed
 export const EvilNotClosestFailedPredicate: MissionVotePredicate = {
-	name: 'EvilPlayerNotClosestToLeaderFailed',
+	name: 'Evil not closest to leader failed',
 	rarity: 'uncommon',
 	isRelevant: (context) => {
 		if (context.votedSuccess) return false;

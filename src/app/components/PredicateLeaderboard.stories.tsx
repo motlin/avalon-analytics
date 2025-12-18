@@ -140,7 +140,7 @@ const significantDeviationsEntries: PredicateLeaderboardEntry[] = [
 
 export const SignificantDeviations: Story = {
 	args: {
-		predicateName: 'PercivalExcludingMerlinProposalPredicate',
+		predicateName: 'Percival excluded Merlin despite knowing who Merlin is',
 		rarity: 'legendary',
 		baselineRate: 0.22,
 		entries: significantDeviationsEntries,
@@ -218,7 +218,7 @@ const averageBehaviorEntries: PredicateLeaderboardEntry[] = [
 
 export const AverageBehavior: Story = {
 	args: {
-		predicateName: 'ApproveWhenNextLeaderProposalVotePredicate',
+		predicateName: 'Approved when they are the next leader',
 		rarity: 'common',
 		baselineRate: 0.31,
 		entries: averageBehaviorEntries,
@@ -274,7 +274,7 @@ const limitedDataEntries: PredicateLeaderboardEntry[] = [
 
 export const LimitedData: Story = {
 	args: {
-		predicateName: 'SameTeamFailedMissionProposalPredicate',
+		predicateName: 'Copied the team from a failed mission',
 		rarity: 'legendary',
 		baselineRate: 0.19,
 		entries: limitedDataEntries,
@@ -429,7 +429,7 @@ const manyPlayersEntries: PredicateLeaderboardEntry[] = [
 
 export const ManyPlayers: Story = {
 	args: {
-		predicateName: 'ProtestVoteProposalVotePredicate',
+		predicateName: 'Protest voted on the 5th proposal',
 		rarity: 'epic',
 		baselineRate: 0.32,
 		entries: manyPlayersEntries,
@@ -448,7 +448,7 @@ export const ManyPlayers: Story = {
  */
 export const NoData: Story = {
 	args: {
-		predicateName: 'RareUnseenPredicate',
+		predicateName: 'Rare unseen behavior',
 		rarity: 'legendary',
 		baselineRate: 0.0,
 		entries: [],

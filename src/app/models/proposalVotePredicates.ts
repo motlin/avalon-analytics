@@ -172,7 +172,7 @@ function getEarlierProposalWithSameTeam(context: ProposalVoteContext): EarlierPr
 
 // 🗳️ Off-Team Approval (early game)
 export const EarlyOffTeamApprovalPredicate: ProposalVotePredicate = {
-	name: 'EarlyOffTeamApprovalProposalVotePredicate',
+	name: 'Voted for a team that did not include them',
 	rarity: 'common',
 	isRelevant: (context) => context.proposalNumber <= 2 && context.missionNumber <= 3,
 	isWeird: (context) => context.votedYes && !teamIncludesPlayer(context, context.voterName),
@@ -185,7 +185,7 @@ export const EarlyOffTeamApprovalPredicate: ProposalVotePredicate = {
 
 // 🗳️ Off-Team Approval (4th proposal)
 export const LateOffTeamApprovalPredicate: ProposalVotePredicate = {
-	name: 'LateOffTeamApprovalProposalVotePredicate',
+	name: 'Voted for a team that did not include them (4th proposal)',
 	rarity: 'common',
 	isRelevant: (context) => context.proposalNumber === 3 && context.missionNumber <= 3,
 	isWeird: (context) => context.votedYes && !teamIncludesPlayer(context, context.voterName),
@@ -198,7 +198,7 @@ export const LateOffTeamApprovalPredicate: ProposalVotePredicate = {
 
 // ✋ Protest Vote (voting no on 5th proposal)
 export const ProtestVotePredicate: ProposalVotePredicate = {
-	name: 'ProtestVoteProposalVotePredicate',
+	name: 'Protest voted on the 5th proposal',
 	rarity: 'epic',
 	isRelevant: (context) => {
 		if (isHammer(context) && context.missionNumber === 4) return false;
@@ -214,7 +214,7 @@ export const ProtestVotePredicate: ProposalVotePredicate = {
 
 // ✋ Protest Vote on Evil Team
 export const ProtestVoteEvilTeamPredicate: ProposalVotePredicate = {
-	name: 'ProtestVoteEvilTeamProposalVotePredicate',
+	name: 'Protest voted when team included seen evil',
 	rarity: 'rare',
 	isRelevant: (context) => {
 		if (isHammer(context) && context.missionNumber === 4) return false;
@@ -236,7 +236,7 @@ export const ProtestVoteEvilTeamPredicate: ProposalVotePredicate = {
 
 // ✋ Protest Vote on Good Team
 export const ProtestVoteGoodTeamPredicate: ProposalVotePredicate = {
-	name: 'ProtestVoteGoodTeamProposalVotePredicate',
+	name: 'Protest voted when team was all good',
 	rarity: 'epic',
 	isRelevant: (context) => {
 		if (isHammer(context) && context.missionNumber === 4) return false;
@@ -258,7 +258,7 @@ export const ProtestVoteGoodTeamPredicate: ProposalVotePredicate = {
 
 // 🧙 Merlin Voted for Morgana
 export const MerlinVotedForMorganaPredicate: ProposalVotePredicate = {
-	name: 'MerlinVotedForMorganaProposalVotePredicate',
+	name: 'Merlin voted for a team including Morgana',
 	rarity: 'common',
 	isRelevant: (context) => {
 		if (isEvilHammerWin(context)) return false;
@@ -275,7 +275,7 @@ export const MerlinVotedForMorganaPredicate: ProposalVotePredicate = {
 
 // 🧙 Merlin Approved Team With Multiple Visible Evil
 export const MerlinApprovedMultipleVisibleEvilPredicate: ProposalVotePredicate = {
-	name: 'MerlinApprovedMultipleVisibleEvilProposalVotePredicate',
+	name: 'Merlin approved a team with multiple visible evil',
 	rarity: 'uncommon',
 	isRelevant: (context) => {
 		if (isEvilHammerWin(context)) return false;
@@ -295,7 +295,7 @@ export const MerlinApprovedMultipleVisibleEvilPredicate: ProposalVotePredicate =
 
 // 😈 Morgana Voted for Merlin
 export const MorganaVotedForMerlinPredicate: ProposalVotePredicate = {
-	name: 'MorganaVotedForMerlinProposalVotePredicate',
+	name: 'Morgana voted for a team including Merlin',
 	rarity: 'common',
 	isRelevant: (context) => {
 		if (isEvilHammerWin(context)) return false;
@@ -312,7 +312,7 @@ export const MorganaVotedForMerlinPredicate: ProposalVotePredicate = {
 
 // 🧔 Percival Voted for Both Merlin and Morgana
 export const PercivalVotedForBothPredicate: ProposalVotePredicate = {
-	name: 'PercivalVotedForMerlinAndMorganaProposalVotePredicate',
+	name: 'Percival voted for a team including both Merlin and Morgana',
 	rarity: 'rare',
 	isRelevant: (context) => {
 		if (isEvilHammerWin(context)) return false;
@@ -329,7 +329,7 @@ export const PercivalVotedForBothPredicate: ProposalVotePredicate = {
 
 // 🧔 Percival Protest Voted Multiple Evil Team
 export const PercivalProtestVotedMultipleEvilPredicate: ProposalVotePredicate = {
-	name: 'PercivalProtestVotedMultipleEvilProposalVotePredicate',
+	name: 'Percival protest voted knowing multiple evil on team',
 	rarity: 'uncommon',
 	isRelevant: (context) => {
 		// Voter must be Percival
@@ -362,7 +362,7 @@ export const PercivalProtestVotedMultipleEvilPredicate: ProposalVotePredicate = 
 
 // ❌ Vote Against Own Proposal
 export const VoteAgainstOwnProposalPredicate: ProposalVotePredicate = {
-	name: 'VoteAgainstOwnProposalProposalVotePredicate',
+	name: 'Voted against their own proposal',
 	rarity: 'common',
 	isRelevant: (context) => context.proposal.proposer === context.voterName,
 	isWeird: (context) => !context.votedYes,
@@ -375,7 +375,7 @@ export const VoteAgainstOwnProposalPredicate: ProposalVotePredicate = {
 
 // ⚠️ Risking Good Loss
 export const RiskingGoodLossPredicate: ProposalVotePredicate = {
-	name: 'RiskingGoodLossProposalVotePredicate',
+	name: 'Risked losing by voting for seen evil',
 	rarity: 'common',
 	isRelevant: (context) => {
 		if (isEvilHammerWin(context)) return false;
@@ -400,7 +400,7 @@ export const RiskingGoodLossPredicate: ProposalVotePredicate = {
 
 // ⚠️ Risking Evil Loss (evil approving a winning good team)
 export const RiskingEvilLossPredicate: ProposalVotePredicate = {
-	name: 'RiskingEvilLossProposalVotePredicate',
+	name: 'Off-team approved a winning good team',
 	rarity: 'common',
 	isRelevant: (context) => {
 		if (isEvilHammerWin(context)) return false;
@@ -423,7 +423,7 @@ export const RiskingEvilLossPredicate: ProposalVotePredicate = {
 
 // 🗳️ Off-Team Approve All Good Team
 export const OffTeamApproveAllGoodTeamPredicate: ProposalVotePredicate = {
-	name: 'OffTeamApproveAllGoodTeamProposalVotePredicate',
+	name: 'Approved an all good team that did not include them',
 	rarity: 'common',
 	isRelevant: (context) => {
 		if (isHammer(context)) return false;
@@ -440,7 +440,7 @@ export const OffTeamApproveAllGoodTeamPredicate: ProposalVotePredicate = {
 
 // 🗳️ Off-Team Approve Max Size Team
 export const OffTeamApproveMaxSizePredicate: ProposalVotePredicate = {
-	name: 'OffTeamApproveMaxSizeProposalVotePredicate',
+	name: 'Approved a max size team that did not include them',
 	rarity: 'common',
 	isRelevant: (context) => {
 		if (isHammer(context)) return false;
@@ -457,7 +457,7 @@ export const OffTeamApproveMaxSizePredicate: ProposalVotePredicate = {
 
 // 😈 Evil Voted Against Evil
 export const EvilVotedAgainstEvilPredicate: ProposalVotePredicate = {
-	name: 'EvilVotedAgainstEvilProposalVotePredicate',
+	name: 'Evil voted against a proposal with two known evil',
 	rarity: 'common',
 	isRelevant: (context) => {
 		const voterRole = getPlayerRole(context, context.voterName);
@@ -478,7 +478,7 @@ export const EvilVotedAgainstEvilPredicate: ProposalVotePredicate = {
 
 // 🗳️ Approve When Next Leader
 export const ApproveWhenNextLeaderProposalVotePredicate: ProposalVotePredicate = {
-	name: 'ApproveWhenNextLeaderProposalVotePredicate',
+	name: 'Approved when they are the next leader',
 	rarity: 'common',
 	hidden: true,
 	isRelevant: (context) => {
@@ -504,7 +504,7 @@ export const ApproveWhenNextLeaderProposalVotePredicate: ProposalVotePredicate =
 
 // 🗳️ On Proposal But Didn't Vote For It (early game)
 export const OnProposalButDidntVoteForItEarlyGameProposalVotePredicate: ProposalVotePredicate = {
-	name: 'OnProposalButDidntVoteForItEarlyGameProposalVotePredicate',
+	name: 'Voted against an early proposal that included them',
 	rarity: 'common',
 	isRelevant: (context) => {
 		// Early game: proposals 1-3 (0-indexed: 0-2), missions 1-2 (0-indexed: 0-1)
@@ -524,7 +524,7 @@ export const OnProposalButDidntVoteForItEarlyGameProposalVotePredicate: Proposal
 
 // 🔄 Switched Vote From Identical Earlier Proposal
 export const SwitchedVoteProposalVotePredicate: ProposalVotePredicate = {
-	name: 'SwitchedVoteProposalVotePredicate',
+	name: 'Switched vote from an identical earlier proposal',
 	rarity: 'common',
 	isRelevant: (context) => {
 		if (isHammer(context)) return false;
@@ -547,7 +547,7 @@ export const SwitchedVoteProposalVotePredicate: ProposalVotePredicate = {
 
 // 🔢 Trusted More Than Max Team Size Players On Last Mission
 export const TrustedMoreThanMaxTeamSizePlayersOnLastMissionProposalVotePredicate: ProposalVotePredicate = {
-	name: 'TrustedMoreThanMaxTeamSizePlayersOnLastMissionProposalVotePredicate',
+	name: 'Trusted too many players on a late mission',
 	rarity: 'common',
 	isRelevant: (context) => {
 		if (isHammer(context)) return false;
@@ -576,7 +576,7 @@ export const TrustedMoreThanMaxTeamSizePlayersOnLastMissionProposalVotePredicate
 
 // 🗳️ Off-Team Approve One Evil (when two fails required)
 export const OffTeamApproveOneEvilProposalVotePredicate: ProposalVotePredicate = {
-	name: 'OffTeamApproveOneEvilProposalVotePredicate',
+	name: 'Off-team approved one evil when two fails required',
 	rarity: 'uncommon',
 	isRelevant: (context) => {
 		// Must be off-team
@@ -596,7 +596,7 @@ export const OffTeamApproveOneEvilProposalVotePredicate: ProposalVotePredicate =
 
 // ✅ First All Good Team Vote
 export const FirstAllGoodTeamVotePredicate: ProposalVotePredicate = {
-	name: 'FirstAllGoodTeamVotePredicate',
+	name: 'Voted for the first all good team',
 	rarity: 'common',
 	isRelevant: (context) => {
 		if (isHammer(context)) return false;
@@ -634,7 +634,7 @@ export const FirstAllGoodTeamVotePredicate: ProposalVotePredicate = {
 
 // 🔄 Approving Proposal With Teammates From Failed Mission
 export const ApprovingProposalWithTeammatesFromFailedMissionProposalVotePredicate: ProposalVotePredicate = {
-	name: 'ApprovingProposalWithTeammatesFromFailedMissionProposalVotePredicate',
+	name: 'Approved a team with players from a failed mission',
 	rarity: 'common',
 	isRelevant: (context) => {
 		// Not relevant if evil hammer win
@@ -693,7 +693,7 @@ function getPreviousFailedMissionsWithSamePlayers(context: ProposalVoteContext):
 
 // ✋ Did Not Protest Vote When Good Was About To Win
 export const DidNotProtestVoteWhenGoodWasAboutToWinProposalVotePredicate: ProposalVotePredicate = {
-	name: 'DidNotProtestVoteWhenGoodWasAboutToWinProposalVotePredicate',
+	name: 'Did not protest vote when good was about to win',
 	rarity: 'legendary',
 	isRelevant: (context) => {
 		// Not relevant if evil hammer win (5th proposal rejected)
@@ -724,7 +724,7 @@ export const DidNotProtestVoteWhenGoodWasAboutToWinProposalVotePredicate: Propos
 
 // ✅ First All Good Team of Max Size Vote
 export const FirstAllGoodTeamOfMaxSizeVotePredicate: ProposalVotePredicate = {
-	name: 'FirstAllGoodTeamOfMaxSizeVotePredicate',
+	name: 'Voted for the first all good team of max size',
 	rarity: 'common',
 	isRelevant: (context) => {
 		const maxTeamSize = getMaxTeamSize(context.game);
