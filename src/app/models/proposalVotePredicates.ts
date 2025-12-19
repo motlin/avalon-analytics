@@ -6,7 +6,7 @@
  */
 
 import type {Annotation, GameContext, ProposalContext, ProposalVoteContext} from './annotations';
-import type {Rarity} from './predicateRarity';
+import type {InterestingRoles, Rarity} from './predicateRarity';
 import {
 	alreadyFailedTwo,
 	alreadySucceededTwo,
@@ -37,6 +37,8 @@ export interface ProposalVotePredicate {
 	getCommentary: (context: ProposalVoteContext) => string;
 	/** Hidden predicates are tracked for stats but not rendered in the UI */
 	hidden?: boolean;
+	/** Which roles should have role-level breakdown analysis */
+	interestingRoles?: InterestingRoles;
 }
 
 // ============================================================================
@@ -216,6 +218,7 @@ export const ProtestVotePredicate: ProposalVotePredicate = {
 export const ProtestVoteEvilTeamPredicate: ProposalVotePredicate = {
 	name: 'Protest voted when team included seen evil',
 	rarity: 'rare',
+	interestingRoles: 'good',
 	isRelevant: (context) => {
 		if (isHammer(context) && context.missionNumber === 4) return false;
 		return isHammer(context);
@@ -377,6 +380,7 @@ export const VoteAgainstOwnProposalPredicate: ProposalVotePredicate = {
 export const RiskingGoodLossPredicate: ProposalVotePredicate = {
 	name: 'Risked losing by voting for seen evil',
 	rarity: 'common',
+	interestingRoles: 'all',
 	isRelevant: (context) => {
 		if (isEvilHammerWin(context)) return false;
 		return alreadyFailedTwo(context) && countSeenEvilOnTeam(context) > 0;

@@ -6,7 +6,7 @@
  */
 
 import type {Annotation, MissionContext, MissionVoteContext} from './annotations';
-import type {Rarity} from './predicateRarity';
+import type {InterestingRoles, Rarity} from './predicateRarity';
 import {
 	alreadyFailedTwo,
 	alreadySucceededTwo,
@@ -29,6 +29,8 @@ export interface MissionVotePredicate {
 	getCommentary: (context: MissionVoteContext) => string;
 	/** Hidden predicates are tracked for stats but not rendered in the UI */
 	hidden?: boolean;
+	/** Which roles should have role-level breakdown analysis */
+	interestingRoles?: InterestingRoles;
 }
 
 // ============================================================================

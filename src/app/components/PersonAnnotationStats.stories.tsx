@@ -69,6 +69,16 @@ function computeLikelihoodRatio(goodRate: number | null, evilRate: number | null
 	return 1;
 }
 
+interface EvilOnlyStatisticParams {
+	predicateName: string;
+	rarity: Rarity;
+	evilRate: number;
+	evilSample: number;
+	playerEvilRate: number | null;
+	playerEvilFires: number;
+	playerEvilOpportunities: number;
+}
+
 function createStatistic(params: StatisticParams) {
 	const fires = params.playerGoodFires + params.playerEvilFires;
 	const opportunities = params.playerGoodOpportunities + params.playerEvilOpportunities;
@@ -102,6 +112,98 @@ function createStatistic(params: StatisticParams) {
 		playerHasTell: params.playerConfidence >= 95,
 		playerLikelihoodRatio,
 		baselineRate: (params.goodRate + params.evilRate) / 2,
+		interestingRoles: undefined,
+		roleStats: [],
+	};
+}
+
+function createEvilOnlyStatistic(params: EvilOnlyStatisticParams) {
+	return {
+		predicateName: params.predicateName,
+		rarity: params.rarity,
+		fires: params.playerEvilFires,
+		opportunities: params.playerEvilOpportunities,
+		rawRate: params.playerEvilOpportunities > 0 ? params.playerEvilFires / params.playerEvilOpportunities : 0,
+		goodBaselineRate: 0,
+		evilBaselineRate: params.evilRate,
+		goodBaselineSample: 0,
+		evilBaselineSample: params.evilSample,
+		popSuggestsAlignment: 'evil' as AlignmentIndicator,
+		popConfidence: 99,
+		popHasDiagnosticValue: true,
+		popLikelihoodRatio: Number.POSITIVE_INFINITY,
+		goodBaselineFires: 0,
+		evilBaselineFires: Math.round(params.evilRate * params.evilSample),
+		playerGoodRate: null,
+		playerGoodFires: 0,
+		playerGoodOpportunities: 0,
+		playerEvilRate: params.playerEvilRate,
+		playerEvilFires: params.playerEvilFires,
+		playerEvilOpportunities: params.playerEvilOpportunities,
+		playerSuggestsAlignment: 'neither' as AlignmentIndicator,
+		playerConfidence: 0,
+		playerHasTell: false,
+		playerLikelihoodRatio: 1,
+		baselineRate: params.evilRate,
+		interestingRoles: 'evil' as const,
+		roleStats: [],
+	};
+}
+
+interface GoodOnlyStatisticParams {
+	predicateName: string;
+	rarity: Rarity;
+	goodRate: number;
+	goodSample: number;
+	playerGoodRate: number | null;
+	playerGoodFires: number;
+	playerGoodOpportunities: number;
+	role?: string;
+}
+
+function createGoodOnlyStatistic(params: GoodOnlyStatisticParams) {
+	return {
+		predicateName: params.predicateName,
+		rarity: params.rarity,
+		fires: params.playerGoodFires,
+		opportunities: params.playerGoodOpportunities,
+		rawRate: params.playerGoodOpportunities > 0 ? params.playerGoodFires / params.playerGoodOpportunities : 0,
+		goodBaselineRate: params.goodRate,
+		evilBaselineRate: 0,
+		goodBaselineSample: params.goodSample,
+		evilBaselineSample: 0,
+		popSuggestsAlignment: 'good' as AlignmentIndicator,
+		popConfidence: 99,
+		popHasDiagnosticValue: true,
+		popLikelihoodRatio: Number.POSITIVE_INFINITY,
+		goodBaselineFires: Math.round(params.goodRate * params.goodSample),
+		evilBaselineFires: 0,
+		playerGoodRate: params.playerGoodRate,
+		playerGoodFires: params.playerGoodFires,
+		playerGoodOpportunities: params.playerGoodOpportunities,
+		playerEvilRate: null,
+		playerEvilFires: 0,
+		playerEvilOpportunities: 0,
+		playerSuggestsAlignment: 'neither' as AlignmentIndicator,
+		playerConfidence: 0,
+		playerHasTell: false,
+		playerLikelihoodRatio: 1,
+		baselineRate: params.goodRate,
+		interestingRoles: params.role ? [params.role] : ('good' as const),
+		roleStats: params.role
+			? [
+					{
+						role: params.role,
+						playerFires: params.playerGoodFires,
+						playerOpportunities: params.playerGoodOpportunities,
+						playerRate: params.playerGoodRate,
+						populationFires: Math.round(params.goodRate * params.goodSample),
+						populationOpportunities: params.goodSample,
+						populationRate: params.goodRate,
+						deviation: params.playerGoodRate !== null ? params.playerGoodRate - params.goodRate : null,
+					},
+				]
+			: [],
 	};
 }
 
@@ -429,6 +531,122 @@ export const NoAnnotationData: Story = {
 		docs: {
 			description: {
 				story: 'Handles the case where no annotation data is available.',
+			},
+		},
+	},
+};
+
+const profileWithAlignmentRestrictedBehaviors: PersonAnnotationProfile = {
+	annotations: [
+		createStatistic({
+			predicateName: 'Proposed an all good team without self',
+			rarity: 'rare',
+			goodRate: 0.45,
+			evilRate: 0.2,
+			goodSample: 1200,
+			evilSample: 800,
+			popSuggests: 'good',
+			popConfidence: 98,
+			playerGoodRate: 0.5,
+			playerGoodFires: 10,
+			playerGoodOpportunities: 20,
+			playerEvilRate: 0.31,
+			playerEvilFires: 5,
+			playerEvilOpportunities: 16,
+			playerSuggests: 'good',
+			playerConfidence: 85,
+		}),
+		createStatistic({
+			predicateName: 'Proposed the first all good team',
+			rarity: 'common',
+			goodRate: 0.52,
+			evilRate: 0.38,
+			goodSample: 1500,
+			evilSample: 1100,
+			popSuggests: 'good',
+			popConfidence: 95,
+			playerGoodRate: 0.6,
+			playerGoodFires: 30,
+			playerGoodOpportunities: 50,
+			playerEvilRate: 0.27,
+			playerEvilFires: 12,
+			playerEvilOpportunities: 45,
+			playerSuggests: 'good',
+			playerConfidence: 99,
+		}),
+		createGoodOnlyStatistic({
+			predicateName: 'Percival included Merlin and Morgana on the same team',
+			rarity: 'legendary',
+			goodRate: 0.18,
+			goodSample: 280,
+			playerGoodRate: 0.25,
+			playerGoodFires: 3,
+			playerGoodOpportunities: 12,
+			role: 'Percival',
+		}),
+		createGoodOnlyStatistic({
+			predicateName: 'Percival excluded Merlin despite knowing who Merlin is',
+			rarity: 'legendary',
+			goodRate: 0.12,
+			goodSample: 320,
+			playerGoodRate: 0.05,
+			playerGoodFires: 1,
+			playerGoodOpportunities: 20,
+			role: 'Percival',
+		}),
+		createEvilOnlyStatistic({
+			predicateName: 'Ducked',
+			rarity: 'epic',
+			evilRate: 0.36,
+			evilSample: 500,
+			playerEvilRate: 0.42,
+			playerEvilFires: 8,
+			playerEvilOpportunities: 19,
+		}),
+		createEvilOnlyStatistic({
+			predicateName: 'Evil hammer proposed another known evil',
+			rarity: 'legendary',
+			evilRate: 0.22,
+			evilSample: 350,
+			playerEvilRate: 0.12,
+			playerEvilFires: 2,
+			playerEvilOpportunities: 17,
+		}),
+		createEvilOnlyStatistic({
+			predicateName: 'Failed to coordinate',
+			rarity: 'rare',
+			evilRate: 0.15,
+			evilSample: 420,
+			playerEvilRate: 0.15,
+			playerEvilFires: 3,
+			playerEvilOpportunities: 20,
+		}),
+		createEvilOnlyStatistic({
+			predicateName: 'Oberon ducked',
+			rarity: 'legendary',
+			evilRate: 0.08,
+			evilSample: 180,
+			playerEvilRate: null,
+			playerEvilFires: 0,
+			playerEvilOpportunities: 0,
+		}),
+	],
+	summary: {
+		totalPredicates: 8,
+		popTellCount: 8,
+		playerTellCount: 1,
+	},
+};
+
+export const WithAlignmentRestrictedBehaviors: Story = {
+	args: {
+		profile: profileWithAlignmentRestrictedBehaviors,
+		personId: 'test-person-id',
+	},
+	parameters: {
+		docs: {
+			description: {
+				story: "Shows a profile with regular behaviors plus alignment-restricted behaviors. Good-only behaviors (like Percival actions) are separated into their own section, as are evil-only behaviors (like ducking). Each section compares the player's rate to other players of the same alignment.",
 			},
 		},
 	},

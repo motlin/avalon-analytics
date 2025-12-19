@@ -6,7 +6,7 @@
  */
 
 import type {Annotation, GameContext, ProposalContext} from './annotations';
-import type {Rarity} from './predicateRarity';
+import type {InterestingRoles, Rarity} from './predicateRarity';
 import {
 	countSeenEvilOnTeam,
 	gameIncludesRole,
@@ -36,6 +36,8 @@ export interface ProposalPredicate {
 	getCommentary: (context: ProposalContext) => string;
 	/** Hidden predicates are tracked for stats but not rendered in the UI */
 	hidden?: boolean;
+	/** Which roles should have role-level breakdown analysis */
+	interestingRoles?: InterestingRoles;
 }
 
 // ============================================================================
@@ -300,6 +302,7 @@ export const AllGoodTeamWithoutSelfPredicate: ProposalPredicate = {
 export const RiskingLossPredicate: ProposalPredicate = {
 	name: 'Risked losing by proposing seen evil',
 	rarity: 'uncommon',
+	interestingRoles: 'all',
 	isRelevant: (context) => alreadyFailedTwo(context),
 	isWeird: (context) => countSeenEvilOnTeam(context) > 0,
 	isWorthCommentary: (context) => {

@@ -7,8 +7,37 @@
  * This is computed at view time from pre-stored counts, not pre-stored computed stats.
  */
 
-import {type Rarity, RARITY_ORDER, getPredicateRarity} from './predicateRarity';
+import type {MissionVotePredicate} from './missionVotePredicates';
+import {MISSION_VOTE_PREDICATES} from './missionVotePredicates';
+import {type Rarity, RARITY_ORDER, getPredicateRarity, type InterestingRoles} from './predicateRarity';
+import type {ProposalPredicate} from './proposalPredicates';
+import {PROPOSAL_PREDICATES} from './proposalPredicates';
+import type {ProposalVotePredicate} from './proposalVotePredicates';
+import {PROPOSAL_VOTE_PREDICATES} from './proposalVotePredicates';
 import {twoProportionZScore, zScoreToConfidence} from './statisticalFunctions';
+
+// ============================================================================
+// Predicate Lookup
+// ============================================================================
+
+type AnyPredicate = ProposalPredicate | ProposalVotePredicate | MissionVotePredicate;
+
+/** Build lookup map from predicate name to predicate definition */
+function buildPredicateLookup(): Map<string, AnyPredicate> {
+	const lookup = new Map<string, AnyPredicate>();
+	for (const pred of PROPOSAL_PREDICATES) {
+		lookup.set(pred.name, pred);
+	}
+	for (const pred of PROPOSAL_VOTE_PREDICATES) {
+		lookup.set(pred.name, pred);
+	}
+	for (const pred of MISSION_VOTE_PREDICATES) {
+		lookup.set(pred.name, pred);
+	}
+	return lookup;
+}
+
+const PREDICATE_LOOKUP = buildPredicateLookup();
 
 // ============================================================================
 // Types
@@ -82,6 +111,12 @@ export interface PersonAnnotationStatistic {
 	// Legacy fields (kept for backwards compatibility)
 	/** Population baseline rate for comparison (overall) */
 	baselineRate: number;
+
+	// Behavior classification
+	/** Which roles should have role-level breakdown analysis (from predicate definition) */
+	interestingRoles: InterestingRoles | undefined;
+	/** Role-specific statistics for this behavior */
+	roleStats: RoleStatistic[];
 }
 
 export interface PersonAnnotationProfile {
@@ -104,6 +139,32 @@ export interface AlignmentBreakdown {
 	opportunities: number;
 }
 
+/** Role-specific breakdown */
+export interface RoleBreakdown {
+	role: string;
+	fires: number;
+	opportunities: number;
+}
+
+/** Role-specific statistics for a person's behavior when playing a specific role */
+export interface RoleStatistic {
+	role: string;
+	/** Player's fires when playing this role */
+	playerFires: number;
+	/** Player's opportunities when playing this role */
+	playerOpportunities: number;
+	/** Player's rate when playing this role */
+	playerRate: number | null;
+	/** Population fires for this role */
+	populationFires: number;
+	/** Population opportunities for this role */
+	populationOpportunities: number;
+	/** Population rate for this role */
+	populationRate: number;
+	/** Deviation from population (player rate - population rate) */
+	deviation: number | null;
+}
+
 /** Raw database stats for a person's predicate behavior */
 export interface RawPersonAnnotationStat {
 	predicateName: string;
@@ -111,6 +172,7 @@ export interface RawPersonAnnotationStat {
 	opportunities: number;
 	goodStats: AlignmentBreakdown | null;
 	evilStats: AlignmentBreakdown | null;
+	roleStats: RoleBreakdown[];
 }
 
 /** Baseline statistics for a predicate across all mapped people */
@@ -122,6 +184,7 @@ export interface PredicateBaseline {
 	goodOpportunities: number;
 	evilFires: number;
 	evilOpportunities: number;
+	roleBaselines: RoleBreakdown[];
 }
 
 // ============================================================================
@@ -265,6 +328,54 @@ function computeSingleStatistic(
 	// Rarity tier
 	const rarity = getPredicateRarity(predicateName);
 
+	// Get interestingRoles from predicate definition
+	const predicate = PREDICATE_LOOKUP.get(predicateName);
+	const interestingRoles = predicate?.interestingRoles;
+
+	// Role-specific statistics
+	const roleBaselinesMap = new Map<string, RoleBreakdown>();
+	for (const rb of baseline?.roleBaselines ?? []) {
+		roleBaselinesMap.set(rb.role, rb);
+	}
+
+	// Compute role statistics
+	const roleStats: RoleStatistic[] = [];
+	const playerRoleMap = new Map<string, RoleBreakdown>();
+	for (const rs of raw.roleStats) {
+		playerRoleMap.set(rs.role, rs);
+	}
+
+	// Combine all roles from both player and baseline
+	const allRoles = new Set([...roleBaselinesMap.keys(), ...playerRoleMap.keys()]);
+	for (const role of allRoles) {
+		const popRoleBaseline = roleBaselinesMap.get(role);
+		const playerRoleStat = playerRoleMap.get(role);
+
+		const populationFires = popRoleBaseline?.fires ?? 0;
+		const populationOpportunities = popRoleBaseline?.opportunities ?? 0;
+		const populationRate = populationOpportunities > 0 ? populationFires / populationOpportunities : 0;
+
+		const playerFires = playerRoleStat?.fires ?? 0;
+		const playerOpportunities = playerRoleStat?.opportunities ?? 0;
+		const playerRate = playerOpportunities > 0 ? playerFires / playerOpportunities : null;
+
+		const deviation = playerRate !== null ? playerRate - populationRate : null;
+
+		roleStats.push({
+			role,
+			playerFires,
+			playerOpportunities,
+			playerRate,
+			populationFires,
+			populationOpportunities,
+			populationRate,
+			deviation,
+		});
+	}
+
+	// Sort role stats by role name for consistent display
+	roleStats.sort((a, b) => a.role.localeCompare(b.role));
+
 	return {
 		predicateName,
 		rarity,
@@ -292,6 +403,8 @@ function computeSingleStatistic(
 		playerHasTell,
 		playerLikelihoodRatio,
 		baselineRate,
+		interestingRoles,
+		roleStats,
 	};
 }
 
@@ -341,6 +454,7 @@ export async function loadPersonAnnotationStats(
 					fires: true;
 					opportunities: true;
 					alignmentBreakdown: {select: {alignment: true; fires: true; opportunities: true}};
+					roleBreakdown: {select: {role: true; fires: true; opportunities: true}};
 				};
 			}) => Promise<
 				Array<{
@@ -348,6 +462,7 @@ export async function loadPersonAnnotationStats(
 					fires: number;
 					opportunities: number;
 					alignmentBreakdown: Array<{alignment: string; fires: number; opportunities: number}>;
+					roleBreakdown: Array<{role: string; fires: number; opportunities: number}>;
 				}>
 			>;
 		};
@@ -366,6 +481,13 @@ export async function loadPersonAnnotationStats(
 					opportunities: true,
 				},
 			},
+			roleBreakdown: {
+				select: {
+					role: true,
+					fires: true,
+					opportunities: true,
+				},
+			},
 		},
 	});
 
@@ -379,6 +501,7 @@ export async function loadPersonAnnotationStats(
 			opportunities: stat.opportunities,
 			goodStats: goodBreakdown ? {fires: goodBreakdown.fires, opportunities: goodBreakdown.opportunities} : null,
 			evilStats: evilBreakdown ? {fires: evilBreakdown.fires, opportunities: evilBreakdown.opportunities} : null,
+			roleStats: stat.roleBreakdown.map((r) => ({role: r.role, fires: r.fires, opportunities: r.opportunities})),
 		};
 	});
 }
@@ -401,6 +524,7 @@ export async function loadGlobalAnnotationBaselines(db: {
 				goodOpportunities: true;
 				evilFires: true;
 				evilOpportunities: true;
+				roleBaselines: {select: {role: true; fires: true; opportunities: true}};
 			};
 		}) => Promise<
 			Array<{
@@ -411,6 +535,7 @@ export async function loadGlobalAnnotationBaselines(db: {
 				goodOpportunities: number;
 				evilFires: number;
 				evilOpportunities: number;
+				roleBaselines: Array<{role: string; fires: number; opportunities: number}>;
 			}>
 		>;
 	};
@@ -424,6 +549,13 @@ export async function loadGlobalAnnotationBaselines(db: {
 			goodOpportunities: true,
 			evilFires: true,
 			evilOpportunities: true,
+			roleBaselines: {
+				select: {
+					role: true,
+					fires: true,
+					opportunities: true,
+				},
+			},
 		},
 	});
 
@@ -435,5 +567,10 @@ export async function loadGlobalAnnotationBaselines(db: {
 		goodOpportunities: baseline.goodOpportunities,
 		evilFires: baseline.evilFires,
 		evilOpportunities: baseline.evilOpportunities,
+		roleBaselines: baseline.roleBaselines.map((r) => ({
+			role: r.role,
+			fires: r.fires,
+			opportunities: r.opportunities,
+		})),
 	}));
 }

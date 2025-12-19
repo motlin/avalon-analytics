@@ -73,6 +73,15 @@ export const PREDICATE_FIRE_COUNTS: Record<string, number> = {
 // Thresholds based on historical fire counts across 12,910 games
 export type Rarity = 'legendary' | 'epic' | 'rare' | 'uncommon' | 'common';
 
+/**
+ * Specifies which roles should have role-level breakdown analysis for a predicate.
+ * - 'all': Show breakdown for all roles
+ * - 'good': Show breakdown for good roles only (Merlin, Percival, Loyal Servant)
+ * - 'evil': Show breakdown for evil roles only (Assassin, Morgana, Mordred, Oberon, Minion)
+ * - string[]: Show breakdown for specific roles
+ */
+export type InterestingRoles = 'all' | 'good' | 'evil' | string[];
+
 const RARITY_THRESHOLDS: {max: number; rarity: Rarity}[] = [
 	{max: 500, rarity: 'legendary'},
 	{max: 1000, rarity: 'epic'},
