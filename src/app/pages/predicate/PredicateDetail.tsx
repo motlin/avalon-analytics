@@ -110,7 +110,7 @@ function formatPredicateName(name: string): string {
  * Route: /predicate/:predicateName
  */
 export async function PredicateDetail({params}: RequestInfo) {
-	const predicateName = params.predicateName;
+	const predicateName = decodeURIComponent(params.predicateName);
 
 	let error: string | null = null;
 	let entries: PredicateLeaderboardEntry[] = [];
