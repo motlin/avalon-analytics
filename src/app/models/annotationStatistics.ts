@@ -114,7 +114,7 @@ export interface PersonAnnotationStatistic {
 
 	// Behavior classification
 	/** Which roles should have role-level breakdown analysis (from predicate definition) */
-	interestingRoles: InterestingRoles | undefined;
+	interestingRoles: InterestingRoles;
 	/** Role-specific statistics for this behavior */
 	roleStats: RoleStatistic[];
 }
@@ -328,9 +328,9 @@ function computeSingleStatistic(
 	// Rarity tier
 	const rarity = getPredicateRarity(predicateName);
 
-	// Get interestingRoles from predicate definition
+	// Get interestingRoles from predicate definition (default to 'all' for unknown predicates)
 	const predicate = PREDICATE_LOOKUP.get(predicateName);
-	const interestingRoles = predicate?.interestingRoles;
+	const interestingRoles = predicate?.interestingRoles ?? 'all';
 
 	// Role-specific statistics
 	const roleBaselinesMap = new Map<string, RoleBreakdown>();

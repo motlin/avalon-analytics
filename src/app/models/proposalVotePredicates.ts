@@ -38,7 +38,7 @@ export interface ProposalVotePredicate {
 	/** Hidden predicates are tracked for stats but not rendered in the UI */
 	hidden?: boolean;
 	/** Which roles should have role-level breakdown analysis */
-	interestingRoles?: InterestingRoles;
+	interestingRoles: InterestingRoles;
 }
 
 // ============================================================================
@@ -176,6 +176,7 @@ function getEarlierProposalWithSameTeam(context: ProposalVoteContext): EarlierPr
 export const EarlyOffTeamApprovalPredicate: ProposalVotePredicate = {
 	name: 'Voted for a team that did not include them',
 	rarity: 'common',
+	interestingRoles: 'all',
 	isRelevant: (context) => context.proposalNumber <= 2 && context.missionNumber <= 3,
 	isWeird: (context) => context.votedYes && !teamIncludesPlayer(context, context.voterName),
 	isWorthCommentary: () => false, // Track but don't comment on every one
@@ -189,6 +190,7 @@ export const EarlyOffTeamApprovalPredicate: ProposalVotePredicate = {
 export const LateOffTeamApprovalPredicate: ProposalVotePredicate = {
 	name: 'Voted for a team that did not include them (4th proposal)',
 	rarity: 'common',
+	interestingRoles: 'all',
 	isRelevant: (context) => context.proposalNumber === 3 && context.missionNumber <= 3,
 	isWeird: (context) => context.votedYes && !teamIncludesPlayer(context, context.voterName),
 	isWorthCommentary: () => false, // Common enough to not comment
@@ -202,6 +204,7 @@ export const LateOffTeamApprovalPredicate: ProposalVotePredicate = {
 export const ProtestVotePredicate: ProposalVotePredicate = {
 	name: 'Protest voted on the 5th proposal',
 	rarity: 'epic',
+	interestingRoles: 'all',
 	isRelevant: (context) => {
 		if (isHammer(context) && context.missionNumber === 4) return false;
 		return isHammer(context);
@@ -241,6 +244,7 @@ export const ProtestVoteEvilTeamPredicate: ProposalVotePredicate = {
 export const ProtestVoteGoodTeamPredicate: ProposalVotePredicate = {
 	name: 'Protest voted when team was all good',
 	rarity: 'epic',
+	interestingRoles: 'all',
 	isRelevant: (context) => {
 		if (isHammer(context) && context.missionNumber === 4) return false;
 		return isHammer(context);
@@ -263,6 +267,7 @@ export const ProtestVoteGoodTeamPredicate: ProposalVotePredicate = {
 export const MerlinVotedForMorganaPredicate: ProposalVotePredicate = {
 	name: 'Merlin voted for a team including Morgana',
 	rarity: 'common',
+	interestingRoles: ['Merlin'],
 	isRelevant: (context) => {
 		if (isEvilHammerWin(context)) return false;
 		if (isHammer(context)) return false;
@@ -280,6 +285,7 @@ export const MerlinVotedForMorganaPredicate: ProposalVotePredicate = {
 export const MerlinApprovedMultipleVisibleEvilPredicate: ProposalVotePredicate = {
 	name: 'Merlin approved a team with multiple visible evil',
 	rarity: 'uncommon',
+	interestingRoles: ['Merlin'],
 	isRelevant: (context) => {
 		if (isEvilHammerWin(context)) return false;
 		if (isHammer(context)) return false;
@@ -300,6 +306,7 @@ export const MerlinApprovedMultipleVisibleEvilPredicate: ProposalVotePredicate =
 export const MorganaVotedForMerlinPredicate: ProposalVotePredicate = {
 	name: 'Morgana voted for a team including Merlin',
 	rarity: 'common',
+	interestingRoles: ['Morgana'],
 	isRelevant: (context) => {
 		if (isEvilHammerWin(context)) return false;
 		if (isHammer(context)) return false;
@@ -317,6 +324,7 @@ export const MorganaVotedForMerlinPredicate: ProposalVotePredicate = {
 export const PercivalVotedForBothPredicate: ProposalVotePredicate = {
 	name: 'Percival voted for a team including both Merlin and Morgana',
 	rarity: 'rare',
+	interestingRoles: ['Percival'],
 	isRelevant: (context) => {
 		if (isEvilHammerWin(context)) return false;
 		if (isHammer(context)) return false;
@@ -334,6 +342,7 @@ export const PercivalVotedForBothPredicate: ProposalVotePredicate = {
 export const PercivalProtestVotedMultipleEvilPredicate: ProposalVotePredicate = {
 	name: 'Percival protest voted knowing multiple evil on team',
 	rarity: 'uncommon',
+	interestingRoles: ['Percival'],
 	isRelevant: (context) => {
 		// Voter must be Percival
 		const voterRole = getPlayerRole(context, context.voterName);
@@ -367,6 +376,7 @@ export const PercivalProtestVotedMultipleEvilPredicate: ProposalVotePredicate = 
 export const VoteAgainstOwnProposalPredicate: ProposalVotePredicate = {
 	name: 'Voted against their own proposal',
 	rarity: 'common',
+	interestingRoles: 'all',
 	isRelevant: (context) => context.proposal.proposer === context.voterName,
 	isWeird: (context) => !context.votedYes,
 	isWorthCommentary: () => true,
@@ -406,6 +416,7 @@ export const RiskingGoodLossPredicate: ProposalVotePredicate = {
 export const RiskingEvilLossPredicate: ProposalVotePredicate = {
 	name: 'Off-team approved a winning good team',
 	rarity: 'common',
+	interestingRoles: 'all',
 	isRelevant: (context) => {
 		if (isEvilHammerWin(context)) return false;
 		// Use countEvilOnTeam (not countSeenEvilOnTeam) because Mordred can still fail the mission
@@ -429,6 +440,7 @@ export const RiskingEvilLossPredicate: ProposalVotePredicate = {
 export const OffTeamApproveAllGoodTeamPredicate: ProposalVotePredicate = {
 	name: 'Approved an all good team that did not include them',
 	rarity: 'common',
+	interestingRoles: 'all',
 	isRelevant: (context) => {
 		if (isHammer(context)) return false;
 		if (teamIncludesPlayer(context, context.voterName)) return false;
@@ -446,6 +458,7 @@ export const OffTeamApproveAllGoodTeamPredicate: ProposalVotePredicate = {
 export const OffTeamApproveMaxSizePredicate: ProposalVotePredicate = {
 	name: 'Approved a max size team that did not include them',
 	rarity: 'common',
+	interestingRoles: 'all',
 	isRelevant: (context) => {
 		if (isHammer(context)) return false;
 		if (teamIncludesPlayer(context, context.voterName)) return false;
@@ -463,6 +476,7 @@ export const OffTeamApproveMaxSizePredicate: ProposalVotePredicate = {
 export const EvilVotedAgainstEvilPredicate: ProposalVotePredicate = {
 	name: 'Evil voted against a proposal with two known evil',
 	rarity: 'common',
+	interestingRoles: 'evil',
 	isRelevant: (context) => {
 		const voterRole = getPlayerRole(context, context.voterName);
 		if (!isKnownEvil(voterRole)) return false;
@@ -484,6 +498,7 @@ export const EvilVotedAgainstEvilPredicate: ProposalVotePredicate = {
 export const ApproveWhenNextLeaderProposalVotePredicate: ProposalVotePredicate = {
 	name: 'Approved when they are the next leader',
 	rarity: 'common',
+	interestingRoles: 'all',
 	hidden: true,
 	isRelevant: (context) => {
 		if (isHammer(context)) return false;
@@ -510,6 +525,7 @@ export const ApproveWhenNextLeaderProposalVotePredicate: ProposalVotePredicate =
 export const OnProposalButDidntVoteForItEarlyGameProposalVotePredicate: ProposalVotePredicate = {
 	name: 'Voted against an early proposal that included them',
 	rarity: 'common',
+	interestingRoles: 'all',
 	isRelevant: (context) => {
 		// Early game: proposals 1-3 (0-indexed: 0-2), missions 1-2 (0-indexed: 0-1)
 		if (context.proposalNumber > 2) return false;
@@ -530,6 +546,7 @@ export const OnProposalButDidntVoteForItEarlyGameProposalVotePredicate: Proposal
 export const SwitchedVoteProposalVotePredicate: ProposalVotePredicate = {
 	name: 'Switched vote from an identical earlier proposal',
 	rarity: 'common',
+	interestingRoles: 'all',
 	isRelevant: (context) => {
 		if (isHammer(context)) return false;
 		return getEarlierProposalWithSameTeam(context) !== null;
@@ -553,6 +570,7 @@ export const SwitchedVoteProposalVotePredicate: ProposalVotePredicate = {
 export const TrustedMoreThanMaxTeamSizePlayersOnLastMissionProposalVotePredicate: ProposalVotePredicate = {
 	name: 'Trusted too many players on a late mission',
 	rarity: 'common',
+	interestingRoles: 'all',
 	isRelevant: (context) => {
 		if (isHammer(context)) return false;
 		// Mission number >= 3 (0-indexed: >= 2, so missions 3, 4, 5)
@@ -582,6 +600,7 @@ export const TrustedMoreThanMaxTeamSizePlayersOnLastMissionProposalVotePredicate
 export const OffTeamApproveOneEvilProposalVotePredicate: ProposalVotePredicate = {
 	name: 'Off-team approved one evil when two fails required',
 	rarity: 'uncommon',
+	interestingRoles: 'all',
 	isRelevant: (context) => {
 		// Must be off-team
 		if (teamIncludesPlayer(context, context.voterName)) return false;
@@ -602,6 +621,7 @@ export const OffTeamApproveOneEvilProposalVotePredicate: ProposalVotePredicate =
 export const FirstAllGoodTeamVotePredicate: ProposalVotePredicate = {
 	name: 'Voted for the first all good team',
 	rarity: 'common',
+	interestingRoles: 'all',
 	isRelevant: (context) => {
 		if (isHammer(context)) return false;
 		if (!isAllGoodTeam(context)) return false;
@@ -640,6 +660,7 @@ export const FirstAllGoodTeamVotePredicate: ProposalVotePredicate = {
 export const ApprovingProposalWithTeammatesFromFailedMissionProposalVotePredicate: ProposalVotePredicate = {
 	name: 'Approved a team with players from a failed mission',
 	rarity: 'common',
+	interestingRoles: 'all',
 	isRelevant: (context) => {
 		// Not relevant if evil hammer win
 		if (isHammer(context) && context.proposal.state === 'REJECTED') return false;
@@ -699,6 +720,7 @@ function getPreviousFailedMissionsWithSamePlayers(context: ProposalVoteContext):
 export const DidNotProtestVoteWhenGoodWasAboutToWinProposalVotePredicate: ProposalVotePredicate = {
 	name: 'Did not protest vote when good was about to win',
 	rarity: 'legendary',
+	interestingRoles: 'evil',
 	isRelevant: (context) => {
 		// Not relevant if evil hammer win (5th proposal rejected)
 		if (isHammer(context) && context.proposal.state === 'REJECTED') return false;
@@ -730,6 +752,7 @@ export const DidNotProtestVoteWhenGoodWasAboutToWinProposalVotePredicate: Propos
 export const FirstAllGoodTeamOfMaxSizeVotePredicate: ProposalVotePredicate = {
 	name: 'Voted for the first all good team of max size',
 	rarity: 'common',
+	interestingRoles: 'all',
 	isRelevant: (context) => {
 		const maxTeamSize = getMaxTeamSize(context.game);
 

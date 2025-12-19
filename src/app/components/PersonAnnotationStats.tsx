@@ -322,7 +322,6 @@ const EVIL_ROLES = ['Assassin', 'Morgana', 'Mordred', 'Oberon', 'Minion'];
 const ALL_ROLES = [...GOOD_ROLES, ...EVIL_ROLES];
 
 function expandInterestingRoles(interestingRoles: PersonAnnotationStatistic['interestingRoles']): string[] {
-	if (!interestingRoles) return [];
 	if (interestingRoles === 'all') return ALL_ROLES;
 	if (interestingRoles === 'good') return GOOD_ROLES;
 	if (interestingRoles === 'evil') return EVIL_ROLES;

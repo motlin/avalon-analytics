@@ -112,7 +112,7 @@ function createStatistic(params: StatisticParams) {
 		playerHasTell: params.playerConfidence >= 95,
 		playerLikelihoodRatio,
 		baselineRate: (params.goodRate + params.evilRate) / 2,
-		interestingRoles: undefined,
+		interestingRoles: 'all' as const,
 		roleStats: [],
 	};
 }
