@@ -92,7 +92,7 @@ const createMockAvalon = (
 		timeCreated: new Date(),
 		currentMissionIdx: missionIdx,
 		phase: gamePhase,
-		roles: ['merlin', 'percival', 'loyal', 'morgana', 'assassin'],
+		roles: ['MERLIN', 'PERCIVAL', 'LOYAL FOLLOWER', 'MORGANA', 'ASSASSIN'],
 		currentProposer: 'CRAIGM',
 		currentProposalIdx: 0,
 		currentProposal: {
@@ -119,7 +119,7 @@ const createMockAvalon = (
 			id: '1',
 			timeCreated: new Date(),
 			currentMissionIdx: missionIdx,
-			roles: ['merlin', 'percival', 'loyal', 'morgana', 'assassin'],
+			roles: ['MERLIN', 'PERCIVAL', 'LOYAL FOLLOWER', 'MORGANA', 'ASSASSIN'],
 		},
 		role: {
 			assassin: isAssassin,
@@ -127,11 +127,11 @@ const createMockAvalon = (
 	},
 	config: {
 		roleMap: {
-			merlin: {name: 'Merlin', team: 'good' as const, description: 'Knows who the evil players are'},
-			percival: {name: 'Percival', team: 'good' as const, description: 'Knows who Merlin and Morgana are'},
-			loyal: {name: 'Loyal Servant', team: 'good' as const, description: 'A loyal servant of Arthur'},
-			morgana: {name: 'Morgana', team: 'evil' as const, description: 'Appears as Merlin to Percival'},
-			assassin: {name: 'Assassin', team: 'evil' as const, description: 'Can assassinate Merlin'},
+			MERLIN: {name: 'MERLIN', team: 'good' as const, description: 'Knows who the evil players are'},
+			PERCIVAL: {name: 'PERCIVAL', team: 'good' as const, description: 'Knows who Merlin and Morgana are'},
+			'LOYAL FOLLOWER': {name: 'LOYAL FOLLOWER', team: 'good' as const, description: 'A loyal servant of Arthur'},
+			MORGANA: {name: 'MORGANA', team: 'evil' as const, description: 'Appears as Merlin to Percival'},
+			ASSASSIN: {name: 'ASSASSIN', team: 'evil' as const, description: 'Can assassinate Merlin'},
 		},
 	},
 });

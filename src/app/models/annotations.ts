@@ -34,64 +34,57 @@ export function toDisplayRole(dbRole: string | undefined): string {
 // 🎭 Role Definitions
 // ============================================================================
 
+/** Database role format type - uppercase as stored in DB */
 export type RoleType =
-	| 'Merlin'
-	| 'Percival'
-	| 'Loyal'
-	| 'Loyal Follower'
-	| 'Morgana'
-	| 'Assassin'
-	| 'Oberon'
-	| 'Mordred'
-	| 'Evil'
-	| 'Evil Minion'
-	| 'Unknown';
+	| 'MERLIN'
+	| 'PERCIVAL'
+	| 'LOYAL FOLLOWER'
+	| 'MORGANA'
+	| 'ASSASSIN'
+	| 'OBERON'
+	| 'MORDRED'
+	| 'EVIL MINION';
 
-export const ROLE_EMOJI: Record<string, string> = {
-	merlin: '🧙',
-	percival: '🧔',
-	loyal: '😇',
-	'loyal follower': '😇',
-	good: '😇',
-	morgana: '😈',
-	assassin: '😈',
-	oberon: '😈',
-	mordred: '😈',
-	evil: '😈',
-	'evil minion': '😈',
-	'minion of mordred': '😈',
-	unknown: '❓',
+/** Role emoji lookup - uses uppercase keys to match database format */
+const ROLE_EMOJI: Record<string, string> = {
+	MERLIN: '🧙',
+	PERCIVAL: '🧔',
+	'LOYAL FOLLOWER': '😇',
+	MORGANA: '😈',
+	ASSASSIN: '😈',
+	OBERON: '😈',
+	MORDRED: '😈',
+	'EVIL MINION': '😈',
 };
 
+const UNKNOWN_EMOJI = '❓';
+
 export function getRoleEmoji(role: string | undefined): string {
-	if (!role) return ROLE_EMOJI.unknown;
-	return ROLE_EMOJI[role.toLowerCase()] ?? ROLE_EMOJI.unknown;
+	if (!role) return UNKNOWN_EMOJI;
+	return ROLE_EMOJI[role] ?? UNKNOWN_EMOJI;
 }
 
+const EVIL_ROLES = new Set(['MORGANA', 'ASSASSIN', 'OBERON', 'MORDRED', 'EVIL MINION']);
+const GOOD_ROLES = new Set(['MERLIN', 'PERCIVAL', 'LOYAL FOLLOWER']);
+const KNOWN_EVIL_ROLES = new Set(['MORGANA', 'ASSASSIN', 'MORDRED', 'EVIL MINION']); // Oberon excluded
+const SEEN_EVIL_ROLES = new Set(['MORGANA', 'ASSASSIN', 'OBERON', 'EVIL MINION']); // Mordred excluded
+
 export function isEvilRole(role: string | undefined): boolean {
-	if (!role) return false;
-	const evilRoles = ['morgana', 'assassin', 'oberon', 'mordred', 'evil', 'evil minion', 'minion of mordred'];
-	return evilRoles.includes(role.toLowerCase());
+	return role !== undefined && EVIL_ROLES.has(role);
 }
 
 export function isGoodRole(role: string | undefined): boolean {
-	if (!role) return false;
-	const goodRoles = ['merlin', 'percival', 'loyal', 'loyal follower', 'good'];
-	return goodRoles.includes(role.toLowerCase());
+	return role !== undefined && GOOD_ROLES.has(role);
 }
 
 export function isKnownEvil(role: string | undefined): boolean {
-	if (!role) return false;
 	// Oberon is evil but not known to other evil players
-	const knownEvilRoles = ['morgana', 'assassin', 'mordred', 'evil', 'evil minion', 'minion of mordred'];
-	return knownEvilRoles.includes(role.toLowerCase());
+	return role !== undefined && KNOWN_EVIL_ROLES.has(role);
 }
 
 export function isSeenEvil(role: string | undefined): boolean {
-	if (!role) return false;
 	// Mordred is not seen by Merlin
-	const seenEvilRoles = ['morgana', 'assassin', 'oberon', 'evil', 'evil minion', 'minion of mordred'];
-	return seenEvilRoles.includes(role.toLowerCase());
+	return role !== undefined && SEEN_EVIL_ROLES.has(role);
 }
 
 // ============================================================================

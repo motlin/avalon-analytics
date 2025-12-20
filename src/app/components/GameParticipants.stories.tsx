@@ -92,7 +92,7 @@ const createMockAvalon = (overrides: any = {}) => {
 		},
 		lastProposal: null,
 		hammer: 'EVE',
-		roles: ['merlin', 'percival', 'loyal_follower', 'morgana', 'evil_minion'],
+		roles: ['MERLIN', 'PERCIVAL', 'LOYAL FOLLOWER', 'MORGANA', 'EVIL MINION'],
 	};
 
 	return {
@@ -124,34 +124,34 @@ const createMockAvalon = (overrides: any = {}) => {
 				},
 				lastProposal: null,
 				hammer: 'EVE',
-				roles: ['merlin', 'percival', 'loyal_follower', 'morgana', 'evil_minion'],
+				roles: ['MERLIN', 'PERCIVAL', 'LOYAL FOLLOWER', 'MORGANA', 'EVIL MINION'],
 			},
 		},
 		config: {
 			roleMap: {
-				merlin: {
-					name: 'Merlin',
+				MERLIN: {
+					name: 'MERLIN',
 					team: 'good' as const,
 					description: 'Merlin sees all evil people (except for Mordred), but can also be assassinated.',
 				},
-				percival: {
-					name: 'Percival',
+				PERCIVAL: {
+					name: 'PERCIVAL',
 					team: 'good' as const,
 					description: 'Percival can see Merlin and Morgana but does not know which one is which.',
 				},
-				loyal_follower: {
-					name: 'Loyal Follower',
+				'LOYAL FOLLOWER': {
+					name: 'LOYAL FOLLOWER',
 					team: 'good' as const,
 					description: 'Loyal Follower is a genuinely good person.',
 				},
-				morgana: {
-					name: 'Morgana',
+				MORGANA: {
+					name: 'MORGANA',
 					team: 'evil' as const,
 					description:
 						'Morgana appears indistinguishable from Merlin to Percival. She sees other evil people (except Oberon)',
 				},
-				evil_minion: {
-					name: 'Evil Minion',
+				'EVIL MINION': {
+					name: 'EVIL MINION',
 					team: 'evil' as const,
 					description: 'Evil Minion is pretty evil. He can see other evil people (except Oberon)',
 				},
@@ -195,7 +195,7 @@ export const DuringMission: Story = {
 					votes: ['ALICE', 'BOB'],
 				},
 				hammer: 'CHARLIE',
-				roles: ['merlin', 'percival', 'loyal_follower', 'morgana', 'evil_minion'],
+				roles: ['MERLIN', 'PERCIVAL', 'LOYAL FOLLOWER', 'MORGANA', 'EVIL MINION'],
 			},
 		}),
 		onSelectedPlayers: (players: string[]) => console.log('Selected players:', players),
@@ -229,7 +229,7 @@ export const HammerTime: Story = {
 					votes: ['CHARLIE', 'DIANA'],
 				},
 				hammer: 'EVE',
-				roles: ['merlin', 'percival', 'loyal_follower', 'morgana', 'evil_minion'],
+				roles: ['MERLIN', 'PERCIVAL', 'LOYAL FOLLOWER', 'MORGANA', 'EVIL MINION'],
 			},
 		}),
 		onSelectedPlayers: (players: string[]) => console.log('Selected players:', players),

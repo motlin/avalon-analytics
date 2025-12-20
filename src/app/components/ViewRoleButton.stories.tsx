@@ -115,10 +115,10 @@ export const PreGameStats: Story = {
 export const GoodRole: Story = {
 	args: {
 		avalon: createMockAvalon(true, {
-			name: 'Percival',
+			name: 'PERCIVAL',
 			team: 'good',
 			description: 'You are Percival. You see Merlin and Morgana, but you do not know which is which.',
-			sees: ['Merlin', 'Morgana'],
+			sees: ['MERLIN', 'MORGANA'],
 		}),
 	},
 };
@@ -126,11 +126,11 @@ export const GoodRole: Story = {
 export const EvilRole: Story = {
 	args: {
 		avalon: createMockAvalon(true, {
-			name: 'Morgana',
+			name: 'MORGANA',
 			team: 'evil',
 			description:
 				'You are Morgana. You appear as Merlin to Percival. You must help the evil team fail 3 missions.',
-			sees: ['Mordred', 'Assassin'],
+			sees: ['MORDRED', 'ASSASSIN'],
 		}),
 	},
 };
@@ -138,11 +138,11 @@ export const EvilRole: Story = {
 export const AssassinRole: Story = {
 	args: {
 		avalon: createMockAvalon(true, {
-			name: 'Assassin',
+			name: 'ASSASSIN',
 			team: 'evil',
 			description: 'You are the Assassin. You must help the evil team fail 3 missions.',
 			assassin: true,
-			sees: ['Morgana', 'Mordred'],
+			sees: ['MORGANA', 'MORDRED'],
 		}),
 	},
 };
@@ -150,11 +150,11 @@ export const AssassinRole: Story = {
 export const MerlinRole: Story = {
 	args: {
 		avalon: createMockAvalon(true, {
-			name: 'Merlin',
+			name: 'MERLIN',
 			team: 'good',
 			description:
 				'You are Merlin. You see all evil players except Mordred. You must help the good team succeed on 3 missions, but stay hidden from the Assassin.',
-			sees: ['Morgana', 'Assassin'],
+			sees: ['MORGANA', 'ASSASSIN'],
 		}),
 	},
 };
@@ -162,7 +162,7 @@ export const MerlinRole: Story = {
 export const RoleSeesNoOne: Story = {
 	args: {
 		avalon: createMockAvalon(true, {
-			name: 'Loyal Servant of Arthur',
+			name: 'LOYAL FOLLOWER',
 			team: 'good',
 			description: 'You are a loyal servant of Arthur. You must help the good team succeed on 3 missions.',
 			sees: [],
@@ -174,10 +174,10 @@ export const InteractiveExample: Story = {
 	render: () => {
 		const [mockAvalon] = useState(() =>
 			createMockAvalon(true, {
-				name: 'Percival',
+				name: 'PERCIVAL',
 				team: 'good',
 				description: 'You are Percival. You see Merlin and Morgana, but you do not know which is which.',
-				sees: ['Merlin', 'Morgana'],
+				sees: ['MERLIN', 'MORGANA'],
 			}),
 		);
 

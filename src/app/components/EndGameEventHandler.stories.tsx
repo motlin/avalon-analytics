@@ -75,11 +75,11 @@ const createMockAvalon = (gameOutcome: 'GOOD_WIN' | 'EVIL_WIN' | 'CANCELED', ass
 							: 'The game has been canceled.',
 				assassinated,
 				roles: [
-					{name: 'CRAIGM', role: 'Merlin', assassin: false},
-					{name: 'ZEHUA', role: 'Percival', assassin: false},
-					{name: 'VINAY', role: 'Loyal Servant of Arthur', assassin: false},
-					{name: 'LUKEE', role: 'Morgana', assassin: false},
-					{name: 'KEN', role: 'Assassin', assassin: true},
+					{name: 'CRAIGM', role: 'MERLIN', assassin: false},
+					{name: 'ZEHUA', role: 'PERCIVAL', assassin: false},
+					{name: 'VINAY', role: 'LOYAL FOLLOWER', assassin: false},
+					{name: 'LUKEE', role: 'MORGANA', assassin: false},
+					{name: 'KEN', role: 'ASSASSIN', assassin: true},
 				],
 				votes: [
 					{CRAIGM: true, ZEHUA: true, VINAY: false, LUKEE: false, KEN: false},
@@ -110,22 +110,22 @@ const createMockAvalon = (gameOutcome: 'GOOD_WIN' | 'EVIL_WIN' | 'CANCELED', ass
 		},
 		config: {
 			roles: [
-				{name: 'Merlin'},
-				{name: 'Percival'},
-				{name: 'Loyal Servant of Arthur'},
-				{name: 'Morgana'},
-				{name: 'Assassin'},
+				{name: 'MERLIN'},
+				{name: 'PERCIVAL'},
+				{name: 'LOYAL FOLLOWER'},
+				{name: 'MORGANA'},
+				{name: 'ASSASSIN'},
 			],
 			roleMap: {
-				Merlin: {name: 'Merlin', team: 'good' as const, description: 'Knows the evil players'},
-				Percival: {name: 'Percival', team: 'good' as const, description: 'Knows Merlin and Morgana'},
-				'Loyal Servant of Arthur': {
-					name: 'Loyal Servant of Arthur',
+				MERLIN: {name: 'MERLIN', team: 'good' as const, description: 'Knows the evil players'},
+				PERCIVAL: {name: 'PERCIVAL', team: 'good' as const, description: 'Knows Merlin and Morgana'},
+				'LOYAL FOLLOWER': {
+					name: 'LOYAL FOLLOWER',
 					team: 'good' as const,
 					description: 'Loyal to good',
 				},
-				Morgana: {name: 'Morgana', team: 'evil' as const, description: 'Appears as Merlin'},
-				Assassin: {name: 'Assassin', team: 'evil' as const, description: 'Can assassinate Merlin'},
+				MORGANA: {name: 'MORGANA', team: 'evil' as const, description: 'Appears as Merlin'},
+				ASSASSIN: {name: 'ASSASSIN', team: 'evil' as const, description: 'Can assassinate Merlin'},
 			},
 		},
 		onEvent: (callback: (event: string) => void) => {

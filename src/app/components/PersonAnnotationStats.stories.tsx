@@ -582,7 +582,7 @@ const profileWithAlignmentRestrictedBehaviors: PersonAnnotationProfile = {
 			playerGoodRate: 0.25,
 			playerGoodFires: 3,
 			playerGoodOpportunities: 12,
-			role: 'Percival',
+			role: 'PERCIVAL',
 		}),
 		createGoodOnlyStatistic({
 			predicateName: 'Percival excluded Merlin despite knowing who Merlin is',
@@ -592,7 +592,7 @@ const profileWithAlignmentRestrictedBehaviors: PersonAnnotationProfile = {
 			playerGoodRate: 0.05,
 			playerGoodFires: 1,
 			playerGoodOpportunities: 20,
-			role: 'Percival',
+			role: 'PERCIVAL',
 		}),
 		createEvilOnlyStatistic({
 			predicateName: 'Ducked',
