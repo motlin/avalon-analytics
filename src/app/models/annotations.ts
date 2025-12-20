@@ -12,15 +12,22 @@ import type {Rarity} from './predicateRarity';
 // 🔧 Utility Functions
 // ============================================================================
 
-/**
- * Converts a string to title case (e.g., "EVIL MINION" -> "Evil Minion")
- */
-function toTitleCase(text: string): string {
-	return text
-		.toLowerCase()
-		.split(' ')
-		.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-		.join(' ');
+/** Map database role names to display format (title case with friendly names) */
+const DB_ROLE_TO_DISPLAY: Record<string, string> = {
+	MERLIN: 'Merlin',
+	PERCIVAL: 'Percival',
+	'LOYAL FOLLOWER': 'Loyal Servant',
+	ASSASSIN: 'Assassin',
+	MORGANA: 'Morgana',
+	MORDRED: 'Mordred',
+	OBERON: 'Oberon',
+	'EVIL MINION': 'Minion',
+};
+
+/** Convert database role name to display format for rendering */
+export function toDisplayRole(dbRole: string | undefined): string {
+	if (!dbRole) return 'Unknown';
+	return DB_ROLE_TO_DISPLAY[dbRole] ?? dbRole;
 }
 
 // ============================================================================
@@ -141,8 +148,7 @@ export function createGameContext(game: Game): GameContext {
 }
 
 export function getPlayerRole(context: GameContext, playerName: string): string | undefined {
-	const role = context.rolesByName.get(playerName);
-	return role ? toTitleCase(role) : undefined;
+	return context.rolesByName.get(playerName);
 }
 
 export function getLeaderRole(context: ProposalContext): string | undefined {

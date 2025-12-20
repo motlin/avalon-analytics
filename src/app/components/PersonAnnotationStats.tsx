@@ -4,6 +4,7 @@ import type {
 	PersonAnnotationStatistic,
 	RoleStatistic,
 } from '../models/annotationStatistics';
+import {toDisplayRole} from '../models/annotations';
 import {RARITY_CSS_COLORS} from '../models/predicateRarity';
 import styles from './PersonAnnotationStats.module.css';
 
@@ -321,23 +322,6 @@ function RoleRestrictedRow({
 const GOOD_ROLES = ['MERLIN', 'PERCIVAL', 'LOYAL FOLLOWER'];
 const EVIL_ROLES = ['ASSASSIN', 'MORGANA', 'MORDRED', 'OBERON', 'EVIL MINION'];
 const ALL_ROLES = [...GOOD_ROLES, ...EVIL_ROLES];
-
-/** Map database role names to display format (title case with friendly names) */
-const DB_ROLE_TO_DISPLAY: Record<string, string> = {
-	MERLIN: 'Merlin',
-	PERCIVAL: 'Percival',
-	'LOYAL FOLLOWER': 'Loyal Servant',
-	ASSASSIN: 'Assassin',
-	MORGANA: 'Morgana',
-	MORDRED: 'Mordred',
-	OBERON: 'Oberon',
-	'EVIL MINION': 'Minion',
-};
-
-/** Convert database role name to display format for rendering */
-function toDisplayRole(dbRole: string): string {
-	return DB_ROLE_TO_DISPLAY[dbRole] ?? dbRole;
-}
 
 function expandInterestingRoles(interestingRoles: PersonAnnotationStatistic['interestingRoles']): string[] {
 	if (interestingRoles === 'all') return ALL_ROLES;

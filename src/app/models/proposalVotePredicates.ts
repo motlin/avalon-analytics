@@ -22,6 +22,7 @@ import {
 	isSeenEvil,
 	teamIncludesPlayer,
 	teamIncludesRole,
+	toDisplayRole,
 } from './annotations';
 
 // ============================================================================
@@ -99,10 +100,10 @@ function playerSeesPlayer(context: ProposalVoteContext, viewerName: string, targ
 	if (!viewerRole || !targetRole) return false;
 
 	// If viewer is Oberon, they cannot see anyone evil
-	if (viewerRole === 'Oberon') return false;
+	if (viewerRole === 'OBERON') return false;
 
 	// If target is Oberon, other evil cannot see them
-	if (targetRole === 'Oberon') return false;
+	if (targetRole === 'OBERON') return false;
 
 	// Known evil can see other known evil
 	return isKnownEvil(viewerRole) && isKnownEvil(targetRole);
@@ -181,7 +182,7 @@ export const EarlyOffTeamApprovalPredicate: ProposalVotePredicate = {
 	isWeird: (context) => context.votedYes && !teamIncludesPlayer(context, context.voterName),
 	isWorthCommentary: () => false, // Track but don't comment on every one
 	getCommentary: (context) => {
-		const role = getPlayerRole(context, context.voterName) ?? 'Unknown';
+		const role = toDisplayRole(getPlayerRole(context, context.voterName));
 		return `${getRoleEmoji(role)} ${role} ${context.voterName} voted for a team that did not include them.`;
 	},
 };
@@ -195,7 +196,7 @@ export const LateOffTeamApprovalPredicate: ProposalVotePredicate = {
 	isWeird: (context) => context.votedYes && !teamIncludesPlayer(context, context.voterName),
 	isWorthCommentary: () => false, // Common enough to not comment
 	getCommentary: (context) => {
-		const role = getPlayerRole(context, context.voterName) ?? 'Unknown';
+		const role = toDisplayRole(getPlayerRole(context, context.voterName));
 		return `${getRoleEmoji(role)} ${role} ${context.voterName} voted for a team that did not include them.`;
 	},
 };
@@ -212,7 +213,7 @@ export const ProtestVotePredicate: ProposalVotePredicate = {
 	isWeird: (context) => !context.votedYes,
 	isWorthCommentary: (context) => isAllGoodTeam(context),
 	getCommentary: (context) => {
-		const role = getPlayerRole(context, context.voterName) ?? 'Unknown';
+		const role = toDisplayRole(getPlayerRole(context, context.voterName));
 		return `${getRoleEmoji(role)} ${role} ${context.voterName} protest voted (voted no on the 5th proposal).`;
 	},
 };
@@ -235,7 +236,7 @@ export const ProtestVoteEvilTeamPredicate: ProposalVotePredicate = {
 	},
 	isWorthCommentary: () => true,
 	getCommentary: (context) => {
-		const role = getPlayerRole(context, context.voterName) ?? 'Unknown';
+		const role = toDisplayRole(getPlayerRole(context, context.voterName));
 		return `${getRoleEmoji(role)} ${role} ${context.voterName} protest voted when the team included seen evil players.`;
 	},
 };
@@ -258,7 +259,7 @@ export const ProtestVoteGoodTeamPredicate: ProposalVotePredicate = {
 	},
 	isWorthCommentary: () => true,
 	getCommentary: (context) => {
-		const role = getPlayerRole(context, context.voterName) ?? 'Unknown';
+		const role = toDisplayRole(getPlayerRole(context, context.voterName));
 		return `${getRoleEmoji(role)} ${role} ${context.voterName} protest voted when the team did not include seen evil players.`;
 	},
 };
@@ -272,7 +273,7 @@ export const MerlinVotedForMorganaPredicate: ProposalVotePredicate = {
 		if (isEvilHammerWin(context)) return false;
 		if (isHammer(context)) return false;
 		const voterRole = getPlayerRole(context, context.voterName);
-		return voterRole === 'Merlin' && teamIncludesRole(context, 'Morgana');
+		return voterRole === 'MERLIN' && teamIncludesRole(context, 'MORGANA');
 	},
 	isWeird: (context) => context.votedYes,
 	isWorthCommentary: () => true,
@@ -290,7 +291,7 @@ export const MerlinApprovedMultipleVisibleEvilPredicate: ProposalVotePredicate =
 		if (isEvilHammerWin(context)) return false;
 		if (isHammer(context)) return false;
 		const voterRole = getPlayerRole(context, context.voterName);
-		if (voterRole !== 'Merlin') return false;
+		if (voterRole !== 'MERLIN') return false;
 		// Team must have 2+ evil players visible to Merlin (excludes Mordred)
 		return countMerlinVisibleEvilOnTeam(context) >= 2;
 	},
@@ -311,7 +312,7 @@ export const MorganaVotedForMerlinPredicate: ProposalVotePredicate = {
 		if (isEvilHammerWin(context)) return false;
 		if (isHammer(context)) return false;
 		const voterRole = getPlayerRole(context, context.voterName);
-		return voterRole === 'Morgana' && teamIncludesRole(context, 'Merlin');
+		return voterRole === 'MORGANA' && teamIncludesRole(context, 'MERLIN');
 	},
 	isWeird: (context) => context.votedYes,
 	isWorthCommentary: () => true,
@@ -329,7 +330,7 @@ export const PercivalVotedForBothPredicate: ProposalVotePredicate = {
 		if (isEvilHammerWin(context)) return false;
 		if (isHammer(context)) return false;
 		const voterRole = getPlayerRole(context, context.voterName);
-		return voterRole === 'Percival' && teamIncludesRole(context, 'Merlin') && teamIncludesRole(context, 'Morgana');
+		return voterRole === 'PERCIVAL' && teamIncludesRole(context, 'MERLIN') && teamIncludesRole(context, 'MORGANA');
 	},
 	isWeird: (context) => context.votedYes,
 	isWorthCommentary: () => true,
@@ -346,13 +347,13 @@ export const PercivalProtestVotedMultipleEvilPredicate: ProposalVotePredicate = 
 	isRelevant: (context) => {
 		// Voter must be Percival
 		const voterRole = getPlayerRole(context, context.voterName);
-		if (voterRole !== 'Percival') return false;
+		if (voterRole !== 'PERCIVAL') return false;
 
 		// No Morgana in the game (so Percival knows Merlin with certainty)
-		if (gameIncludesRole(context, 'Morgana')) return false;
+		if (gameIncludesRole(context, 'MORGANA')) return false;
 
 		// Find Merlin
-		const merlinName = findPlayerWithRole(context, 'Merlin');
+		const merlinName = findPlayerWithRole(context, 'MERLIN');
 		if (!merlinName) return false;
 
 		// Neither Merlin nor Percival is on the team
@@ -381,7 +382,7 @@ export const VoteAgainstOwnProposalPredicate: ProposalVotePredicate = {
 	isWeird: (context) => !context.votedYes,
 	isWorthCommentary: () => true,
 	getCommentary: (context) => {
-		const role = getPlayerRole(context, context.voterName) ?? 'Unknown';
+		const role = toDisplayRole(getPlayerRole(context, context.voterName));
 		return `${getRoleEmoji(role)} ${role} ${context.voterName} voted against their own proposal.`;
 	},
 };
@@ -405,7 +406,7 @@ export const RiskingGoodLossPredicate: ProposalVotePredicate = {
 		return true;
 	},
 	getCommentary: (context) => {
-		const role = getPlayerRole(context, context.voterName) ?? 'Unknown';
+		const role = toDisplayRole(getPlayerRole(context, context.voterName));
 		const evilCount = countSeenEvilOnTeam(context);
 		const failsRequired = context.mission.failsRequired;
 		return `${getRoleEmoji(role)} ${role} ${context.voterName} risked losing by voting for a team with ${evilCount} seen evil players when ${failsRequired} fails were required and two missions had already failed.`;
@@ -431,7 +432,7 @@ export const RiskingEvilLossPredicate: ProposalVotePredicate = {
 		return true;
 	},
 	getCommentary: (context) => {
-		const role = getPlayerRole(context, context.voterName) ?? 'Unknown';
+		const role = toDisplayRole(getPlayerRole(context, context.voterName));
 		return `${getRoleEmoji(role)} ${role} ${context.voterName} off-team approved a team that would win for good.`;
 	},
 };
@@ -449,7 +450,7 @@ export const OffTeamApproveAllGoodTeamPredicate: ProposalVotePredicate = {
 	isWeird: (context) => context.votedYes,
 	isWorthCommentary: () => true,
 	getCommentary: (context) => {
-		const role = getPlayerRole(context, context.voterName) ?? 'Unknown';
+		const role = toDisplayRole(getPlayerRole(context, context.voterName));
 		return `${getRoleEmoji(role)} ${role} ${context.voterName} approved an all good team that did not include them.`;
 	},
 };
@@ -467,7 +468,7 @@ export const OffTeamApproveMaxSizePredicate: ProposalVotePredicate = {
 	isWeird: (context) => context.votedYes,
 	isWorthCommentary: () => true,
 	getCommentary: (context) => {
-		const role = getPlayerRole(context, context.voterName) ?? 'Unknown';
+		const role = toDisplayRole(getPlayerRole(context, context.voterName));
 		return `${getRoleEmoji(role)} ${role} ${context.voterName} approved a proposal of max size that did not include them.`;
 	},
 };
@@ -489,7 +490,7 @@ export const EvilVotedAgainstEvilPredicate: ProposalVotePredicate = {
 	isWeird: (context) => !context.votedYes,
 	isWorthCommentary: (context) => context.proposal.proposer !== context.voterName,
 	getCommentary: (context) => {
-		const role = getPlayerRole(context, context.voterName) ?? 'Unknown';
+		const role = toDisplayRole(getPlayerRole(context, context.voterName));
 		return `${getRoleEmoji(role)} ${role} ${context.voterName} voted against a proposal that included two known evil players.`;
 	},
 };
@@ -516,7 +517,7 @@ export const ApproveWhenNextLeaderProposalVotePredicate: ProposalVotePredicate =
 	isWeird: (context) => context.votedYes,
 	isWorthCommentary: () => true,
 	getCommentary: (context) => {
-		const role = getPlayerRole(context, context.voterName) ?? 'Unknown';
+		const role = toDisplayRole(getPlayerRole(context, context.voterName));
 		return `${getRoleEmoji(role)} ${role} ${context.voterName} approved the proposal when they are the next leader anyway.`;
 	},
 };
@@ -537,7 +538,7 @@ export const OnProposalButDidntVoteForItEarlyGameProposalVotePredicate: Proposal
 	isWeird: (context) => !context.votedYes,
 	isWorthCommentary: () => false, // Track but don't comment on every one
 	getCommentary: (context) => {
-		const role = getPlayerRole(context, context.voterName) ?? 'Unknown';
+		const role = toDisplayRole(getPlayerRole(context, context.voterName));
 		return `${getRoleEmoji(role)} ${role} ${context.voterName} voted against an early proposal that included them.`;
 	},
 };
@@ -559,7 +560,7 @@ export const SwitchedVoteProposalVotePredicate: ProposalVotePredicate = {
 	},
 	isWorthCommentary: () => true,
 	getCommentary: (context) => {
-		const role = getPlayerRole(context, context.voterName) ?? 'Unknown';
+		const role = toDisplayRole(getPlayerRole(context, context.voterName));
 		const earlierProposal = getEarlierProposalWithSameTeam(context);
 		if (!earlierProposal) return '';
 		return `${getRoleEmoji(role)} ${role} ${context.voterName} switched their vote from an identical earlier proposal on mission ${earlierProposal.missionNumber + 1} proposal ${earlierProposal.proposalNumber + 1}.`;
@@ -589,7 +590,7 @@ export const TrustedMoreThanMaxTeamSizePlayersOnLastMissionProposalVotePredicate
 	},
 	isWorthCommentary: () => true,
 	getCommentary: (context) => {
-		const role = getPlayerRole(context, context.voterName) ?? 'Unknown';
+		const role = toDisplayRole(getPlayerRole(context, context.voterName));
 		const trustedPlayers = getTrustedPlayersOnMission(context);
 		const trustedNames = trustedPlayers.join(', ');
 		return `${getRoleEmoji(role)} ${role} ${context.voterName} trusted ${trustedPlayers.length} players on mission ${context.missionNumber + 1}. Trusted: ${trustedNames}.`;
@@ -612,7 +613,7 @@ export const OffTeamApproveOneEvilProposalVotePredicate: ProposalVotePredicate =
 	isWeird: (context) => context.votedYes,
 	isWorthCommentary: () => true,
 	getCommentary: (context) => {
-		const role = getPlayerRole(context, context.voterName) ?? 'Unknown';
+		const role = toDisplayRole(getPlayerRole(context, context.voterName));
 		return `${getRoleEmoji(role)} ${role} ${context.voterName} off-team approved a proposal with 1 seen evil player when two fails are required.`;
 	},
 };
@@ -651,7 +652,7 @@ export const FirstAllGoodTeamVotePredicate: ProposalVotePredicate = {
 	isWeird: (context) => context.votedYes,
 	isWorthCommentary: () => true,
 	getCommentary: (context) => {
-		const role = getPlayerRole(context, context.voterName) ?? 'Unknown';
+		const role = toDisplayRole(getPlayerRole(context, context.voterName));
 		return `${getRoleEmoji(role)} ${role} ${context.voterName} voted for the first all good team.`;
 	},
 };
@@ -674,7 +675,7 @@ export const ApprovingProposalWithTeammatesFromFailedMissionProposalVotePredicat
 	isWeird: (context) => context.votedYes,
 	isWorthCommentary: () => true,
 	getCommentary: (context) => {
-		const role = getPlayerRole(context, context.voterName) ?? 'Unknown';
+		const role = toDisplayRole(getPlayerRole(context, context.voterName));
 		const failedMissions = getPreviousFailedMissionsWithSamePlayers(context);
 		const missionDetails = failedMissions.map((m) => `Mission ${m.missionNumber + 1}`).join(', ');
 		return `${getRoleEmoji(role)} ${role} ${context.voterName} approved a proposal with the same players as a previous failed mission. ${missionDetails}.`;
@@ -743,7 +744,7 @@ export const DidNotProtestVoteWhenGoodWasAboutToWinProposalVotePredicate: Propos
 	isWeird: (context) => context.votedYes,
 	isWorthCommentary: () => true,
 	getCommentary: (context) => {
-		const role = getPlayerRole(context, context.voterName) ?? 'Unknown';
+		const role = toDisplayRole(getPlayerRole(context, context.voterName));
 		return `${getRoleEmoji(role)} ${role} ${context.voterName} did not protest vote when good was about to win.`;
 	},
 };
@@ -791,7 +792,7 @@ export const FirstAllGoodTeamOfMaxSizeVotePredicate: ProposalVotePredicate = {
 	isWeird: (context) => context.votedYes,
 	isWorthCommentary: () => true,
 	getCommentary: (context) => {
-		const role = getPlayerRole(context, context.voterName) ?? 'Unknown';
+		const role = toDisplayRole(getPlayerRole(context, context.voterName));
 		return `${getRoleEmoji(role)} ${role} ${context.voterName} voted for an all good team of max size.`;
 	},
 };
