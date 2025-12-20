@@ -317,9 +317,27 @@ function RoleRestrictedRow({
 	);
 }
 
-const GOOD_ROLES = ['Merlin', 'Percival', 'Loyal Servant'];
-const EVIL_ROLES = ['Assassin', 'Morgana', 'Mordred', 'Oberon', 'Minion'];
+/** Role constants in database format (uppercase) */
+const GOOD_ROLES = ['MERLIN', 'PERCIVAL', 'LOYAL FOLLOWER'];
+const EVIL_ROLES = ['ASSASSIN', 'MORGANA', 'MORDRED', 'OBERON', 'EVIL MINION'];
 const ALL_ROLES = [...GOOD_ROLES, ...EVIL_ROLES];
+
+/** Map database role names to display format (title case with friendly names) */
+const DB_ROLE_TO_DISPLAY: Record<string, string> = {
+	MERLIN: 'Merlin',
+	PERCIVAL: 'Percival',
+	'LOYAL FOLLOWER': 'Loyal Servant',
+	ASSASSIN: 'Assassin',
+	MORGANA: 'Morgana',
+	MORDRED: 'Mordred',
+	OBERON: 'Oberon',
+	'EVIL MINION': 'Minion',
+};
+
+/** Convert database role name to display format for rendering */
+function toDisplayRole(dbRole: string): string {
+	return DB_ROLE_TO_DISPLAY[dbRole] ?? dbRole;
+}
 
 function expandInterestingRoles(interestingRoles: PersonAnnotationStatistic['interestingRoles']): string[] {
 	if (interestingRoles === 'all') return ALL_ROLES;
@@ -426,9 +444,10 @@ export function PersonAnnotationStats({profile, personId}: PersonAnnotationStats
 						key={role}
 						className={styles.roleSection}
 					>
-						<h4 className={styles.roleTitle}>{role} Behaviors</h4>
+						<h4 className={styles.roleTitle}>{toDisplayRole(role)} Behaviors</h4>
 						<p className={styles.alignmentRestrictedDescription}>
-							Role-level breakdown for {role}. Compares this player's rate to other {role} players.
+							Role-level breakdown for {toDisplayRole(role)}. Compares this player's rate to other{' '}
+							{toDisplayRole(role)} players.
 						</p>
 						<div className={styles.tableWrapper}>
 							<table className={styles.table}>

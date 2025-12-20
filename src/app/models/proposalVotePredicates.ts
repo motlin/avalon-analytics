@@ -267,7 +267,7 @@ export const ProtestVoteGoodTeamPredicate: ProposalVotePredicate = {
 export const MerlinVotedForMorganaPredicate: ProposalVotePredicate = {
 	name: 'Merlin voted for a team including Morgana',
 	rarity: 'common',
-	interestingRoles: ['Merlin'],
+	interestingRoles: ['MERLIN'],
 	isRelevant: (context) => {
 		if (isEvilHammerWin(context)) return false;
 		if (isHammer(context)) return false;
@@ -285,7 +285,7 @@ export const MerlinVotedForMorganaPredicate: ProposalVotePredicate = {
 export const MerlinApprovedMultipleVisibleEvilPredicate: ProposalVotePredicate = {
 	name: 'Merlin approved a team with multiple visible evil',
 	rarity: 'uncommon',
-	interestingRoles: ['Merlin'],
+	interestingRoles: ['MERLIN'],
 	isRelevant: (context) => {
 		if (isEvilHammerWin(context)) return false;
 		if (isHammer(context)) return false;
@@ -306,7 +306,7 @@ export const MerlinApprovedMultipleVisibleEvilPredicate: ProposalVotePredicate =
 export const MorganaVotedForMerlinPredicate: ProposalVotePredicate = {
 	name: 'Morgana voted for a team including Merlin',
 	rarity: 'common',
-	interestingRoles: ['Morgana'],
+	interestingRoles: ['MORGANA'],
 	isRelevant: (context) => {
 		if (isEvilHammerWin(context)) return false;
 		if (isHammer(context)) return false;
@@ -324,7 +324,7 @@ export const MorganaVotedForMerlinPredicate: ProposalVotePredicate = {
 export const PercivalVotedForBothPredicate: ProposalVotePredicate = {
 	name: 'Percival voted for a team including both Merlin and Morgana',
 	rarity: 'rare',
-	interestingRoles: ['Percival'],
+	interestingRoles: ['PERCIVAL'],
 	isRelevant: (context) => {
 		if (isEvilHammerWin(context)) return false;
 		if (isHammer(context)) return false;
@@ -342,7 +342,7 @@ export const PercivalVotedForBothPredicate: ProposalVotePredicate = {
 export const PercivalProtestVotedMultipleEvilPredicate: ProposalVotePredicate = {
 	name: 'Percival protest voted knowing multiple evil on team',
 	rarity: 'uncommon',
-	interestingRoles: ['Percival'],
+	interestingRoles: ['PERCIVAL'],
 	isRelevant: (context) => {
 		// Voter must be Percival
 		const voterRole = getPlayerRole(context, context.voterName);

@@ -110,7 +110,7 @@ export const DuckingWhenEvilWonTwoPredicate: MissionVotePredicate = {
 export const OberonDuckedPredicate: MissionVotePredicate = {
 	name: 'Oberon ducked',
 	rarity: 'epic',
-	interestingRoles: ['Oberon'],
+	interestingRoles: ['OBERON'],
 	isRelevant: (context) => {
 		const voterRole = getPlayerRole(context, context.voterName);
 		return voterRole === 'Oberon';
