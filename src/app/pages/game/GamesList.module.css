@@ -82,3 +82,46 @@
 .pagination {
 	margin-top: 24px;
 }
+
+/* Behavior games list styles */
+.subtitle {
+	margin: 0 0 1rem;
+	padding: 0 16px;
+	color: #555;
+}
+
+.summary {
+	display: flex;
+	gap: 1.5rem;
+	padding: 0 16px 1rem;
+	flex-wrap: wrap;
+}
+
+.summaryItem {
+	font-size: 0.9rem;
+	color: #666;
+}
+
+.section {
+	padding: 0 16px 1rem;
+}
+
+.section h2 {
+	font-size: 1.1rem;
+	margin: 0 0 0.75rem;
+	color: #333;
+}
+
+.gameRole {
+	font-weight: 600;
+	color: #333;
+}
+
+.gameDate {
+	font-size: 0.85rem;
+	color: #666;
+}
+
+.gameCard.missed {
+	opacity: 0.6;
+}
