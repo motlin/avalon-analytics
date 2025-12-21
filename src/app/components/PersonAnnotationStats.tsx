@@ -70,7 +70,7 @@ function getTellCellClass(likelihoodRatio: number, confidence: number, suggests:
 }
 
 function AnnotationRow({statistic, personId}: {statistic: PersonAnnotationStatistic; personId: string}) {
-	const gamesUrl = `/person/${personId}/predicate/${statistic.predicateName}/games`;
+	const gamesUrl = `/games?person=${personId}&behavior=${statistic.predicateName}`;
 
 	const popGoodTooltip = `${statistic.goodBaselineFires}/${statistic.goodBaselineSample} fires`;
 	const popEvilTooltip = `${statistic.evilBaselineFires}/${statistic.evilBaselineSample} fires`;
@@ -101,7 +101,7 @@ function AnnotationRow({statistic, personId}: {statistic: PersonAnnotationStatis
 					style={{backgroundColor: RARITY_CSS_COLORS[statistic.rarity]}}
 				/>
 				<a
-					href={`/predicate/${statistic.predicateName}`}
+					href={gamesUrl}
 					className={styles.predicateLink}
 				>
 					{formatPredicateName(statistic.predicateName)}
@@ -201,7 +201,7 @@ function AlignmentRestrictedRow({
 	personId: string;
 	alignment: 'good' | 'evil';
 }) {
-	const gamesUrl = `/person/${personId}/predicate/${statistic.predicateName}/games`;
+	const gamesUrl = `/games?person=${personId}&behavior=${statistic.predicateName}`;
 
 	const isGood = alignment === 'good';
 	const popRate = isGood ? statistic.goodBaselineRate : statistic.evilBaselineRate;
@@ -223,7 +223,7 @@ function AlignmentRestrictedRow({
 					style={{backgroundColor: RARITY_CSS_COLORS[statistic.rarity]}}
 				/>
 				<a
-					href={`/predicate/${statistic.predicateName}`}
+					href={gamesUrl}
 					className={styles.predicateLink}
 				>
 					{formatPredicateName(statistic.predicateName)}
@@ -265,17 +265,25 @@ function RoleRestrictedRow({
 	roleStat: RoleStatistic | undefined;
 	personId: string;
 }) {
-	const gamesUrl = `/person/${personId}/predicate/${statistic.predicateName}/games`;
+	const gamesUrl = `/games?person=${personId}&behavior=${statistic.predicateName}`;
 
-	const popRate = roleStat?.populationRate ?? 0;
-	const popFires = roleStat?.populationFires ?? 0;
-	const popSample = roleStat?.populationOpportunities ?? 0;
-	const playerRate = roleStat?.playerRate ?? null;
-	const playerFires = roleStat?.playerFires ?? 0;
-	const playerOpportunities = roleStat?.playerOpportunities ?? 0;
+	// Overall stats (all roles)
+	const allPopRate = statistic.baselineRate;
+	const allPlayerRate = statistic.opportunities > 0 ? statistic.rawRate : null;
+	const allPopTooltip = `${statistic.goodBaselineFires + statistic.evilBaselineFires}/${statistic.goodBaselineSample + statistic.evilBaselineSample} fires`;
+	const allPlayerTooltip = `${statistic.fires}/${statistic.opportunities} fires`;
 
-	const popTooltip = `${popFires}/${popSample} fires`;
-	const playerTooltip = playerOpportunities > 0 ? `${playerFires}/${playerOpportunities} fires` : 'No opportunities';
+	// Role-specific stats
+	const rolePopRate = roleStat?.populationRate ?? 0;
+	const rolePopFires = roleStat?.populationFires ?? 0;
+	const rolePopSample = roleStat?.populationOpportunities ?? 0;
+	const rolePlayerRate = roleStat?.playerRate ?? null;
+	const rolePlayerFires = roleStat?.playerFires ?? 0;
+	const rolePlayerOpportunities = roleStat?.playerOpportunities ?? 0;
+
+	const rolePopTooltip = `${rolePopFires}/${rolePopSample} fires`;
+	const rolePlayerTooltip =
+		rolePlayerOpportunities > 0 ? `${rolePlayerFires}/${rolePlayerOpportunities} fires` : 'No opportunities';
 
 	return (
 		<tr className={styles.dataRow}>
@@ -285,7 +293,7 @@ function RoleRestrictedRow({
 					style={{backgroundColor: RARITY_CSS_COLORS[statistic.rarity]}}
 				/>
 				<a
-					href={`/predicate/${statistic.predicateName}`}
+					href={gamesUrl}
 					className={styles.predicateLink}
 				>
 					{formatPredicateName(statistic.predicateName)}
@@ -293,26 +301,43 @@ function RoleRestrictedRow({
 			</td>
 			<td
 				className={styles.rateCell}
-				title={popTooltip}
+				title={allPopTooltip}
 			>
-				{formatPercent(popRate)}
+				{formatPercent(allPopRate)}
 			</td>
 			<td
 				className={styles.rateCell}
-				title={playerTooltip}
+				title={allPlayerTooltip}
 			>
 				<a
 					href={gamesUrl}
 					className={styles.rateLinkGood}
 				>
-					{formatPercent(playerRate)}
+					{formatPercent(allPlayerRate)}
 				</a>
 			</td>
 			<td
-				className={getDeviationClass(playerRate, popRate)}
-				title={`Player rate vs population: ${formatPercent(playerRate)} vs ${formatPercent(popRate)}`}
+				className={styles.rateCell}
+				title={rolePopTooltip}
 			>
-				{formatDeviation(playerRate, popRate)}
+				{formatPercent(rolePopRate)}
+			</td>
+			<td
+				className={styles.rateCell}
+				title={rolePlayerTooltip}
+			>
+				<a
+					href={gamesUrl}
+					className={styles.rateLinkGood}
+				>
+					{formatPercent(rolePlayerRate)}
+				</a>
+			</td>
+			<td
+				className={getDeviationClass(rolePlayerRate, rolePopRate)}
+				title={`Player rate vs population: ${formatPercent(rolePlayerRate)} vs ${formatPercent(rolePopRate)}`}
+			>
+				{formatDeviation(rolePlayerRate, rolePopRate)}
 			</td>
 		</tr>
 	);
@@ -430,16 +455,37 @@ export function PersonAnnotationStats({profile, personId}: PersonAnnotationStats
 					>
 						<h4 className={styles.roleTitle}>{toDisplayRole(role)} Behaviors</h4>
 						<p className={styles.alignmentRestrictedDescription}>
-							Role-level breakdown for {toDisplayRole(role)}. Compares this player's rate to other{' '}
-							{toDisplayRole(role)} players.
+							Compares your rate as {toDisplayRole(role)} to other {toDisplayRole(role)} players, with
+							overall rates for context.
 						</p>
 						<div className={styles.tableWrapper}>
 							<table className={styles.table}>
 								<thead>
 									<tr>
-										<th className={styles.headerBehavior}>Behavior</th>
-										<th className={styles.headerSubGood}>Pop Rate</th>
-										<th className={styles.headerSubGood}>You</th>
+										<th
+											className={styles.headerBehavior}
+											rowSpan={2}
+										>
+											Behavior
+										</th>
+										<th
+											className={styles.headerNum}
+											colSpan={2}
+										>
+											All Roles
+										</th>
+										<th
+											className={styles.headerNum}
+											colSpan={3}
+										>
+											{toDisplayRole(role)}
+										</th>
+									</tr>
+									<tr>
+										<th className={styles.headerSub}>Pop</th>
+										<th className={styles.headerSub}>You</th>
+										<th className={styles.headerSub}>Pop</th>
+										<th className={styles.headerSub}>You</th>
 										<th className={styles.headerSub}>vs Pop</th>
 									</tr>
 								</thead>
