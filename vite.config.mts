@@ -13,6 +13,9 @@ export default defineConfig({
     tailwindcss(),
   ],
   envPrefix: "FIREBASE_",
+  server: {
+    allowedHosts: process.env['VITE_ALLOWED_HOSTS']?.split(',').filter(Boolean) ?? [],
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

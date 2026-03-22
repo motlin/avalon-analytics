@@ -50,6 +50,7 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           wranglerVersion: '4.50.0'
+          packageManager: pnpm
           command: d1 migrations apply avalon-analytics-dev --remote
         continue-on-error: true
 
@@ -64,6 +65,7 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           wranglerVersion: '4.50.0'
+          packageManager: pnpm
           workingDirectory: dist/worker
           command: versions upload --preview-alias pr-${{ github.event.pull_request.number }} -c wrangler.json
 
