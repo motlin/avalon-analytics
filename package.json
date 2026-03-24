@@ -8,7 +8,7 @@
 	"scripts": {
 		"prebuild": "prisma generate && mkdir -p .wrangler/state/v3/d1",
 		"build": "vite build",
-		"postbuild": "cp ./dist/client/assets/query_engine_bg*.wasm dist/worker/assets/ 2>/dev/null || true && cp ./dist/worker/assets/worker-entry.css dist/client/assets/ 2>/dev/null || true",
+		"postbuild": "cp ./dist/client/assets/query_engine_bg*.wasm dist/worker/assets/ 2>/dev/null || true && cp ./dist/worker/assets/index.css dist/client/assets/worker-entry.css 2>/dev/null || true",
 		"dev": "vite dev",
 		"dev:init": "rw-scripts dev-init",
 		"preview": "vite preview",
