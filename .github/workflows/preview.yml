@@ -45,7 +45,7 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           packageManager: pnpm
           workingDirectory: dist/worker
-          command: versions upload --preview-alias pr-${{ github.event.pull_request.number }} -c wrangler.json
+          command: versions upload --preview-alias pr-${{ github.event.pull_request.number }}
 
       - name: Comment PR with preview URL
         uses: actions/github-script@v8
