@@ -21,6 +21,16 @@
     "FIREBASE_MESSAGING_SENDER_ID": "1000859874531",
     "FIREBASE_APP_ID": "1:1000859874531:web:789f785c58c574bff181d6"
   },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["SessionDurableObject"]
+    },
+    {
+      "tag": "v2",
+      "deleted_classes": ["SessionDurableObject"]
+    }
+  ],
   "d1_databases": [
     {
       "binding": "DB",
