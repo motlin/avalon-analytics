@@ -97,7 +97,7 @@
 		"prettier": "^3.8.1",
 		"prisma": "^7.8.0",
 		"storybook": "^10.1.8",
-		"tailwindcss": "^4.1.17",
+		"tailwindcss": "^4.2.4",
 		"tsx": "^4.21.0",
 		"typescript": "^6.0.3",
 		"vibe-rules": "^0.2.31",
