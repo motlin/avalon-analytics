@@ -90,7 +90,7 @@
 		"autoprefixer": "^10.4.22",
 		"eslint": "^10.1.0",
 		"eslint-plugin-storybook": "^10.1.8",
-		"globals": "^16.3.0",
+		"globals": "^17.6.0",
 		"jiti": "^2.1.5",
 		"miniflare": "^3.20250408.2",
 		"playwright": "^1.54.1",
