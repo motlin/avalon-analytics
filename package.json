@@ -79,7 +79,7 @@
 		"@storybook/react": "^10.1.8",
 		"@storybook/react-vite": "^10.1.8",
 		"@tailwindcss/postcss": "^4.2.4",
-		"@tailwindcss/vite": "^4.1.17",
+		"@tailwindcss/vite": "^4.2.4",
 		"@types/node": "~24.5.2",
 		"@types/react": "19.1.2",
 		"@types/react-dom": "19.1.2",
