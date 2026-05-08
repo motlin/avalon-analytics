@@ -91,7 +91,7 @@
 		"eslint": "^10.1.0",
 		"eslint-plugin-storybook": "^10.1.8",
 		"globals": "^17.6.0",
-		"jiti": "^2.1.5",
+		"jiti": "^2.7.0",
 		"miniflare": "^4.20260507.1",
 		"playwright": "^1.54.1",
 		"prettier": "^3.8.1",
