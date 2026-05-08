@@ -95,7 +95,7 @@
 		"miniflare": "^3.20250408.2",
 		"playwright": "^1.54.1",
 		"prettier": "^3.8.1",
-		"prisma": "^6.8.2",
+		"prisma": "^7.8.0",
 		"storybook": "^10.1.8",
 		"tailwindcss": "^4.1.17",
 		"tsx": "^4.21.0",
