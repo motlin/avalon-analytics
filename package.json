@@ -103,7 +103,7 @@
 		"vibe-rules": "^0.2.31",
 		"vite": "8.0.11",
 		"vitest": "^4.1.0",
-		"wrangler": "4.53.0"
+		"wrangler": "4.90.0"
 	},
 	"pnpm": {
 		"overrides": {
