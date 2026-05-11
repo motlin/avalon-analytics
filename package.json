@@ -71,7 +71,7 @@
 		"@biomejs/biome": "2.4.14",
 		"@cloudflare/vite-plugin": "1.36.3",
 		"@cloudflare/vitest-pool-workers": "^0.16.3",
-		"@cloudflare/workers-types": "4.20260508.1",
+		"@cloudflare/workers-types": "4.20260511.1",
 		"@eslint/js": "^10.0.1",
 		"@storybook/addon-docs": "^10.1.8",
 		"@storybook/addon-onboarding": "^10.1.8",
