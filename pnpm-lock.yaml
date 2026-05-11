@@ -118,8 +118,8 @@ importers:
         specifier: ^10.1.8
         version: 10.1.8(@types/react@19.2.14)(esbuild@0.27.7)(rollup@4.45.1)(storybook@10.3.6(@testing-library/dom@10.4.0)(prettier@3.8.3)(react-dom@19.3.0-canary-56824423-20260414(react@19.3.0-canary-56824423-20260414))(react@19.3.0-canary-56824423-20260414))(vite@8.0.12(@types/node@25.6.2)(esbuild@0.27.7)(jiti@2.7.0)(terser@5.47.1)(tsx@4.21.0)(yaml@2.8.1))(webpack@5.100.0(esbuild@0.27.7)(postcss@8.5.14))
       '@storybook/addon-onboarding':
-        specifier: ^10.1.8
-        version: 10.1.8(storybook@10.3.6(@testing-library/dom@10.4.0)(prettier@3.8.3)(react-dom@19.3.0-canary-56824423-20260414(react@19.3.0-canary-56824423-20260414))(react@19.3.0-canary-56824423-20260414))
+        specifier: ^10.3.6
+        version: 10.3.6(storybook@10.3.6(@testing-library/dom@10.4.0)(prettier@3.8.3)(react-dom@19.3.0-canary-56824423-20260414(react@19.3.0-canary-56824423-20260414))(react@19.3.0-canary-56824423-20260414))
       '@storybook/addon-vitest':
         specifier: ^10.3.6
         version: 10.3.6(@vitest/browser-playwright@4.1.6)(@vitest/browser@4.1.6(vite@8.0.12(@types/node@25.6.2)(esbuild@0.27.7)(jiti@2.7.0)(terser@5.47.1)(tsx@4.21.0)(yaml@2.8.1))(vitest@4.1.6))(@vitest/runner@4.1.6)(react-dom@19.3.0-canary-56824423-20260414(react@19.3.0-canary-56824423-20260414))(react@19.3.0-canary-56824423-20260414)(storybook@10.3.6(@testing-library/dom@10.4.0)(prettier@3.8.3)(react-dom@19.3.0-canary-56824423-20260414(react@19.3.0-canary-56824423-20260414))(react@19.3.0-canary-56824423-20260414))(vitest@4.1.6)
@@ -2171,10 +2171,10 @@ packages:
     peerDependencies:
       storybook: ^10.1.8
 
-  '@storybook/addon-onboarding@10.1.8':
-    resolution: {integrity: sha512-AJEeo7QRvWB4DJtYtaOrh7bP08Iwfb2lWG9oxu+VGJ/nTQ7TloiqhOXQgNe8pdpWQtWT+40Eth2IOCJ7H3e4BQ==}
+  '@storybook/addon-onboarding@10.3.6':
+    resolution: {integrity: sha512-Tys9eOFzCkBygfDWVRa2hpTQI5Y1HQt9ybkJIHdR16GASQ3fhyXVULHVRmGQLEGN+3n84JGvlU8CN9S/OBB1IQ==}
     peerDependencies:
-      storybook: ^10.1.8
+      storybook: ^10.3.6
 
   '@storybook/addon-vitest@10.3.6':
     resolution: {integrity: sha512-HXj7RrPJY+xzoNjL+xZu2oLw1fI5BA87Noh1NAXMPuECHR5R5fuRM/tTsJuIGXHFMO06FjSi/rekDIfCj1fL4w==}
@@ -7228,7 +7228,7 @@ snapshots:
       - vite
       - webpack
 
-  '@storybook/addon-onboarding@10.1.8(storybook@10.3.6(@testing-library/dom@10.4.0)(prettier@3.8.3)(react-dom@19.3.0-canary-56824423-20260414(react@19.3.0-canary-56824423-20260414))(react@19.3.0-canary-56824423-20260414))':
+  '@storybook/addon-onboarding@10.3.6(storybook@10.3.6(@testing-library/dom@10.4.0)(prettier@3.8.3)(react-dom@19.3.0-canary-56824423-20260414(react@19.3.0-canary-56824423-20260414))(react@19.3.0-canary-56824423-20260414))':
     dependencies:
       storybook: 10.3.6(@testing-library/dom@10.4.0)(prettier@3.8.3)(react-dom@19.3.0-canary-56824423-20260414(react@19.3.0-canary-56824423-20260414))(react@19.3.0-canary-56824423-20260414)
 
