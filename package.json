@@ -58,7 +58,7 @@
 		"firebase": "^12.13.0",
 		"json5": "^2.2.3",
 		"lucide-react": "^1.14.0",
-		"markdown-to-jsx": "^9.7.16",
+		"markdown-to-jsx": "^9.8.0",
 		"react": "19.3.0-canary-56824423-20260414",
 		"react-dom": "19.3.0-canary-56824423-20260414",
 		"react-server-dom-webpack": "19.3.0-canary-56824423-20260414",
