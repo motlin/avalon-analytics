@@ -62,7 +62,7 @@
 		"react": "19.3.0-canary-56824423-20260414",
 		"react-dom": "19.3.0-canary-56824423-20260414",
 		"react-server-dom-webpack": "19.3.0-canary-56824423-20260414",
-		"rwsdk": "1.0.0-beta.39",
+		"rwsdk": "1.2.7",
 		"simple-statistics": "^7.8.9",
 		"tailwind-merge": "^3.6.0",
 		"zod": "^4.4.3"
