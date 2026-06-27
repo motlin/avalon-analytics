@@ -30,9 +30,9 @@ dev: install import-games-local
 lint: install
     pnpm run format
 
-# `pnpm run ci:eslint`
+# `pnpm run eslint:ci`
 lint-ci: install-ci
-    pnpm run ci:eslint
+    pnpm run eslint:ci
 
 # `pnpm run test:run`
 test: install
@@ -59,18 +59,18 @@ format: install
     pre-commit run just-fmt --all-files
     pnpm run format
 
-# `pnpm run ci:format`
+# `pnpm run format:ci`
 format-ci: install-ci
     pre-commit run just-fmt --all-files
-    pnpm run ci:format
+    pnpm run format:ci
 
-# `pnpm run ci:typecheck`
+# `pnpm run typecheck:ci`
 typecheck: install generate
-    pnpm run ci:typecheck
+    pnpm run typecheck:ci
 
-# `pnpm run ci:typecheck`
+# `pnpm run typecheck:ci`
 typecheck-ci: install-ci generate-ci
-    pnpm run ci:typecheck
+    pnpm run typecheck:ci
 
 # Run install, build, test, lint, and pre-commit hooks in sequence
 precommit: generate lint format hooks typecheck build-ci test storybook-tests
