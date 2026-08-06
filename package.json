@@ -104,18 +104,5 @@
 		"vite": "8.0.12",
 		"vitest": "^4.1.6",
 		"wrangler": "4.90.0"
-	},
-	"pnpm": {
-		"overrides": {
-			"@typescript-eslint/utils": "^8.57.0"
-		},
-		"onlyBuiltDependencies": [
-			"@prisma/client",
-			"@prisma/engines",
-			"esbuild",
-			"prisma",
-			"sharp",
-			"workerd"
-		]
 	}
 }
