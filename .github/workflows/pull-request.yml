@@ -13,8 +13,8 @@ jobs:
         steps:
             - uses: motlin/forbid-merge-commits-action@main
 
-    automerge-dependabot:
-        if: github.event.pull_request.user.login == 'dependabot[bot]'
+    automerge-bots:
+        if: contains(fromJSON('[\"dependabot[bot]\", \"renovate[bot]\"]'), github.event.pull_request.user.login)
         runs-on: ubuntu-latest
         permissions:
             pull-requests: write
@@ -22,7 +22,7 @@ jobs:
         steps:
             - uses: actions/checkout@v7
 
-            - name: Enable auto-merge for Dependabot PR
+            - name: Enable auto-merge for bot PR
               run: gh pr merge --rebase --auto "${{ github.event.pull_request.number }}"
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
