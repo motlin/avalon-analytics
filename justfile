@@ -56,10 +56,12 @@ build-ci: install-ci
 
 # `pnpm run format`
 format: install
+    pre-commit run just-fmt --all-files
     pnpm run format
 
 # `pnpm run ci:format`
 format-ci: install-ci
+    pre-commit run just-fmt --all-files
     pnpm run ci:format
 
 # `pnpm run ci:typecheck`
