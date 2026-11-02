@@ -1,27 +1,32 @@
-.container {
+.container
+{
 	margin-bottom: 2rem;
 }
 
-.title {
+.title
+{
 	margin: 0 0 1rem 0;
 	font-size: 1.25rem;
 	font-weight: 600;
 }
 
-.cardsContainer {
+.cardsContainer
+{
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
 	gap: 1rem;
 }
 
-.card {
+.card
+{
 	padding: 1rem;
 	background-color: hsl(var(--accent));
 	border-radius: 8px;
 	border: 1px solid hsl(var(--border));
 }
 
-.cardTitle {
+.cardTitle
+{
 	margin: 0 0 1rem 0;
 	font-size: 1rem;
 	font-weight: 600;
@@ -29,58 +34,68 @@
 	border-bottom: 2px solid hsl(var(--border));
 }
 
-.merlinIcon {
+.merlinIcon
+{
 	color: hsl(var(--good-color));
 }
 
-.assassinIcon {
+.assassinIcon
+{
 	color: hsl(var(--evil-color));
 }
 
-.evilTeammateIcon {
+.evilTeammateIcon
+{
 	color: hsl(var(--special-color));
 }
 
-.statGrid {
+.statGrid
+{
 	display: grid;
 	grid-template-columns: repeat(2, 1fr);
 	gap: 0.75rem;
 }
 
-.statItem {
+.statItem
+{
 	display: flex;
 	flex-direction: column;
 	gap: 0.25rem;
 }
 
-.statLabel {
+.statLabel
+{
 	font-size: 0.75rem;
 	color: hsl(var(--muted-foreground));
 	text-transform: uppercase;
 	letter-spacing: 0.025em;
 }
 
-.statValue {
+.statValue
+{
 	font-size: 1.25rem;
 	font-weight: 600;
 	font-variant-numeric: tabular-nums;
 }
 
-.statValueHighlight {
+.statValueHighlight
+{
 	font-size: 1.25rem;
 	font-weight: 600;
 	font-variant-numeric: tabular-nums;
 	color: hsl(var(--highlight-color));
 }
 
-.statValueSuccess {
+.statValueSuccess
+{
 	font-size: 1.25rem;
 	font-weight: 600;
 	font-variant-numeric: tabular-nums;
 	color: hsl(var(--good-color));
 }
 
-.statValueDanger {
+.statValueDanger
+{
 	font-size: 1.25rem;
 	font-weight: 600;
 	font-variant-numeric: tabular-nums;

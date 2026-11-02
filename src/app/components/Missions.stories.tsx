@@ -1,13 +1,17 @@
 import type {Meta, StoryObj} from '@storybook/react-vite';
 import Missions from './Missions';
 
-const meta: Meta<typeof Missions> = {
+const meta: Meta<typeof Missions> =
+{
 	title: 'Gameplay/Missions',
 	component: Missions,
-	parameters: {
+	parameters:
+	{
 		layout: 'centered',
-		docs: {
-			description: {
+		docs:
+		{
+			description:
+			{
 				component: `The Missions component displays the progress of all 5 missions in an Avalon game.
 
 ## Features
@@ -37,8 +41,10 @@ function Game() {
 			},
 		},
 	},
-	argTypes: {
-		avalon: {
+	argTypes:
+	{
+		avalon:
+		{
 			control: 'object',
 			description: 'Avalon game API object containing missions array and game state information',
 		},
@@ -48,9 +54,19 @@ function Game() {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const createTeamWithJoinMethod = (players: string[]): string[] & {joinWithAnd: () => string} => {
-	const team = players as string[] & {joinWithAnd: () => string};
-	team.joinWithAnd = () => {
+const createTeamWithJoinMethod = (
+	players: string[],
+): string[] &
+{
+	joinWithAnd: () => string;
+} =>
+{
+	const team = players as string[] &
+	{
+		joinWithAnd: () => string;
+	};
+	team.joinWithAnd = () =>
+	{
 		if (players.length === 0) return '';
 		if (players.length === 1) return players[0];
 		if (players.length === 2) return `${players[0]} and ${players[1]}`;
@@ -61,7 +77,8 @@ const createTeamWithJoinMethod = (players: string[]): string[] & {joinWithAnd: (
 
 const mockTeam = createTeamWithJoinMethod(['CRAIGM', 'ZEHUA', 'VINAY']);
 
-const mockGame = {
+const mockGame =
+{
 	id: 'mock-game-1',
 	timeCreated: new Date('2024-01-01'),
 	missions: [
@@ -146,31 +163,58 @@ const mockGame = {
 	currentMissionIdx: 2,
 	phase: 'PROPOSAL',
 	players: [
-		{uid: '1', name: 'CRAIGM'},
-		{uid: '2', name: 'ZEHUA'},
-		{uid: '3', name: 'VINAY'},
-		{uid: '4', name: 'LUKEE'},
-		{uid: '5', name: 'KEN'},
+		{
+			uid: '1',
+			name: 'CRAIGM',
+		},
+		{
+			uid: '2',
+			name: 'ZEHUA',
+		},
+		{
+			uid: '3',
+			name: 'VINAY',
+		},
+		{
+			uid: '4',
+			name: 'LUKEE',
+		},
+		{
+			uid: '5',
+			name: 'KEN',
+		},
 	],
-	options: {
+	options:
+	{
 		inGameLog: false,
 	},
 };
 
-const mockAvalonData = {
+const mockAvalonData =
+{
 	game: mockGame,
-	user: {name: 'CRAIGM'},
-	config: {roleMap: {}},
-	lobby: {
+	user:
+	{
+		name: 'CRAIGM',
+	},
+	config:
+	{
+		roleMap: {},
+	},
+	lobby:
+	{
 		game: mockGame,
 	},
 };
 
-const mockAvalonWithLogs = {
+const mockAvalonWithLogs =
+{
 	...mockAvalonData,
-	game: {
+	game:
+	{
 		...mockAvalonData.game,
-		options: {
+		options:
+		{
 			inGameLog: true,
 		},
 	},
@@ -244,128 +288,233 @@ const realGameMissions = [
 	},
 ];
 
-const realGame = {
+const realGame =
+{
 	id: 'real-game-1',
 	timeCreated: new Date('2024-01-01'),
 	missions: realGameMissions,
 	currentMissionIdx: 2,
 	phase: 'PROPOSAL',
 	players: [
-		{uid: '1', name: 'CRAIGM'},
-		{uid: '2', name: 'ZEHUA'},
-		{uid: '3', name: 'VINAY'},
-		{uid: '4', name: 'LUKEE'},
-		{uid: '5', name: 'KEN'},
-		{uid: '6', name: 'ROB'},
-		{uid: '7', name: 'JUSTIN'},
-		{uid: '8', name: 'TIFANY'},
-		{uid: '9', name: 'FLORA'},
+		{
+			uid: '1',
+			name: 'CRAIGM',
+		},
+		{
+			uid: '2',
+			name: 'ZEHUA',
+		},
+		{
+			uid: '3',
+			name: 'VINAY',
+		},
+		{
+			uid: '4',
+			name: 'LUKEE',
+		},
+		{
+			uid: '5',
+			name: 'KEN',
+		},
+		{
+			uid: '6',
+			name: 'ROB',
+		},
+		{
+			uid: '7',
+			name: 'JUSTIN',
+		},
+		{
+			uid: '8',
+			name: 'TIFANY',
+		},
+		{
+			uid: '9',
+			name: 'FLORA',
+		},
 	],
-	options: {
+	options:
+	{
 		inGameLog: true,
 	},
 };
 
-const realGameData = {
+const realGameData =
+{
 	game: realGame,
-	user: {name: 'CRAIGM'},
-	config: {roleMap: {}},
-	lobby: {
+	user:
+	{
+		name: 'CRAIGM',
+	},
+	config:
+	{
+		roleMap: {},
+	},
+	lobby:
+	{
 		game: realGame,
 	},
 };
 
-export const Default: Story = {
-	args: {
+export const Default: Story =
+{
+	args:
+	{
 		avalon: mockAvalonData,
 	},
-	parameters: {
-		docs: {
-			description: {
+	parameters:
+	{
+		docs:
+		{
+			description:
+			{
 				story: 'Shows a game in progress with 1 successful mission, 1 failed mission, and working on the 3rd mission.',
 			},
 		},
 	},
 };
 
-export const WithInGameLog: Story = {
-	args: {
+export const WithInGameLog: Story =
+{
+	args:
+	{
 		avalon: mockAvalonWithLogs,
 	},
-	parameters: {
-		docs: {
-			description: {
+	parameters:
+	{
+		docs:
+		{
+			description:
+			{
 				story: 'Same as default but with in-game logging enabled. Useful for debugging and seeing detailed proposal information.',
 			},
 		},
 	},
 };
 
-export const RealGameData: Story = {
-	args: {
+export const RealGameData: Story =
+{
+	args:
+	{
 		avalon: realGameData as any,
 	},
-	parameters: {
-		docs: {
-			description: {
+	parameters:
+	{
+		docs:
+		{
+			description:
+			{
 				story: 'Example from a real 9-player game showing actual mission data and voting patterns.',
 			},
 		},
 	},
 };
 
-export const AllPending: Story = {
-	args: {
-		avalon: {
+export const AllPending: Story =
+{
+	args:
+	{
+		avalon:
+		{
 			...mockAvalonData,
-			game: {
+			game:
+			{
 				...mockAvalonData.game,
-				missions: mockAvalonData.game.missions.map((m) => ({...m, state: 'PENDING' as const})),
+				missions: mockAvalonData.game.missions.map((m) => (
+				{
+					...m,
+					state: 'PENDING' as const,
+				})),
 				currentMissionIdx: 0,
 			},
-			lobby: {
-				game: {
+			lobby:
+			{
+				game:
+				{
 					...mockAvalonData.game,
-					missions: mockAvalonData.game.missions.map((m) => ({...m, state: 'PENDING' as const})),
+					missions: mockAvalonData.game.missions.map((m) => (
+					{
+						...m,
+						state: 'PENDING' as const,
+					})),
 					currentMissionIdx: 0,
 				},
 			},
 		},
 	},
-	parameters: {
-		docs: {
-			description: {
+	parameters:
+	{
+		docs:
+		{
+			description:
+			{
 				story: 'Shows the initial game state where no missions have been attempted yet.',
 			},
 		},
 	},
 };
 
-export const GoodWins: Story = {
-	args: {
-		avalon: {
+export const GoodWins: Story =
+{
+	args:
+	{
+		avalon:
+		{
 			...mockAvalonData,
-			game: {
+			game:
+			{
 				...mockAvalonData.game,
 				missions: [
-					{...mockAvalonData.game.missions[0], state: 'SUCCESS' as const},
-					{...mockAvalonData.game.missions[1], state: 'SUCCESS' as const},
-					{...mockAvalonData.game.missions[2], state: 'SUCCESS' as const},
-					{...mockAvalonData.game.missions[3], state: 'PENDING' as const},
-					{...mockAvalonData.game.missions[4], state: 'PENDING' as const},
+					{
+						...mockAvalonData.game.missions[0],
+						state: 'SUCCESS' as const,
+					},
+					{
+						...mockAvalonData.game.missions[1],
+						state: 'SUCCESS' as const,
+					},
+					{
+						...mockAvalonData.game.missions[2],
+						state: 'SUCCESS' as const,
+					},
+					{
+						...mockAvalonData.game.missions[3],
+						state: 'PENDING' as const,
+					},
+					{
+						...mockAvalonData.game.missions[4],
+						state: 'PENDING' as const,
+					},
 				],
 				currentMissionIdx: 3,
 				phase: 'ASSASSINATION',
 			},
-			lobby: {
-				game: {
+			lobby:
+			{
+				game:
+				{
 					...mockAvalonData.game,
 					missions: [
-						{...mockAvalonData.game.missions[0], state: 'SUCCESS' as const},
-						{...mockAvalonData.game.missions[1], state: 'SUCCESS' as const},
-						{...mockAvalonData.game.missions[2], state: 'SUCCESS' as const},
-						{...mockAvalonData.game.missions[3], state: 'PENDING' as const},
-						{...mockAvalonData.game.missions[4], state: 'PENDING' as const},
+						{
+							...mockAvalonData.game.missions[0],
+							state: 'SUCCESS' as const,
+						},
+						{
+							...mockAvalonData.game.missions[1],
+							state: 'SUCCESS' as const,
+						},
+						{
+							...mockAvalonData.game.missions[2],
+							state: 'SUCCESS' as const,
+						},
+						{
+							...mockAvalonData.game.missions[3],
+							state: 'PENDING' as const,
+						},
+						{
+							...mockAvalonData.game.missions[4],
+							state: 'PENDING' as const,
+						},
 					],
 					currentMissionIdx: 3,
 					phase: 'ASSASSINATION',
@@ -373,40 +522,79 @@ export const GoodWins: Story = {
 			},
 		},
 	},
-	parameters: {
-		docs: {
-			description: {
+	parameters:
+	{
+		docs:
+		{
+			description:
+			{
 				story: 'Good has won 3 missions! The game is now in assassination phase where evil tries to identify Merlin.',
 			},
 		},
 	},
 };
 
-export const EvilWins: Story = {
-	args: {
-		avalon: {
+export const EvilWins: Story =
+{
+	args:
+	{
+		avalon:
+		{
 			...mockAvalonData,
-			game: {
+			game:
+			{
 				...mockAvalonData.game,
 				missions: [
-					{...mockAvalonData.game.missions[0], state: 'FAIL' as const},
-					{...mockAvalonData.game.missions[1], state: 'SUCCESS' as const},
-					{...mockAvalonData.game.missions[2], state: 'FAIL' as const},
-					{...mockAvalonData.game.missions[3], state: 'FAIL' as const},
-					{...mockAvalonData.game.missions[4], state: 'PENDING' as const},
+					{
+						...mockAvalonData.game.missions[0],
+						state: 'FAIL' as const,
+					},
+					{
+						...mockAvalonData.game.missions[1],
+						state: 'SUCCESS' as const,
+					},
+					{
+						...mockAvalonData.game.missions[2],
+						state: 'FAIL' as const,
+					},
+					{
+						...mockAvalonData.game.missions[3],
+						state: 'FAIL' as const,
+					},
+					{
+						...mockAvalonData.game.missions[4],
+						state: 'PENDING' as const,
+					},
 				],
 				currentMissionIdx: 4,
 				phase: 'GAME_OVER',
 			},
-			lobby: {
-				game: {
+			lobby:
+			{
+				game:
+				{
 					...mockAvalonData.game,
 					missions: [
-						{...mockAvalonData.game.missions[0], state: 'FAIL' as const},
-						{...mockAvalonData.game.missions[1], state: 'SUCCESS' as const},
-						{...mockAvalonData.game.missions[2], state: 'FAIL' as const},
-						{...mockAvalonData.game.missions[3], state: 'FAIL' as const},
-						{...mockAvalonData.game.missions[4], state: 'PENDING' as const},
+						{
+							...mockAvalonData.game.missions[0],
+							state: 'FAIL' as const,
+						},
+						{
+							...mockAvalonData.game.missions[1],
+							state: 'SUCCESS' as const,
+						},
+						{
+							...mockAvalonData.game.missions[2],
+							state: 'FAIL' as const,
+						},
+						{
+							...mockAvalonData.game.missions[3],
+							state: 'FAIL' as const,
+						},
+						{
+							...mockAvalonData.game.missions[4],
+							state: 'PENDING' as const,
+						},
 					],
 					currentMissionIdx: 4,
 					phase: 'GAME_OVER',
@@ -414,9 +602,12 @@ export const EvilWins: Story = {
 			},
 		},
 	},
-	parameters: {
-		docs: {
-			description: {
+	parameters:
+	{
+		docs:
+		{
+			description:
+			{
 				story: 'Evil has won by failing 3 missions! The game is over and evil team celebrates their victory.',
 			},
 		},

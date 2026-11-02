@@ -9,43 +9,105 @@ import {type Game, GameSchema} from '../../models/game';
 import {getPersonService} from '../../services/person';
 import {db, setupDb} from '@/db';
 
-const ROLE_MAP: Record<string, {name: string; team: 'good' | 'evil'; description: string}> = {
-	MERLIN: {name: 'MERLIN', team: 'good', description: 'Sees evil'},
-	PERCIVAL: {name: 'PERCIVAL', team: 'good', description: 'Sees Merlin'},
-	'LOYAL FOLLOWER': {name: 'LOYAL FOLLOWER', team: 'good', description: 'Loyal servant'},
-	MORGANA: {name: 'MORGANA', team: 'evil', description: 'Appears as Merlin'},
-	ASSASSIN: {name: 'ASSASSIN', team: 'evil', description: 'Can assassinate Merlin'},
-	MORDRED: {name: 'MORDRED', team: 'evil', description: 'Hidden from Merlin'},
-	OBERON: {name: 'OBERON', team: 'evil', description: 'Unknown to evil'},
-	'EVIL MINION': {name: 'EVIL MINION', team: 'evil', description: 'Evil servant'},
+const ROLE_MAP: Record<
+	string,
+	{
+		name: string;
+		team: 'good' | 'evil';
+		description: string;
+	}
+> =
+{
+	MERLIN:
+	{
+		name: 'MERLIN',
+		team: 'good',
+		description: 'Sees evil',
+	},
+	PERCIVAL:
+	{
+		name: 'PERCIVAL',
+		team: 'good',
+		description: 'Sees Merlin',
+	},
+	'LOYAL FOLLOWER':
+	{
+		name: 'LOYAL FOLLOWER',
+		team: 'good',
+		description: 'Loyal servant',
+	},
+	MORGANA:
+	{
+		name: 'MORGANA',
+		team: 'evil',
+		description: 'Appears as Merlin',
+	},
+	ASSASSIN:
+	{
+		name: 'ASSASSIN',
+		team: 'evil',
+		description: 'Can assassinate Merlin',
+	},
+	MORDRED:
+	{
+		name: 'MORDRED',
+		team: 'evil',
+		description: 'Hidden from Merlin',
+	},
+	OBERON:
+	{
+		name: 'OBERON',
+		team: 'evil',
+		description: 'Unknown to evil',
+	},
+	'EVIL MINION':
+	{
+		name: 'EVIL MINION',
+		team: 'evil',
+		description: 'Evil servant',
+	},
 };
 
-function buildAvalonApi(game: Game): AvalonApi {
-	const gameWithStringPlayers = {
+function buildAvalonApi(game: Game): AvalonApi
+{
+	const gameWithStringPlayers =
+	{
 		...game,
 		players: game.players.map((p) => p.name),
 	};
 
 	return {
 		game: gameWithStringPlayers as any,
-		user: {name: ''},
-		lobby: {game: gameWithStringPlayers as any},
-		config: {roleMap: ROLE_MAP},
+		user:
+		{
+			name: '',
+		},
+		lobby:
+		{
+			game: gameWithStringPlayers as any,
+		},
+		config:
+		{
+			roleMap: ROLE_MAP,
+		},
 	};
 }
 
-interface PersonMapping {
+interface PersonMapping
+{
 	personId: string;
 	personName: string;
 }
 
-export async function GameCombined({params}: RequestInfo) {
+export async function GameCombined({params}: RequestInfo)
+{
 	const gameId = params.gameId;
 	let game: Game | null = null;
 	let error: string | null = null;
 	const uidToPersonMap = new Map<string, PersonMapping>();
 
-	try {
+	try
+	{
 		await setupDb(env);
 
 		// Load person mappings using the PersonService
@@ -53,42 +115,61 @@ export async function GameCombined({params}: RequestInfo) {
 		await personService.initialize();
 
 		const allPeople = await personService.getAllPeople();
-		for (const person of allPeople) {
-			for (const uid of person.uids) {
-				uidToPersonMap.set(uid, {
-					personId: person.id,
-					personName: person.name,
-				});
+		for (const person of allPeople)
+		{
+			for (const uid of person.uids)
+			{
+				uidToPersonMap.set(
+					uid,
+					{
+						personId: person.id,
+						personName: person.name,
+					},
+				);
 			}
 		}
 
-		const rawGame = await db.rawGameData.findUnique({
-			where: {firebaseKey: gameId},
-		});
-		if (rawGame) {
+		const rawGame = await db.rawGameData.findUnique(
+			{
+				where:
+				{
+					firebaseKey: gameId,
+				},
+			},
+		);
+		if (rawGame)
+		{
 			const gameData = typeof rawGame.gameJson === 'string' ? JSON.parse(rawGame.gameJson) : rawGame.gameJson;
 			const parsed = GameSchema.safeParse(gameData);
-			if (parsed.success) {
+			if (parsed.success)
+			{
 				game = parsed.data;
-			} else {
+			}
+			else
+			{
 				error = 'Failed to parse game data';
 			}
 		}
-	} catch (err) {
+	}
+	catch (err)
+	{
 		error = err instanceof Error ? err.message : 'Failed to load game';
 	}
 
-	if (error) {
+	if (error)
+	{
 		return <div>Error: {error}</div>;
 	}
 
-	if (!game) {
+	if (!game)
+	{
 		return <div>Game not found</div>;
 	}
 
 	const avalonApi = buildAvalonApi(game);
 
-	const getWinner = (): 'GOOD' | 'EVIL' | null => {
+	const getWinner = (): 'GOOD' | 'EVIL' | null =>
+	{
 		if (game.outcome?.winner) return game.outcome.winner as 'GOOD' | 'EVIL';
 		if (game.outcome?.state === 'GOOD_WIN') return 'GOOD';
 		if (game.outcome?.state === 'EVIL_WIN') return 'EVIL';
@@ -99,36 +180,67 @@ export async function GameCombined({params}: RequestInfo) {
 	const reason = game.outcome?.message || game.outcome?.reason || '';
 
 	return (
-		<div style={{backgroundColor: '#b2ebf2', minHeight: '100vh'}}>
+		<div
+			style={
+			{
+				backgroundColor: '#b2ebf2',
+				minHeight: '100vh',
+			}}
+		>
 			<Breadcrumb
-				items={[{label: 'Home', href: '/'}, {label: 'All Games', href: '/games'}, {label: 'Annotated Table'}]}
+				items={[
+					{
+						label: 'Home',
+						href: '/',
+					},
+					{
+						label: 'All Games',
+						href: '/games',
+					},
+					{
+						label: 'Annotated Table',
+					},
+				]}
 			/>
 
 			<div
-				style={{
+				style={
+				{
 					backgroundColor: '#80deea',
 					padding: '16px 30px',
 					textAlign: 'center',
 				}}
 			>
-				<h1 style={{margin: 0, fontSize: '1.5rem', fontWeight: 'bold'}}>Annotated Table</h1>
-				<div style={{fontSize: '0.875rem', marginTop: '8px'}}>
+				<h1
+					style={
+					{
+						margin: 0,
+						fontSize: '1.5rem',
+						fontWeight: 'bold',
+					}}
+				>
+					Annotated Table
+				</h1>
+				<div
+					style={
+					{
+						fontSize: '0.875rem',
+						marginTop: '8px',
+					}}
+				>
 					<LocalTimestamp isoString={game.timeCreated.toISOString()} />
 					{game.timeFinished && (
 						<>
 							{' '}
-							—{' '}
-							<LocalTimestamp
-								isoString={game.timeFinished.toISOString()}
-								showDate={false}
-							/>
+							— <LocalTimestamp isoString={game.timeFinished.toISOString()} showDate={false} />
 						</>
 					)}
 				</div>
 			</div>
 
 			<div
-				style={{
+				style={
+				{
 					padding: '16px',
 					display: 'flex',
 					flexDirection: 'column',
@@ -136,24 +248,44 @@ export async function GameCombined({params}: RequestInfo) {
 				}}
 			>
 				{winner && (
-					<h2 style={{fontSize: '1.5rem', fontWeight: 'bold', margin: '16px 0'}}>
+					<h2
+						style={
+						{
+							fontSize: '1.5rem',
+							fontWeight: 'bold',
+							margin: '16px 0',
+						}}
+					>
 						{winner === 'GOOD' ? 'Good wins!' : 'Evil wins!'}
 					</h2>
 				)}
 
-				{reason && <p style={{fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '8px'}}>{reason}</p>}
+				{reason && (
+					<p
+						style={
+						{
+							fontSize: '1.25rem',
+							fontWeight: 'bold',
+							marginBottom: '8px',
+						}}
+					>
+						{reason}
+					</p>
+				)}
 
 				{game.outcome?.assassinated && (
-					<p style={{marginBottom: '16px'}}>
+					<p
+						style={
+						{
+							marginBottom: '16px',
+						}}
+					>
 						{game.outcome.assassinated} was assassinated by{' '}
 						{game.outcome.roles?.find((r) => r.assassin)?.name || 'The Assassin'}
 					</p>
 				)}
 
-				<CombinedAnnotatedTable
-					game={game}
-					uidToPersonMap={uidToPersonMap}
-				/>
+				<CombinedAnnotatedTable game={game} uidToPersonMap={uidToPersonMap} />
 
 				<Achievements avalon={avalonApi} />
 			</div>

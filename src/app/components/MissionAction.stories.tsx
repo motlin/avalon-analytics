@@ -1,13 +1,17 @@
 import type {Meta, StoryObj} from '@storybook/react-vite';
 import MissionAction from './MissionAction';
 
-const meta = {
+const meta =
+{
 	title: 'Gameplay/MissionAction',
 	component: MissionAction,
-	parameters: {
+	parameters:
+	{
 		layout: 'centered',
-		docs: {
-			description: {
+		docs:
+		{
+			description:
+			{
 				component: `
 The MissionAction component is where team members secretly decide the fate of missions. This is the core mechanic that determines the outcome of each round.
 
@@ -36,8 +40,10 @@ Mission voting creates complex decisions:
 			},
 		},
 	},
-	argTypes: {
-		avalon: {
+	argTypes:
+	{
+		avalon:
+		{
 			description: 'Avalon game state object with mission voting interface',
 		},
 	},
@@ -47,38 +53,49 @@ Mission voting creates complex decisions:
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const mockDoMission = (vote: boolean) => {
+const mockDoMission = (vote: boolean) =>
+{
 	console.log('Mission vote:', vote);
 };
 
-export const NeedsToVote: Story = {
-	args: {
-		avalon: {
-			user: {
+export const NeedsToVote: Story =
+{
+	args:
+	{
+		avalon:
+		{
+			user:
+			{
 				name: 'CRAIGM',
 			},
-			game: {
+			game:
+			{
 				missions: [],
 				players: [],
 				id: '1',
 				timeCreated: new Date(),
 			},
-			config: {
+			config:
+			{
 				roleMap: {},
 			},
-			lobby: {
-				game: {
+			lobby:
+			{
+				game:
+				{
 					missions: [],
 					players: [],
 					id: '1',
 					timeCreated: new Date(),
-					currentProposal: {
+					currentProposal:
+					{
 						team: ['CRAIGM', 'ZEHUA', 'VINAY'],
 						votes: [],
 						state: 'APPROVED',
 						proposer: 'CRAIGM',
 					},
-					currentMission: {
+					currentMission:
+					{
 						team: [],
 						votes: [],
 						state: 'PENDING',
@@ -93,34 +110,44 @@ export const NeedsToVote: Story = {
 	},
 };
 
-export const WaitingForOthers: Story = {
-	args: {
-		avalon: {
-			user: {
+export const WaitingForOthers: Story =
+{
+	args:
+	{
+		avalon:
+		{
+			user:
+			{
 				name: 'LUKEE',
 			},
-			game: {
+			game:
+			{
 				missions: [],
 				players: [],
 				id: '1',
 				timeCreated: new Date(),
 			},
-			config: {
+			config:
+			{
 				roleMap: {},
 			},
-			lobby: {
-				game: {
+			lobby:
+			{
+				game:
+				{
 					missions: [],
 					players: [],
 					id: '1',
 					timeCreated: new Date(),
-					currentProposal: {
+					currentProposal:
+					{
 						team: ['CRAIGM', 'ZEHUA', 'VINAY'],
 						votes: [],
 						state: 'APPROVED',
 						proposer: 'CRAIGM',
 					},
-					currentMission: {
+					currentMission:
+					{
 						team: ['CRAIGM'],
 						votes: [],
 						state: 'PENDING',
@@ -135,34 +162,44 @@ export const WaitingForOthers: Story = {
 	},
 };
 
-export const SinglePlayerWaiting: Story = {
-	args: {
-		avalon: {
-			user: {
+export const SinglePlayerWaiting: Story =
+{
+	args:
+	{
+		avalon:
+		{
+			user:
+			{
 				name: 'LUKEE',
 			},
-			game: {
+			game:
+			{
 				missions: [],
 				players: [],
 				id: '1',
 				timeCreated: new Date(),
 			},
-			config: {
+			config:
+			{
 				roleMap: {},
 			},
-			lobby: {
-				game: {
+			lobby:
+			{
+				game:
+				{
 					missions: [],
 					players: [],
 					id: '1',
 					timeCreated: new Date(),
-					currentProposal: {
+					currentProposal:
+					{
 						team: ['CRAIGM', 'ZEHUA'],
 						votes: [],
 						state: 'APPROVED',
 						proposer: 'CRAIGM',
 					},
-					currentMission: {
+					currentMission:
+					{
 						team: ['CRAIGM'],
 						votes: [],
 						state: 'PENDING',

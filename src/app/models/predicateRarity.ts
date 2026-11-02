@@ -9,7 +9,8 @@
  */
 
 // Historical fire counts per predicate (from analyze-predicates.ts)
-export const PREDICATE_FIRE_COUNTS: Record<string, number> = {
+export const PREDICATE_FIRE_COUNTS: Record<string, number> =
+{
 	// Proposal Vote Predicates
 	DidNotProtestVoteWhenGoodWasAboutToWinProposalVotePredicate: 385,
 	ProtestVoteProposalVotePredicate: 836,
@@ -82,17 +83,37 @@ export type Rarity = 'legendary' | 'epic' | 'rare' | 'uncommon' | 'common';
  */
 export type InterestingRoles = 'all' | 'good' | 'evil' | string[];
 
-const RARITY_THRESHOLDS: {max: number; rarity: Rarity}[] = [
-	{max: 500, rarity: 'legendary'},
-	{max: 1000, rarity: 'epic'},
-	{max: 2500, rarity: 'rare'},
-	{max: 6000, rarity: 'uncommon'},
-	{max: Infinity, rarity: 'common'},
+const RARITY_THRESHOLDS:
+{
+	max: number;
+	rarity: Rarity;
+}[] = [
+	{
+		max: 500,
+		rarity: 'legendary',
+	},
+	{
+		max: 1000,
+		rarity: 'epic',
+	},
+	{
+		max: 2500,
+		rarity: 'rare',
+	},
+	{
+		max: 6000,
+		rarity: 'uncommon',
+	},
+	{
+		max: Infinity,
+		rarity: 'common',
+	},
 ];
 
 // CSS colors for each rarity level (WoW-style)
 // These could be theme-dependent in the future (light/dark mode)
-export const RARITY_CSS_COLORS: Record<Rarity, string> = {
+export const RARITY_CSS_COLORS: Record<Rarity, string> =
+{
 	legendary: '#ff8000',
 	epic: '#a335ee',
 	rare: '#0070dd',
@@ -101,7 +122,8 @@ export const RARITY_CSS_COLORS: Record<Rarity, string> = {
 };
 
 // Order for sorting (lower = rarer = more important)
-export const RARITY_ORDER: Record<Rarity, number> = {
+export const RARITY_ORDER: Record<Rarity, number> =
+{
 	legendary: 0,
 	epic: 1,
 	rare: 2,
@@ -113,14 +135,18 @@ export const RARITY_ORDER: Record<Rarity, number> = {
  * Get the rarity tier for a predicate based on its historical fire count.
  * Used by analysis scripts to suggest rarity assignments for new predicates.
  */
-export function getPredicateRarity(predicateName: string): Rarity {
+export function getPredicateRarity(predicateName: string): Rarity
+{
 	const fireCount = PREDICATE_FIRE_COUNTS[predicateName];
-	if (fireCount === undefined) {
+	if (fireCount === undefined)
+	{
 		return 'common';
 	}
 
-	for (const threshold of RARITY_THRESHOLDS) {
-		if (fireCount < threshold.max) {
+	for (const threshold of RARITY_THRESHOLDS)
+	{
+		if (fireCount < threshold.max)
+		{
 			return threshold.rarity;
 		}
 	}
@@ -131,9 +157,12 @@ export function getPredicateRarity(predicateName: string): Rarity {
  * Get the rarity tier for a given fire count.
  * Used by analysis scripts to determine rarity assignments.
  */
-export function getRarityForFireCount(fireCount: number): Rarity {
-	for (const threshold of RARITY_THRESHOLDS) {
-		if (fireCount < threshold.max) {
+export function getRarityForFireCount(fireCount: number): Rarity
+{
+	for (const threshold of RARITY_THRESHOLDS)
+	{
+		if (fireCount < threshold.max)
+		{
 			return threshold.rarity;
 		}
 	}

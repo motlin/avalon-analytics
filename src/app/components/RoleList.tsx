@@ -4,29 +4,35 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faOldRepublic, faEmpire} from '@fortawesome/free-brands-svg-icons';
 import {faInfoCircle} from '@fortawesome/free-solid-svg-icons';
 
-interface Role {
+interface Role
+{
 	name: string;
 	team: 'good' | 'evil';
 	description: string;
 	selected?: boolean;
 }
 
-interface RoleListProps {
+interface RoleListProps
+{
 	roles: Role[];
 	allowSelect?: boolean;
 }
 
-const RoleList: React.FC<RoleListProps> = ({roles, allowSelect = false}) => {
+const RoleList: React.FC<RoleListProps> = ({roles, allowSelect = false}) =>
+{
 	const [selectedRole, setSelectedRole] = useState<Role | null>(null);
 	const [showDialog, setShowDialog] = useState(false);
 
-	const showRoleInfo = (role: Role) => {
+	const showRoleInfo = (role: Role) =>
+	{
 		setSelectedRole(role);
 		setShowDialog(true);
 	};
 
-	const handleCheckboxChange = (index: number) => {
-		if (allowSelect && roles[index]) {
+	const handleCheckboxChange = (index: number) =>
+	{
+		if (allowSelect && roles[index])
+		{
 			roles[index].selected = !roles[index].selected;
 		}
 	};
@@ -35,10 +41,7 @@ const RoleList: React.FC<RoleListProps> = ({roles, allowSelect = false}) => {
 		<div>
 			<div className={styles.roleList}>
 				{roles.map((role, index) => (
-					<div
-						key={index}
-						className={styles.roleItem}
-					>
+					<div key={index} className={styles.roleItem}>
 						{allowSelect && (
 							<div className={styles.checkboxContainer}>
 								<input
@@ -67,14 +70,8 @@ const RoleList: React.FC<RoleListProps> = ({roles, allowSelect = false}) => {
 			</div>
 
 			{showDialog && selectedRole && (
-				<div
-					className={styles.dialogBackdrop}
-					onClick={() => setShowDialog(false)}
-				>
-					<div
-						className={styles.dialog}
-						onClick={(e) => e.stopPropagation()}
-					>
+				<div className={styles.dialogBackdrop} onClick={() => setShowDialog(false)}>
+					<div className={styles.dialog} onClick={(e) => e.stopPropagation()}>
 						<div className={styles.dialogHeader}>
 							<span
 								className={`${styles.dialogIcon} ${selectedRole.team === 'evil' ? styles.iconEvil : ''}`}
@@ -84,10 +81,7 @@ const RoleList: React.FC<RoleListProps> = ({roles, allowSelect = false}) => {
 							<h3>{selectedRole.name}</h3>
 						</div>
 						<div className={styles.dialogContent}>{selectedRole.description}</div>
-						<button
-							className={styles.closeButton}
-							onClick={() => setShowDialog(false)}
-						>
+						<button className={styles.closeButton} onClick={() => setShowDialog(false)}>
 							Close
 						</button>
 					</div>

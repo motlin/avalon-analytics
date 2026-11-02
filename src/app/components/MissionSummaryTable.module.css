@@ -1,41 +1,50 @@
-.table {
+.table
+{
 	border-collapse: collapse;
 }
 
-.table tr {
+.table tr
+{
 	height: 2.3em;
 }
 
-.table td {
+.table td
+{
 	width: 1.7em;
 }
 
-.evenRow {
+.evenRow
+{
 	background-color: Gainsboro;
 }
 
-.oddRow {
+.oddRow
+{
 	background-color: bisque;
 }
 
-.playerName {
+.playerName
+{
 	border-left: 2px solid;
 	padding-left: 8px;
 	padding-right: 8px;
 	width: auto;
 }
 
-.missionResult {
+.missionResult
+{
 	border-right: 2px solid;
 	text-align: center;
 	padding: 0 4px;
 }
 
-.fontWeightMedium {
+.fontWeightMedium
+{
 	font-weight: 500;
 }
 
-.role {
+.role
+{
 	border-right: 2px solid;
 	white-space: nowrap;
 	padding-left: 8px;
@@ -43,17 +52,20 @@
 	width: auto;
 }
 
-.proposalCell {
+.proposalCell
+{
 	text-align: center;
 	min-width: 2em;
 	padding: 0 4px;
 }
 
-.role + td {
+.role + td
+{
 	padding-left: 8px;
 }
 
-.missionResult + td {
+.missionResult + td
+{
 	padding-left: 8px;
 	border-left: 2px solid;
 }

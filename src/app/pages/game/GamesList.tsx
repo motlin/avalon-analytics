@@ -8,7 +8,12 @@ import {getPersonService} from '../../services/person';
 import {db, setupDb} from '@/db';
 import styles from './GamesList.module.css';
 
-function formatGameDate(date: Date): {dateString: string; timeString: string} {
+function formatGameDate(date: Date):
+{
+	dateString: string;
+	timeString: string;
+}
+{
 	const year = date.getFullYear();
 	const month = String(date.getMonth() + 1).padStart(2, '0');
 	const day = String(date.getDate()).padStart(2, '0');
@@ -18,10 +23,14 @@ function formatGameDate(date: Date): {dateString: string; timeString: string} {
 	const minutes = String(date.getMinutes()).padStart(2, '0');
 	const timeString = `${hours}:${minutes}`;
 
-	return {dateString, timeString};
+	return {
+		dateString,
+		timeString,
+	};
 }
 
-function formatPredicateName(name: string): string {
+function formatPredicateName(name: string): string
+{
 	return name
 		.replace(/ProposalVotePredicate$/, '')
 		.replace(/ProposalPredicate$/, '')
@@ -30,21 +39,30 @@ function formatPredicateName(name: string): string {
 		.replace(/([a-z])([A-Z])/g, '$1 $2');
 }
 
-interface BehaviorGame {
+interface BehaviorGame
+{
 	firebaseKey: string;
 	fired: boolean;
 	role: string;
 	gameDate: Date;
 }
 
-export async function GamesList({request}: RequestInfo) {
+export async function GamesList({request}: RequestInfo)
+{
 	const url = new URL(request.url);
 	const personId = url.searchParams.get('person');
 	const behavior = url.searchParams.get('behavior');
 
 	// If person and behavior are provided, show filtered behavior games
-	if (personId && behavior) {
-		return BehaviorGamesList({personId, behavior, url});
+	if (personId && behavior)
+	{
+		return BehaviorGamesList(
+			{
+				personId,
+				behavior,
+				url,
+			},
+		);
 	}
 
 	// Otherwise show all games
@@ -56,33 +74,54 @@ export async function GamesList({request}: RequestInfo) {
 	const currentPage = pageParam ? Math.max(1, parseInt(pageParam, 10)) : 1;
 	const pageSize = 20;
 
-	try {
+	try
+	{
 		await setupDb(env);
 		totalGames = await db.rawGameData.count();
-		const rawGames = await db.rawGameData.findMany({
-			orderBy: {createdAt: 'desc'},
-			skip: (currentPage - 1) * pageSize,
-			take: pageSize,
-		});
+		const rawGames = await db.rawGameData.findMany(
+			{
+				orderBy:
+				{
+					createdAt: 'desc',
+				},
+				skip: (currentPage - 1) * pageSize,
+				take: pageSize,
+			},
+		);
 
-		for (const rawGame of rawGames) {
+		for (const rawGame of rawGames)
+		{
 			const gameData = typeof rawGame.gameJson === 'string' ? JSON.parse(rawGame.gameJson) : rawGame.gameJson;
 			const parsed = GameSchema.safeParse(gameData);
-			if (parsed.success) {
+			if (parsed.success)
+			{
 				games.push(parsed.data);
 			}
 		}
-	} catch (err) {
+	}
+	catch (err)
+	{
 		error = err instanceof Error ? err.message : 'Failed to load games';
 	}
 
-	if (error) {
+	if (error)
+	{
 		return <div>Error: {error}</div>;
 	}
 
 	return (
 		<div className={styles.container}>
-			<Breadcrumb items={[{label: 'Home', href: '/'}, {label: 'All Games'}]} />
+			<Breadcrumb
+				items={[
+					{
+						label: 'Home',
+						href: '/',
+					},
+					{
+						label: 'All Games',
+					},
+				]}
+			/>
 			<div className={styles.header}>
 				<h1>All Games</h1>
 			</div>
@@ -92,17 +131,14 @@ export async function GamesList({request}: RequestInfo) {
 				) : (
 					<>
 						<div className={styles.gameList}>
-							{games.map((game) => {
+							{games.map((game) =>
+							{
 								const playerNames = game.players.map((p) => p.name).join(', ');
 								const playerCount = game.players.length;
 								const {dateString, timeString} = formatGameDate(game.timeCreated);
 
 								return (
-									<a
-										key={game.id}
-										href={`/game/${game.id}`}
-										className={styles.gameCard}
-									>
+									<a key={game.id} href={`/game/${game.id}`} className={styles.gameCard}>
 										<div className={styles.gameCardHeader}>
 											<span className={styles.dateText}>{dateString}</span>
 											<span className={styles.timeText}>{timeString}</span>
@@ -132,7 +168,8 @@ export async function GamesList({request}: RequestInfo) {
 	);
 }
 
-async function BehaviorGamesList({personId, behavior, url}: {personId: string; behavior: string; url: URL}) {
+async function BehaviorGamesList({personId, behavior, url}: {personId: string; behavior: string; url: URL})
+{
 	let error: string | null = null;
 	let personName: string | null = null;
 	let games: BehaviorGame[] = [];
@@ -141,7 +178,8 @@ async function BehaviorGamesList({personId, behavior, url}: {personId: string; b
 
 	const firedFilter = url.searchParams.get('fired') ?? 'true';
 
-	try {
+	try
+	{
 		await setupDb(env);
 
 		const personService = getPersonService();
@@ -149,10 +187,21 @@ async function BehaviorGamesList({personId, behavior, url}: {personId: string; b
 		const allPeople = await personService.getAllPeople();
 		const person = allPeople.find((p) => p.id === personId);
 
-		if (!person) {
+		if (!person)
+		{
 			return (
 				<div className={styles.container}>
-					<Breadcrumb items={[{label: 'Home', href: '/'}, {label: 'Person Not Found'}]} />
+					<Breadcrumb
+						items={[
+							{
+								label: 'Home',
+								href: '/',
+							},
+							{
+								label: 'Person Not Found',
+							},
+						]}
+					/>
 					<h1>Person Not Found</h1>
 					<p>No person found with ID: {personId}</p>
 				</div>
@@ -161,32 +210,47 @@ async function BehaviorGamesList({personId, behavior, url}: {personId: string; b
 
 		personName = person.name;
 
-		const annotationStats = await db.personAnnotationStats.findFirst({
-			where: {
-				personId,
-				predicateName: behavior,
-			},
-			select: {
-				fires: true,
-				opportunities: true,
-				gameInstances: {
-					select: {
-						firebaseKey: true,
-						fired: true,
-						role: true,
+		const annotationStats = await db.personAnnotationStats.findFirst(
+			{
+				where:
+				{
+					personId,
+					predicateName: behavior,
+				},
+				select:
+				{
+					fires: true,
+					opportunities: true,
+					gameInstances:
+					{
+						select:
+						{
+							firebaseKey: true,
+							fired: true,
+							role: true,
+						},
 					},
 				},
 			},
-		});
+		);
 
-		if (!annotationStats) {
+		if (!annotationStats)
+		{
 			return (
 				<div className={styles.container}>
 					<Breadcrumb
 						items={[
-							{label: 'Home', href: '/'},
-							{label: personName, href: `/person/${personId}`},
-							{label: formatPredicateName(behavior)},
+							{
+								label: 'Home',
+								href: '/',
+							},
+							{
+								label: personName,
+								href: `/person/${personId}`,
+							},
+							{
+								label: formatPredicateName(behavior),
+							},
 						]}
 					/>
 					<h1>No Data</h1>
@@ -199,34 +263,55 @@ async function BehaviorGamesList({personId, behavior, url}: {personId: string; b
 		totalOpportunities = annotationStats.opportunities;
 
 		const gameKeys = annotationStats.gameInstances.map((g) => g.firebaseKey);
-		const rawGames = await db.rawGameData.findMany({
-			where: {
-				firebaseKey: {in: gameKeys},
+		const rawGames = await db.rawGameData.findMany(
+			{
+				where:
+				{
+					firebaseKey:
+					{
+						in: gameKeys,
+					},
+				},
+				select:
+				{
+					firebaseKey: true,
+					createdAt: true,
+				},
 			},
-			select: {
-				firebaseKey: true,
-				createdAt: true,
-			},
-		});
+		);
 
 		const gameDates = new Map(rawGames.map((g) => [g.firebaseKey, g.createdAt]));
 
 		games = annotationStats.gameInstances
-			.map((g) => ({
+			.map((g) => (
+			{
 				firebaseKey: g.firebaseKey,
 				fired: g.fired,
 				role: g.role,
 				gameDate: gameDates.get(g.firebaseKey) || new Date(0),
 			}))
 			.sort((a, b) => b.gameDate.getTime() - a.gameDate.getTime());
-	} catch (err) {
+	}
+	catch (err)
+	{
 		error = err instanceof Error ? err.message : 'Failed to load data';
 	}
 
-	if (error) {
+	if (error)
+	{
 		return (
 			<div className={styles.container}>
-				<Breadcrumb items={[{label: 'Home', href: '/'}, {label: 'Error'}]} />
+				<Breadcrumb
+					items={[
+						{
+							label: 'Home',
+							href: '/',
+						},
+						{
+							label: 'Error',
+						},
+					]}
+				/>
 				<h1>Error</h1>
 				<p>{error}</p>
 			</div>
@@ -244,9 +329,17 @@ async function BehaviorGamesList({personId, behavior, url}: {personId: string; b
 		<div className={styles.container}>
 			<Breadcrumb
 				items={[
-					{label: 'Home', href: '/'},
-					{label: personName || 'Unknown', href: `/person/${personId}`},
-					{label: displayName},
+					{
+						label: 'Home',
+						href: '/',
+					},
+					{
+						label: personName || 'Unknown',
+						href: `/person/${personId}`,
+					},
+					{
+						label: displayName,
+					},
 				]}
 			/>
 
@@ -270,17 +363,10 @@ async function BehaviorGamesList({personId, behavior, url}: {personId: string; b
 					<h2>Games Where Behavior Occurred ({firedGames.length})</h2>
 					<div className={styles.gameList}>
 						{firedGames.map((game) => (
-							<a
-								key={game.firebaseKey}
-								href={`/game/${game.firebaseKey}`}
-								className={styles.gameCard}
-							>
+							<a key={game.firebaseKey} href={`/game/${game.firebaseKey}`} className={styles.gameCard}>
 								<span className={styles.gameRole}>{game.role}</span>
 								<span className={styles.gameDate}>
-									<LocalTimestamp
-										isoString={game.gameDate.toISOString()}
-										showTime={false}
-									/>
+									<LocalTimestamp isoString={game.gameDate.toISOString()} showTime={false} />
 								</span>
 							</a>
 						))}
@@ -300,10 +386,7 @@ async function BehaviorGamesList({personId, behavior, url}: {personId: string; b
 							>
 								<span className={styles.gameRole}>{game.role}</span>
 								<span className={styles.gameDate}>
-									<LocalTimestamp
-										isoString={game.gameDate.toISOString()}
-										showTime={false}
-									/>
+									<LocalTimestamp isoString={game.gameDate.toISOString()} showTime={false} />
 								</span>
 							</a>
 						))}

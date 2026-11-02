@@ -1,13 +1,17 @@
 import type {Meta, StoryObj} from '@storybook/react-vite';
 import AssassinationAction from './AssassinationAction';
 
-const meta: Meta<typeof AssassinationAction> = {
+const meta: Meta<typeof AssassinationAction> =
+{
 	title: 'Endgame/AssassinationAction',
 	component: AssassinationAction,
-	parameters: {
+	parameters:
+	{
 		layout: 'centered',
-		docs: {
-			description: {
+		docs:
+		{
+			description:
+			{
 				component: `
 The AssassinationAction component handles the final phase of an Avalon game where the Assassin attempts to identify Merlin after the good team completes three missions.
 
@@ -40,26 +44,39 @@ This component only appears when:
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const mockAssassinate = async (target: string) => {
+const mockAssassinate = async (target: string) =>
+{
 	console.log('Assassinating:', target);
 	await new Promise((resolve) => setTimeout(resolve, 1000));
 };
 
-const mockGame = {
+const mockGame =
+{
 	id: 'game-1',
 	timeCreated: new Date('2024-01-01'),
-	players: [{uid: '1', name: 'CRAIGM'}],
+	players: [
+		{
+			uid: '1',
+			name: 'CRAIGM',
+		},
+	],
 	missions: [],
 };
 
-export const AssassinView: Story = {
-	args: {
-		avalon: {
+export const AssassinView: Story =
+{
+	args:
+	{
+		avalon:
+		{
 			game: mockGame,
-			lobby: {
+			lobby:
+			{
 				game: mockGame,
-				role: {
-					role: {
+				role:
+				{
+					role:
+					{
 						name: 'ASSASSIN',
 						team: 'evil',
 						description: 'You can see evil players and must identify Merlin',
@@ -68,10 +85,12 @@ export const AssassinView: Story = {
 					sees: ['MORGANA', 'EVIL MINION'],
 				},
 			},
-			user: {
+			user:
+			{
 				name: 'CRAIGM',
 			},
-			config: {
+			config:
+			{
 				roleMap: {},
 			},
 			assassinate: mockAssassinate,
@@ -80,14 +99,20 @@ export const AssassinView: Story = {
 	},
 };
 
-export const AssassinNoTarget: Story = {
-	args: {
-		avalon: {
+export const AssassinNoTarget: Story =
+{
+	args:
+	{
+		avalon:
+		{
 			game: mockGame,
-			lobby: {
+			lobby:
+			{
 				game: mockGame,
-				role: {
-					role: {
+				role:
+				{
+					role:
+					{
 						name: 'ASSASSIN',
 						team: 'evil',
 						description: 'You can see evil players and must identify Merlin',
@@ -96,10 +121,12 @@ export const AssassinNoTarget: Story = {
 					sees: ['MORGANA', 'EVIL MINION'],
 				},
 			},
-			user: {
+			user:
+			{
 				name: 'CRAIGM',
 			},
-			config: {
+			config:
+			{
 				roleMap: {},
 			},
 			assassinate: mockAssassinate,
@@ -108,14 +135,20 @@ export const AssassinNoTarget: Story = {
 	},
 };
 
-export const AssassinSelfSelected: Story = {
-	args: {
-		avalon: {
+export const AssassinSelfSelected: Story =
+{
+	args:
+	{
+		avalon:
+		{
 			game: mockGame,
-			lobby: {
+			lobby:
+			{
 				game: mockGame,
-				role: {
-					role: {
+				role:
+				{
+					role:
+					{
 						name: 'ASSASSIN',
 						team: 'evil',
 						description: 'You can see evil players and must identify Merlin',
@@ -124,10 +157,12 @@ export const AssassinSelfSelected: Story = {
 					sees: ['MORGANA', 'EVIL MINION'],
 				},
 			},
-			user: {
+			user:
+			{
 				name: 'CRAIGM',
 			},
-			config: {
+			config:
+			{
 				roleMap: {},
 			},
 			assassinate: mockAssassinate,
@@ -136,14 +171,20 @@ export const AssassinSelfSelected: Story = {
 	},
 };
 
-export const NonAssassinView: Story = {
-	args: {
-		avalon: {
+export const NonAssassinView: Story =
+{
+	args:
+	{
+		avalon:
+		{
 			game: mockGame,
-			lobby: {
+			lobby:
+			{
 				game: mockGame,
-				role: {
-					role: {
+				role:
+				{
+					role:
+					{
 						name: 'LOYAL FOLLOWER',
 						team: 'good',
 						description: 'You serve Arthur loyally',
@@ -152,10 +193,12 @@ export const NonAssassinView: Story = {
 					sees: [],
 				},
 			},
-			user: {
+			user:
+			{
 				name: 'ZEHUA',
 			},
-			config: {
+			config:
+			{
 				roleMap: {},
 			},
 			assassinate: mockAssassinate,

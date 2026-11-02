@@ -2,23 +2,29 @@ import React, {useState} from 'react';
 import styles from './AssassinationAction.module.css';
 import type {AvalonApi} from './types';
 
-interface AssassinationActionProps {
+interface AssassinationActionProps
+{
 	avalon: AvalonApi;
 	playerList: string[];
 }
 
-const AssassinationAction: React.FC<AssassinationActionProps> = ({avalon, playerList}) => {
+const AssassinationAction: React.FC<AssassinationActionProps> = ({avalon, playerList}) =>
+{
 	const [isAssassinating, setIsAssassinating] = useState(false);
 
 	const isValidSelection = playerList.length === 1 && playerList[0] !== avalon.user?.name;
 
 	const assassinateButtonText = isValidSelection ? `Assassinate ${playerList[0]}` : 'Select target';
 
-	const handleAssassinate = async () => {
+	const handleAssassinate = async () =>
+	{
 		setIsAssassinating(true);
-		try {
+		try
+		{
 			await avalon.assassinate?.(playerList[0]);
-		} finally {
+		}
+		finally
+		{
 			setIsAssassinating(false);
 		}
 	};

@@ -1,13 +1,17 @@
 import type {Meta, StoryObj} from '@storybook/react-vite';
 import LogoutButton from './LogoutButton';
 
-const meta: Meta<typeof LogoutButton> = {
+const meta: Meta<typeof LogoutButton> =
+{
 	title: 'Authentication/LogoutButton',
 	component: LogoutButton,
-	parameters: {
+	parameters:
+	{
 		layout: 'centered',
-		docs: {
-			description: {
+		docs:
+		{
+			description:
+			{
 				component: `
 The LogoutButton component provides a simple way for users to sign out of their current session. It's typically displayed in the application header or navigation area.
 
@@ -30,14 +34,18 @@ Place the LogoutButton in consistent locations across your application for a pre
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const mockAvalon = {
-	logout: () => {
+const mockAvalon =
+{
+	logout: () =>
+	{
 		console.log('Logout called');
 	},
 };
 
-export const Default: Story = {
-	args: {
+export const Default: Story =
+{
+	args:
+	{
 		avalon: mockAvalon,
 	},
 };

@@ -1,14 +1,17 @@
-.container {
+.container
+{
 	width: 100%;
 }
 
-.tabsContainer {
+.tabsContainer
+{
 	display: flex;
 	flex-direction: column;
 	height: 100%;
 }
 
-.tabsList {
+.tabsList
+{
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -16,7 +19,8 @@
 	background-color: #e1f5fe;
 }
 
-.tab {
+.tab
+{
 	flex: 1;
 	height: 100%;
 	border: none;
@@ -29,15 +33,18 @@
 	border-radius: 0;
 }
 
-.tab:hover {
+.tab:hover
+{
 	background-color: #b3e5fc;
 }
 
-.activeTab {
+.activeTab
+{
 	background-color: #81d4fa;
 }
 
-.iconContainer {
+.iconContainer
+{
 	position: relative;
 	display: flex;
 	align-items: center;
@@ -46,14 +53,16 @@
 	height: 40px;
 }
 
-.iconStack {
+.iconStack
+{
 	position: relative;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 }
 
-.teamSizeText {
+.teamSizeText
+{
 	position: absolute;
 	font-size: 0.8em;
 	color: #424242;
@@ -61,7 +70,8 @@
 	z-index: 1;
 }
 
-.failsRequiredIndicator {
+.failsRequiredIndicator
+{
 	position: absolute;
 	font-size: 0.6em;
 	top: -8px;
@@ -69,12 +79,14 @@
 	z-index: 2;
 }
 
-.tabContent {
+.tabContent
+{
 	flex: 1;
 	position: relative;
 }
 
-.tabPanel {
+.tabPanel
+{
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -82,46 +94,56 @@
 	bottom: 0;
 }
 
-.activePanel {
+.activePanel
+{
 	display: block;
 }
 
-.hiddenPanel {
+.hiddenPanel
+{
 	display: none;
 }
 
-.card {
+.card
+{
 	padding: 16px;
 	border-radius: 4px;
 	height: 100%;
 	box-sizing: border-box;
 }
 
-.pendingMission {
+.pendingMission
+{
 	background-color: #eceff1;
 }
 
-.successMission {
+.successMission
+{
 	background-color: #e8f5e8;
 }
 
-.failMission {
+.failMission
+{
 	background-color: #ffebee;
 }
 
-.cardContent {
+.cardContent
+{
 	font-size: 0.875rem;
 }
 
-.missionTitle {
+.missionTitle
+{
 	margin-bottom: 8px;
 	font-weight: 500;
 }
 
-.missionDetails {
+.missionDetails
+{
 	margin-bottom: 16px;
 }
 
-.missionDetails div {
+.missionDetails div
+{
 	margin-bottom: 4px;
 }

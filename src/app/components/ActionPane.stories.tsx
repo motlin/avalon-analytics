@@ -1,13 +1,17 @@
 import type {Meta, StoryObj} from '@storybook/react-vite';
 import ActionPane from './ActionPane';
 
-const meta: Meta<typeof ActionPane> = {
+const meta: Meta<typeof ActionPane> =
+{
 	title: 'Gameplay/ActionPane',
 	component: ActionPane,
-	parameters: {
+	parameters:
+	{
 		layout: 'centered',
-		docs: {
-			description: {
+		docs:
+		{
+			description:
+			{
 				component: `
 The ActionPane component is the primary interface for player actions during an Avalon game. It dynamically displays the appropriate action interface based on the current game state and the player's role.
 
@@ -40,17 +44,27 @@ When viewing as a spectator or after taking your action, the component displays 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
-	args: {
-		avalon: {
-			game: {
+export const Default: Story =
+{
+	args:
+	{
+		avalon:
+		{
+			game:
+			{
 				id: 'game-1',
 				timeCreated: new Date('2024-01-01'),
-				players: [{uid: '1', name: 'Alice'}],
+				players: [
+					{
+						uid: '1',
+						name: 'Alice',
+					},
+				],
 				missions: [],
 				currentProposalIdx: 0,
 				currentProposer: 'Alice',
-				currentMission: {
+				currentMission:
+				{
 					teamSize: 3,
 					failsRequired: 1,
 					proposals: [],
@@ -59,15 +73,26 @@ export const Default: Story = {
 					votes: [],
 				},
 			},
-			user: {name: 'Alice'},
-			lobby: {
-				game: {
+			user:
+			{
+				name: 'Alice',
+			},
+			lobby:
+			{
+				game:
+				{
 					id: 'game-1',
 					timeCreated: new Date('2024-01-01'),
-					players: [{uid: '1', name: 'Alice'}],
+					players: [
+						{
+							uid: '1',
+							name: 'Alice',
+						},
+					],
 					missions: [],
 					phase: 'TEAM_PROPOSAL',
-					currentMission: {
+					currentMission:
+					{
 						teamSize: 3,
 						failsRequired: 1,
 						proposals: [],
@@ -77,10 +102,13 @@ export const Default: Story = {
 					},
 				},
 			},
-			config: {
+			config:
+			{
 				roleMap: {},
 			},
-			proposeTeam: () => {},
+			proposeTeam: () =>
+			{
+			},
 		},
 		selectedPlayers: [],
 	},

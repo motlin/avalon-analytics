@@ -1,13 +1,17 @@
 import type {Meta, StoryObj} from '@storybook/react-vite';
 import Toast from './Toast';
 
-const meta: Meta<typeof Toast> = {
+const meta: Meta<typeof Toast> =
+{
 	title: 'UI/Toast',
 	component: Toast,
-	parameters: {
+	parameters:
+	{
 		layout: 'padded',
-		docs: {
-			description: {
+		docs:
+		{
+			description:
+			{
 				component: `The Toast component provides non-intrusive notifications to users about system events, actions, or status updates.
 
 ## Features
@@ -35,35 +39,49 @@ Toast notifications are typically triggered by user actions or system events. Th
 		},
 	},
 	tags: ['autodocs', 'test'],
-	argTypes: {
-		message: {
+	argTypes:
+	{
+		message:
+		{
 			control: 'text',
 			description: 'The notification message to display',
 		},
-		type: {
+		type:
+		{
 			control: 'select',
 			options: ['success', 'error', 'warning', 'info'],
 			description: 'The type of notification, affects styling and icon',
 		},
-		duration: {
-			control: {type: 'number', min: 0, max: 10000, step: 500},
+		duration:
+		{
+			control:
+			{
+				type: 'number',
+				min: 0,
+				max: 10000,
+				step: 500,
+			},
 			description: 'Auto-dismiss duration in milliseconds (0 = no auto-dismiss)',
 		},
-		position: {
+		position:
+		{
 			control: 'select',
 			options: ['top-left', 'top-center', 'top-right', 'bottom-left', 'bottom-center', 'bottom-right'],
 			description: 'Position of the toast on screen',
 		},
-		fullWidth: {
+		fullWidth:
+		{
 			control: 'boolean',
 			description: 'Make toast span the full width of the container',
 		},
-		visible: {
+		visible:
+		{
 			control: 'boolean',
 			description: 'Controls visibility of the toast',
 		},
 	},
-	args: {
+	args:
+	{
 		message: 'This is a notification message',
 		type: 'info',
 		duration: 2000,
@@ -76,171 +94,233 @@ Toast notifications are typically triggered by user actions or system events. Th
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
-	parameters: {
-		docs: {
-			description: {
+export const Default: Story =
+{
+	parameters:
+	{
+		docs:
+		{
+			description:
+			{
 				story: 'Default toast configuration with info type, top-center position, and 2-second auto-dismiss.',
 			},
 		},
 	},
 };
 
-export const Success: Story = {
-	args: {
+export const Success: Story =
+{
+	args:
+	{
 		message: 'Your action was completed successfully!',
 		type: 'success',
 	},
-	parameters: {
-		docs: {
-			description: {
+	parameters:
+	{
+		docs:
+		{
+			description:
+			{
 				story: 'Success toast for positive feedback after successful operations.',
 			},
 		},
 	},
 };
 
-export const Error: Story = {
-	args: {
+export const Error: Story =
+{
+	args:
+	{
 		message: 'An error occurred while processing your request.',
 		type: 'error',
 		duration: 5000,
 	},
-	parameters: {
-		docs: {
-			description: {
+	parameters:
+	{
+		docs:
+		{
+			description:
+			{
 				story: 'Error toast with longer duration for critical messages that require user attention.',
 			},
 		},
 	},
 };
 
-export const Warning: Story = {
-	args: {
+export const Warning: Story =
+{
+	args:
+	{
 		message: 'This action cannot be undone. Please proceed with caution.',
 		type: 'warning',
 		duration: 4000,
 	},
-	parameters: {
-		docs: {
-			description: {
+	parameters:
+	{
+		docs:
+		{
+			description:
+			{
 				story: 'Warning toast for cautionary messages that need user awareness.',
 			},
 		},
 	},
 };
 
-export const LongMessage: Story = {
-	args: {
+export const LongMessage: Story =
+{
+	args:
+	{
 		message:
 			'This is a much longer notification message that demonstrates how the toast component handles text wrapping and maintains proper spacing with multiple lines of content.',
 		type: 'info',
 		duration: 6000,
 	},
-	parameters: {
-		docs: {
-			description: {
+	parameters:
+	{
+		docs:
+		{
+			description:
+			{
 				story: 'Toast with a longer message showing text wrapping behavior.',
 			},
 		},
 	},
 };
 
-export const NoDismiss: Story = {
-	args: {
+export const NoDismiss: Story =
+{
+	args:
+	{
 		message: 'This toast will not auto-dismiss. Close it manually.',
 		type: 'warning',
 		duration: 0,
 	},
-	parameters: {
-		docs: {
-			description: {
+	parameters:
+	{
+		docs:
+		{
+			description:
+			{
 				story: 'Toast that requires manual dismissal by setting duration to 0.',
 			},
 		},
 	},
 };
 
-export const TopLeft: Story = {
-	args: {
+export const TopLeft: Story =
+{
+	args:
+	{
 		message: 'Notification positioned at top-left',
 		position: 'top-left',
 		fullWidth: false,
 	},
-	parameters: {
-		docs: {
-			description: {
+	parameters:
+	{
+		docs:
+		{
+			description:
+			{
 				story: 'Toast positioned at the top-left corner with fixed width.',
 			},
 		},
 	},
 };
 
-export const TopRight: Story = {
-	args: {
+export const TopRight: Story =
+{
+	args:
+	{
 		message: 'Notification positioned at top-right',
 		position: 'top-right',
 		fullWidth: false,
 	},
-	parameters: {
-		docs: {
-			description: {
+	parameters:
+	{
+		docs:
+		{
+			description:
+			{
 				story: 'Toast positioned at the top-right corner with fixed width.',
 			},
 		},
 	},
 };
 
-export const BottomCenter: Story = {
-	args: {
+export const BottomCenter: Story =
+{
+	args:
+	{
 		message: 'Notification positioned at bottom-center',
 		position: 'bottom-center',
 		type: 'success',
 	},
-	parameters: {
-		docs: {
-			description: {
+	parameters:
+	{
+		docs:
+		{
+			description:
+			{
 				story: 'Toast positioned at the bottom-center, useful for mobile interfaces.',
 			},
 		},
 	},
 };
 
-export const BottomLeft: Story = {
-	args: {
+export const BottomLeft: Story =
+{
+	args:
+	{
 		message: 'Notification positioned at bottom-left',
 		position: 'bottom-left',
 		fullWidth: false,
 		type: 'warning',
 	},
-	parameters: {
-		docs: {
-			description: {
+	parameters:
+	{
+		docs:
+		{
+			description:
+			{
 				story: 'Toast positioned at the bottom-left corner with fixed width.',
 			},
 		},
 	},
 };
 
-export const BottomRight: Story = {
-	args: {
+export const BottomRight: Story =
+{
+	args:
+	{
 		message: 'Notification positioned at bottom-right',
 		position: 'bottom-right',
 		fullWidth: false,
 		type: 'error',
 	},
-	parameters: {
-		docs: {
-			description: {
+	parameters:
+	{
+		docs:
+		{
+			description:
+			{
 				story: 'Toast positioned at the bottom-right corner with fixed width.',
 			},
 		},
 	},
 };
 
-export const AllTypes: Story = {
+export const AllTypes: Story =
+{
 	render: () => (
-		<div style={{position: 'relative', height: '400px', width: '100%'}}>
+		<div
+			style={
+			{
+				position: 'relative',
+				height: '400px',
+				width: '100%',
+			}}
+		>
 			<Toast
 				message="Success: Operation completed!"
 				type="success"
@@ -271,48 +351,63 @@ export const AllTypes: Story = {
 			/>
 		</div>
 	),
-	parameters: {
-		docs: {
-			description: {
+	parameters:
+	{
+		docs:
+		{
+			description:
+			{
 				story: 'Showcase of all toast types positioned in different corners simultaneously.',
 			},
 		},
 	},
 };
 
-export const GameNotifications: Story = {
+export const GameNotifications: Story =
+{
 	render: () => (
-		<div style={{position: 'relative', height: '300px', width: '100%'}}>
-			<Toast
-				message="PLAYER joined the lobby"
-				type="success"
-				position="top-center"
-				duration={0}
-			/>
+		<div
+			style={
+			{
+				position: 'relative',
+				height: '300px',
+				width: '100%',
+			}}
+		>
+			<Toast message="PLAYER joined the lobby" type="success" position="top-center" duration={0} />
 		</div>
 	),
-	parameters: {
-		docs: {
-			description: {
+	parameters:
+	{
+		docs:
+		{
+			description:
+			{
 				story: 'Example of how toasts might appear in the Avalon game context for player notifications.',
 			},
 		},
 	},
 };
 
-export const MobileLayout: Story = {
-	args: {
+export const MobileLayout: Story =
+{
+	args:
+	{
 		message: 'Mobile-optimized notification',
 		type: 'info',
 		position: 'bottom-center',
 		fullWidth: true,
 	},
-	parameters: {
-		viewport: {
+	parameters:
+	{
+		viewport:
+		{
 			defaultViewport: 'mobile1',
 		},
-		docs: {
-			description: {
+		docs:
+		{
+			description:
+			{
 				story: 'Toast optimized for mobile viewports with full-width layout.',
 			},
 		},

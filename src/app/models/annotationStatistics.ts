@@ -23,15 +23,19 @@ import {twoProportionZScore, zScoreToConfidence} from './statisticalFunctions';
 type AnyPredicate = ProposalPredicate | ProposalVotePredicate | MissionVotePredicate;
 
 /** Build lookup map from predicate name to predicate definition */
-function buildPredicateLookup(): Map<string, AnyPredicate> {
+function buildPredicateLookup(): Map<string, AnyPredicate>
+{
 	const lookup = new Map<string, AnyPredicate>();
-	for (const pred of PROPOSAL_PREDICATES) {
+	for (const pred of PROPOSAL_PREDICATES)
+	{
 		lookup.set(pred.name, pred);
 	}
-	for (const pred of PROPOSAL_VOTE_PREDICATES) {
+	for (const pred of PROPOSAL_VOTE_PREDICATES)
+	{
 		lookup.set(pred.name, pred);
 	}
-	for (const pred of MISSION_VOTE_PREDICATES) {
+	for (const pred of MISSION_VOTE_PREDICATES)
+	{
 		lookup.set(pred.name, pred);
 	}
 	return lookup;
@@ -46,7 +50,8 @@ const PREDICATE_LOOKUP = buildPredicateLookup();
 /** Which alignment does exhibiting this behavior suggest? */
 export type AlignmentIndicator = 'good' | 'evil' | 'neither';
 
-export interface PersonAnnotationStatistic {
+export interface PersonAnnotationStatistic
+{
 	/** The predicate being measured */
 	predicateName: string;
 	/** Rarity tier based on historical fire counts */
@@ -119,11 +124,13 @@ export interface PersonAnnotationStatistic {
 	roleStats: RoleStatistic[];
 }
 
-export interface PersonAnnotationProfile {
+export interface PersonAnnotationProfile
+{
 	/** Sorted list of annotation statistics (rarest first) */
 	annotations: PersonAnnotationStatistic[];
 	/** Summary statistics across all predicates */
-	summary: {
+	summary:
+	{
 		/** Total number of predicates with any opportunities */
 		totalPredicates: number;
 		/** Number of behaviors with population diagnostic value (≥95% confidence) */
@@ -134,20 +141,23 @@ export interface PersonAnnotationProfile {
 }
 
 /** Alignment-specific breakdown */
-export interface AlignmentBreakdown {
+export interface AlignmentBreakdown
+{
 	fires: number;
 	opportunities: number;
 }
 
 /** Role-specific breakdown */
-export interface RoleBreakdown {
+export interface RoleBreakdown
+{
 	role: string;
 	fires: number;
 	opportunities: number;
 }
 
 /** Role-specific statistics for a person's behavior when playing a specific role */
-export interface RoleStatistic {
+export interface RoleStatistic
+{
 	role: string;
 	/** Player's fires when playing this role */
 	playerFires: number;
@@ -166,7 +176,8 @@ export interface RoleStatistic {
 }
 
 /** Raw database stats for a person's predicate behavior */
-export interface RawPersonAnnotationStat {
+export interface RawPersonAnnotationStat
+{
 	predicateName: string;
 	fires: number;
 	opportunities: number;
@@ -176,7 +187,8 @@ export interface RawPersonAnnotationStat {
 }
 
 /** Baseline statistics for a predicate across all mapped people */
-export interface PredicateBaseline {
+export interface PredicateBaseline
+{
 	predicateName: string;
 	totalFires: number;
 	totalOpportunities: number;
@@ -202,19 +214,23 @@ export interface PredicateBaseline {
 export function computePersonAnnotationProfile(
 	rawStats: RawPersonAnnotationStat[],
 	baselines: PredicateBaseline[],
-): PersonAnnotationProfile {
+): PersonAnnotationProfile
+{
 	// Build baseline lookup map
 	const baselineMap = new Map<string, PredicateBaseline>();
-	for (const baseline of baselines) {
+	for (const baseline of baselines)
+	{
 		baselineMap.set(baseline.predicateName, baseline);
 	}
 
 	// Compute statistics for each predicate
 	const annotations: PersonAnnotationStatistic[] = [];
 
-	for (const raw of rawStats) {
+	for (const raw of rawStats)
+	{
 		// Skip predicates with no opportunities
-		if (raw.opportunities === 0) {
+		if (raw.opportunities === 0)
+		{
 			continue;
 		}
 
@@ -229,7 +245,10 @@ export function computePersonAnnotationProfile(
 	// Compute summary
 	const summary = computeSummary(annotations);
 
-	return {annotations, summary};
+	return {
+		annotations,
+		summary,
+	};
 }
 
 // ============================================================================
@@ -242,7 +261,8 @@ export function computePersonAnnotationProfile(
 function computeSingleStatistic(
 	raw: RawPersonAnnotationStat,
 	baseline: PredicateBaseline | undefined,
-): PersonAnnotationStatistic {
+): PersonAnnotationStatistic
+{
 	const {predicateName, fires, opportunities, goodStats, evilStats} = raw;
 
 	// Raw rate (overall)
@@ -269,18 +289,26 @@ function computeSingleStatistic(
 	// Determine which alignment doing this behavior suggests (population level)
 	let popSuggestsAlignment: AlignmentIndicator = 'neither';
 	let popLikelihoodRatio = 1;
-	if (goodBaselineRate > 0 && evilBaselineRate > 0) {
-		if (goodBaselineRate > evilBaselineRate) {
+	if (goodBaselineRate > 0 && evilBaselineRate > 0)
+	{
+		if (goodBaselineRate > evilBaselineRate)
+		{
 			popSuggestsAlignment = 'good';
 			popLikelihoodRatio = goodBaselineRate / evilBaselineRate;
-		} else if (evilBaselineRate > goodBaselineRate) {
+		}
+		else if (evilBaselineRate > goodBaselineRate)
+		{
 			popSuggestsAlignment = 'evil';
 			popLikelihoodRatio = evilBaselineRate / goodBaselineRate;
 		}
-	} else if (goodBaselineRate > 0 && evilBaselineRate === 0) {
+	}
+	else if (goodBaselineRate > 0 && evilBaselineRate === 0)
+	{
 		popSuggestsAlignment = 'good';
 		popLikelihoodRatio = Number.POSITIVE_INFINITY;
-	} else if (evilBaselineRate > 0 && goodBaselineRate === 0) {
+	}
+	else if (evilBaselineRate > 0 && goodBaselineRate === 0)
+	{
 		popSuggestsAlignment = 'evil';
 		popLikelihoodRatio = Number.POSITIVE_INFINITY;
 	}
@@ -307,19 +335,28 @@ function computeSingleStatistic(
 	// Determine which alignment this player's behavior suggests
 	let playerSuggestsAlignment: AlignmentIndicator = 'neither';
 	let playerLikelihoodRatio = 1;
-	if (playerGoodRate !== null && playerEvilRate !== null) {
-		if (playerGoodRate > 0 && playerEvilRate > 0) {
-			if (playerGoodRate > playerEvilRate) {
+	if (playerGoodRate !== null && playerEvilRate !== null)
+	{
+		if (playerGoodRate > 0 && playerEvilRate > 0)
+		{
+			if (playerGoodRate > playerEvilRate)
+			{
 				playerSuggestsAlignment = 'good';
 				playerLikelihoodRatio = playerGoodRate / playerEvilRate;
-			} else if (playerEvilRate > playerGoodRate) {
+			}
+			else if (playerEvilRate > playerGoodRate)
+			{
 				playerSuggestsAlignment = 'evil';
 				playerLikelihoodRatio = playerEvilRate / playerGoodRate;
 			}
-		} else if (playerGoodRate > 0 && playerEvilRate === 0) {
+		}
+		else if (playerGoodRate > 0 && playerEvilRate === 0)
+		{
 			playerSuggestsAlignment = 'good';
 			playerLikelihoodRatio = Number.POSITIVE_INFINITY;
-		} else if (playerEvilRate > 0 && playerGoodRate === 0) {
+		}
+		else if (playerEvilRate > 0 && playerGoodRate === 0)
+		{
 			playerSuggestsAlignment = 'evil';
 			playerLikelihoodRatio = Number.POSITIVE_INFINITY;
 		}
@@ -334,20 +371,23 @@ function computeSingleStatistic(
 
 	// Role-specific statistics
 	const roleBaselinesMap = new Map<string, RoleBreakdown>();
-	for (const rb of baseline?.roleBaselines ?? []) {
+	for (const rb of baseline?.roleBaselines ?? [])
+	{
 		roleBaselinesMap.set(rb.role, rb);
 	}
 
 	// Compute role statistics
 	const roleStats: RoleStatistic[] = [];
 	const playerRoleMap = new Map<string, RoleBreakdown>();
-	for (const rs of raw.roleStats) {
+	for (const rs of raw.roleStats)
+	{
 		playerRoleMap.set(rs.role, rs);
 	}
 
 	// Combine all roles from both player and baseline
 	const allRoles = new Set([...roleBaselinesMap.keys(), ...playerRoleMap.keys()]);
-	for (const role of allRoles) {
+	for (const role of allRoles)
+	{
 		const popRoleBaseline = roleBaselinesMap.get(role);
 		const playerRoleStat = playerRoleMap.get(role);
 
@@ -361,16 +401,18 @@ function computeSingleStatistic(
 
 		const deviation = playerRate !== null ? playerRate - populationRate : null;
 
-		roleStats.push({
-			role,
-			playerFires,
-			playerOpportunities,
-			playerRate,
-			populationFires,
-			populationOpportunities,
-			populationRate,
-			deviation,
-		});
+		roleStats.push(
+			{
+				role,
+				playerFires,
+				playerOpportunities,
+				playerRate,
+				populationFires,
+				populationOpportunities,
+				populationRate,
+				deviation,
+			},
+		);
 	}
 
 	// Sort role stats by role name for consistent display
@@ -411,15 +453,19 @@ function computeSingleStatistic(
 /**
  * Computes summary statistics across all annotations.
  */
-function computeSummary(annotations: PersonAnnotationStatistic[]): PersonAnnotationProfile['summary'] {
+function computeSummary(annotations: PersonAnnotationStatistic[]): PersonAnnotationProfile['summary']
+{
 	let popTellCount = 0;
 	let playerTellCount = 0;
 
-	for (const annotation of annotations) {
-		if (annotation.popHasDiagnosticValue) {
+	for (const annotation of annotations)
+	{
+		if (annotation.popHasDiagnosticValue)
+		{
 			popTellCount++;
 		}
-		if (annotation.playerHasTell) {
+		if (annotation.playerHasTell)
+		{
 			playerTellCount++;
 		}
 	}
@@ -445,53 +491,98 @@ function computeSummary(annotations: PersonAnnotationStatistic[]): PersonAnnotat
  */
 export async function loadPersonAnnotationStats(
 	personId: string,
-	db: {
-		personAnnotationStats: {
+	db:
+	{
+		personAnnotationStats:
+		{
 			findMany: (args: {
-				where: {personId: string};
-				select: {
+				where:
+				{
+					personId: string;
+				};
+				select:
+				{
 					predicateName: true;
 					fires: true;
 					opportunities: true;
-					alignmentBreakdown: {select: {alignment: true; fires: true; opportunities: true}};
-					roleBreakdown: {select: {role: true; fires: true; opportunities: true}};
+					alignmentBreakdown:
+					{
+						select:
+						{
+							alignment: true;
+							fires: true;
+							opportunities: true;
+						};
+					};
+					roleBreakdown:
+					{
+						select:
+						{
+							role: true;
+							fires: true;
+							opportunities: true;
+						};
+					};
 				};
 			}) => Promise<
-				Array<{
+				Array<
+				{
 					predicateName: string;
 					fires: number;
 					opportunities: number;
-					alignmentBreakdown: Array<{alignment: string; fires: number; opportunities: number}>;
-					roleBreakdown: Array<{role: string; fires: number; opportunities: number}>;
+					alignmentBreakdown: Array<
+					{
+						alignment: string;
+						fires: number;
+						opportunities: number;
+					}>;
+					roleBreakdown: Array<
+					{
+						role: string;
+						fires: number;
+						opportunities: number;
+					}>;
 				}>
 			>;
 		};
 	},
-): Promise<RawPersonAnnotationStat[]> {
-	const dbStats = await db.personAnnotationStats.findMany({
-		where: {personId},
-		select: {
-			predicateName: true,
-			fires: true,
-			opportunities: true,
-			alignmentBreakdown: {
-				select: {
-					alignment: true,
-					fires: true,
-					opportunities: true,
-				},
+): Promise<RawPersonAnnotationStat[]>
+{
+	const dbStats = await db.personAnnotationStats.findMany(
+		{
+			where:
+			{
+				personId,
 			},
-			roleBreakdown: {
-				select: {
-					role: true,
-					fires: true,
-					opportunities: true,
+			select:
+			{
+				predicateName: true,
+				fires: true,
+				opportunities: true,
+				alignmentBreakdown:
+				{
+					select:
+					{
+						alignment: true,
+						fires: true,
+						opportunities: true,
+					},
+				},
+				roleBreakdown:
+				{
+					select:
+					{
+						role: true,
+						fires: true,
+						opportunities: true,
+					},
 				},
 			},
 		},
-	});
+	);
 
-	return dbStats.map((stat) => {
+	return dbStats.map((stat) =>
+	{
 		const goodBreakdown = stat.alignmentBreakdown.find((b) => b.alignment === 'good');
 		const evilBreakdown = stat.alignmentBreakdown.find((b) => b.alignment === 'evil');
 
@@ -499,9 +590,26 @@ export async function loadPersonAnnotationStats(
 			predicateName: stat.predicateName,
 			fires: stat.fires,
 			opportunities: stat.opportunities,
-			goodStats: goodBreakdown ? {fires: goodBreakdown.fires, opportunities: goodBreakdown.opportunities} : null,
-			evilStats: evilBreakdown ? {fires: evilBreakdown.fires, opportunities: evilBreakdown.opportunities} : null,
-			roleStats: stat.roleBreakdown.map((r) => ({role: r.role, fires: r.fires, opportunities: r.opportunities})),
+			goodStats: goodBreakdown
+				?
+					{
+						fires: goodBreakdown.fires,
+						opportunities: goodBreakdown.opportunities,
+					}
+				: null,
+			evilStats: evilBreakdown
+				?
+					{
+						fires: evilBreakdown.fires,
+						opportunities: evilBreakdown.opportunities,
+					}
+				: null,
+			roleStats: stat.roleBreakdown.map((r) => (
+			{
+				role: r.role,
+				fires: r.fires,
+				opportunities: r.opportunities,
+			})),
 		};
 	});
 }
@@ -514,9 +622,11 @@ export async function loadPersonAnnotationStats(
  * @returns Array of predicate baselines
  */
 export async function loadGlobalAnnotationBaselines(db: {
-	globalAnnotationBaseline: {
+	globalAnnotationBaseline:
+	{
 		findMany: (args: {
-			select: {
+			select:
+			{
 				predicateName: true;
 				totalFires: true;
 				totalOpportunities: true;
@@ -524,10 +634,19 @@ export async function loadGlobalAnnotationBaselines(db: {
 				goodOpportunities: true;
 				evilFires: true;
 				evilOpportunities: true;
-				roleBaselines: {select: {role: true; fires: true; opportunities: true}};
+				roleBaselines:
+				{
+					select:
+					{
+						role: true;
+						fires: true;
+						opportunities: true;
+					};
+				};
 			};
 		}) => Promise<
-			Array<{
+			Array<
+			{
 				predicateName: string;
 				totalFires: number;
 				totalOpportunities: number;
@@ -535,31 +654,43 @@ export async function loadGlobalAnnotationBaselines(db: {
 				goodOpportunities: number;
 				evilFires: number;
 				evilOpportunities: number;
-				roleBaselines: Array<{role: string; fires: number; opportunities: number}>;
+				roleBaselines: Array<
+				{
+					role: string;
+					fires: number;
+					opportunities: number;
+				}>;
 			}>
 		>;
 	};
-}): Promise<PredicateBaseline[]> {
-	const dbBaselines = await db.globalAnnotationBaseline.findMany({
-		select: {
-			predicateName: true,
-			totalFires: true,
-			totalOpportunities: true,
-			goodFires: true,
-			goodOpportunities: true,
-			evilFires: true,
-			evilOpportunities: true,
-			roleBaselines: {
-				select: {
-					role: true,
-					fires: true,
-					opportunities: true,
+}): Promise<PredicateBaseline[]>
+{
+	const dbBaselines = await db.globalAnnotationBaseline.findMany(
+		{
+			select:
+			{
+				predicateName: true,
+				totalFires: true,
+				totalOpportunities: true,
+				goodFires: true,
+				goodOpportunities: true,
+				evilFires: true,
+				evilOpportunities: true,
+				roleBaselines:
+				{
+					select:
+					{
+						role: true,
+						fires: true,
+						opportunities: true,
+					},
 				},
 			},
 		},
-	});
+	);
 
-	return dbBaselines.map((baseline) => ({
+	return dbBaselines.map((baseline) => (
+	{
 		predicateName: baseline.predicateName,
 		totalFires: baseline.totalFires,
 		totalOpportunities: baseline.totalOpportunities,
@@ -567,7 +698,8 @@ export async function loadGlobalAnnotationBaselines(db: {
 		goodOpportunities: baseline.goodOpportunities,
 		evilFires: baseline.evilFires,
 		evilOpportunities: baseline.evilOpportunities,
-		roleBaselines: baseline.roleBaselines.map((r) => ({
+		roleBaselines: baseline.roleBaselines.map((r) => (
+		{
 			role: r.role,
 			fires: r.fires,
 			opportunities: r.opportunities,

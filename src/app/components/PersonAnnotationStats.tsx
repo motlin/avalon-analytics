@@ -1,4 +1,5 @@
-import type {
+import type
+{
 	AlignmentIndicator,
 	PersonAnnotationProfile,
 	PersonAnnotationStatistic,
@@ -8,19 +9,23 @@ import {toDisplayRole} from '../models/annotations';
 import {RARITY_CSS_COLORS} from '../models/predicateRarity';
 import styles from './PersonAnnotationStats.module.css';
 
-interface PersonAnnotationStatsProps {
+interface PersonAnnotationStatsProps
+{
 	profile: PersonAnnotationProfile;
 	personId: string;
 }
 
-function formatPercent(value: number | null): string {
-	if (value === null) {
+function formatPercent(value: number | null): string
+{
+	if (value === null)
+	{
 		return '—';
 	}
 	return `${(value * 100).toFixed(0)}%`;
 }
 
-function formatPredicateName(name: string): string {
+function formatPredicateName(name: string): string
+{
 	return name
 		.replace(/ProposalVotePredicate$/, '')
 		.replace(/ProposalPredicate$/, '')
@@ -29,47 +34,59 @@ function formatPredicateName(name: string): string {
 		.replace(/([a-z])([A-Z])/g, '$1 $2');
 }
 
-function formatLikelihoodRatio(ratio: number): string {
-	if (!Number.isFinite(ratio)) {
+function formatLikelihoodRatio(ratio: number): string
+{
+	if (!Number.isFinite(ratio))
+	{
 		return '∞';
 	}
-	if (ratio >= 10) {
+	if (ratio >= 10)
+	{
 		return `${ratio.toFixed(0)}x`;
 	}
 	return `${ratio.toFixed(1)}x`;
 }
 
-function formatTellCell(likelihoodRatio: number, confidence: number, suggests: AlignmentIndicator): string {
-	if (suggests === 'neither' || likelihoodRatio <= 1) {
+function formatTellCell(likelihoodRatio: number, confidence: number, suggests: AlignmentIndicator): string
+{
+	if (suggests === 'neither' || likelihoodRatio <= 1)
+	{
 		return '—';
 	}
 	const alignmentLabel = suggests === 'good' ? 'Good' : 'Evil';
 	return `${formatLikelihoodRatio(likelihoodRatio)} ${alignmentLabel}`;
 }
 
-function formatTellTooltip(likelihoodRatio: number, confidence: number, suggests: AlignmentIndicator): string {
-	if (suggests === 'neither' || likelihoodRatio <= 1) {
+function formatTellTooltip(likelihoodRatio: number, confidence: number, suggests: AlignmentIndicator): string
+{
+	if (suggests === 'neither' || likelihoodRatio <= 1)
+	{
 		return 'No significant difference between good and evil rates';
 	}
 	const alignmentLabel = suggests === 'good' ? 'good' : 'evil';
 	return `${formatLikelihoodRatio(likelihoodRatio)} more likely when ${alignmentLabel} (${confidence.toFixed(0)}% confidence)`;
 }
 
-function getTellCellClass(likelihoodRatio: number, confidence: number, suggests: AlignmentIndicator): string {
-	if (suggests === 'neither' || likelihoodRatio <= 1) {
+function getTellCellClass(likelihoodRatio: number, confidence: number, suggests: AlignmentIndicator): string
+{
+	if (suggests === 'neither' || likelihoodRatio <= 1)
+	{
 		return styles.tellNone;
 	}
 	const isStrong = confidence >= 95 && likelihoodRatio >= 1.5;
-	if (suggests === 'good') {
+	if (suggests === 'good')
+	{
 		return isStrong ? styles.tellGoodStrong : styles.tellGoodWeak;
 	}
-	if (suggests === 'evil') {
+	if (suggests === 'evil')
+	{
 		return isStrong ? styles.tellEvilStrong : styles.tellEvilWeak;
 	}
 	return styles.tellNone;
 }
 
-function AnnotationRow({statistic, personId}: {statistic: PersonAnnotationStatistic; personId: string}) {
+function AnnotationRow({statistic, personId}: {statistic: PersonAnnotationStatistic; personId: string})
+{
 	const gamesUrl = `/games?person=${personId}&behavior=${statistic.predicateName}`;
 
 	const popGoodTooltip = `${statistic.goodBaselineFires}/${statistic.goodBaselineSample} fires`;
@@ -98,25 +115,19 @@ function AnnotationRow({statistic, personId}: {statistic: PersonAnnotationStatis
 			<td className={styles.behaviorCell}>
 				<span
 					className={styles.rarityDot}
-					style={{backgroundColor: RARITY_CSS_COLORS[statistic.rarity]}}
+					style={
+					{
+						backgroundColor: RARITY_CSS_COLORS[statistic.rarity],
+					}}
 				/>
-				<a
-					href={gamesUrl}
-					className={styles.predicateLink}
-				>
+				<a href={gamesUrl} className={styles.predicateLink}>
 					{formatPredicateName(statistic.predicateName)}
 				</a>
 			</td>
-			<td
-				className={styles.rateCell}
-				title={popGoodTooltip}
-			>
+			<td className={styles.rateCell} title={popGoodTooltip}>
 				{formatPercent(statistic.goodBaselineRate)}
 			</td>
-			<td
-				className={styles.rateCell}
-				title={popEvilTooltip}
-			>
+			<td className={styles.rateCell} title={popEvilTooltip}>
 				{formatPercent(statistic.evilBaselineRate)}
 			</td>
 			<td
@@ -129,25 +140,13 @@ function AnnotationRow({statistic, personId}: {statistic: PersonAnnotationStatis
 			>
 				{formatTellCell(statistic.popLikelihoodRatio, statistic.popConfidence, statistic.popSuggestsAlignment)}
 			</td>
-			<td
-				className={styles.rateCell}
-				title={playerGoodTooltip}
-			>
-				<a
-					href={gamesUrl}
-					className={styles.rateLinkGood}
-				>
+			<td className={styles.rateCell} title={playerGoodTooltip}>
+				<a href={gamesUrl} className={styles.rateLinkGood}>
 					{formatPercent(statistic.playerGoodRate)}
 				</a>
 			</td>
-			<td
-				className={styles.rateCell}
-				title={playerEvilTooltip}
-			>
-				<a
-					href={gamesUrl}
-					className={styles.rateLinkEvil}
-				>
+			<td className={styles.rateCell} title={playerEvilTooltip}>
+				<a href={gamesUrl} className={styles.rateLinkEvil}>
 					{formatPercent(statistic.playerEvilRate)}
 				</a>
 			</td>
@@ -169,24 +168,30 @@ function AnnotationRow({statistic, personId}: {statistic: PersonAnnotationStatis
 	);
 }
 
-function formatDeviation(playerRate: number | null, populationRate: number): string {
-	if (playerRate === null) {
+function formatDeviation(playerRate: number | null, populationRate: number): string
+{
+	if (playerRate === null)
+	{
 		return '—';
 	}
 	const diff = (playerRate - populationRate) * 100;
-	if (Math.abs(diff) < 0.5) {
+	if (Math.abs(diff) < 0.5)
+	{
 		return '±0%';
 	}
 	const sign = diff > 0 ? '+' : '';
 	return `${sign}${diff.toFixed(0)}%`;
 }
 
-function getDeviationClass(playerRate: number | null, populationRate: number): string {
-	if (playerRate === null) {
+function getDeviationClass(playerRate: number | null, populationRate: number): string
+{
+	if (playerRate === null)
+	{
 		return styles.deviationNone;
 	}
 	const diff = playerRate - populationRate;
-	if (Math.abs(diff) < 0.02) {
+	if (Math.abs(diff) < 0.02)
+	{
 		return styles.deviationNone;
 	}
 	return diff > 0 ? styles.deviationAbove : styles.deviationBelow;
@@ -200,7 +205,8 @@ function AlignmentRestrictedRow({
 	statistic: PersonAnnotationStatistic;
 	personId: string;
 	alignment: 'good' | 'evil';
-}) {
+})
+{
 	const gamesUrl = `/games?person=${personId}&behavior=${statistic.predicateName}`;
 
 	const isGood = alignment === 'good';
@@ -220,29 +226,20 @@ function AlignmentRestrictedRow({
 			<td className={styles.behaviorCell}>
 				<span
 					className={styles.rarityDot}
-					style={{backgroundColor: RARITY_CSS_COLORS[statistic.rarity]}}
+					style={
+					{
+						backgroundColor: RARITY_CSS_COLORS[statistic.rarity],
+					}}
 				/>
-				<a
-					href={gamesUrl}
-					className={styles.predicateLink}
-				>
+				<a href={gamesUrl} className={styles.predicateLink}>
 					{formatPredicateName(statistic.predicateName)}
 				</a>
 			</td>
-			<td
-				className={styles.rateCell}
-				title={popTooltip}
-			>
+			<td className={styles.rateCell} title={popTooltip}>
 				{formatPercent(popRate)}
 			</td>
-			<td
-				className={styles.rateCell}
-				title={playerTooltip}
-			>
-				<a
-					href={gamesUrl}
-					className={linkClass}
-				>
+			<td className={styles.rateCell} title={playerTooltip}>
+				<a href={gamesUrl} className={linkClass}>
 					{formatPercent(playerRate)}
 				</a>
 			</td>
@@ -264,7 +261,8 @@ function RoleRestrictedRow({
 	statistic: PersonAnnotationStatistic;
 	roleStat: RoleStatistic | undefined;
 	personId: string;
-}) {
+})
+{
 	const gamesUrl = `/games?person=${personId}&behavior=${statistic.predicateName}`;
 
 	// Overall stats (all roles)
@@ -290,46 +288,28 @@ function RoleRestrictedRow({
 			<td className={styles.behaviorCell}>
 				<span
 					className={styles.rarityDot}
-					style={{backgroundColor: RARITY_CSS_COLORS[statistic.rarity]}}
+					style={
+					{
+						backgroundColor: RARITY_CSS_COLORS[statistic.rarity],
+					}}
 				/>
-				<a
-					href={gamesUrl}
-					className={styles.predicateLink}
-				>
+				<a href={gamesUrl} className={styles.predicateLink}>
 					{formatPredicateName(statistic.predicateName)}
 				</a>
 			</td>
-			<td
-				className={styles.rateCell}
-				title={allPopTooltip}
-			>
+			<td className={styles.rateCell} title={allPopTooltip}>
 				{formatPercent(allPopRate)}
 			</td>
-			<td
-				className={styles.rateCell}
-				title={allPlayerTooltip}
-			>
-				<a
-					href={gamesUrl}
-					className={styles.rateLinkGood}
-				>
+			<td className={styles.rateCell} title={allPlayerTooltip}>
+				<a href={gamesUrl} className={styles.rateLinkGood}>
 					{formatPercent(allPlayerRate)}
 				</a>
 			</td>
-			<td
-				className={styles.rateCell}
-				title={rolePopTooltip}
-			>
+			<td className={styles.rateCell} title={rolePopTooltip}>
 				{formatPercent(rolePopRate)}
 			</td>
-			<td
-				className={styles.rateCell}
-				title={rolePlayerTooltip}
-			>
-				<a
-					href={gamesUrl}
-					className={styles.rateLinkGood}
-				>
+			<td className={styles.rateCell} title={rolePlayerTooltip}>
+				<a href={gamesUrl} className={styles.rateLinkGood}>
 					{formatPercent(rolePlayerRate)}
 				</a>
 			</td>
@@ -348,22 +328,26 @@ const GOOD_ROLES = ['MERLIN', 'PERCIVAL', 'LOYAL FOLLOWER'];
 const EVIL_ROLES = ['ASSASSIN', 'MORGANA', 'MORDRED', 'OBERON', 'EVIL MINION'];
 const ALL_ROLES = [...GOOD_ROLES, ...EVIL_ROLES];
 
-function expandInterestingRoles(interestingRoles: PersonAnnotationStatistic['interestingRoles']): string[] {
+function expandInterestingRoles(interestingRoles: PersonAnnotationStatistic['interestingRoles']): string[]
+{
 	if (interestingRoles === 'all') return ALL_ROLES;
 	if (interestingRoles === 'good') return GOOD_ROLES;
 	if (interestingRoles === 'evil') return EVIL_ROLES;
 	return interestingRoles;
 }
 
-export function PersonAnnotationStats({profile, personId}: PersonAnnotationStatsProps) {
+export function PersonAnnotationStats({profile, personId}: PersonAnnotationStatsProps)
+{
 	const {annotations, summary} = profile;
 
 	// Main table shows all annotations (for alignment comparison)
 	// Role sections show annotations where interestingRoles includes that role
 	const roleGroups = new Map<string, PersonAnnotationStatistic[]>();
-	for (const annotation of annotations) {
+	for (const annotation of annotations)
+	{
 		const roles = expandInterestingRoles(annotation.interestingRoles);
-		for (const role of roles) {
+		for (const role of roles)
+		{
 			const existing = roleGroups.get(role) ?? [];
 			existing.push(annotation);
 			roleGroups.set(role, existing);
@@ -371,7 +355,8 @@ export function PersonAnnotationStats({profile, personId}: PersonAnnotationStats
 	}
 	const sortedRoles = Array.from(roleGroups.keys()).sort();
 
-	if (annotations.length === 0) {
+	if (annotations.length === 0)
+	{
 		return (
 			<div className={styles.container}>
 				<h3 className={styles.title}>Behavioral Tells</h3>
@@ -400,16 +385,10 @@ export function PersonAnnotationStats({profile, personId}: PersonAnnotationStats
 						<thead>
 							<tr>
 								<th className={styles.headerBehavior}>Behavior</th>
-								<th
-									className={styles.headerNum}
-									colSpan={3}
-								>
+								<th className={styles.headerNum} colSpan={3}>
 									Population
 								</th>
-								<th
-									className={styles.headerNum}
-									colSpan={3}
-								>
+								<th className={styles.headerNum} colSpan={3}>
 									You
 								</th>
 							</tr>
@@ -446,13 +425,11 @@ export function PersonAnnotationStats({profile, personId}: PersonAnnotationStats
 				</span>
 			</div>
 
-			{sortedRoles.map((role) => {
+			{sortedRoles.map((role) =>
+			{
 				const roleAnnotations = roleGroups.get(role) ?? [];
 				return (
-					<div
-						key={role}
-						className={styles.roleSection}
-					>
+					<div key={role} className={styles.roleSection}>
 						<h4 className={styles.roleTitle}>{toDisplayRole(role)} Behaviors</h4>
 						<p className={styles.alignmentRestrictedDescription}>
 							Compares your rate as {toDisplayRole(role)} to other {toDisplayRole(role)} players, with
@@ -462,22 +439,13 @@ export function PersonAnnotationStats({profile, personId}: PersonAnnotationStats
 							<table className={styles.table}>
 								<thead>
 									<tr>
-										<th
-											className={styles.headerBehavior}
-											rowSpan={2}
-										>
+										<th className={styles.headerBehavior} rowSpan={2}>
 											Behavior
 										</th>
-										<th
-											className={styles.headerNum}
-											colSpan={2}
-										>
+										<th className={styles.headerNum} colSpan={2}>
 											All Roles
 										</th>
-										<th
-											className={styles.headerNum}
-											colSpan={3}
-										>
+										<th className={styles.headerNum} colSpan={3}>
 											{toDisplayRole(role)}
 										</th>
 									</tr>
@@ -490,7 +458,8 @@ export function PersonAnnotationStats({profile, personId}: PersonAnnotationStats
 									</tr>
 								</thead>
 								<tbody>
-									{roleAnnotations.map((statistic) => {
+									{roleAnnotations.map((statistic) =>
+									{
 										const roleStat = statistic.roleStats.find((rs) => rs.role === role);
 										return (
 											<RoleRestrictedRow

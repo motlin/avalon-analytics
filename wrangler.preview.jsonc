@@ -1,19 +1,18 @@
 {
-  "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "avalon-analytics",
-  "main": "src/worker.tsx",
-  "compatibility_date": "2025-05-07",
-  "compatibility_flags": [
-    "nodejs_compat"
-  ],
-  "observability": {
-    "enabled": true
-  },
-  "d1_databases": [
-    {
-      "binding": "DB",
-      "database_name": "avalon-analytics-dev",
-      "database_id": "PLACEHOLDER_DEV_DB_ID"
-    }
-  ]
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "avalon-analytics",
+	"main": "src/worker.tsx",
+	"compatibility_date": "2025-05-07",
+	"compatibility_flags": ["nodejs_compat"],
+	"observability":
+	{
+		"enabled": true,
+	},
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "avalon-analytics-dev",
+			"database_id": "PLACEHOLDER_DEV_DB_ID",
+		},
+	],
 }

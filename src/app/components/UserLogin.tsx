@@ -3,17 +3,20 @@ import styles from './UserLogin.module.css';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faEnvelopeSquare} from '@fortawesome/free-solid-svg-icons';
 
-interface AvalonApi {
+interface AvalonApi
+{
 	confirmingEmailError: string;
 	submitEmailAddr: (email: string) => Promise<void>;
 	signInAnonymously: () => Promise<void>;
 }
 
-interface UserLoginProps {
+interface UserLoginProps
+{
 	avalon: AvalonApi;
 }
 
-const UserLogin: React.FC<UserLoginProps> = ({avalon}) => {
+const UserLogin: React.FC<UserLoginProps> = ({avalon}) =>
+{
 	const [tab, setTab] = useState<number>(0);
 	const [emailAddr, setEmailAddr] = useState<string>('');
 	const [errorMessage, setErrorMessage] = useState<string>('');
@@ -21,49 +24,60 @@ const UserLogin: React.FC<UserLoginProps> = ({avalon}) => {
 	const [emailSubmitted, setEmailSubmitted] = useState<boolean>(false);
 	const userEmailFieldRef = useRef<HTMLInputElement>(null);
 
-	useEffect(() => {
+	useEffect(() =>
+	{
 		document.title = 'Avalon (Not Logged In)';
 	}, []);
 
-	const clearErrorMessage = () => {
+	const clearErrorMessage = () =>
+	{
 		setErrorMessage('');
 	};
 
-	const submitEmailAddress = () => {
+	const submitEmailAddress = () =>
+	{
 		setIsSubmittingEmailAddr(true);
 		clearErrorMessage();
 		avalon.confirmingEmailError = '';
 
 		avalon
 			.submitEmailAddr(emailAddr)
-			.then(() => {
+			.then(() =>
+			{
 				setEmailSubmitted(true);
 			})
-			.catch((err: Error) => {
+			.catch((err: Error) =>
+			{
 				setErrorMessage(err.message);
 			})
-			.finally(() => {
+			.finally(() =>
+			{
 				setIsSubmittingEmailAddr(false);
 			});
 	};
 
-	const signInAnonymously = () => {
+	const signInAnonymously = () =>
+	{
 		clearErrorMessage();
 		avalon
 			.signInAnonymously()
 			.then(() => {})
-			.catch((err: Error) => {
+			.catch((err: Error) =>
+			{
 				setErrorMessage(err.message);
 			});
 	};
 
-	const resetForm = () => {
+	const resetForm = () =>
+	{
 		setEmailSubmitted(false);
 	};
 
-	const handleEmailKeyUp = (event: React.KeyboardEvent<HTMLInputElement>) => {
+	const handleEmailKeyUp = (event: React.KeyboardEvent<HTMLInputElement>) =>
+	{
 		clearErrorMessage();
-		if (event.key === 'Enter') {
+		if (event.key === 'Enter')
+		{
 			submitEmailAddress();
 		}
 	};
@@ -94,16 +108,10 @@ const UserLogin: React.FC<UserLoginProps> = ({avalon}) => {
 
 				<div className={styles.tabs}>
 					<div className={styles.tabsSlider}></div>
-					<button
-						className={`${styles.tab} ${tab === 0 ? styles.tabActive : ''}`}
-						onClick={() => setTab(0)}
-					>
+					<button className={`${styles.tab} ${tab === 0 ? styles.tabActive : ''}`} onClick={() => setTab(0)}>
 						Email
 					</button>
-					<button
-						className={`${styles.tab} ${tab === 1 ? styles.tabActive : ''}`}
-						onClick={() => setTab(1)}
-					>
+					<button className={`${styles.tab} ${tab === 1 ? styles.tabActive : ''}`} onClick={() => setTab(1)}>
 						Anonymous
 					</button>
 				</div>
@@ -142,10 +150,7 @@ const UserLogin: React.FC<UserLoginProps> = ({avalon}) => {
 											<p>Check your email for the verification link</p>
 										</div>
 									</div>
-									<button
-										className={`${styles.btn} ${styles.mt4}`}
-										onClick={resetForm}
-									>
+									<button className={`${styles.btn} ${styles.mt4}`} onClick={resetForm}>
 										Try Again
 									</button>
 								</>
@@ -155,10 +160,7 @@ const UserLogin: React.FC<UserLoginProps> = ({avalon}) => {
 
 					{tab === 1 && (
 						<div className={styles.tabItem}>
-							<button
-								className={styles.btn}
-								onClick={signInAnonymously}
-							>
+							<button className={styles.btn} onClick={signInAnonymously}>
 								Login
 							</button>
 						</div>

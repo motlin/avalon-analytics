@@ -2,11 +2,13 @@
  * Based on MissionSummaryTable with annotation tooltips
  */
 
-.container {
+.container
+{
 	width: 100%;
 }
 
-.tableWrapper {
+.tableWrapper
+{
 	overflow: visible;
 	width: 100%;
 	display: flex;
@@ -14,52 +16,63 @@
 	padding-bottom: 100px;
 }
 
-.table {
+.table
+{
 	border-collapse: collapse;
 }
 
-.table tr {
+.table tr
+{
 	height: 2.3em;
 }
 
-.table td {
+.table td
+{
 	width: 1.7em;
 }
 
-.evenRow {
+.evenRow
+{
 	background-color: Gainsboro;
 }
 
-.oddRow {
+.oddRow
+{
 	background-color: bisque;
 }
 
-.playerName {
+.playerName
+{
 	border-left: 2px solid;
 	padding-left: 8px;
 	padding-right: 8px;
 	width: auto;
 }
 
-.fontWeightMedium {
+.fontWeightMedium
+{
 	font-weight: 500;
 }
 
-.playerLink {
+.playerLink
+{
 	color: #0066cc;
 	text-decoration: none;
 }
 
-.playerLink:hover {
+.playerLink:hover
+{
 	text-decoration: underline;
 }
 
-.unmappedPlayer {
+.unmappedPlayer
+{
 	color: #888;
 	font-style: italic;
 }
 
-.role {
+.role
+{
 	border-right: 2px solid;
 	white-space: nowrap;
 	padding-left: 8px;
@@ -67,35 +80,41 @@
 	width: auto;
 }
 
-.proposalCell {
+.proposalCell
+{
 	text-align: center;
 	min-width: 2em;
 	padding: 0 4px;
 }
 
-.role + td {
+.role + td
+{
 	padding-left: 8px;
 }
 
-.missionResult {
+.missionResult
+{
 	border-right: 2px solid;
 	text-align: center;
 	padding: 0 4px;
 }
 
-.missionResult + td {
+.missionResult + td
+{
 	padding-left: 8px;
 	border-left: 2px solid;
 }
 
 /* Tooltip styles */
-.tooltipWrapper {
+.tooltipWrapper
+{
 	position: relative;
 	display: inline-block;
 	cursor: help;
 }
 
-.tooltip {
+.tooltip
+{
 	visibility: hidden;
 	opacity: 0;
 	position: absolute;
@@ -118,39 +137,46 @@
 		opacity 0.1s ease-in-out;
 }
 
-.tooltipWrapper:hover .tooltip {
+.tooltipWrapper:hover .tooltip
+{
 	visibility: visible;
 	opacity: 1;
 	transition-delay: 0s;
 }
 
-.tooltipLine {
+.tooltipLine
+{
 	display: block;
 	margin-top: 4px;
 	text-align: left;
 }
 
-.tooltipLine:first-child {
+.tooltipLine:first-child
+{
 	margin-top: 0;
 }
 
-.tooltipPredicateName {
+.tooltipPredicateName
+{
 	font-size: 11px;
 	font-style: italic;
 }
 
 /* Proposer icon - yellow circle behind thumb icons */
-.proposerIcon {
+.proposerIcon
+{
 	/* Wrapper for the yellow proposer indicator circle */
 }
 
 /* Annotation indicator - small dot to show hover notes are available */
-.hasAnnotation {
+.hasAnnotation
+{
 	position: relative;
 }
 
-.hasAnnotation::after {
-	content: "";
+.hasAnnotation::after
+{
+	content: '';
 	position: absolute;
 	top: -2px;
 	right: -2px;

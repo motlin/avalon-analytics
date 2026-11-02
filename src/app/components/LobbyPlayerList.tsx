@@ -1,4 +1,5 @@
-import {
+import
+{
 	closestCenter,
 	DndContext,
 	type DragEndEvent,
@@ -7,7 +8,8 @@ import {
 	useSensor,
 	useSensors,
 } from '@dnd-kit/core';
-import {
+import
+{
 	arrayMove,
 	SortableContext,
 	sortableKeyboardCoordinates,
@@ -22,11 +24,13 @@ import {faBars, faStar, faUser, faTimes, faHourglass} from '@fortawesome/free-so
 import {faUser as faUserRegular} from '@fortawesome/free-regular-svg-icons';
 import type {AvalonApi} from './types';
 
-interface LobbyPlayerListProps {
+interface LobbyPlayerListProps
+{
 	avalon: AvalonApi;
 }
 
-interface SortableItemProps {
+interface SortableItemProps
+{
 	id: string;
 	player: string;
 	avalon: AvalonApi;
@@ -42,20 +46,32 @@ const SortableItem: React.FC<SortableItemProps> = ({
 	canDrag,
 	playersBeingKicked,
 	onKickPlayerConfirm,
-}) => {
-	const {attributes, listeners, setNodeRef, transform, transition} = useSortable({id});
+}) =>
+{
+	const {attributes, listeners, setNodeRef, transform, transition} = useSortable(
+		{
+			id,
+		},
+	);
 
-	const style = {
+	const style =
+	{
 		transform: CSS.Transform.toString(transform),
 		transition,
 	};
 
-	const getPlayerIcon = () => {
-		if (avalon.lobby.admin && player === avalon.lobby.admin.name) {
+	const getPlayerIcon = () =>
+	{
+		if (avalon.lobby.admin && player === avalon.lobby.admin.name)
+		{
 			return <FontAwesomeIcon icon={faStar} />;
-		} else if (player === avalon.user.name) {
+		}
+		else if (player === avalon.user.name)
+		{
 			return <FontAwesomeIcon icon={faUserRegular} />;
-		} else {
+		}
+		else
+		{
 			return <FontAwesomeIcon icon={faUser} />;
 		}
 	};
@@ -63,17 +79,9 @@ const SortableItem: React.FC<SortableItemProps> = ({
 	const isKickable = avalon.isAdmin && player !== avalon.user.name && !avalon.isGameInProgress;
 
 	return (
-		<div
-			ref={setNodeRef}
-			style={style}
-			className={styles.listItem}
-		>
+		<div ref={setNodeRef} style={style} className={styles.listItem}>
 			{canDrag && (
-				<div
-					className={styles.dragHandle}
-					{...attributes}
-					{...listeners}
-				>
+				<div className={styles.dragHandle} {...attributes} {...listeners}>
 					<FontAwesomeIcon icon={faBars} />
 				</div>
 			)}
@@ -96,7 +104,8 @@ const SortableItem: React.FC<SortableItemProps> = ({
 	);
 };
 
-const LobbyPlayerList: React.FC<LobbyPlayerListProps> = ({avalon}) => {
+const LobbyPlayerList: React.FC<LobbyPlayerListProps> = ({avalon}) =>
+{
 	const [playerList, setPlayerList] = useState<string[]>(avalon.config.playerList ?? []);
 	const [kickPlayerDialog, setKickPlayerDialog] = useState(false);
 	const [playerToKick, setPlayerToKick] = useState('');
@@ -104,30 +113,39 @@ const LobbyPlayerList: React.FC<LobbyPlayerListProps> = ({avalon}) => {
 
 	const sensors = useSensors(
 		useSensor(PointerSensor),
-		useSensor(KeyboardSensor, {
-			coordinateGetter: sortableKeyboardCoordinates,
-		}),
+		useSensor(
+			KeyboardSensor,
+			{
+				coordinateGetter: sortableKeyboardCoordinates,
+			},
+		),
 	);
 
 	const canDrag = !!(avalon.isAdmin && !avalon.isGameInProgress);
 
 	// Update local state when avalon.config.playerList changes
-	useEffect(() => {
-		if (avalon.config.playerList) {
+	useEffect(() =>
+	{
+		if (avalon.config.playerList)
+		{
 			setPlayerList(avalon.config.playerList);
 		}
 	}, [avalon.config.playerList]);
 
-	const handleDragEnd = (event: DragEndEvent) => {
+	const handleDragEnd = (event: DragEndEvent) =>
+	{
 		const {active, over} = event;
 
-		if (active.id !== over?.id) {
-			setPlayerList((items) => {
+		if (active.id !== over?.id)
+		{
+			setPlayerList((items) =>
+			{
 				const oldIndex = items.indexOf(active.id as string);
 				const newIndex = items.indexOf(over?.id as string);
 				const newList = arrayMove(items, oldIndex, newIndex);
 
-				if (avalon.config.sortList) {
+				if (avalon.config.sortList)
+				{
 					avalon.config.sortList(newList);
 				}
 
@@ -136,25 +154,32 @@ const LobbyPlayerList: React.FC<LobbyPlayerListProps> = ({avalon}) => {
 		}
 	};
 
-	const kickPlayerConfirm = (player: string) => {
+	const kickPlayerConfirm = (player: string) =>
+	{
 		setPlayerToKick(player);
 		setKickPlayerDialog(true);
 	};
 
-	const handleKickPlayer = async (player: string) => {
+	const handleKickPlayer = async (player: string) =>
+	{
 		setKickPlayerDialog(false);
 		setPlayersBeingKicked((prev) => [...prev, player]);
 
-		try {
-			if (avalon.kickPlayer) {
+		try
+		{
+			if (avalon.kickPlayer)
+			{
 				await avalon.kickPlayer(player);
 			}
-		} finally {
+		}
+		finally
+		{
 			setPlayersBeingKicked((prev) => prev.filter((p) => p !== player));
 		}
 	};
 
-	const handleCancelKick = () => {
+	const handleCancelKick = () =>
+	{
 		setKickPlayerDialog(false);
 		setPlayerToKick('');
 	};
@@ -170,16 +195,10 @@ const LobbyPlayerList: React.FC<LobbyPlayerListProps> = ({avalon}) => {
 						</div>
 						<div className={styles.dialogContent}>Do you wish to kick {playerToKick} from the lobby?</div>
 						<div className={styles.dialogActions}>
-							<button
-								className={styles.kickConfirmButton}
-								onClick={() => handleKickPlayer(playerToKick)}
-							>
+							<button className={styles.kickConfirmButton} onClick={() => handleKickPlayer(playerToKick)}>
 								Kick {playerToKick}
 							</button>
-							<button
-								className={styles.cancelButton}
-								onClick={handleCancelKick}
-							>
+							<button className={styles.cancelButton} onClick={handleCancelKick}>
 								Cancel
 							</button>
 						</div>
@@ -189,15 +208,8 @@ const LobbyPlayerList: React.FC<LobbyPlayerListProps> = ({avalon}) => {
 
 			{/* Player List */}
 			<div className={styles.playerList}>
-				<DndContext
-					sensors={sensors}
-					collisionDetection={closestCenter}
-					onDragEnd={handleDragEnd}
-				>
-					<SortableContext
-						items={playerList}
-						strategy={verticalListSortingStrategy}
-					>
+				<DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+					<SortableContext items={playerList} strategy={verticalListSortingStrategy}>
 						{playerList.map((player) => (
 							<SortableItem
 								key={player}

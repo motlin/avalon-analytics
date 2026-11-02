@@ -1,13 +1,17 @@
 import type {Meta, StoryObj} from '@storybook/react-vite';
 import Game from './Game';
 
-const meta: Meta<typeof Game> = {
+const meta: Meta<typeof Game> =
+{
 	title: 'Game/Game',
 	component: Game,
-	parameters: {
+	parameters:
+	{
 		layout: 'fullscreen',
-		docs: {
-			description: {
+		docs:
+		{
+			description:
+			{
 				component: `
 The Game component is the main coordinator for the Avalon game interface. It orchestrates the three primary game areas:
 
@@ -34,12 +38,10 @@ The component receives the complete Avalon game state as props and passes the re
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const createMockAvalon = (
-	gamePhase: string = 'TEAM_PROPOSAL',
-	missionIdx: number = 0,
-	isAssassin: boolean = false,
-) => ({
-	game: {
+const createMockAvalon = (gamePhase: string = 'TEAM_PROPOSAL', missionIdx: number = 0, isAssassin: boolean = false) => (
+{
+	game:
+	{
 		id: 'mock-game-id',
 		timeCreated: new Date('2025-01-01T00:00:00Z'),
 		missions: [
@@ -92,16 +94,32 @@ const createMockAvalon = (
 		currentMissionIdx: missionIdx,
 		phase: gamePhase,
 		players: [
-			{uid: '1', name: 'CRAIGM'},
-			{uid: '2', name: 'ZEHUA'},
-			{uid: '3', name: 'VINAY'},
-			{uid: '4', name: 'LUKEE'},
-			{uid: '5', name: 'KEN'},
+			{
+				uid: '1',
+				name: 'CRAIGM',
+			},
+			{
+				uid: '2',
+				name: 'ZEHUA',
+			},
+			{
+				uid: '3',
+				name: 'VINAY',
+			},
+			{
+				uid: '4',
+				name: 'LUKEE',
+			},
+			{
+				uid: '5',
+				name: 'KEN',
+			},
 		],
 		roles: ['MERLIN', 'PERCIVAL', 'LOYAL FOLLOWER', 'MORGANA', 'ASSASSIN'],
 		currentProposer: 'CRAIGM',
 		currentProposalIdx: 0,
-		currentProposal: {
+		currentProposal:
+		{
 			team: ['CRAIGM', 'ZEHUA'],
 			votes: [],
 			proposer: 'CRAIGM',
@@ -109,18 +127,22 @@ const createMockAvalon = (
 		},
 		lastProposal: null,
 		hammer: 'KEN',
-		currentMission: {
+		currentMission:
+		{
 			teamSize: 2,
 			team: [],
 			failsRequired: 1,
 			state: 'PENDING' as const,
 		},
 	},
-	user: {
+	user:
+	{
 		name: 'CRAIGM',
 	},
-	lobby: {
-		game: {
+	lobby:
+	{
+		game:
+		{
 			id: 'mock-game-id',
 			timeCreated: new Date('2025-01-01T00:00:00Z'),
 			missions: [],
@@ -128,41 +150,77 @@ const createMockAvalon = (
 			currentMissionIdx: missionIdx,
 			roles: ['MERLIN', 'PERCIVAL', 'LOYAL FOLLOWER', 'MORGANA', 'ASSASSIN'],
 		},
-		role: {
+		role:
+		{
 			assassin: isAssassin,
 		},
 	},
-	config: {
-		roleMap: {
-			MERLIN: {name: 'MERLIN', team: 'good' as const, description: 'Knows who the evil players are'},
-			PERCIVAL: {name: 'PERCIVAL', team: 'good' as const, description: 'Knows who Merlin and Morgana are'},
-			'LOYAL FOLLOWER': {name: 'LOYAL FOLLOWER', team: 'good' as const, description: 'A loyal servant of Arthur'},
-			MORGANA: {name: 'MORGANA', team: 'evil' as const, description: 'Appears as Merlin to Percival'},
-			ASSASSIN: {name: 'ASSASSIN', team: 'evil' as const, description: 'Can assassinate Merlin'},
+	config:
+	{
+		roleMap:
+		{
+			MERLIN:
+			{
+				name: 'MERLIN',
+				team: 'good' as const,
+				description: 'Knows who the evil players are',
+			},
+			PERCIVAL:
+			{
+				name: 'PERCIVAL',
+				team: 'good' as const,
+				description: 'Knows who Merlin and Morgana are',
+			},
+			'LOYAL FOLLOWER':
+			{
+				name: 'LOYAL FOLLOWER',
+				team: 'good' as const,
+				description: 'A loyal servant of Arthur',
+			},
+			MORGANA:
+			{
+				name: 'MORGANA',
+				team: 'evil' as const,
+				description: 'Appears as Merlin to Percival',
+			},
+			ASSASSIN:
+			{
+				name: 'ASSASSIN',
+				team: 'evil' as const,
+				description: 'Can assassinate Merlin',
+			},
 		},
 	},
 });
 
-export const TeamProposal: Story = {
-	args: {
+export const TeamProposal: Story =
+{
+	args:
+	{
 		avalon: createMockAvalon('TEAM_PROPOSAL', 0),
 	},
 };
 
-export const ProposalVote: Story = {
-	args: {
+export const ProposalVote: Story =
+{
+	args:
+	{
 		avalon: createMockAvalon('PROPOSAL_VOTE', 0),
 	},
 };
 
-export const MissionVote: Story = {
-	args: {
+export const MissionVote: Story =
+{
+	args:
+	{
 		avalon: createMockAvalon('MISSION_VOTE', 0),
 	},
 };
 
-export const Assassination: Story = {
-	args: {
+export const Assassination: Story =
+{
+	args:
+	{
 		avalon: createMockAvalon('ASSASSINATION', 4, true),
 	},
 };

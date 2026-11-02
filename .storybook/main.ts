@@ -4,29 +4,36 @@ import {fileURLToPath} from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-const config: StorybookConfig = {
+const config: StorybookConfig =
+{
 	stories: ['../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
 	addons: ['@storybook/addon-docs', '@storybook/addon-onboarding', '@storybook/addon-vitest'],
-	framework: {
+	framework:
+	{
 		name: '@storybook/react-vite',
 		options: {},
 	},
-	features: {
+	features:
+	{
 		interactionsDebugger: true,
 	},
-	async viteFinal(config) {
+	async viteFinal(config)
+	{
 		return {
 			...config,
-			resolve: {
+			resolve:
+			{
 				...config.resolve,
-				alias: {
+				alias:
+				{
 					...config.resolve?.alias,
 					'@': path.resolve(__dirname, '../src'),
 					'@generated': path.resolve(__dirname, '../generated'),
 				},
 				dedupe: ['react', 'react-dom'],
 			},
-			optimizeDeps: {
+			optimizeDeps:
+			{
 				...config.optimizeDeps,
 				include: [
 					...(config.optimizeDeps?.include || []),

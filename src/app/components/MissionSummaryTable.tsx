@@ -5,20 +5,24 @@ import {faCheckCircle, faTimesCircle, faCircle} from '@fortawesome/free-solid-sv
 import {faThumbsUp, faThumbsDown, faCircle as faCircleRegular} from '@fortawesome/free-regular-svg-icons';
 import type {Game} from '../models/game';
 
-interface MissionSummaryTableProps {
+interface MissionSummaryTableProps
+{
 	game: Game;
 	showSpoilers?: boolean;
 }
 
-const MissionSummaryTable: React.FC<MissionSummaryTableProps> = ({game, showSpoilers = true}) => {
+const MissionSummaryTable: React.FC<MissionSummaryTableProps> = ({game, showSpoilers = true}) =>
+{
 	const players = game.players.map((p) => p.name);
 	const missions = game.missions;
-	const roles = game.outcome?.roles?.map((r) => ({
+	const roles = game.outcome?.roles?.map((r) => (
+	{
 		name: r.name,
 		role: r.role,
 	}));
 	const missionVotes = game.outcome?.votes?.reduce(
-		(acc, vote, index) => {
+		(acc, vote, index) =>
+		{
 			acc[index] = vote;
 			return acc;
 		},
@@ -29,19 +33,18 @@ const MissionSummaryTable: React.FC<MissionSummaryTableProps> = ({game, showSpoi
 		<table className={styles.table}>
 			<tbody>
 				{players.map((player, playerIndex) => (
-					<tr
-						key={player}
-						className={playerIndex % 2 === 0 ? styles.evenRow : styles.oddRow}
-					>
+					<tr key={player} className={playerIndex % 2 === 0 ? styles.evenRow : styles.oddRow}>
 						<td className={styles.playerName}>
 							<span className={styles.fontWeightMedium}>{player}</span>
 						</td>
 						{showSpoilers && roles && (
 							<td className={styles.role}>{roles.find((r) => r.name === player)?.role}</td>
 						)}
-						{missions.flatMap((mission, missionIndex) => {
+						{missions.flatMap((mission, missionIndex) =>
+						{
 							const validProposals = mission.proposals.filter((p) => p.team.length > 0);
-							const proposalCells = validProposals.map((proposal, proposalIndex) => {
+							const proposalCells = validProposals.map((proposal, proposalIndex) =>
+							{
 								const isProposer = proposal.proposer === player;
 								const isOnTeam = proposal.team.includes(player);
 								const votedYes = proposal.votes.includes(player);
@@ -83,10 +86,7 @@ const MissionSummaryTable: React.FC<MissionSummaryTableProps> = ({game, showSpoi
 							});
 
 							const missionVoteCell = (
-								<td
-									key={`${player}_mission${missionIndex}`}
-									className={styles.missionResult}
-								>
+								<td key={`${player}_mission${missionIndex}`} className={styles.missionResult}>
 									{mission.team.includes(player) && missionVotes && (
 										<span className="fa-layers fa-fw">
 											<FontAwesomeIcon

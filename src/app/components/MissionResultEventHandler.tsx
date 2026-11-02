@@ -1,10 +1,12 @@
 import React from 'react';
 
-interface MissionResultEventHandlerProps {
+interface MissionResultEventHandlerProps
+{
 	avalon: any;
 }
 
-const MissionResultEventHandler: React.FC<MissionResultEventHandlerProps> = () => {
+const MissionResultEventHandler: React.FC<MissionResultEventHandlerProps> = () =>
+{
 	return null;
 };
 

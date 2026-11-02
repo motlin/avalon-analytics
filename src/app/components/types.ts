@@ -1,19 +1,22 @@
 import type {Game as BaseGame, Mission as BaseMission, Player, GameOutcome} from '../models/game';
 
-export interface Mission extends Omit<BaseMission, 'team'> {
+export interface Mission extends Omit<BaseMission, 'team'>
+{
 	team: string[];
 	votes: string[];
 	evilOnTeam?: string[];
 }
 
-export interface Proposal {
+export interface Proposal
+{
 	proposer: string;
 	team: string[];
 	votes: string[];
 	state: 'APPROVED' | 'REJECTED' | 'PENDING';
 }
 
-export interface Game extends BaseGame {
+export interface Game extends BaseGame
+{
 	missions: Mission[];
 	phase?: string;
 	currentProposer?: string;
@@ -27,34 +30,41 @@ export interface Game extends BaseGame {
 	currentMissionIdx?: number;
 }
 
-export interface User {
+export interface User
+{
 	name: string;
-	stats?: {
+	stats?:
+	{
 		games: number;
 	};
 }
 
-export interface Role {
+export interface Role
+{
 	name: string;
 	team: 'good' | 'evil';
 	description: string;
 	selected?: boolean;
 }
 
-export interface Config {
+export interface Config
+{
 	roleMap: Record<string, Role>;
 	playerList?: string[];
 	selectableRoles?: Role[];
 	sortList?: (newList: string[]) => void;
 }
 
-export interface Lobby {
+export interface Lobby
+{
 	name?: string;
 	role?: any;
-	game: Game & {
+	game: Game &
+	{
 		currentMissionIdx?: number;
 		currentMission?: Mission;
-		currentProposal?: {
+		currentProposal?:
+		{
 			team: string[];
 			votes: string[];
 			state: string;
@@ -66,13 +76,15 @@ export interface Lobby {
 		missionVotes?: Record<string, boolean>[];
 		players?: (string | Player)[];
 	};
-	admin?: {
+	admin?:
+	{
 		name: string;
 		playersKicked?: string[];
 	};
 }
 
-export interface AvalonApi {
+export interface AvalonApi
+{
 	game: Game;
 	user: User;
 	lobby: Lobby;

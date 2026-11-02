@@ -1,9 +1,11 @@
-.container {
+.container
+{
 	position: relative;
 }
 
 /* Dialog Overlay */
-.dialogOverlay {
+.dialogOverlay
+{
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -16,7 +18,8 @@
 	z-index: 1000;
 }
 
-.dialog {
+.dialog
+{
 	background-color: #b2ebf2;
 	border-radius: 4px;
 	box-shadow:
@@ -28,26 +31,30 @@
 	min-width: 280px;
 }
 
-.dialogTitle {
+.dialogTitle
+{
 	background-color: #26c6da;
 	padding: 16px;
 	border-radius: 4px 4px 0 0;
 }
 
-.dialogTitle h3 {
+.dialogTitle h3
+{
 	margin: 0;
 	font-size: 1.25rem;
 	font-weight: 500;
 	color: #333;
 }
 
-.dialogContent {
+.dialogContent
+{
 	padding: 16px;
 	color: #333;
 	font-size: 0.875rem;
 }
 
-.dialogActions {
+.dialogActions
+{
 	border-top: 1px solid rgba(0, 0, 0, 0.12);
 	padding: 8px;
 	display: flex;
@@ -55,7 +62,8 @@
 	gap: 8px;
 }
 
-.kickConfirmButton {
+.kickConfirmButton
+{
 	background-color: #f44336;
 	color: white;
 	border: none;
@@ -68,11 +76,13 @@
 	transition: background-color 0.3s ease;
 }
 
-.kickConfirmButton:hover {
+.kickConfirmButton:hover
+{
 	background-color: #d32f2f;
 }
 
-.cancelButton {
+.cancelButton
+{
 	background-color: transparent;
 	color: #1976d2;
 	border: none;
@@ -85,12 +95,14 @@
 	transition: background-color 0.3s ease;
 }
 
-.cancelButton:hover {
+.cancelButton:hover
+{
 	background-color: rgba(25, 118, 210, 0.04);
 }
 
 /* Player List */
-.playerList {
+.playerList
+{
 	background-color: #eceff1;
 	border-radius: 4px;
 	box-shadow:
@@ -100,7 +112,8 @@
 	overflow: hidden;
 }
 
-.listItem {
+.listItem
+{
 	background-color: white;
 	border-bottom: 1px solid rgba(0, 0, 0, 0.12);
 	display: flex;
@@ -110,15 +123,18 @@
 	cursor: default;
 }
 
-.listItem:last-child {
+.listItem:last-child
+{
 	border-bottom: none;
 }
 
-.listItem:hover {
+.listItem:hover
+{
 	background-color: #f5f5f5;
 }
 
-.dragHandle {
+.dragHandle
+{
 	margin-right: 16px;
 	color: #666;
 	cursor: grab;
@@ -129,11 +145,13 @@
 	align-items: center;
 }
 
-.dragHandle:active {
+.dragHandle:active
+{
 	cursor: grabbing;
 }
 
-.playerIcon {
+.playerIcon
+{
 	margin-right: 16px;
 	font-size: 1.2rem;
 	line-height: 1;
@@ -141,14 +159,16 @@
 	align-items: center;
 }
 
-.playerName {
+.playerName
+{
 	flex: 1;
 	font-size: 1rem;
 	font-weight: 400;
 	color: #333;
 }
 
-.kickButton {
+.kickButton
+{
 	background-color: transparent;
 	border: none;
 	cursor: pointer;
@@ -167,43 +187,52 @@
 		color 0.3s ease;
 }
 
-.kickButton:hover {
+.kickButton:hover
+{
 	background-color: rgba(0, 0, 0, 0.04);
 	color: #333;
 }
 
-.kickButton:disabled {
+.kickButton:disabled
+{
 	opacity: 0.6;
 	cursor: not-allowed;
 }
 
-.kickButton.loading {
+.kickButton.loading
+{
 	color: #ff9800;
 }
 
 /* Dragging states */
-.listItem[data-sortable-item][data-sortable-item-dragging] {
+.listItem[data-sortable-item][data-sortable-item-dragging]
+{
 	opacity: 0.5;
 	transform: rotate(5deg);
 }
 
-.listItem[data-sortable-item][data-sortable-item-over] {
+.listItem[data-sortable-item][data-sortable-item-over]
+{
 	border-top: 2px solid #2196f3;
 }
 
 /* Responsive design */
-@media (max-width: 600px) {
-	.dialog {
+@media (max-width: 600px)
+{
+	.dialog
+	{
 		margin: 16px;
 		width: calc(100% - 32px);
 	}
 
-	.listItem {
+	.listItem
+	{
 		padding: 8px 12px;
 	}
 
 	.dragHandle,
-	.playerIcon {
+	.playerIcon
+	{
 		margin-right: 12px;
 	}
 }

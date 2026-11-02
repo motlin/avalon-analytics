@@ -1,13 +1,17 @@
 import type {Meta, StoryObj} from '@storybook/react-vite';
 import TeamVoteAction from './TeamVoteAction';
 
-const meta = {
+const meta =
+{
 	title: 'Gameplay/TeamVoteAction',
 	component: TeamVoteAction,
-	parameters: {
+	parameters:
+	{
 		layout: 'centered',
-		docs: {
-			description: {
+		docs:
+		{
+			description:
+			{
 				component: `
 The TeamVoteAction component handles the team approval voting phase of the game. All players simultaneously vote to approve or reject the proposed mission team.
 
@@ -36,8 +40,10 @@ Voting patterns reveal information:
 			},
 		},
 	},
-	argTypes: {
-		avalon: {
+	argTypes:
+	{
+		avalon:
+		{
 			description: 'Avalon game state object containing voting information',
 		},
 	},
@@ -48,30 +54,39 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 const mockVoteTeam = () =>
-	new Promise<void>((resolve) => {
+	new Promise<void>((resolve) =>
+	{
 		setTimeout(resolve, 1000);
 	});
 
-export const FirstProposal: Story = {
-	args: {
-		avalon: {
-			game: {
+export const FirstProposal: Story =
+{
+	args:
+	{
+		avalon:
+		{
+			game:
+			{
 				missions: [],
 				players: [],
 				id: '1',
 				timeCreated: new Date(),
 			},
-			config: {
+			config:
+			{
 				roleMap: {},
 			},
-			lobby: {
-				game: {
+			lobby:
+			{
+				game:
+				{
 					missions: [],
 					id: '1',
 					players: [],
 					timeCreated: new Date(),
 					currentProposalIdx: 0,
-					currentProposal: {
+					currentProposal:
+					{
 						team: ['CRAIGM', 'ZEHUA', 'VINAY'],
 						votes: [],
 						state: 'PENDING',
@@ -79,7 +94,8 @@ export const FirstProposal: Story = {
 					currentProposer: 'CRAIGM',
 				},
 			},
-			user: {
+			user:
+			{
 				name: 'LUKEE',
 			},
 			voteTeam: mockVoteTeam,
@@ -87,26 +103,34 @@ export const FirstProposal: Story = {
 	},
 };
 
-export const SecondProposal: Story = {
-	args: {
-		avalon: {
-			game: {
+export const SecondProposal: Story =
+{
+	args:
+	{
+		avalon:
+		{
+			game:
+			{
 				missions: [],
 				players: [],
 				id: '1',
 				timeCreated: new Date(),
 			},
-			config: {
+			config:
+			{
 				roleMap: {},
 			},
-			lobby: {
-				game: {
+			lobby:
+			{
+				game:
+				{
 					missions: [],
 					id: '1',
 					players: [],
 					timeCreated: new Date(),
 					currentProposalIdx: 1,
-					currentProposal: {
+					currentProposal:
+					{
 						team: ['ZEHUA', 'VINAY', 'LUKEE'],
 						votes: [],
 						state: 'PENDING',
@@ -114,7 +138,8 @@ export const SecondProposal: Story = {
 					currentProposer: 'ZEHUA',
 				},
 			},
-			user: {
+			user:
+			{
 				name: 'CRAIGM',
 			},
 			voteTeam: mockVoteTeam,
@@ -122,26 +147,34 @@ export const SecondProposal: Story = {
 	},
 };
 
-export const YourProposal: Story = {
-	args: {
-		avalon: {
-			game: {
+export const YourProposal: Story =
+{
+	args:
+	{
+		avalon:
+		{
+			game:
+			{
 				missions: [],
 				players: [],
 				id: '1',
 				timeCreated: new Date(),
 			},
-			config: {
+			config:
+			{
 				roleMap: {},
 			},
-			lobby: {
-				game: {
+			lobby:
+			{
+				game:
+				{
 					missions: [],
 					id: '1',
 					players: [],
 					timeCreated: new Date(),
 					currentProposalIdx: 2,
-					currentProposal: {
+					currentProposal:
+					{
 						team: ['CRAIGM', 'KEN', 'ROB'],
 						votes: [],
 						state: 'PENDING',
@@ -149,7 +182,8 @@ export const YourProposal: Story = {
 					currentProposer: 'VINAY',
 				},
 			},
-			user: {
+			user:
+			{
 				name: 'VINAY',
 			},
 			voteTeam: mockVoteTeam,
@@ -157,26 +191,34 @@ export const YourProposal: Story = {
 	},
 };
 
-export const AlreadyVoted: Story = {
-	args: {
-		avalon: {
-			game: {
+export const AlreadyVoted: Story =
+{
+	args:
+	{
+		avalon:
+		{
+			game:
+			{
 				missions: [],
 				players: [],
 				id: '1',
 				timeCreated: new Date(),
 			},
-			config: {
+			config:
+			{
 				roleMap: {},
 			},
-			lobby: {
-				game: {
+			lobby:
+			{
+				game:
+				{
 					missions: [],
 					id: '1',
 					players: [],
 					timeCreated: new Date(),
 					currentProposalIdx: 3,
-					currentProposal: {
+					currentProposal:
+					{
 						team: ['LUKEE', 'KEN'],
 						votes: ['CRAIGM'],
 						state: 'PENDING',
@@ -184,7 +226,8 @@ export const AlreadyVoted: Story = {
 					currentProposer: 'LUKEE',
 				},
 			},
-			user: {
+			user:
+			{
 				name: 'CRAIGM',
 			},
 			voteTeam: mockVoteTeam,
@@ -192,26 +235,34 @@ export const AlreadyVoted: Story = {
 	},
 };
 
-export const FinalProposal: Story = {
-	args: {
-		avalon: {
-			game: {
+export const FinalProposal: Story =
+{
+	args:
+	{
+		avalon:
+		{
+			game:
+			{
 				missions: [],
 				players: [],
 				id: '1',
 				timeCreated: new Date(),
 			},
-			config: {
+			config:
+			{
 				roleMap: {},
 			},
-			lobby: {
-				game: {
+			lobby:
+			{
+				game:
+				{
 					missions: [],
 					id: '1',
 					players: [],
 					timeCreated: new Date(),
 					currentProposalIdx: 4,
-					currentProposal: {
+					currentProposal:
+					{
 						team: ['CRAIGM', 'ZEHUA', 'VINAY', 'LUKEE'],
 						votes: [],
 						state: 'PENDING',
@@ -219,7 +270,8 @@ export const FinalProposal: Story = {
 					currentProposer: 'KEN',
 				},
 			},
-			user: {
+			user:
+			{
 				name: 'ROB',
 			},
 			voteTeam: mockVoteTeam,

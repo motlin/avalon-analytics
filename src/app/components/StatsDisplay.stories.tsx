@@ -1,13 +1,17 @@
 import type {Meta, StoryObj} from '@storybook/react-vite';
 import StatsDisplay from './StatsDisplay';
 
-const meta: Meta<typeof StatsDisplay> = {
+const meta: Meta<typeof StatsDisplay> =
+{
 	title: 'UI/StatsDisplay',
 	component: StatsDisplay,
-	parameters: {
+	parameters:
+	{
 		layout: 'centered',
-		docs: {
-			description: {
+		docs:
+		{
+			description:
+			{
 				component: `StatsDisplay shows player statistics and win rates in a clean, informative format.
 
 ## Features
@@ -43,12 +47,15 @@ function Profile() {
 		},
 	},
 	tags: ['autodocs'],
-	argTypes: {
-		stats: {
+	argTypes:
+	{
+		stats:
+		{
 			control: 'object',
 			description: 'Player statistics object containing games, wins, good team plays, and playtime',
 		},
-		globalStats: {
+		globalStats:
+		{
 			control: 'object',
 			description: 'Optional global statistics for comparison. Shows overall good win rate across all games',
 		},
@@ -58,9 +65,12 @@ function Profile() {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const BasicStats: Story = {
-	args: {
-		stats: {
+export const BasicStats: Story =
+{
+	args:
+	{
+		stats:
+		{
 			games: 50,
 			good: 25,
 			wins: 30,
@@ -68,45 +78,60 @@ export const BasicStats: Story = {
 			playtimeSeconds: 7200, // 2 hours
 		},
 	},
-	parameters: {
-		docs: {
-			description: {
+	parameters:
+	{
+		docs:
+		{
+			description:
+			{
 				story: 'Standard player statistics showing a 60% win rate with balanced good/evil distribution.',
 			},
 		},
 	},
 };
 
-export const WithGlobalStats: Story = {
-	args: {
-		stats: {
+export const WithGlobalStats: Story =
+{
+	args:
+	{
+		stats:
+		{
 			games: 75,
 			good: 40,
 			wins: 45,
 			good_wins: 28,
 			playtimeSeconds: 10800, // 3 hours
 		},
-		globalStats: {
+		globalStats:
+		{
 			games: 10000,
 			good_wins: 5500,
 		},
 	},
-	parameters: {
-		docs: {
-			description: {
+	parameters:
+	{
+		docs:
+		{
+			description:
+			{
 				story: 'Shows player stats alongside global statistics. The global good win rate (55%) provides context for game balance.',
 			},
 		},
 	},
 };
 
-export const EmptyStats: Story = {
-	args: {
+export const EmptyStats: Story =
+{
+	args:
+	{
 		stats: {},
 	},
-	parameters: {
-		docs: {
-			description: {
+	parameters:
+	{
+		docs:
+		{
+			description:
+			{
 				story: 'Handles missing or incomplete statistics gracefully. Common for new players or when stats fail to load.',
 			},
 		},

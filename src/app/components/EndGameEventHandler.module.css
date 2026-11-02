@@ -1,4 +1,5 @@
-.overlay {
+.overlay
+{
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -11,7 +12,8 @@
 	z-index: 1000;
 }
 
-.dialog {
+.dialog
+{
 	width: 100%;
 	height: 100%;
 	max-width: 100vw;
@@ -20,26 +22,30 @@
 	overflow: auto;
 }
 
-.card {
+.card
+{
 	background-color: #b2ebf2; /* cyan lighten-4 */
 	height: 100%;
 	display: flex;
 	flex-direction: column;
 }
 
-.title {
+.title
+{
 	background-color: #80deea; /* cyan lighten-2 */
 	padding: 16px 30px;
 	text-align: center;
 }
 
-.title h2 {
+.title h2
+{
 	margin: 0;
 	font-size: 1.5rem;
 	font-weight: bold;
 }
 
-.content {
+.content
+{
 	padding: 16px;
 	flex: 1;
 	overflow: auto;
@@ -48,30 +54,35 @@
 	align-items: center;
 }
 
-.message {
+.message
+{
 	font-size: 1.25rem;
 	font-weight: bold;
 	margin-bottom: 8px;
 }
 
-.assassinationInfo {
+.assassinationInfo
+{
 	margin-bottom: 16px;
 }
 
-.tableContainer {
+.tableContainer
+{
 	overflow-x: auto;
 	width: 100%;
 	margin-top: 16px;
 }
 
-.actions {
+.actions
+{
 	padding: 16px;
 	display: flex;
 	justify-content: flex-end;
 	border-top: 1px solid rgba(0, 0, 0, 0.12);
 }
 
-.button {
+.button
+{
 	background-color: #2196f3;
 	color: white;
 	border: none;
@@ -82,41 +93,50 @@
 	text-transform: uppercase;
 }
 
-.button:hover {
+.button:hover
+{
 	background-color: #1976d2;
 }
 
-table {
+table
+{
 	border-collapse: collapse;
 }
 
-tr {
+tr
+{
 	height: 2.3em;
 }
 
-td {
+td
+{
 	width: 1.7em;
 	padding-left: 6px;
 	padding-right: 4px;
 }
 
-tr:nth-child(even) {
+tr:nth-child(even)
+{
 	background-color: #dcdcdc; /* Gainsboro */
 }
 
-tr:nth-child(odd) {
+tr:nth-child(odd)
+{
 	background-color: #ffe4c4; /* bisque */
 }
 
-td.role {
+td.role
+{
 	border-right: 2px solid;
 	white-space: nowrap;
 }
 
-td.playerName {
+td.playerName
+{
 	border-left: 2px solid;
 }
 
-td.missionResult {
+td.missionResult
+{
 	border-right: 2px solid;
 }

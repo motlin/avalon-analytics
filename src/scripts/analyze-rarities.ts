@@ -9,50 +9,69 @@
 
 import {PREDICATE_FIRE_COUNTS, RARITY_ORDER, getRarityForFireCount, type Rarity} from '../app/models/predicateRarity';
 
-interface RarityStats {
+interface RarityStats
+{
 	rarity: Rarity;
 	predicateCount: number;
 	totalFires: number;
-	predicates: {name: string; fires: number}[];
+	predicates:
+	{
+		name: string;
+		fires: number;
+	}[];
 }
 
-function analyzeRarities(): Map<Rarity, RarityStats> {
+function analyzeRarities(): Map<Rarity, RarityStats>
+{
 	const stats = new Map<Rarity, RarityStats>();
 
 	// Initialize all rarity tiers
 	const rarities: Rarity[] = ['legendary', 'epic', 'rare', 'uncommon', 'common'];
-	for (const rarity of rarities) {
-		stats.set(rarity, {
+	for (const rarity of rarities)
+	{
+		stats.set(
 			rarity,
-			predicateCount: 0,
-			totalFires: 0,
-			predicates: [],
-		});
+			{
+				rarity,
+				predicateCount: 0,
+				totalFires: 0,
+				predicates: [],
+			},
+		);
 	}
 
 	// Categorize each predicate
-	for (const [predicateName, fireCount] of Object.entries(PREDICATE_FIRE_COUNTS)) {
+	for (const [predicateName, fireCount] of Object.entries(PREDICATE_FIRE_COUNTS))
+	{
 		const rarity = getRarityForFireCount(fireCount);
 		const tierStats = stats.get(rarity)!;
 
 		tierStats.predicateCount++;
 		tierStats.totalFires += fireCount;
-		tierStats.predicates.push({name: predicateName, fires: fireCount});
+		tierStats.predicates.push(
+			{
+				name: predicateName,
+				fires: fireCount,
+			},
+		);
 	}
 
 	// Sort predicates within each tier by fire count
-	for (const tierStats of stats.values()) {
+	for (const tierStats of stats.values())
+	{
 		tierStats.predicates.sort((a, b) => a.fires - b.fires);
 	}
 
 	return stats;
 }
 
-function formatNumber(n: number): string {
+function formatNumber(n: number): string
+{
 	return n.toLocaleString();
 }
 
-function main() {
+function main()
+{
 	const stats = analyzeRarities();
 	const totalPredicates = Object.keys(PREDICATE_FIRE_COUNTS).length;
 	const totalFires = Object.values(PREDICATE_FIRE_COUNTS).reduce((sum, n) => sum + n, 0);
@@ -70,7 +89,8 @@ function main() {
 
 	const sortedTiers = [...stats.entries()].sort((a, b) => RARITY_ORDER[a[0]] - RARITY_ORDER[b[0]]);
 
-	for (const [rarity, tierStats] of sortedTiers) {
+	for (const [rarity, tierStats] of sortedTiers)
+	{
 		const avg = tierStats.predicateCount > 0 ? Math.round(tierStats.totalFires / tierStats.predicateCount) : 0;
 		const rarityPadded = rarity.padEnd(11);
 		const countPadded = tierStats.predicateCount.toString().padStart(5);
@@ -83,7 +103,8 @@ function main() {
 	console.log('\n\nDetailed Breakdown by Rarity:');
 	console.log('=============================\n');
 
-	for (const [rarity, tierStats] of sortedTiers) {
+	for (const [rarity, tierStats] of sortedTiers)
+	{
 		if (tierStats.predicateCount === 0) continue;
 
 		console.log(
@@ -91,7 +112,8 @@ function main() {
 		);
 		console.log('-'.repeat(60));
 
-		for (const pred of tierStats.predicates) {
+		for (const pred of tierStats.predicates)
+		{
 			const firesPadded = formatNumber(pred.fires).padStart(6);
 			console.log(`  ${firesPadded}  ${pred.name}`);
 		}

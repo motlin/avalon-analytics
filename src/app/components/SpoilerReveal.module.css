@@ -1,4 +1,5 @@
-.revealButton {
+.revealButton
+{
 	background-color: #00838f;
 	color: white;
 	border: none;
@@ -15,10 +16,12 @@
 	transition: background-color 0.2s ease;
 }
 
-.revealButton:hover {
+.revealButton:hover
+{
 	background-color: #006064;
 }
 
-.revealButton:active {
+.revealButton:active
+{
 	background-color: #004d40;
 }

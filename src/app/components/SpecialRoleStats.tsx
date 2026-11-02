@@ -1,23 +1,27 @@
 import type {PersonStatistics} from '../models/player-statistics';
 import styles from './SpecialRoleStats.module.css';
 
-interface SpecialRoleStatsProps {
+interface SpecialRoleStatsProps
+{
 	stats: PersonStatistics;
 }
 
-function formatRate(numerator: number, denominator: number): string {
+function formatRate(numerator: number, denominator: number): string
+{
 	if (denominator === 0) return '-';
 	return `${((numerator / denominator) * 100).toFixed(0)}%`;
 }
 
-export function SpecialRoleStats({stats}: SpecialRoleStatsProps) {
+export function SpecialRoleStats({stats}: SpecialRoleStatsProps)
+{
 	const {merlinStats, assassinStats, evilTeammateStats} = stats;
 
 	const showMerlin = merlinStats.gamesPlayed > 0;
 	const showAssassin = assassinStats.gamesPlayed > 0;
 	const showEvilTeammate = evilTeammateStats.gamesPlayed > 0;
 
-	if (!showMerlin && !showAssassin && !showEvilTeammate) {
+	if (!showMerlin && !showAssassin && !showEvilTeammate)
+	{
 		return null;
 	}
 

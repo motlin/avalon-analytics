@@ -1,10 +1,12 @@
-.playerList {
+.playerList
+{
 	background-color: #cfd8dc;
 	border-radius: 4px;
 	overflow: hidden;
 }
 
-.playerItem {
+.playerItem
+{
 	display: flex;
 	align-items: center;
 	padding: 8px 16px;
@@ -12,34 +14,40 @@
 	min-height: 48px;
 }
 
-.playerItem:last-child {
+.playerItem:last-child
+{
 	border-bottom: none;
 }
 
-.checkboxColumn {
+.checkboxColumn
+{
 	width: 16.67%;
 	display: flex;
 	align-items: center;
 	justify-content: flex-start;
 }
 
-.checkbox {
+.checkbox
+{
 	width: 20px;
 	height: 20px;
 	cursor: pointer;
 	accent-color: #3f51b5;
 }
 
-.checkbox:disabled {
+.checkbox:disabled
+{
 	cursor: not-allowed;
 }
 
-.selectedForMission {
+.selectedForMission
+{
 	accent-color: #7986cb;
 	pointer-events: none;
 }
 
-.statusColumn {
+.statusColumn
+{
 	width: 16.67%;
 	display: flex;
 	align-items: center;
@@ -48,15 +56,18 @@
 	margin-right: 4px;
 }
 
-.crown {
+.crown
+{
 	font-size: 1.8em;
 }
 
-.hammer {
+.hammer
+{
 	font-size: 1em;
 }
 
-.nameColumn {
+.nameColumn
+{
 	width: 58.33%;
 	display: flex;
 	align-items: center;
@@ -66,7 +77,8 @@
 	margin-right: 4px;
 }
 
-.iconColumn {
+.iconColumn
+{
 	width: 8.33%;
 	display: flex;
 	align-items: center;
@@ -76,6 +88,7 @@
 	margin-right: 4px;
 }
 
-.statusIcons {
+.statusIcons
+{
 	font-size: 1.4em;
 }

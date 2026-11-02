@@ -6,7 +6,8 @@ import styles from './PredicateLeaderboard.module.css';
  * Individual person's statistics for a specific predicate.
  * Used for leaderboard ranking.
  */
-export interface PredicateLeaderboardEntry {
+export interface PredicateLeaderboardEntry
+{
 	/** Person's unique identifier for linking */
 	personId: string;
 	/** Person's display name */
@@ -27,7 +28,8 @@ export interface PredicateLeaderboardEntry {
 	isSignificant: boolean;
 }
 
-export interface PredicateLeaderboardProps {
+export interface PredicateLeaderboardProps
+{
 	/** The predicate being displayed */
 	predicateName: string;
 	/** Rarity tier of the predicate */
@@ -43,8 +45,10 @@ export interface PredicateLeaderboardProps {
  * Not significant -> white
  * Highly significant (|z-score| >= 3) -> saturated blue
  */
-function significanceToBackgroundColor(isSignificant: boolean, zScore: number): string {
-	if (!isSignificant) {
+function significanceToBackgroundColor(isSignificant: boolean, zScore: number): string
+{
+	if (!isSignificant)
+	{
 		return 'transparent';
 	}
 
@@ -58,11 +62,13 @@ function significanceToBackgroundColor(isSignificant: boolean, zScore: number): 
 	return `rgba(59, 130, 246, ${alpha})`; // Blue color (#3b82f6)
 }
 
-function formatPercent(value: number): string {
+function formatPercent(value: number): string
+{
 	return `${(value * 100).toFixed(1)}%`;
 }
 
-function formatPredicateName(name: string): string {
+function formatPredicateName(name: string): string
+{
 	// Remove common suffixes to make names more readable
 	return name
 		.replace(/ProposalVotePredicate$/, '')
@@ -72,20 +78,21 @@ function formatPredicateName(name: string): string {
 		.replace(/([a-z])([A-Z])/g, '$1 $2');
 }
 
-function LeaderboardRow({entry, rank}: {entry: PredicateLeaderboardEntry; rank: number}) {
+function LeaderboardRow({entry, rank}: {entry: PredicateLeaderboardEntry; rank: number})
+{
 	const backgroundColor = significanceToBackgroundColor(entry.isSignificant, entry.zScore);
 
 	return (
 		<tr
 			className={styles.dataRow}
-			style={{backgroundColor}}
+			style={
+			{
+				backgroundColor,
+			}}
 		>
 			<td className={styles.rankCell}>{rank}</td>
 			<td className={styles.nameCell}>
-				<a
-					href={`/person/${entry.personId}`}
-					className={styles.personLink}
-				>
+				<a href={`/person/${entry.personId}`} className={styles.personLink}>
 					{entry.personName}
 				</a>
 			</td>
@@ -100,14 +107,19 @@ function LeaderboardRow({entry, rank}: {entry: PredicateLeaderboardEntry; rank: 
 	);
 }
 
-export function PredicateLeaderboard({predicateName, rarity, baselineRate, entries}: PredicateLeaderboardProps) {
-	if (entries.length === 0) {
+export function PredicateLeaderboard({predicateName, rarity, baselineRate, entries}: PredicateLeaderboardProps)
+{
+	if (entries.length === 0)
+	{
 		return (
 			<div className={styles.container}>
 				<h3 className={styles.title}>
 					<span
 						className={styles.rarityDot}
-						style={{backgroundColor: RARITY_CSS_COLORS[rarity]}}
+						style={
+						{
+							backgroundColor: RARITY_CSS_COLORS[rarity],
+						}}
 					/>
 					{formatPredicateName(predicateName)}
 				</h3>
@@ -121,7 +133,10 @@ export function PredicateLeaderboard({predicateName, rarity, baselineRate, entri
 			<h3 className={styles.title}>
 				<span
 					className={styles.rarityDot}
-					style={{backgroundColor: RARITY_CSS_COLORS[rarity]}}
+					style={
+					{
+						backgroundColor: RARITY_CSS_COLORS[rarity],
+					}}
 				/>
 				{formatPredicateName(predicateName)}
 			</h3>
@@ -142,11 +157,7 @@ export function PredicateLeaderboard({predicateName, rarity, baselineRate, entri
 					</thead>
 					<tbody>
 						{entries.map((entry, index) => (
-							<LeaderboardRow
-								key={entry.personId}
-								entry={entry}
-								rank={index + 1}
-							/>
+							<LeaderboardRow key={entry.personId} entry={entry} rank={index + 1} />
 						))}
 					</tbody>
 				</table>
@@ -156,21 +167,31 @@ export function PredicateLeaderboard({predicateName, rarity, baselineRate, entri
 				<span className={styles.legendItem}>
 					<span
 						className={styles.legendSwatch}
-						style={{backgroundColor: 'transparent', border: '1px solid hsl(var(--border))'}}
+						style={
+						{
+							backgroundColor: 'transparent',
+							border: '1px solid hsl(var(--border))',
+						}}
 					/>
 					Not significant
 				</span>
 				<span className={styles.legendItem}>
 					<span
 						className={styles.legendSwatch}
-						style={{backgroundColor: 'rgba(59, 130, 246, 0.15)'}}
+						style={
+						{
+							backgroundColor: 'rgba(59, 130, 246, 0.15)',
+						}}
 					/>
 					Significant (p &lt; 0.05)
 				</span>
 				<span className={styles.legendItem}>
 					<span
 						className={styles.legendSwatch}
-						style={{backgroundColor: 'rgba(59, 130, 246, 0.4)'}}
+						style={
+						{
+							backgroundColor: 'rgba(59, 130, 246, 0.4)',
+						}}
 					/>
 					Highly significant
 				</span>

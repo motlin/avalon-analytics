@@ -3,18 +3,22 @@ import {useState} from 'react';
 import styles from './LogoutButton.module.css';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 
-interface AvalonApi {
+interface AvalonApi
+{
 	logout: () => void;
 }
 
-interface LogoutButtonProps {
+interface LogoutButtonProps
+{
 	avalon: AvalonApi;
 }
 
-const LogoutButton: React.FC<LogoutButtonProps> = ({avalon}) => {
+const LogoutButton: React.FC<LogoutButtonProps> = ({avalon}) =>
+{
 	const [loggingOut, setLoggingOut] = useState(false);
 
-	const handleLogoutClick = () => {
+	const handleLogoutClick = () =>
+	{
 		setLoggingOut(true);
 		avalon.logout();
 	};

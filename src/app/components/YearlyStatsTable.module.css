@@ -1,62 +1,74 @@
-.container {
+.container
+{
 	margin-bottom: 2rem;
 }
 
-.title {
+.title
+{
 	margin: 0 0 1rem 0;
 	font-size: 1.25rem;
 	font-weight: 600;
 }
 
-.tableWrapper {
+.tableWrapper
+{
 	overflow-x: auto;
 }
 
-.table {
+.table
+{
 	width: 100%;
 	border-collapse: collapse;
 	font-size: 0.875rem;
 }
 
 .table th,
-.table td {
+.table td
+{
 	padding: 0.5rem 0.75rem;
 	text-align: left;
 	border-bottom: 1px solid hsl(var(--border));
 }
 
-.headerYear {
+.headerYear
+{
 	font-weight: 600;
 	background-color: hsl(var(--muted));
 	text-align: left;
 }
 
-.headerNum {
+.headerNum
+{
 	font-weight: 600;
 	background-color: hsl(var(--muted));
 	text-align: right;
 }
 
-.dataRow:hover {
+.dataRow:hover
+{
 	background-color: hsl(var(--accent));
 }
 
-.yearCell {
+.yearCell
+{
 	font-weight: 600;
 }
 
-.numCell {
+.numCell
+{
 	text-align: right;
 	font-variant-numeric: tabular-nums;
 }
 
-.numCellGood {
+.numCellGood
+{
 	text-align: right;
 	font-variant-numeric: tabular-nums;
 	color: hsl(var(--good-color));
 }
 
-.numCellEvil {
+.numCellEvil
+{
 	text-align: right;
 	font-variant-numeric: tabular-nums;
 	color: hsl(var(--evil-color));

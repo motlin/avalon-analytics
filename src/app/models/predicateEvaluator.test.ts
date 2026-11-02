@@ -12,13 +12,25 @@ import {aggregateResultsByPlayerAndPredicate, evaluateGamePredicates, getAllResu
 // ============================================================================
 
 function createTestGame(options: {
-	players: Array<{uid: string; name: string; role?: string}>;
+	players: Array<
+	{
+		uid: string;
+		name: string;
+		role?: string;
+	}>;
 	missions?: Mission[];
-	outcomeRoles?: Array<{name: string; role: string; assassin: boolean}>;
+	outcomeRoles?: Array<
+	{
+		name: string;
+		role: string;
+		assassin: boolean;
+	}>;
 	outcomeState?: string;
 	outcomeVotes?: Record<string, boolean>[];
-}): Game {
-	const defaultMission: Mission = {
+}): Game
+{
+	const defaultMission: Mission =
+	{
 		failsRequired: 1,
 		teamSize: 2,
 		proposals: [
@@ -39,7 +51,8 @@ function createTestGame(options: {
 		timeFinished: new Date('2025-01-01T12:30:00Z'),
 		players: options.players,
 		missions: options.missions ?? [defaultMission],
-		outcome: {
+		outcome:
+		{
 			state: options.outcomeState ?? 'GOOD_WIN',
 			assassinated: undefined,
 			roles: options.outcomeRoles,
@@ -52,14 +65,26 @@ function createTestGame(options: {
 // Alignment Detection
 // ============================================================================
 
-describe('alignment detection', () => {
-	it('detects good alignment for MERLIN role', () => {
-		const game = createTestGame({
-			players: [
-				{uid: 'u1', name: 'Alice', role: 'MERLIN'},
-				{uid: 'u2', name: 'Bob', role: 'ASSASSIN'},
-			],
-		});
+describe('alignment detection', () =>
+{
+	it('detects good alignment for MERLIN role', () =>
+	{
+		const game = createTestGame(
+			{
+				players: [
+					{
+						uid: 'u1',
+						name: 'Alice',
+						role: 'MERLIN',
+					},
+					{
+						uid: 'u2',
+						name: 'Bob',
+						role: 'ASSASSIN',
+					},
+				],
+			},
+		);
 
 		const results = evaluateGamePredicates(game);
 		const aliceResults = results.proposalResults.filter((r) => r.playerName === 'Alice');
@@ -67,13 +92,24 @@ describe('alignment detection', () => {
 		expect(aliceResults.every((r) => r.alignment === 'good')).toBe(true);
 	});
 
-	it('detects good alignment for PERCIVAL role', () => {
-		const game = createTestGame({
-			players: [
-				{uid: 'u1', name: 'Alice', role: 'PERCIVAL'},
-				{uid: 'u2', name: 'Bob', role: 'ASSASSIN'},
-			],
-		});
+	it('detects good alignment for PERCIVAL role', () =>
+	{
+		const game = createTestGame(
+			{
+				players: [
+					{
+						uid: 'u1',
+						name: 'Alice',
+						role: 'PERCIVAL',
+					},
+					{
+						uid: 'u2',
+						name: 'Bob',
+						role: 'ASSASSIN',
+					},
+				],
+			},
+		);
 
 		const results = evaluateGamePredicates(game);
 		const aliceResults = results.proposalResults.filter((r) => r.playerName === 'Alice');
@@ -81,13 +117,24 @@ describe('alignment detection', () => {
 		expect(aliceResults.every((r) => r.alignment === 'good')).toBe(true);
 	});
 
-	it('detects good alignment for LOYAL FOLLOWER role', () => {
-		const game = createTestGame({
-			players: [
-				{uid: 'u1', name: 'Alice', role: 'LOYAL FOLLOWER'},
-				{uid: 'u2', name: 'Bob', role: 'ASSASSIN'},
-			],
-		});
+	it('detects good alignment for LOYAL FOLLOWER role', () =>
+	{
+		const game = createTestGame(
+			{
+				players: [
+					{
+						uid: 'u1',
+						name: 'Alice',
+						role: 'LOYAL FOLLOWER',
+					},
+					{
+						uid: 'u2',
+						name: 'Bob',
+						role: 'ASSASSIN',
+					},
+				],
+			},
+		);
 
 		const results = evaluateGamePredicates(game);
 		const aliceResults = results.proposalResults.filter((r) => r.playerName === 'Alice');
@@ -95,13 +142,24 @@ describe('alignment detection', () => {
 		expect(aliceResults.every((r) => r.alignment === 'good')).toBe(true);
 	});
 
-	it('detects evil alignment for Assassin role', () => {
-		const game = createTestGame({
-			players: [
-				{uid: 'u1', name: 'Alice', role: 'MERLIN'},
-				{uid: 'u2', name: 'Bob', role: 'ASSASSIN'},
-			],
-		});
+	it('detects evil alignment for Assassin role', () =>
+	{
+		const game = createTestGame(
+			{
+				players: [
+					{
+						uid: 'u1',
+						name: 'Alice',
+						role: 'MERLIN',
+					},
+					{
+						uid: 'u2',
+						name: 'Bob',
+						role: 'ASSASSIN',
+					},
+				],
+			},
+		);
 
 		const results = evaluateGamePredicates(game);
 		// Bob votes but doesn't propose in default game, check vote results
@@ -110,13 +168,24 @@ describe('alignment detection', () => {
 		expect(bobResults.every((r) => r.alignment === 'evil')).toBe(true);
 	});
 
-	it('detects evil alignment for MORGANA role', () => {
-		const game = createTestGame({
-			players: [
-				{uid: 'u1', name: 'Alice', role: 'MERLIN'},
-				{uid: 'u2', name: 'Bob', role: 'MORGANA'},
-			],
-		});
+	it('detects evil alignment for MORGANA role', () =>
+	{
+		const game = createTestGame(
+			{
+				players: [
+					{
+						uid: 'u1',
+						name: 'Alice',
+						role: 'MERLIN',
+					},
+					{
+						uid: 'u2',
+						name: 'Bob',
+						role: 'MORGANA',
+					},
+				],
+			},
+		);
 
 		const results = evaluateGamePredicates(game);
 		// Bob votes but doesn't propose in default game, check vote results
@@ -125,13 +194,24 @@ describe('alignment detection', () => {
 		expect(bobResults.every((r) => r.alignment === 'evil')).toBe(true);
 	});
 
-	it('detects evil alignment for Mordred role', () => {
-		const game = createTestGame({
-			players: [
-				{uid: 'u1', name: 'Alice', role: 'MERLIN'},
-				{uid: 'u2', name: 'Bob', role: 'MORDRED'},
-			],
-		});
+	it('detects evil alignment for Mordred role', () =>
+	{
+		const game = createTestGame(
+			{
+				players: [
+					{
+						uid: 'u1',
+						name: 'Alice',
+						role: 'MERLIN',
+					},
+					{
+						uid: 'u2',
+						name: 'Bob',
+						role: 'MORDRED',
+					},
+				],
+			},
+		);
 
 		const results = evaluateGamePredicates(game);
 		// Bob votes but doesn't propose in default game, check vote results
@@ -140,13 +220,24 @@ describe('alignment detection', () => {
 		expect(bobResults.every((r) => r.alignment === 'evil')).toBe(true);
 	});
 
-	it('detects evil alignment for OBERON role', () => {
-		const game = createTestGame({
-			players: [
-				{uid: 'u1', name: 'Alice', role: 'MERLIN'},
-				{uid: 'u2', name: 'Bob', role: 'OBERON'},
-			],
-		});
+	it('detects evil alignment for OBERON role', () =>
+	{
+		const game = createTestGame(
+			{
+				players: [
+					{
+						uid: 'u1',
+						name: 'Alice',
+						role: 'MERLIN',
+					},
+					{
+						uid: 'u2',
+						name: 'Bob',
+						role: 'OBERON',
+					},
+				],
+			},
+		);
 
 		const results = evaluateGamePredicates(game);
 		// Bob votes but doesn't propose in default game, check vote results
@@ -155,30 +246,56 @@ describe('alignment detection', () => {
 		expect(bobResults.every((r) => r.alignment === 'evil')).toBe(true);
 	});
 
-	it('detects unknown alignment when role is not set', () => {
-		const game = createTestGame({
-			players: [
-				{uid: 'u1', name: 'Alice'},
-				{uid: 'u2', name: 'Bob'},
-			],
-		});
+	it('detects unknown alignment when role is not set', () =>
+	{
+		const game = createTestGame(
+			{
+				players: [
+					{
+						uid: 'u1',
+						name: 'Alice',
+					},
+					{
+						uid: 'u2',
+						name: 'Bob',
+					},
+				],
+			},
+		);
 
 		const results = evaluateGamePredicates(game);
 		const allResults = getAllResults(results);
 		expect(allResults.every((r) => r.alignment === 'unknown')).toBe(true);
 	});
 
-	it('uses outcome roles when player roles are not set', () => {
-		const game = createTestGame({
-			players: [
-				{uid: 'u1', name: 'Alice'},
-				{uid: 'u2', name: 'Bob'},
-			],
-			outcomeRoles: [
-				{name: 'Alice', role: 'MERLIN', assassin: false},
-				{name: 'Bob', role: 'MORGANA', assassin: false},
-			],
-		});
+	it('uses outcome roles when player roles are not set', () =>
+	{
+		const game = createTestGame(
+			{
+				players: [
+					{
+						uid: 'u1',
+						name: 'Alice',
+					},
+					{
+						uid: 'u2',
+						name: 'Bob',
+					},
+				],
+				outcomeRoles: [
+					{
+						name: 'Alice',
+						role: 'MERLIN',
+						assassin: false,
+					},
+					{
+						name: 'Bob',
+						role: 'MORGANA',
+						assassin: false,
+					},
+				],
+			},
+		);
 
 		const results = evaluateGamePredicates(game);
 		const aliceResults = results.proposalResults.filter((r) => r.playerName === 'Alice');
@@ -193,14 +310,26 @@ describe('alignment detection', () => {
 // Opportunity Tracking (isRelevant counting)
 // ============================================================================
 
-describe('opportunity tracking', () => {
-	it('counts isRelevant=true as opportunity even when isWeird=false', () => {
-		const game = createTestGame({
-			players: [
-				{uid: 'u1', name: 'Alice', role: 'MERLIN'},
-				{uid: 'u2', name: 'Bob', role: 'ASSASSIN'},
-			],
-		});
+describe('opportunity tracking', () =>
+{
+	it('counts isRelevant=true as opportunity even when isWeird=false', () =>
+	{
+		const game = createTestGame(
+			{
+				players: [
+					{
+						uid: 'u1',
+						name: 'Alice',
+						role: 'MERLIN',
+					},
+					{
+						uid: 'u2',
+						name: 'Bob',
+						role: 'ASSASSIN',
+					},
+				],
+			},
+		);
 
 		const results = evaluateGamePredicates(game);
 		const allResults = getAllResults(results);
@@ -212,14 +341,17 @@ describe('opportunity tracking', () => {
 
 		// The key assertion: isRelevant counts independently from fired
 		const summaries = aggregateResultsByPlayerAndPredicate(allResults);
-		for (const summary of summaries.values()) {
+		for (const summary of summaries.values())
+		{
 			// Fires should never exceed opportunities
 			expect(summary.fires).toBeLessThanOrEqual(summary.opportunities);
 		}
 	});
 
-	it('increments opportunities for each relevant proposal', () => {
-		const mission: Mission = {
+	it('increments opportunities for each relevant proposal', () =>
+	{
+		const mission: Mission =
+		{
 			failsRequired: 1,
 			teamSize: 2,
 			proposals: [
@@ -240,13 +372,23 @@ describe('opportunity tracking', () => {
 			team: ['Alice', 'Bob'],
 		};
 
-		const game = createTestGame({
-			players: [
-				{uid: 'u1', name: 'Alice', role: 'MERLIN'},
-				{uid: 'u2', name: 'Bob', role: 'ASSASSIN'},
-			],
-			missions: [mission],
-		});
+		const game = createTestGame(
+			{
+				players: [
+					{
+						uid: 'u1',
+						name: 'Alice',
+						role: 'MERLIN',
+					},
+					{
+						uid: 'u2',
+						name: 'Bob',
+						role: 'ASSASSIN',
+					},
+				],
+				missions: [mission],
+			},
+		);
 
 		const results = evaluateGamePredicates(game);
 		const summaries = aggregateResultsByPlayerAndPredicate(results.proposalResults);
@@ -260,8 +402,10 @@ describe('opportunity tracking', () => {
 		expect(bobProposal.length).toBeGreaterThan(0);
 	});
 
-	it('counts vote opportunities per voter per proposal', () => {
-		const mission: Mission = {
+	it('counts vote opportunities per voter per proposal', () =>
+	{
+		const mission: Mission =
+		{
 			failsRequired: 1,
 			teamSize: 2,
 			proposals: [
@@ -282,13 +426,23 @@ describe('opportunity tracking', () => {
 			team: ['Alice', 'Bob'],
 		};
 
-		const game = createTestGame({
-			players: [
-				{uid: 'u1', name: 'Alice', role: 'MERLIN'},
-				{uid: 'u2', name: 'Bob', role: 'ASSASSIN'},
-			],
-			missions: [mission],
-		});
+		const game = createTestGame(
+			{
+				players: [
+					{
+						uid: 'u1',
+						name: 'Alice',
+						role: 'MERLIN',
+					},
+					{
+						uid: 'u2',
+						name: 'Bob',
+						role: 'ASSASSIN',
+					},
+				],
+				missions: [mission],
+			},
+		);
 
 		const results = evaluateGamePredicates(game);
 
@@ -306,14 +460,26 @@ describe('opportunity tracking', () => {
 // Fired Condition (all three must be true)
 // ============================================================================
 
-describe('fired condition', () => {
-	it('sets fired=false when isRelevant=false', () => {
-		const game = createTestGame({
-			players: [
-				{uid: 'u1', name: 'Alice', role: 'MERLIN'},
-				{uid: 'u2', name: 'Bob', role: 'ASSASSIN'},
-			],
-		});
+describe('fired condition', () =>
+{
+	it('sets fired=false when isRelevant=false', () =>
+	{
+		const game = createTestGame(
+			{
+				players: [
+					{
+						uid: 'u1',
+						name: 'Alice',
+						role: 'MERLIN',
+					},
+					{
+						uid: 'u2',
+						name: 'Bob',
+						role: 'ASSASSIN',
+					},
+				],
+			},
+		);
 
 		const results = evaluateGamePredicates(game);
 		const allResults = getAllResults(results);
@@ -323,13 +489,24 @@ describe('fired condition', () => {
 		expect(irrelevantResults.every((r) => r.fired === false)).toBe(true);
 	});
 
-	it('can have fired=false even when isRelevant=true', () => {
-		const game = createTestGame({
-			players: [
-				{uid: 'u1', name: 'Alice', role: 'MERLIN'},
-				{uid: 'u2', name: 'Bob', role: 'ASSASSIN'},
-			],
-		});
+	it('can have fired=false even when isRelevant=true', () =>
+	{
+		const game = createTestGame(
+			{
+				players: [
+					{
+						uid: 'u1',
+						name: 'Alice',
+						role: 'MERLIN',
+					},
+					{
+						uid: 'u2',
+						name: 'Bob',
+						role: 'ASSASSIN',
+					},
+				],
+			},
+		);
 
 		const results = evaluateGamePredicates(game);
 		const allResults = getAllResults(results);
@@ -340,28 +517,42 @@ describe('fired condition', () => {
 		expect(relevantButNotFired.length).toBeGreaterThan(0);
 	});
 
-	it('tracks predicate name correctly', () => {
-		const game = createTestGame({
-			players: [
-				{uid: 'u1', name: 'Alice', role: 'MERLIN'},
-				{uid: 'u2', name: 'Bob', role: 'ASSASSIN'},
-			],
-		});
+	it('tracks predicate name correctly', () =>
+	{
+		const game = createTestGame(
+			{
+				players: [
+					{
+						uid: 'u1',
+						name: 'Alice',
+						role: 'MERLIN',
+					},
+					{
+						uid: 'u2',
+						name: 'Bob',
+						role: 'ASSASSIN',
+					},
+				],
+			},
+		);
 
 		const results = evaluateGamePredicates(game);
 
 		// Check that predicate names are populated
-		for (const result of results.proposalResults) {
+		for (const result of results.proposalResults)
+		{
 			expect(result.predicateName).toBeTruthy();
 			expect(typeof result.predicateName).toBe('string');
 		}
 
-		for (const result of results.proposalVoteResults) {
+		for (const result of results.proposalVoteResults)
+		{
 			expect(result.predicateName).toBeTruthy();
 			expect(typeof result.predicateName).toBe('string');
 		}
 
-		for (const result of results.missionVoteResults) {
+		for (const result of results.missionVoteResults)
+		{
 			expect(result.predicateName).toBeTruthy();
 			expect(typeof result.predicateName).toBe('string');
 		}
@@ -372,8 +563,10 @@ describe('fired condition', () => {
 // Aggregation Functions
 // ============================================================================
 
-describe('aggregateResultsByPlayerAndPredicate', () => {
-	it('aggregates results correctly by player and predicate', () => {
+describe('aggregateResultsByPlayerAndPredicate', () =>
+{
+	it('aggregates results correctly by player and predicate', () =>
+	{
 		const results: PredicateEvaluationResult[] = [
 			{
 				predicateName: 'TestPredicate',
@@ -409,7 +602,8 @@ describe('aggregateResultsByPlayerAndPredicate', () => {
 		expect(aliceSummary?.fires).toBe(1);
 	});
 
-	it('creates separate entries for different predicates', () => {
+	it('creates separate entries for different predicates', () =>
+	{
 		const results: PredicateEvaluationResult[] = [
 			{
 				predicateName: 'Predicate1',
@@ -437,7 +631,8 @@ describe('aggregateResultsByPlayerAndPredicate', () => {
 		expect(summaries.get('Alice:Predicate2')?.fires).toBe(0);
 	});
 
-	it('creates separate entries for different players', () => {
+	it('creates separate entries for different players', () =>
+	{
 		const results: PredicateEvaluationResult[] = [
 			{
 				predicateName: 'TestPredicate',
@@ -470,15 +665,32 @@ describe('aggregateResultsByPlayerAndPredicate', () => {
 // getAllResults
 // ============================================================================
 
-describe('getAllResults', () => {
-	it('combines all result types into a single array', () => {
-		const game = createTestGame({
-			players: [
-				{uid: 'u1', name: 'Alice', role: 'MERLIN'},
-				{uid: 'u2', name: 'Bob', role: 'ASSASSIN'},
-			],
-			outcomeVotes: [{Alice: true, Bob: false}],
-		});
+describe('getAllResults', () =>
+{
+	it('combines all result types into a single array', () =>
+	{
+		const game = createTestGame(
+			{
+				players: [
+					{
+						uid: 'u1',
+						name: 'Alice',
+						role: 'MERLIN',
+					},
+					{
+						uid: 'u2',
+						name: 'Bob',
+						role: 'ASSASSIN',
+					},
+				],
+				outcomeVotes: [
+					{
+						Alice: true,
+						Bob: false,
+					},
+				],
+			},
+		);
 
 		const results = evaluateGamePredicates(game);
 		const allResults = getAllResults(results);
@@ -493,15 +705,32 @@ describe('getAllResults', () => {
 // Mission Vote Evaluation
 // ============================================================================
 
-describe('mission vote evaluation', () => {
-	it('evaluates mission votes when outcome votes are present', () => {
-		const game = createTestGame({
-			players: [
-				{uid: 'u1', name: 'Alice', role: 'MERLIN'},
-				{uid: 'u2', name: 'Bob', role: 'ASSASSIN'},
-			],
-			outcomeVotes: [{Alice: true, Bob: false}],
-		});
+describe('mission vote evaluation', () =>
+{
+	it('evaluates mission votes when outcome votes are present', () =>
+	{
+		const game = createTestGame(
+			{
+				players: [
+					{
+						uid: 'u1',
+						name: 'Alice',
+						role: 'MERLIN',
+					},
+					{
+						uid: 'u2',
+						name: 'Bob',
+						role: 'ASSASSIN',
+					},
+				],
+				outcomeVotes: [
+					{
+						Alice: true,
+						Bob: false,
+					},
+				],
+			},
+		);
 
 		const results = evaluateGamePredicates(game);
 
@@ -515,14 +744,25 @@ describe('mission vote evaluation', () => {
 		expect(bobMissionVotes.length).toBeGreaterThan(0);
 	});
 
-	it('skips mission vote evaluation when outcome votes are not present', () => {
-		const game = createTestGame({
-			players: [
-				{uid: 'u1', name: 'Alice', role: 'MERLIN'},
-				{uid: 'u2', name: 'Bob', role: 'ASSASSIN'},
-			],
-			// No outcomeVotes
-		});
+	it('skips mission vote evaluation when outcome votes are not present', () =>
+	{
+		const game = createTestGame(
+			{
+				players: [
+					{
+						uid: 'u1',
+						name: 'Alice',
+						role: 'MERLIN',
+					},
+					{
+						uid: 'u2',
+						name: 'Bob',
+						role: 'ASSASSIN',
+					},
+				],
+				// No outcomeVotes
+			},
+		);
 
 		const results = evaluateGamePredicates(game);
 		expect(results.missionVoteResults.length).toBe(0);
@@ -533,14 +773,26 @@ describe('mission vote evaluation', () => {
 // Player Role in Results
 // ============================================================================
 
-describe('player role tracking', () => {
-	it('includes player role in evaluation results', () => {
-		const game = createTestGame({
-			players: [
-				{uid: 'u1', name: 'Alice', role: 'MERLIN'},
-				{uid: 'u2', name: 'Bob', role: 'ASSASSIN'},
-			],
-		});
+describe('player role tracking', () =>
+{
+	it('includes player role in evaluation results', () =>
+	{
+		const game = createTestGame(
+			{
+				players: [
+					{
+						uid: 'u1',
+						name: 'Alice',
+						role: 'MERLIN',
+					},
+					{
+						uid: 'u2',
+						name: 'Bob',
+						role: 'ASSASSIN',
+					},
+				],
+			},
+		);
 
 		const results = evaluateGamePredicates(game);
 
@@ -551,13 +803,22 @@ describe('player role tracking', () => {
 		expect(bobVoteResults.every((r) => r.playerRole === 'ASSASSIN')).toBe(true);
 	});
 
-	it('sets playerRole to undefined when role is unknown', () => {
-		const game = createTestGame({
-			players: [
-				{uid: 'u1', name: 'Alice'},
-				{uid: 'u2', name: 'Bob'},
-			],
-		});
+	it('sets playerRole to undefined when role is unknown', () =>
+	{
+		const game = createTestGame(
+			{
+				players: [
+					{
+						uid: 'u1',
+						name: 'Alice',
+					},
+					{
+						uid: 'u2',
+						name: 'Bob',
+					},
+				],
+			},
+		);
 
 		const results = evaluateGamePredicates(game);
 		const allResults = getAllResults(results);

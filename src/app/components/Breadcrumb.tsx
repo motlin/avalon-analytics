@@ -1,13 +1,16 @@
-interface BreadcrumbItem {
+interface BreadcrumbItem
+{
 	label: string;
 	href?: string;
 }
 
-interface BreadcrumbProps {
+interface BreadcrumbProps
+{
 	items: BreadcrumbItem[];
 }
 
-export function Breadcrumb({items}: BreadcrumbProps) {
+export function Breadcrumb({items}: BreadcrumbProps)
+{
 	return (
 		<>
 			<style>{`
@@ -17,10 +20,14 @@ export function Breadcrumb({items}: BreadcrumbProps) {
 			`}</style>
 			<nav
 				aria-label="Breadcrumb"
-				style={{marginBottom: '1rem'}}
+				style={
+				{
+					marginBottom: '1rem',
+				}}
 			>
 				<ol
-					style={{
+					style={
+					{
 						display: 'flex',
 						listStyle: 'none',
 						padding: 0,
@@ -32,11 +39,16 @@ export function Breadcrumb({items}: BreadcrumbProps) {
 					{items.map((item, index) => (
 						<li
 							key={index}
-							style={{display: 'flex', alignItems: 'center'}}
+							style={
+							{
+								display: 'flex',
+								alignItems: 'center',
+							}}
 						>
 							{index > 0 && (
 								<span
-									style={{
+									style={
+									{
 										margin: '0 0.5rem',
 										color: '#999',
 									}}
@@ -49,7 +61,8 @@ export function Breadcrumb({items}: BreadcrumbProps) {
 								<a
 									href={item.href}
 									className="breadcrumb-link"
-									style={{
+									style={
+									{
 										color: '#0066cc',
 										textDecoration: 'none',
 									}}
@@ -58,7 +71,8 @@ export function Breadcrumb({items}: BreadcrumbProps) {
 								</a>
 							) : (
 								<span
-									style={{
+									style={
+									{
 										color: '#333',
 										fontWeight: '500',
 									}}

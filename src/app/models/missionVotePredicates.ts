@@ -7,7 +7,8 @@
 
 import type {Annotation, MissionContext, MissionVoteContext} from './annotations';
 import type {InterestingRoles, Rarity} from './predicateRarity';
-import {
+import
+{
 	alreadyFailedTwo,
 	alreadySucceededTwo,
 	getPlayerRole,
@@ -21,7 +22,8 @@ import {
 // 🔧 Predicate Interface
 // ============================================================================
 
-export interface MissionVotePredicate {
+export interface MissionVotePredicate
+{
 	name: string;
 	rarity: Rarity;
 	isRelevant: (context: MissionVoteContext) => boolean;
@@ -38,34 +40,42 @@ export interface MissionVotePredicate {
 // 🎯 Helper Functions
 // ============================================================================
 
-interface MissionVoteInfo {
+interface MissionVoteInfo
+{
 	playerName: string;
 	playerRole: string | undefined;
 	votedSuccess: boolean;
 }
 
-function getMissionVotes(context: MissionContext): MissionVoteInfo[] {
+function getMissionVotes(context: MissionContext): MissionVoteInfo[]
+{
 	const votes: MissionVoteInfo[] = [];
 	const missionVotes = context.game.outcome?.votes?.[context.missionNumber];
 
-	if (missionVotes) {
-		for (const [playerName, votedSuccess] of Object.entries(missionVotes)) {
-			votes.push({
-				playerName,
-				playerRole: getPlayerRole(context, playerName),
-				votedSuccess,
-			});
+	if (missionVotes)
+	{
+		for (const [playerName, votedSuccess] of Object.entries(missionVotes))
+		{
+			votes.push(
+				{
+					playerName,
+					playerRole: getPlayerRole(context, playerName),
+					votedSuccess,
+				},
+			);
 		}
 	}
 
 	return votes;
 }
 
-function getFailVotes(context: MissionContext): MissionVoteInfo[] {
+function getFailVotes(context: MissionContext): MissionVoteInfo[]
+{
 	return getMissionVotes(context).filter((vote) => !vote.votedSuccess);
 }
 
-function getKnownEvilFailVotes(context: MissionContext): MissionVoteInfo[] {
+function getKnownEvilFailVotes(context: MissionContext): MissionVoteInfo[]
+{
 	return getFailVotes(context).filter((vote) => isKnownEvil(vote.playerRole));
 }
 
@@ -74,50 +84,59 @@ function getKnownEvilFailVotes(context: MissionContext): MissionVoteInfo[] {
 // ============================================================================
 
 // 🦆 Ducking When Good Already Won Two (evil didn't fail)
-export const DuckingWhenGoodWonTwoPredicate: MissionVotePredicate = {
+export const DuckingWhenGoodWonTwoPredicate: MissionVotePredicate =
+{
 	name: 'Ducked when good already won two missions',
 	rarity: 'rare',
 	interestingRoles: 'evil',
-	isRelevant: (context) => {
+	isRelevant: (context) =>
+	{
 		const voterRole = getPlayerRole(context, context.voterName);
 		return alreadySucceededTwo(context) && isEvilRole(voterRole);
 	},
 	isWeird: (context) => context.votedSuccess,
 	isWorthCommentary: () => true,
-	getCommentary: (context) => {
+	getCommentary: (context) =>
+	{
 		const role = toDisplayRole(getPlayerRole(context, context.voterName));
 		return `${getRoleEmoji(role)} ${role} ${context.voterName} ducked when good already won two missions.`;
 	},
 };
 
 // 🦆 Ducking When Evil Already Won Two
-export const DuckingWhenEvilWonTwoPredicate: MissionVotePredicate = {
+export const DuckingWhenEvilWonTwoPredicate: MissionVotePredicate =
+{
 	name: 'Ducked when evil already won two missions',
 	rarity: 'rare',
 	interestingRoles: 'evil',
-	isRelevant: (context) => {
+	isRelevant: (context) =>
+	{
 		const voterRole = getPlayerRole(context, context.voterName);
 		return alreadyFailedTwo(context) && isEvilRole(voterRole);
 	},
 	isWeird: (context) => context.votedSuccess,
 	isWorthCommentary: () => true,
-	getCommentary: (context) => {
+	getCommentary: (context) =>
+	{
 		const role = toDisplayRole(getPlayerRole(context, context.voterName));
 		return `${getRoleEmoji(role)} ${role} ${context.voterName} ducked when evil already won two missions.`;
 	},
 };
 
 // 👻 Oberon Ducked
-export const OberonDuckedPredicate: MissionVotePredicate = {
+export const OberonDuckedPredicate: MissionVotePredicate =
+{
 	name: 'Oberon ducked',
 	rarity: 'epic',
 	interestingRoles: ['OBERON'],
-	isRelevant: (context) => {
+	isRelevant: (context) =>
+	{
 		const voterRole = getPlayerRole(context, context.voterName);
 		return voterRole === 'OBERON';
 	},
 	isWeird: (context) => context.votedSuccess,
-	isWorthCommentary: (context) => {
+	isWorthCommentary: (context) =>
+	{
 		// Don't comment if already covered by more specific predicates
 		const duckingGood =
 			DuckingWhenGoodWonTwoPredicate.isRelevant(context) && DuckingWhenGoodWonTwoPredicate.isWeird(context);
@@ -125,22 +144,26 @@ export const OberonDuckedPredicate: MissionVotePredicate = {
 			DuckingWhenEvilWonTwoPredicate.isRelevant(context) && DuckingWhenEvilWonTwoPredicate.isWeird(context);
 		return !duckingGood && !duckingEvil;
 	},
-	getCommentary: (context) => {
+	getCommentary: (context) =>
+	{
 		return `👻 Oberon ${context.voterName} ducked (did not fail a mission).`;
 	},
 };
 
 // 🦆 General Evil Ducked (non-Oberon)
-export const EvilDuckedPredicate: MissionVotePredicate = {
+export const EvilDuckedPredicate: MissionVotePredicate =
+{
 	name: 'Ducked',
 	rarity: 'common',
 	interestingRoles: 'evil',
-	isRelevant: (context) => {
+	isRelevant: (context) =>
+	{
 		const voterRole = getPlayerRole(context, context.voterName);
 		return isEvilRole(voterRole) && voterRole !== 'OBERON';
 	},
 	isWeird: (context) => context.votedSuccess,
-	isWorthCommentary: (context) => {
+	isWorthCommentary: (context) =>
+	{
 		// Don't comment if already covered by more specific predicates
 		const duckingGood =
 			DuckingWhenGoodWonTwoPredicate.isRelevant(context) && DuckingWhenGoodWonTwoPredicate.isWeird(context);
@@ -148,18 +171,21 @@ export const EvilDuckedPredicate: MissionVotePredicate = {
 			DuckingWhenEvilWonTwoPredicate.isRelevant(context) && DuckingWhenEvilWonTwoPredicate.isWeird(context);
 		return !duckingGood && !duckingEvil;
 	},
-	getCommentary: (context) => {
+	getCommentary: (context) =>
+	{
 		const role = toDisplayRole(getPlayerRole(context, context.voterName));
 		return `${getRoleEmoji(role)} ${role} ${context.voterName} ducked.`;
 	},
 };
 
 // ⚔️ Failure to Coordinate (multiple evil failed when not needed)
-export const FailureToCoordinatePredicate: MissionVotePredicate = {
+export const FailureToCoordinatePredicate: MissionVotePredicate =
+{
 	name: 'Failed to coordinate',
 	rarity: 'epic',
 	interestingRoles: 'evil',
-	isRelevant: (context) => {
+	isRelevant: (context) =>
+	{
 		if (context.votedSuccess) return false;
 		if (alreadyFailedTwo(context)) return false;
 
@@ -167,14 +193,16 @@ export const FailureToCoordinatePredicate: MissionVotePredicate = {
 		const failsRequired = context.mission.failsRequired;
 		return knownEvilFails.length > failsRequired;
 	},
-	isWeird: (context) => {
+	isWeird: (context) =>
+	{
 		// Determine who should have been the one to fail based on hammer distance
 		const allFailVotes = getFailVotes(context);
 		const lastProposal = context.mission.proposals[context.mission.proposals.length - 1];
 		const hammerIndex = getHammerIndex(context, lastProposal.proposer);
 
 		// Find the player who should have been the coordinated fail
-		const coordinatedVote = allFailVotes.reduce((closest, vote) => {
+		const coordinatedVote = allFailVotes.reduce((closest, vote) =>
+		{
 			const closestDistance = getDistanceFromHammer(context, closest.playerName, hammerIndex);
 			const voteDistance = getDistanceFromHammer(context, vote.playerName, hammerIndex);
 			return voteDistance < closestDistance ? vote : closest;
@@ -183,7 +211,8 @@ export const FailureToCoordinatePredicate: MissionVotePredicate = {
 		return context.voterName !== coordinatedVote.playerName;
 	},
 	isWorthCommentary: () => true,
-	getCommentary: (context) => {
+	getCommentary: (context) =>
+	{
 		const role = toDisplayRole(getPlayerRole(context, context.voterName));
 		const knownEvilFails = getKnownEvilFailVotes(context);
 		const failsRequired = context.mission.failsRequired;
@@ -192,11 +221,13 @@ export const FailureToCoordinatePredicate: MissionVotePredicate = {
 };
 
 // 🎯 Evil Player Not Closest to Leader Failed
-export const EvilNotClosestFailedPredicate: MissionVotePredicate = {
+export const EvilNotClosestFailedPredicate: MissionVotePredicate =
+{
 	name: 'Evil not closest to leader failed',
 	rarity: 'uncommon',
 	interestingRoles: 'evil',
-	isRelevant: (context) => {
+	isRelevant: (context) =>
+	{
 		if (context.votedSuccess) return false;
 		const voterRole = getPlayerRole(context, context.voterName);
 		if (!isKnownEvil(voterRole)) return false;
@@ -206,7 +237,8 @@ export const EvilNotClosestFailedPredicate: MissionVotePredicate = {
 		const knownEvilOnMission = missionVotes.filter((v) => isKnownEvil(v.playerRole));
 		return knownEvilOnMission.length >= 2;
 	},
-	isWeird: (context) => {
+	isWeird: (context) =>
+	{
 		const lastProposal = context.mission.proposals[context.mission.proposals.length - 1];
 		const leader = lastProposal.proposer;
 
@@ -215,7 +247,8 @@ export const EvilNotClosestFailedPredicate: MissionVotePredicate = {
 		const knownEvilOnMission = missionVotes.filter((v) => isKnownEvil(v.playerRole));
 
 		// Find closest to leader
-		const closest = knownEvilOnMission.reduce((min, vote) => {
+		const closest = knownEvilOnMission.reduce((min, vote) =>
+		{
 			const minDistance = getDistanceFromLeader(context, min.playerName, leader);
 			const voteDistance = getDistanceFromLeader(context, vote.playerName, leader);
 			return voteDistance < minDistance ? vote : min;
@@ -224,7 +257,8 @@ export const EvilNotClosestFailedPredicate: MissionVotePredicate = {
 		return context.voterName !== closest.playerName && !context.votedSuccess;
 	},
 	isWorthCommentary: () => true,
-	getCommentary: (context) => {
+	getCommentary: (context) =>
+	{
 		const role = toDisplayRole(getPlayerRole(context, context.voterName));
 		return `${getRoleEmoji(role)} ${role} ${context.voterName} failed the mission despite not being the evil player closest to the leader.`;
 	},
@@ -234,19 +268,22 @@ export const EvilNotClosestFailedPredicate: MissionVotePredicate = {
 // 🎯 Distance Calculations
 // ============================================================================
 
-function getHammerIndex(context: MissionContext, proposerName: string): number {
+function getHammerIndex(context: MissionContext, proposerName: string): number
+{
 	const playerIndex = context.game.players.findIndex((p) => p.name === proposerName);
 	const numPlayers = context.game.players.length;
 	return (playerIndex + 4) % numPlayers; // 5th person after current leader
 }
 
-function getDistanceFromHammer(context: MissionContext, playerName: string, hammerIndex: number): number {
+function getDistanceFromHammer(context: MissionContext, playerName: string, hammerIndex: number): number
+{
 	const playerIndex = context.game.players.findIndex((p) => p.name === playerName);
 	const numPlayers = context.game.players.length;
 	return (hammerIndex - playerIndex + numPlayers) % numPlayers;
 }
 
-function getDistanceFromLeader(context: MissionContext, playerName: string, leaderName: string): number {
+function getDistanceFromLeader(context: MissionContext, playerName: string, leaderName: string): number
+{
 	const playerIndex = context.game.players.findIndex((p) => p.name === playerName);
 	const leaderIndex = context.game.players.findIndex((p) => p.name === leaderName);
 	const numPlayers = context.game.players.length;
@@ -272,20 +309,25 @@ export const MISSION_VOTE_PREDICATES: MissionVotePredicate[] = [
 // 🎯 Evaluate Mission Vote
 // ============================================================================
 
-export function evaluateMissionVote(context: MissionVoteContext): Annotation[] {
+export function evaluateMissionVote(context: MissionVoteContext): Annotation[]
+{
 	const annotations: Annotation[] = [];
 
-	for (const predicate of MISSION_VOTE_PREDICATES) {
-		if (predicate.isRelevant(context) && predicate.isWeird(context) && predicate.isWorthCommentary(context)) {
-			annotations.push({
-				type: 'missionVote',
-				predicateName: predicate.name,
-				rarity: predicate.rarity,
-				commentary: predicate.getCommentary(context),
-				playerName: context.voterName,
-				playerRole: getPlayerRole(context, context.voterName),
-				hidden: predicate.hidden,
-			});
+	for (const predicate of MISSION_VOTE_PREDICATES)
+	{
+		if (predicate.isRelevant(context) && predicate.isWeird(context) && predicate.isWorthCommentary(context))
+		{
+			annotations.push(
+				{
+					type: 'missionVote',
+					predicateName: predicate.name,
+					rarity: predicate.rarity,
+					commentary: predicate.getCommentary(context),
+					playerName: context.voterName,
+					playerRole: getPlayerRole(context, context.voterName),
+					hidden: predicate.hidden,
+				},
+			);
 		}
 	}
 

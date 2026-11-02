@@ -108,7 +108,8 @@
 			"proposals": []
 		}
 	],
-	"outcome": {
+	"outcome":
+	{
 		"state": "GOOD_WIN",
 		"message": "Three successful missions",
 		"assassinated": "JOSHC",
@@ -188,19 +189,24 @@
 			"uid": "5jPjVRuXF5hAEXBuKhSjbSqy4Nq2"
 		}
 	],
-	"options": {
+	"options":
+	{
 		"inGameLog": false
 	},
-	"timeCreated": {
+	"timeCreated":
+	{
 		"__datatype__": "timestamp",
-		"value": {
+		"value":
+		{
 			"_seconds": 1747859435,
 			"_nanoseconds": 538000000
 		}
 	},
-	"timeFinished": {
+	"timeFinished":
+	{
 		"__datatype__": "timestamp",
-		"value": {
+		"value":
+		{
 			"_seconds": 1747860063,
 			"_nanoseconds": 314000000
 		}

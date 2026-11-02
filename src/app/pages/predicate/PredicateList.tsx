@@ -5,7 +5,8 @@ import {type Rarity, RARITY_CSS_COLORS, RARITY_ORDER, getPredicateRarity} from '
 import {setupDb, db} from '@/db';
 import styles from '../players/PlayersPage.module.css';
 
-interface PredicateListEntry {
+interface PredicateListEntry
+{
 	predicateName: string;
 	displayName: string;
 	rarity: Rarity;
@@ -18,7 +19,8 @@ interface PredicateListEntry {
 /**
  * Formats predicate name for display (removes common suffixes and adds spaces).
  */
-function formatPredicateName(name: string): string {
+function formatPredicateName(name: string): string
+{
 	return name
 		.replace(/ProposalVotePredicate$/, '')
 		.replace(/ProposalPredicate$/, '')
@@ -27,7 +29,8 @@ function formatPredicateName(name: string): string {
 		.replace(/([a-z])([A-Z])/g, '$1 $2');
 }
 
-function formatPercent(value: number): string {
+function formatPercent(value: number): string
+{
 	return `${(value * 100).toFixed(1)}%`;
 }
 
@@ -35,64 +38,97 @@ function formatPercent(value: number): string {
  * Predicate list page showing all predicates with their baseline statistics.
  * Route: /predicates
  */
-export async function PredicateList() {
+export async function PredicateList()
+{
 	let predicates: PredicateListEntry[] = [];
 	let error: string | null = null;
 
-	try {
+	try
+	{
 		await setupDb(env);
 
 		// Load all baselines
 		const baselines = await loadGlobalAnnotationBaselines(db);
 
 		// Get player counts per predicate
-		const playerCounts = await db.personAnnotationStats.groupBy({
-			by: ['predicateName'],
-			_count: {personId: true},
-			where: {opportunities: {gt: 0}},
-		});
+		const playerCounts = await db.personAnnotationStats.groupBy(
+			{
+				by: ['predicateName'],
+				_count:
+				{
+					personId: true,
+				},
+				where:
+				{
+					opportunities:
+					{
+						gt: 0,
+					},
+				},
+			},
+		);
 
 		const playerCountMap = new Map<string, number>();
-		for (const count of playerCounts) {
+		for (const count of playerCounts)
+		{
 			playerCountMap.set(count.predicateName, count._count.personId);
 		}
 
 		// Build predicate list entries
-		for (const baseline of baselines) {
-			if (baseline.totalOpportunities === 0) {
+		for (const baseline of baselines)
+		{
+			if (baseline.totalOpportunities === 0)
+			{
 				continue;
 			}
 
-			predicates.push({
-				predicateName: baseline.predicateName,
-				displayName: formatPredicateName(baseline.predicateName),
-				rarity: getPredicateRarity(baseline.predicateName),
-				totalFires: baseline.totalFires,
-				totalOpportunities: baseline.totalOpportunities,
-				baselineRate: baseline.totalFires / baseline.totalOpportunities,
-				playerCount: playerCountMap.get(baseline.predicateName) ?? 0,
-			});
+			predicates.push(
+				{
+					predicateName: baseline.predicateName,
+					displayName: formatPredicateName(baseline.predicateName),
+					rarity: getPredicateRarity(baseline.predicateName),
+					totalFires: baseline.totalFires,
+					totalOpportunities: baseline.totalOpportunities,
+					baselineRate: baseline.totalFires / baseline.totalOpportunities,
+					playerCount: playerCountMap.get(baseline.predicateName) ?? 0,
+				},
+			);
 		}
 
 		// Sort by rarity (rarest first), then alphabetically
-		predicates.sort((a, b) => {
+		predicates.sort((a, b) =>
+		{
 			const rarityDiff = RARITY_ORDER[a.rarity] - RARITY_ORDER[b.rarity];
-			if (rarityDiff !== 0) {
+			if (rarityDiff !== 0)
+			{
 				return rarityDiff;
 			}
 			return a.displayName.localeCompare(b.displayName);
 		});
-	} catch (err) {
+	}
+	catch (err)
+	{
 		error = err instanceof Error ? err.message : 'Failed to load predicates';
 	}
 
-	if (error) {
+	if (error)
+	{
 		return <div>Error: {error}</div>;
 	}
 
 	return (
 		<div className={styles.container}>
-			<Breadcrumb items={[{label: 'Home', href: '/'}, {label: 'Predicates'}]} />
+			<Breadcrumb
+				items={[
+					{
+						label: 'Home',
+						href: '/',
+					},
+					{
+						label: 'Predicates',
+					},
+				]}
+			/>
 			<div className={styles.header}>
 				<h1>Predicates</h1>
 				<p className={styles.subtitle}>{predicates.length} behaviors tracked across all players</p>
@@ -126,7 +162,8 @@ export async function PredicateList() {
 										</td>
 										<td className={styles.numberColumn}>
 											<span
-												style={{
+												style={
+												{
 													display: 'inline-block',
 													width: '0.75rem',
 													height: '0.75rem',

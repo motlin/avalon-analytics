@@ -24,12 +24,14 @@ const GAMES_PER_PAGE = 20;
  * Query parameters:
  * - page: Page number for game history (default: 1)
  */
-interface PersonOption {
+interface PersonOption
+{
 	id: string;
 	name: string;
 }
 
-export async function PlayerDetailPage({params, request}: RequestInfo) {
+export async function PlayerDetailPage({params, request}: RequestInfo)
+{
 	const playerId = params.playerId;
 	const url = new URL(request.url);
 	const pageParam = url.searchParams.get('page');
@@ -43,7 +45,8 @@ export async function PlayerDetailPage({params, request}: RequestInfo) {
 	let allPeopleForMapping: PersonOption[] = [];
 	let stats: PersonStatistics | null = null;
 
-	try {
+	try
+	{
 		await setupDb(env);
 
 		// Initialize person service and check if this is a mapped person
@@ -54,30 +57,41 @@ export async function PlayerDetailPage({params, request}: RequestInfo) {
 		const person = allPeople.find((p) => p.id === playerId);
 
 		// Store all people for the mapping dropdown
-		allPeopleForMapping = allPeople.map((p) => ({id: p.id, name: p.name}));
+		allPeopleForMapping = allPeople.map((p) => (
+		{
+			id: p.id,
+			name: p.name,
+		}));
 
-		if (person) {
+		if (person)
+		{
 			// This is a mapped person - load PersonStats
 			isMapped = true;
 			playerName = person.name;
 			playerUids = person.uids;
 			stats = await loadPersonStatsFromDb(person.id);
-		} else {
+		}
+		else
+		{
 			// Treat as a UID - check if it's mapped to a person
 			playerUids = [playerId];
 
 			// Check if this UID is already mapped to a person
 			const mappedPersonId = personService.getPersonId(playerId);
-			if (mappedPersonId) {
+			if (mappedPersonId)
+			{
 				// UID is mapped - load PersonStats and mark as mapped
 				isMapped = true;
 				const mappedPerson = allPeople.find((p) => p.id === mappedPersonId);
-				if (mappedPerson) {
+				if (mappedPerson)
+				{
 					playerName = mappedPerson.name;
 					playerUids = mappedPerson.uids;
 				}
 				stats = await loadPersonStatsFromDb(mappedPersonId);
-			} else {
+			}
+			else
+			{
 				// Truly unmapped player - load PlayerStats
 				stats = await loadPlayerStatsFromDb(playerId);
 			}
@@ -86,18 +100,26 @@ export async function PlayerDetailPage({params, request}: RequestInfo) {
 		const uidSet = new Set(playerUids);
 
 		// Fetch games for game history section
-		const playerGameRecords = await db.playerGame.findMany({
-			where: {
-				playerUid: {in: playerUids},
+		const playerGameRecords = await db.playerGame.findMany(
+			{
+				where:
+				{
+					playerUid:
+					{
+						in: playerUids,
+					},
+				},
+				include:
+				{
+					rawGameData: true,
+				},
 			},
-			include: {
-				rawGameData: true,
-			},
-		});
+		);
 
 		// Deduplicate by firebaseKey (a mapped person with multiple UIDs might have duplicates)
 		const seenKeys = new Set<string>();
-		for (const record of playerGameRecords) {
+		for (const record of playerGameRecords)
+		{
 			if (seenKeys.has(record.firebaseKey)) continue;
 			seenKeys.add(record.firebaseKey);
 
@@ -106,7 +128,8 @@ export async function PlayerDetailPage({params, request}: RequestInfo) {
 					? JSON.parse(record.rawGameData.gameJson)
 					: record.rawGameData.gameJson;
 			const parsed = GameSchema.safeParse(gameData);
-			if (parsed.success) {
+			if (parsed.success)
+			{
 				games.push(parsed.data);
 			}
 		}
@@ -114,22 +137,44 @@ export async function PlayerDetailPage({params, request}: RequestInfo) {
 		games.sort((a, b) => b.timeCreated.getTime() - a.timeCreated.getTime());
 
 		// Get player name from game if not already set
-		if (!playerName && games.length > 0) {
+		if (!playerName && games.length > 0)
+		{
 			playerName = games[0].players.find((p) => uidSet.has(p.uid))?.name || null;
 		}
-	} catch (err) {
+	}
+	catch (err)
+	{
 		error = err instanceof Error ? err.message : 'Failed to load games for player';
 	}
 
-	if (error) {
+	if (error)
+	{
 		return <div>Error: {error}</div>;
 	}
 
-	if (!stats || games.length === 0) {
+	if (!stats || games.length === 0)
+	{
 		return (
-			<div style={{padding: '1rem'}}>
+			<div
+				style={
+				{
+					padding: '1rem',
+				}}
+			>
 				<Breadcrumb
-					items={[{label: 'Home', href: '/'}, {label: 'Players', href: '/players'}, {label: 'Not Found'}]}
+					items={[
+						{
+							label: 'Home',
+							href: '/',
+						},
+						{
+							label: 'Players',
+							href: '/players',
+						},
+						{
+							label: 'Not Found',
+						},
+					]}
 				/>
 				<h1>Player Not Found</h1>
 				<p>No statistics found for player with ID: {playerId}</p>
@@ -138,44 +183,83 @@ export async function PlayerDetailPage({params, request}: RequestInfo) {
 	}
 
 	// Override the person name if we have a mapped person name
-	if (playerName && isMapped) {
+	if (playerName && isMapped)
+	{
 		stats.personName = playerName;
 	}
 
 	return (
-		<div style={{padding: '1rem', maxWidth: '1200px', margin: '0 auto'}}>
+		<div
+			style={
+			{
+				padding: '1rem',
+				maxWidth: '1200px',
+				margin: '0 auto',
+			}}
+		>
 			<Breadcrumb
 				items={[
-					{label: 'Home', href: '/'},
-					{label: 'Players', href: '/players'},
-					{label: playerName || playerId},
+					{
+						label: 'Home',
+						href: '/',
+					},
+					{
+						label: 'Players',
+						href: '/players',
+					},
+					{
+						label: playerName || playerId,
+					},
 				]}
 			/>
 
 			{/* Header Section */}
-			<div style={{marginBottom: '2rem'}}>
-				<h1 style={{margin: '0 0 0.5rem 0'}}>Player Statistics: {playerName || playerId}</h1>
+			<div
+				style={
+				{
+					marginBottom: '2rem',
+				}}
+			>
+				<h1
+					style={
+					{
+						margin: '0 0 0.5rem 0',
+					}}
+				>
+					Player Statistics: {playerName || playerId}
+				</h1>
 				{isMapped ? (
-					<p style={{margin: 0, color: '#666', fontSize: '0.875rem'}}>
+					<p
+						style={
+						{
+							margin: 0,
+							color: '#666',
+							fontSize: '0.875rem',
+						}}
+					>
 						{playerUids.length} linked account{playerUids.length !== 1 ? 's' : ''}
 					</p>
 				) : (
-					<p style={{margin: 0, color: '#666', fontSize: '0.875rem'}}>UID: {playerId}</p>
+					<p
+						style={
+						{
+							margin: 0,
+							color: '#666',
+							fontSize: '0.875rem',
+						}}
+					>
+						UID: {playerId}
+					</p>
 				)}
 			</div>
 
 			{/* Mapping Section for Unmapped Players */}
-			{!isMapped && (
-				<MappingSection
-					uid={playerId}
-					playerName={playerName}
-					allPeople={allPeopleForMapping}
-				/>
-			)}
+			{!isMapped && <MappingSection uid={playerId} playerName={playerName} allPeople={allPeopleForMapping} />}
 
 			{/* Overview Summary */}
 			<div
-				style={{
+				style={
+				{
 					display: 'grid',
 					gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
 					gap: '1rem',
@@ -185,29 +269,115 @@ export async function PlayerDetailPage({params, request}: RequestInfo) {
 					borderRadius: '8px',
 				}}
 			>
-				<div style={{textAlign: 'center'}}>
-					<div style={{fontSize: '2rem', fontWeight: 'bold'}}>{stats.totalGames}</div>
-					<div style={{color: '#666', fontSize: '0.875rem'}}>Total Games</div>
+				<div
+					style={
+					{
+						textAlign: 'center',
+					}}
+				>
+					<div
+						style={
+						{
+							fontSize: '2rem',
+							fontWeight: 'bold',
+						}}
+					>
+						{stats.totalGames}
+					</div>
+					<div
+						style={
+						{
+							color: '#666',
+							fontSize: '0.875rem',
+						}}
+					>
+						Total Games
+					</div>
 				</div>
-				<div style={{textAlign: 'center'}}>
-					<div style={{fontSize: '2rem', fontWeight: 'bold', color: '#4caf50'}}>{stats.totalWins}</div>
-					<div style={{color: '#666', fontSize: '0.875rem'}}>Wins</div>
+				<div
+					style={
+					{
+						textAlign: 'center',
+					}}
+				>
+					<div
+						style={
+						{
+							fontSize: '2rem',
+							fontWeight: 'bold',
+							color: '#4caf50',
+						}}
+					>
+						{stats.totalWins}
+					</div>
+					<div
+						style={
+						{
+							color: '#666',
+							fontSize: '0.875rem',
+						}}
+					>
+						Wins
+					</div>
 				</div>
-				<div style={{textAlign: 'center'}}>
-					<div style={{fontSize: '2rem', fontWeight: 'bold', color: '#f44336'}}>{stats.totalLosses}</div>
-					<div style={{color: '#666', fontSize: '0.875rem'}}>Losses</div>
+				<div
+					style={
+					{
+						textAlign: 'center',
+					}}
+				>
+					<div
+						style={
+						{
+							fontSize: '2rem',
+							fontWeight: 'bold',
+							color: '#f44336',
+						}}
+					>
+						{stats.totalLosses}
+					</div>
+					<div
+						style={
+						{
+							color: '#666',
+							fontSize: '0.875rem',
+						}}
+					>
+						Losses
+					</div>
 				</div>
-				<div style={{textAlign: 'center'}}>
-					<div style={{fontSize: '2rem', fontWeight: 'bold', color: '#1976d2'}}>
+				<div
+					style={
+					{
+						textAlign: 'center',
+					}}
+				>
+					<div
+						style={
+						{
+							fontSize: '2rem',
+							fontWeight: 'bold',
+							color: '#1976d2',
+						}}
+					>
 						{stats.overallWinRate.toFixed(0)}%
 					</div>
-					<div style={{color: '#666', fontSize: '0.875rem'}}>Win Rate</div>
+					<div
+						style={
+						{
+							color: '#666',
+							fontSize: '0.875rem',
+						}}
+					>
+						Win Rate
+					</div>
 				</div>
 			</div>
 
 			{/* Detailed Statistics Sections */}
 			<div
-				style={{
+				style={
+				{
 					display: 'grid',
 					gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
 					gap: '2rem',
@@ -234,7 +404,8 @@ export async function PlayerDetailPage({params, request}: RequestInfo) {
 	);
 }
 
-interface GameHistorySectionProps {
+interface GameHistorySectionProps
+{
 	games: Game[];
 	playerUids: string[];
 	playerId: string;
@@ -242,7 +413,8 @@ interface GameHistorySectionProps {
 	gamesPerPage: number;
 }
 
-function GameHistorySection({games, playerUids, playerId, currentPage, gamesPerPage}: GameHistorySectionProps) {
+function GameHistorySection({games, playerUids, playerId, currentPage, gamesPerPage}: GameHistorySectionProps)
+{
 	const totalGames = games.length;
 	const totalPages = Math.ceil(totalGames / gamesPerPage);
 	const startIndex = (currentPage - 1) * gamesPerPage;
@@ -251,15 +423,42 @@ function GameHistorySection({games, playerUids, playerId, currentPage, gamesPerP
 	const uidSet = new Set(playerUids);
 
 	return (
-		<div style={{marginTop: '2rem'}}>
-			<div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem'}}>
-				<h3 style={{margin: 0}}>Game History</h3>
-				<span style={{color: '#666', fontSize: '0.875rem'}}>
+		<div
+			style={
+			{
+				marginTop: '2rem',
+			}}
+		>
+			<div
+				style={
+				{
+					display: 'flex',
+					justifyContent: 'space-between',
+					alignItems: 'center',
+					marginBottom: '1rem',
+				}}
+			>
+				<h3
+					style={
+					{
+						margin: 0,
+					}}
+				>
+					Game History
+				</h3>
+				<span
+					style={
+					{
+						color: '#666',
+						fontSize: '0.875rem',
+					}}
+				>
 					Showing {startIndex + 1}-{endIndex} of {totalGames} games
 				</span>
 			</div>
 
-			{paginatedGames.map((game) => {
+			{paginatedGames.map((game) =>
+			{
 				const playerInGame = game.players.find((p) => uidSet.has(p.uid));
 				const playerRole = game.outcome?.roles?.find(
 					(r: {name: string; role: string}) => r.name === playerInGame?.name,
@@ -276,11 +475,16 @@ function GameHistorySection({games, playerUids, playerId, currentPage, gamesPerP
 				const wasAssassinated = game.outcome?.assassinated === playerInGame?.name;
 				const wasMerlin = normalizedRole === 'MERLIN';
 
-				const getOutcomeDescription = () => {
+				const getOutcomeDescription = () =>
+				{
 					if (!game.outcome) return null;
 
 					const outcomeReason = game.outcome.reason || game.outcome.message;
-					const reasons: {[key: string]: string} = {
+					const reasons:
+					{
+						[key: string]: string;
+					} =
+					{
 						'Three successful missions': '3 missions succeeded',
 						'Three failed missions': '3 missions failed',
 						'Five rejected proposals': '5 proposals rejected',
@@ -294,7 +498,8 @@ function GameHistorySection({games, playerUids, playerId, currentPage, gamesPerP
 				return (
 					<div
 						key={game.id}
-						style={{
+						style={
+						{
 							border: '2px solid',
 							borderColor: playerWon ? '#4caf50' : '#f44336',
 							padding: '1rem',
@@ -305,34 +510,58 @@ function GameHistorySection({games, playerUids, playerId, currentPage, gamesPerP
 						}}
 					>
 						<div
-							style={{
+							style={
+							{
 								display: 'flex',
 								justifyContent: 'space-between',
 								alignItems: 'flex-start',
 							}}
 						>
-							<div style={{flex: 1}}>
-								<h3 style={{margin: '0 0 0.5rem 0'}}>
+							<div
+								style={
+								{
+									flex: 1,
+								}}
+							>
+								<h3
+									style={
+									{
+										margin: '0 0 0.5rem 0',
+									}}
+								>
 									<a
 										href={`/game/${game.id}`}
-										style={{textDecoration: 'none', color: '#0066cc'}}
+										style={
+										{
+											textDecoration: 'none',
+											color: '#0066cc',
+										}}
 									>
 										<LocalTimestamp isoString={game.timeCreated.toISOString()} />
 									</a>
 								</h3>
 
 								<div
-									style={{
+									style={
+									{
 										display: 'flex',
 										flexWrap: 'wrap',
 										gap: '1rem',
 										fontSize: '0.9rem',
 									}}
 								>
-									<div style={{display: 'flex', alignItems: 'center', gap: '0.5rem'}}>
+									<div
+										style={
+										{
+											display: 'flex',
+											alignItems: 'center',
+											gap: '0.5rem',
+										}}
+									>
 										<strong>Result:</strong>
 										<span
-											style={{
+											style={
+											{
 												color: playerWon ? '#4caf50' : '#f44336',
 												fontWeight: 'bold',
 											}}
@@ -342,10 +571,18 @@ function GameHistorySection({games, playerUids, playerId, currentPage, gamesPerP
 									</div>
 
 									{playerRole && (
-										<div style={{display: 'flex', alignItems: 'center', gap: '0.5rem'}}>
+										<div
+											style={
+											{
+												display: 'flex',
+												alignItems: 'center',
+												gap: '0.5rem',
+											}}
+										>
 											<strong>Role:</strong>
 											<span
-												style={{
+												style={
+												{
 													color: isEvil ? '#c62828' : '#2e7d32',
 													fontWeight: 'bold',
 												}}
@@ -356,7 +593,14 @@ function GameHistorySection({games, playerUids, playerId, currentPage, gamesPerP
 									)}
 
 									{game.outcome && (
-										<div style={{display: 'flex', alignItems: 'center', gap: '0.5rem'}}>
+										<div
+											style={
+											{
+												display: 'flex',
+												alignItems: 'center',
+												gap: '0.5rem',
+											}}
+										>
 											<strong>Outcome:</strong>
 											<span>{getOutcomeDescription()}</span>
 										</div>
@@ -365,7 +609,8 @@ function GameHistorySection({games, playerUids, playerId, currentPage, gamesPerP
 
 								{(wasAssassinated || wasMerlin) && (
 									<div
-										style={{
+										style={
+										{
 											marginTop: '0.5rem',
 											padding: '0.5rem',
 											backgroundColor: wasAssassinated ? '#fff3cd' : '#e3f2fd',
@@ -390,7 +635,14 @@ function GameHistorySection({games, playerUids, playerId, currentPage, gamesPerP
 							</div>
 						</div>
 
-						<div style={{marginTop: '0.75rem', fontSize: '0.85rem', color: '#666'}}>
+						<div
+							style={
+							{
+								marginTop: '0.75rem',
+								fontSize: '0.85rem',
+								color: '#666',
+							}}
+						>
 							<strong>Players:</strong> {game.players.map((p) => p.name).join(', ')}
 						</div>
 					</div>
@@ -400,7 +652,8 @@ function GameHistorySection({games, playerUids, playerId, currentPage, gamesPerP
 			{/* Pagination Controls */}
 			{totalPages > 1 && (
 				<div
-					style={{
+					style={
+					{
 						display: 'flex',
 						justifyContent: 'center',
 						alignItems: 'center',
@@ -412,7 +665,8 @@ function GameHistorySection({games, playerUids, playerId, currentPage, gamesPerP
 					{currentPage > 1 && (
 						<a
 							href={`/players/${playerId}?page=${currentPage - 1}`}
-							style={{
+							style={
+							{
 								padding: '0.5rem 1rem',
 								border: '1px solid #ddd',
 								borderRadius: '4px',
@@ -424,19 +678,36 @@ function GameHistorySection({games, playerUids, playerId, currentPage, gamesPerP
 						</a>
 					)}
 
-					{Array.from({length: totalPages}, (_, i) => i + 1)
-						.filter((page) => {
+					{Array.from(
+						{
+							length: totalPages,
+						},
+						(_, i) => i + 1,
+					)
+						.filter((page) =>
+						{
 							// Show first, last, current, and pages near current
 							return page === 1 || page === totalPages || Math.abs(page - currentPage) <= 2;
 						})
-						.map((page, index, filtered) => {
+						.map((page, index, filtered) =>
+						{
 							const showEllipsis = index > 0 && page - filtered[index - 1] > 1;
 							return (
 								<span key={page}>
-									{showEllipsis && <span style={{padding: '0 0.25rem'}}>…</span>}
+									{showEllipsis && (
+										<span
+											style={
+											{
+												padding: '0 0.25rem',
+											}}
+										>
+											…
+										</span>
+									)}
 									<a
 										href={`/players/${playerId}?page=${page}`}
-										style={{
+										style={
+										{
 											padding: '0.5rem 0.75rem',
 											border: '1px solid',
 											borderColor: page === currentPage ? '#0066cc' : '#ddd',
@@ -455,7 +726,8 @@ function GameHistorySection({games, playerUids, playerId, currentPage, gamesPerP
 					{currentPage < totalPages && (
 						<a
 							href={`/players/${playerId}?page=${currentPage + 1}`}
-							style={{
+							style={
+							{
 								padding: '0.5rem 1rem',
 								border: '1px solid #ddd',
 								borderRadius: '4px',
@@ -472,16 +744,19 @@ function GameHistorySection({games, playerUids, playerId, currentPage, gamesPerP
 	);
 }
 
-interface MappingSectionProps {
+interface MappingSectionProps
+{
 	uid: string;
 	playerName: string | null;
 	allPeople: PersonOption[];
 }
 
-function MappingSection({uid, playerName, allPeople}: MappingSectionProps) {
+function MappingSection({uid, playerName, allPeople}: MappingSectionProps)
+{
 	return (
 		<div
-			style={{
+			style={
+			{
 				marginBottom: '2rem',
 				padding: '1.5rem',
 				backgroundColor: '#fff3cd',
@@ -489,48 +764,94 @@ function MappingSection({uid, playerName, allPeople}: MappingSectionProps) {
 				borderRadius: '8px',
 			}}
 		>
-			<h3 style={{margin: '0 0 1rem 0', color: '#856404'}}>Unmapped Player</h3>
-			<p style={{margin: '0 0 1rem 0', color: '#856404'}}>
+			<h3
+				style={
+				{
+					margin: '0 0 1rem 0',
+					color: '#856404',
+				}}
+			>
+				Unmapped Player
+			</h3>
+			<p
+				style={
+				{
+					margin: '0 0 1rem 0',
+					color: '#856404',
+				}}
+			>
 				This player is not linked to a known person. You can map this UID to an existing person or create a new
 				one.
 			</p>
 
-			<div style={{display: 'flex', flexDirection: 'column', gap: '1rem'}}>
+			<div
+				style={
+				{
+					display: 'flex',
+					flexDirection: 'column',
+					gap: '1rem',
+				}}
+			>
 				{/* Map to existing person */}
-				<details style={{backgroundColor: '#fff', padding: '1rem', borderRadius: '4px'}}>
-					<summary style={{cursor: 'pointer', fontWeight: 'bold', marginBottom: '0.5rem'}}>
+				<details
+					style={
+					{
+						backgroundColor: '#fff',
+						padding: '1rem',
+						borderRadius: '4px',
+					}}
+				>
+					<summary
+						style={
+						{
+							cursor: 'pointer',
+							fontWeight: 'bold',
+							marginBottom: '0.5rem',
+						}}
+					>
 						Map to existing person
 					</summary>
-					<div style={{marginTop: '1rem'}}>
+					<div
+						style={
+						{
+							marginTop: '1rem',
+						}}
+					>
 						{allPeople.length === 0 ? (
-							<p style={{color: '#666'}}>No people in the database yet.</p>
+							<p
+								style={
+								{
+									color: '#666',
+								}}
+							>
+								No people in the database yet.
+							</p>
 						) : (
-							<div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
+							<div
+								style={
+								{
+									display: 'flex',
+									flexDirection: 'column',
+									gap: '0.5rem',
+								}}
+							>
 								{allPeople.map((person) => (
 									<form
 										key={person.id}
 										method="POST"
 										action="/admin/map-uid"
-										style={{display: 'inline'}}
+										style={
+										{
+											display: 'inline',
+										}}
 									>
-										<input
-											type="hidden"
-											name="uid"
-											value={uid}
-										/>
-										<input
-											type="hidden"
-											name="personId"
-											value={person.id}
-										/>
-										<input
-											type="hidden"
-											name="redirectTo"
-											value={`/person/${person.id}`}
-										/>
+										<input type="hidden" name="uid" value={uid} />
+										<input type="hidden" name="personId" value={person.id} />
+										<input type="hidden" name="redirectTo" value={`/person/${person.id}`} />
 										<button
 											type="submit"
-											style={{
+											style={
+											{
 												background: 'none',
 												border: '1px solid #ddd',
 												borderRadius: '4px',
@@ -550,29 +871,47 @@ function MappingSection({uid, playerName, allPeople}: MappingSectionProps) {
 				</details>
 
 				{/* Create new person */}
-				<details style={{backgroundColor: '#fff', padding: '1rem', borderRadius: '4px'}}>
-					<summary style={{cursor: 'pointer', fontWeight: 'bold', marginBottom: '0.5rem'}}>
+				<details
+					style={
+					{
+						backgroundColor: '#fff',
+						padding: '1rem',
+						borderRadius: '4px',
+					}}
+				>
+					<summary
+						style={
+						{
+							cursor: 'pointer',
+							fontWeight: 'bold',
+							marginBottom: '0.5rem',
+						}}
+					>
 						Create new person
 					</summary>
 					<form
 						method="POST"
 						action="/admin/map-uid"
-						style={{marginTop: '1rem'}}
+						style={
+						{
+							marginTop: '1rem',
+						}}
 					>
-						<input
-							type="hidden"
-							name="uid"
-							value={uid}
-						/>
-						<input
-							type="hidden"
-							name="redirectTo"
-							value={`/players/${uid}`}
-						/>
-						<div style={{marginBottom: '0.5rem'}}>
+						<input type="hidden" name="uid" value={uid} />
+						<input type="hidden" name="redirectTo" value={`/players/${uid}`} />
+						<div
+							style={
+							{
+								marginBottom: '0.5rem',
+							}}
+						>
 							<label
 								htmlFor="newPersonName"
-								style={{display: 'block', marginBottom: '0.25rem'}}
+								style={
+								{
+									display: 'block',
+									marginBottom: '0.25rem',
+								}}
 							>
 								Person Name:
 							</label>
@@ -583,7 +922,8 @@ function MappingSection({uid, playerName, allPeople}: MappingSectionProps) {
 								defaultValue={playerName || ''}
 								placeholder="Enter person name"
 								required
-								style={{
+								style={
+								{
 									width: '100%',
 									padding: '0.5rem',
 									border: '1px solid #ddd',
@@ -594,7 +934,8 @@ function MappingSection({uid, playerName, allPeople}: MappingSectionProps) {
 						</div>
 						<button
 							type="submit"
-							style={{
+							style={
+							{
 								backgroundColor: '#28a745',
 								color: '#fff',
 								border: 'none',

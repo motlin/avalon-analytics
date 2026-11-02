@@ -1,7 +1,8 @@
 import React from 'react';
 import styles from './StatsDisplay.module.css';
 
-interface Stats {
+interface Stats
+{
 	games?: number;
 	good?: number;
 	wins?: number;
@@ -9,17 +10,20 @@ interface Stats {
 	playtimeSeconds?: number;
 }
 
-interface GlobalStats {
+interface GlobalStats
+{
 	games: number;
 	good_wins: number;
 }
 
-interface StatsDisplayProps {
+interface StatsDisplayProps
+{
 	stats: Stats;
 	globalStats?: GlobalStats;
 }
 
-const StatsDisplay: React.FC<StatsDisplayProps> = ({stats, globalStats}) => {
+const StatsDisplay: React.FC<StatsDisplayProps> = ({stats, globalStats}) =>
+{
 	const games = stats.games || 0;
 	const good = stats.good || 0;
 	const evil = games - good;
@@ -39,14 +43,20 @@ const StatsDisplay: React.FC<StatsDisplayProps> = ({stats, globalStats}) => {
 		? `${((100 * (globalStats.games - globalStats.good_wins)) / globalStats.games).toFixed(0)}%`
 		: '';
 
-	const playtime = (() => {
+	const playtime = (() =>
+	{
 		const playtimeSeconds = stats.playtimeSeconds || 0;
 		const hours = playtimeSeconds / 60 / 60;
-		if (hours > 1) {
+		if (hours > 1)
+		{
 			return `${hours.toFixed(1)} hours`;
-		} else if (playtimeSeconds > 60) {
+		}
+		else if (playtimeSeconds > 60)
+		{
 			return `${(playtimeSeconds / 60).toFixed(0)} minutes`;
-		} else {
+		}
+		else
+		{
 			return 'Not enough';
 		}
 	})();

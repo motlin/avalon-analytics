@@ -1,28 +1,34 @@
-.container {
+.container
+{
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 }
 
-.table {
+.table
+{
 	border-collapse: collapse;
 }
 
-.table td {
+.table td
+{
 	text-align: right;
 	padding-left: 1em;
 	padding-right: 1em;
 }
 
-.statsHeader {
+.statsHeader
+{
 	border-bottom: 2px solid;
 }
 
-.fontWeightMedium {
+.fontWeightMedium
+{
 	font-weight: 500;
 }
 
-.playtime {
+.playtime
+{
 	padding-top: 0.5rem;
 	margin-top: 0.75rem;
 }

@@ -9,7 +9,8 @@
  */
 
 import type {Game, Mission, Proposal} from './game';
-import type {
+import type
+{
 	GameContext,
 	MissionContext,
 	MissionVoteContext,
@@ -30,7 +31,8 @@ import {MISSION_VOTE_PREDICATES} from './missionVotePredicates';
 
 export type Alignment = 'good' | 'evil' | 'unknown';
 
-export interface PredicateEvaluationResult {
+export interface PredicateEvaluationResult
+{
 	predicateName: string;
 	playerName: string;
 	playerRole: string | undefined;
@@ -41,7 +43,8 @@ export interface PredicateEvaluationResult {
 	fired: boolean;
 }
 
-export interface GamePredicateResults {
+export interface GamePredicateResults
+{
 	game: Game;
 	proposalResults: PredicateEvaluationResult[];
 	proposalVoteResults: PredicateEvaluationResult[];
@@ -52,7 +55,8 @@ export interface GamePredicateResults {
 // Alignment Helper
 // ============================================================================
 
-function getAlignment(role: string | undefined): Alignment {
+function getAlignment(role: string | undefined): Alignment
+{
 	if (!role) return 'unknown';
 	if (isGoodRole(role)) return 'good';
 	if (isEvilRole(role)) return 'evil';
@@ -63,7 +67,8 @@ function getAlignment(role: string | undefined): Alignment {
 // Proposal Predicate Evaluation
 // ============================================================================
 
-function evaluateProposalPredicate(predicate: ProposalPredicate, context: ProposalContext): PredicateEvaluationResult {
+function evaluateProposalPredicate(predicate: ProposalPredicate, context: ProposalContext): PredicateEvaluationResult
+{
 	const playerName = context.proposal.proposer;
 	const playerRole = getPlayerRole(context, playerName);
 	const isRelevant = predicate.isRelevant(context);
@@ -79,7 +84,8 @@ function evaluateProposalPredicate(predicate: ProposalPredicate, context: Propos
 	};
 }
 
-function evaluateAllProposalPredicates(context: ProposalContext): PredicateEvaluationResult[] {
+function evaluateAllProposalPredicates(context: ProposalContext): PredicateEvaluationResult[]
+{
 	return PROPOSAL_PREDICATES.map((predicate) => evaluateProposalPredicate(predicate, context));
 }
 
@@ -90,7 +96,8 @@ function evaluateAllProposalPredicates(context: ProposalContext): PredicateEvalu
 function evaluateProposalVotePredicate(
 	predicate: ProposalVotePredicate,
 	context: ProposalVoteContext,
-): PredicateEvaluationResult {
+): PredicateEvaluationResult
+{
 	const playerName = context.voterName;
 	const playerRole = getPlayerRole(context, playerName);
 	const isRelevant = predicate.isRelevant(context);
@@ -106,7 +113,8 @@ function evaluateProposalVotePredicate(
 	};
 }
 
-function evaluateAllProposalVotePredicates(context: ProposalVoteContext): PredicateEvaluationResult[] {
+function evaluateAllProposalVotePredicates(context: ProposalVoteContext): PredicateEvaluationResult[]
+{
 	return PROPOSAL_VOTE_PREDICATES.map((predicate) => evaluateProposalVotePredicate(predicate, context));
 }
 
@@ -117,7 +125,8 @@ function evaluateAllProposalVotePredicates(context: ProposalVoteContext): Predic
 function evaluateMissionVotePredicate(
 	predicate: MissionVotePredicate,
 	context: MissionVoteContext,
-): PredicateEvaluationResult {
+): PredicateEvaluationResult
+{
 	const playerName = context.voterName;
 	const playerRole = getPlayerRole(context, playerName);
 	const isRelevant = predicate.isRelevant(context);
@@ -133,7 +142,8 @@ function evaluateMissionVotePredicate(
 	};
 }
 
-function evaluateAllMissionVotePredicates(context: MissionVoteContext): PredicateEvaluationResult[] {
+function evaluateAllMissionVotePredicates(context: MissionVoteContext): PredicateEvaluationResult[]
+{
 	return MISSION_VOTE_PREDICATES.map((predicate) => evaluateMissionVotePredicate(predicate, context));
 }
 
@@ -145,24 +155,29 @@ function evaluateAllMissionVotePredicates(context: MissionVoteContext): Predicat
  * Evaluates all predicates for an entire game and returns opportunity tracking data.
  * This is the main entry point for generating annotation statistics.
  */
-export function evaluateGamePredicates(game: Game): GamePredicateResults {
+export function evaluateGamePredicates(game: Game): GamePredicateResults
+{
 	const context = createGameContext(game);
 	const proposalResults: PredicateEvaluationResult[] = [];
 	const proposalVoteResults: PredicateEvaluationResult[] = [];
 	const missionVoteResults: PredicateEvaluationResult[] = [];
 
-	for (let missionIndex = 0; missionIndex < game.missions.length; missionIndex++) {
+	for (let missionIndex = 0; missionIndex < game.missions.length; missionIndex++)
+	{
 		const mission = game.missions[missionIndex];
-		const missionContext: MissionContext = {
+		const missionContext: MissionContext =
+		{
 			...context,
 			mission,
 			missionNumber: missionIndex,
 		};
 
 		// Evaluate each proposal in the mission
-		for (let proposalIndex = 0; proposalIndex < mission.proposals.length; proposalIndex++) {
+		for (let proposalIndex = 0; proposalIndex < mission.proposals.length; proposalIndex++)
+		{
 			const proposal = mission.proposals[proposalIndex];
-			const proposalContext: ProposalContext = {
+			const proposalContext: ProposalContext =
+			{
 				...missionContext,
 				proposal,
 				proposalNumber: proposalIndex,
@@ -172,9 +187,11 @@ export function evaluateGamePredicates(game: Game): GamePredicateResults {
 			proposalResults.push(...evaluateAllProposalPredicates(proposalContext));
 
 			// Evaluate proposal vote predicates (for each voter)
-			for (const player of game.players) {
+			for (const player of game.players)
+			{
 				const votedYes = proposal.votes.includes(player.name);
-				const voteContext: ProposalVoteContext = {
+				const voteContext: ProposalVoteContext =
+				{
 					...proposalContext,
 					voterName: player.name,
 					votedYes,
@@ -185,9 +202,12 @@ export function evaluateGamePredicates(game: Game): GamePredicateResults {
 
 		// Evaluate mission vote predicates (from outcome data)
 		const missionVotes = game.outcome?.votes?.[missionIndex];
-		if (missionVotes) {
-			for (const [playerName, votedSuccess] of Object.entries(missionVotes)) {
-				const voteContext: MissionVoteContext = {
+		if (missionVotes)
+		{
+			for (const [playerName, votedSuccess] of Object.entries(missionVotes))
+			{
+				const voteContext: MissionVoteContext =
+				{
 					...missionContext,
 					voterName: playerName,
 					votedSuccess,
@@ -209,7 +229,8 @@ export function evaluateGamePredicates(game: Game): GamePredicateResults {
 // Utility Functions for Aggregating Results
 // ============================================================================
 
-export interface PredicateOpportunitySummary {
+export interface PredicateOpportunitySummary
+{
 	predicateName: string;
 	playerName: string;
 	playerRole: string | undefined;
@@ -224,15 +245,19 @@ export interface PredicateOpportunitySummary {
  */
 export function aggregateResultsByPlayerAndPredicate(
 	results: PredicateEvaluationResult[],
-): Map<string, PredicateOpportunitySummary> {
+): Map<string, PredicateOpportunitySummary>
+{
 	const summaries = new Map<string, PredicateOpportunitySummary>();
 
-	for (const result of results) {
+	for (const result of results)
+	{
 		const key = `${result.playerName}:${result.predicateName}`;
 		let summary = summaries.get(key);
 
-		if (!summary) {
-			summary = {
+		if (!summary)
+		{
+			summary =
+			{
 				predicateName: result.predicateName,
 				playerName: result.playerName,
 				playerRole: result.playerRole,
@@ -243,10 +268,12 @@ export function aggregateResultsByPlayerAndPredicate(
 			summaries.set(key, summary);
 		}
 
-		if (result.isRelevant) {
+		if (result.isRelevant)
+		{
 			summary.opportunities++;
 		}
-		if (result.fired) {
+		if (result.fired)
+		{
 			summary.fires++;
 		}
 	}
@@ -257,6 +284,7 @@ export function aggregateResultsByPlayerAndPredicate(
 /**
  * Gets all results from a GamePredicateResults as a flat array.
  */
-export function getAllResults(gameResults: GamePredicateResults): PredicateEvaluationResult[] {
+export function getAllResults(gameResults: GamePredicateResults): PredicateEvaluationResult[]
+{
 	return [...gameResults.proposalResults, ...gameResults.proposalVoteResults, ...gameResults.missionVoteResults];
 }

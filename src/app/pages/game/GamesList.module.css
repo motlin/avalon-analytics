@@ -1,37 +1,44 @@
-.container {
+.container
+{
 	background-color: #b2ebf2; /* cyan lighten-4 */
 	min-height: 100vh;
 }
 
-.header {
+.header
+{
 	background-color: #80deea; /* cyan lighten-2 */
 	padding: 16px 30px;
 	text-align: center;
 }
 
-.header h1 {
+.header h1
+{
 	margin: 0;
 	font-size: 1.5rem;
 	font-weight: bold;
 }
 
-.content {
+.content
+{
 	padding: 16px;
 	max-width: 800px;
 	margin: 0 auto;
 }
 
-.noGames {
+.noGames
+{
 	text-align: center;
 }
 
-.gameList {
+.gameList
+{
 	display: flex;
 	flex-direction: column;
 	gap: 8px;
 }
 
-.gameCard {
+.gameCard
+{
 	display: block;
 	background-color: #eceff1;
 	border-radius: 4px;
@@ -45,14 +52,16 @@
 	transition: box-shadow 0.2s ease;
 }
 
-.gameCard:hover {
+.gameCard:hover
+{
 	box-shadow:
 		0 4px 5px -2px rgba(0, 0, 0, 0.2),
 		0 3px 4px 0 rgba(0, 0, 0, 0.14),
 		0 1px 8px 0 rgba(0, 0, 0, 0.12);
 }
 
-.gameCardHeader {
+.gameCardHeader
+{
 	background-color: #4dd0e1; /* cyan lighten-1 */
 	padding: 6px 12px;
 	display: flex;
@@ -60,68 +69,81 @@
 	gap: 8px;
 }
 
-.dateText {
+.dateText
+{
 	font-weight: bold;
 	font-size: 1rem;
 }
 
-.timeText {
+.timeText
+{
 	font-size: 0.75rem;
 	color: #455a64;
 }
 
-.gameCardContent {
+.gameCardContent
+{
 	padding: 6px 12px;
 }
 
-.playerInfo {
+.playerInfo
+{
 	font-size: 0.875rem;
 	color: #555;
 }
 
-.pagination {
+.pagination
+{
 	margin-top: 24px;
 }
 
 /* Behavior games list styles */
-.subtitle {
+.subtitle
+{
 	margin: 0 0 1rem;
 	padding: 0 16px;
 	color: #555;
 }
 
-.summary {
+.summary
+{
 	display: flex;
 	gap: 1.5rem;
 	padding: 0 16px 1rem;
 	flex-wrap: wrap;
 }
 
-.summaryItem {
+.summaryItem
+{
 	font-size: 0.9rem;
 	color: #666;
 }
 
-.section {
+.section
+{
 	padding: 0 16px 1rem;
 }
 
-.section h2 {
+.section h2
+{
 	font-size: 1.1rem;
 	margin: 0 0 0.75rem;
 	color: #333;
 }
 
-.gameRole {
+.gameRole
+{
 	font-weight: 600;
 	color: #333;
 }
 
-.gameDate {
+.gameDate
+{
 	font-size: 0.85rem;
 	color: #666;
 }
 
-.gameCard.missed {
+.gameCard.missed
+{
 	opacity: 0.6;
 }

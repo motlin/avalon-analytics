@@ -8,58 +8,78 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faEnvelopeSquare, faInfoCircle, faPlay} from '@fortawesome/free-solid-svg-icons';
 import type {AvalonApi} from './types';
 
-interface LobbyProps {
+interface LobbyProps
+{
 	avalon: AvalonApi;
 }
 
-const Lobby: React.FC<LobbyProps> = ({avalon}) => {
-	const [options, setOptions] = useState({
-		inGameLog: false,
-	});
+const Lobby: React.FC<LobbyProps> = ({avalon}) =>
+{
+	const [options, setOptions] = useState(
+		{
+			inGameLog: false,
+		},
+	);
 	const [showOptionGameLog, setShowOptionGameLog] = useState(false);
 	const [startingGame, setStartingGame] = useState(false);
 
-	useEffect(() => {
+	useEffect(() =>
+	{
 		console.log('event in lobby', avalon);
 	}, [avalon]);
 
-	const reasonToNotStartGame = (): string | null => {
-		if (!avalon.config.playerList) {
+	const reasonToNotStartGame = (): string | null =>
+	{
+		if (!avalon.config.playerList)
+		{
 			return 'Loading...';
 		}
-		if (avalon.config.playerList.length < 5) {
+		if (avalon.config.playerList.length < 5)
+		{
 			return `Need at least 5 players! Invite your friends to lobby ${avalon.lobby.name}`;
 		}
-		if (avalon.config.playerList.length > 10) {
+		if (avalon.config.playerList.length > 10)
+		{
 			return 'Cannot start game with more than 10 players';
 		}
-		if (!avalon.isAdmin) {
+		if (!avalon.isAdmin)
+		{
 			return `Waiting for ${avalon.lobby.admin?.name || 'admin'} to start game...`;
 		}
 		return null;
 	};
 
-	const canStartGame = (): boolean => {
+	const canStartGame = (): boolean =>
+	{
 		return reasonToNotStartGame() === null;
 	};
 
-	const validTeamSize = (): boolean => {
+	const validTeamSize = (): boolean =>
+	{
 		const playerCount = avalon.config.playerList?.length ?? 0;
 		return playerCount >= 5 && playerCount <= 10;
 	};
 
-	const numEvilPlayers = (): number => {
+	const numEvilPlayers = (): number =>
+	{
 		return avalonLib.getNumEvilForGameSize(avalon.config.playerList?.length ?? 0);
 	};
 
-	const handleStartGame = async () => {
+	const handleStartGame = async () =>
+	{
 		setStartingGame(true);
 		await avalon.startGame?.(options);
 		setStartingGame(false);
 	};
 
-	const handleInGameLogChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-		setOptions({...options, inGameLog: event.target.checked});
+	const handleInGameLogChange = (event: React.ChangeEvent<HTMLInputElement>) =>
+	{
+		setOptions(
+			{
+				...options,
+				inGameLog: event.target.checked,
+			},
+		);
 	};
 
 	return (
@@ -91,10 +111,7 @@ const Lobby: React.FC<LobbyProps> = ({avalon}) => {
 					<div className={styles.rolesSection}>
 						<div className={styles.sectionContainer}>
 							<p className={styles.sectionTitle}>Special Roles Available</p>
-							<RoleList
-								roles={avalon.config.selectableRoles ?? []}
-								allowSelect={avalon.isAdmin}
-							/>
+							<RoleList roles={avalon.config.selectableRoles ?? []} allowSelect={avalon.isAdmin} />
 						</div>
 					</div>
 				)}
@@ -115,14 +132,8 @@ const Lobby: React.FC<LobbyProps> = ({avalon}) => {
 			{canStartGame() && (
 				<div className={styles.optionsSection}>
 					{showOptionGameLog && (
-						<div
-							className={styles.dialogOverlay}
-							onClick={() => setShowOptionGameLog(false)}
-						>
-							<div
-								className={styles.dialog}
-								onClick={(e) => e.stopPropagation()}
-							>
+						<div className={styles.dialogOverlay} onClick={() => setShowOptionGameLog(false)}>
+							<div className={styles.dialog} onClick={(e) => e.stopPropagation()}>
 								<div className={styles.dialogTitle}>
 									<h3>Enable in-game log display</h3>
 								</div>
@@ -148,10 +159,7 @@ const Lobby: React.FC<LobbyProps> = ({avalon}) => {
 							</div>
 							<div className={styles.optionLabel}>Enable in-game log display</div>
 							<div className={styles.infoButton}>
-								<button
-									onClick={() => setShowOptionGameLog(true)}
-									className={styles.infoBtn}
-								>
+								<button onClick={() => setShowOptionGameLog(true)} className={styles.infoBtn}>
 									<FontAwesomeIcon icon={faInfoCircle} />
 								</button>
 							</div>
@@ -187,10 +195,7 @@ const Lobby: React.FC<LobbyProps> = ({avalon}) => {
 						rel="noopener noreferrer"
 						className={styles.feedbackButton}
 					>
-						<FontAwesomeIcon
-							icon={faEnvelopeSquare}
-							className={styles.feedbackIcon}
-						/>
+						<FontAwesomeIcon icon={faEnvelopeSquare} className={styles.feedbackIcon} />
 						<span>Send feedback</span>
 					</a>
 				</div>

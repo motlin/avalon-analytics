@@ -4,11 +4,13 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faCheckCircle, faTimesCircle} from '@fortawesome/free-solid-svg-icons';
 import type {AvalonApi} from './types';
 
-interface MissionActionProps {
+interface MissionActionProps
+{
 	avalon: AvalonApi;
 }
 
-function joinWithAnd(array: string[]): string {
+function joinWithAnd(array: string[]): string
+{
 	if (array.length === 0) return '';
 	if (array.length === 1) return array[0];
 	const arrCopy = array.slice(0);
@@ -16,28 +18,36 @@ function joinWithAnd(array: string[]): string {
 	return arrCopy.join(', ') + ' and ' + lastElement;
 }
 
-const MissionAction: React.FC<MissionActionProps> = ({avalon}) => {
+const MissionAction: React.FC<MissionActionProps> = ({avalon}) =>
+{
 	const [needsToVote, setNeedsToVote] = useState(
 		avalon.lobby.game.currentProposal?.team?.includes(avalon.user?.name) || false,
 	);
 
-	const stillWaitingFor = useMemo(() => {
+	const stillWaitingFor = useMemo(() =>
+	{
 		return (avalon.lobby.game.currentProposal?.team || [])
 			.filter((name) => !(avalon.lobby.game.currentMission?.team || []).includes(name))
 			.filter((name) => name !== avalon.user?.name);
 	}, [avalon.lobby.game.currentProposal?.team, avalon.lobby.game.currentMission?.team, avalon.user?.name]);
 
-	const waitingForText = useMemo(() => {
-		if (stillWaitingFor.length > 0) {
+	const waitingForText = useMemo(() =>
+	{
+		if (stillWaitingFor.length > 0)
+		{
 			return 'Waiting for ' + joinWithAnd(stillWaitingFor);
-		} else {
+		}
+		else
+		{
 			return 'Waiting for results...';
 		}
 	}, [stillWaitingFor]);
 
-	const missionVote = (vote: boolean) => {
+	const missionVote = (vote: boolean) =>
+	{
 		setNeedsToVote(false);
-		if (avalon.doMission) {
+		if (avalon.doMission)
+		{
 			avalon.doMission(vote);
 		}
 	};
@@ -48,19 +58,13 @@ const MissionAction: React.FC<MissionActionProps> = ({avalon}) => {
 			<div className={styles.cardContent}>
 				{needsToVote ? (
 					<div className={styles.buttonLayout}>
-						<button
-							className={styles.successButton}
-							onClick={() => missionVote(true)}
-						>
+						<button className={styles.successButton} onClick={() => missionVote(true)}>
 							<span className={styles.successIcon}>
 								<FontAwesomeIcon icon={faCheckCircle} />
 							</span>
 							SUCCESS
 						</button>
-						<button
-							className={styles.failButton}
-							onClick={() => missionVote(false)}
-						>
+						<button className={styles.failButton} onClick={() => missionVote(false)}>
 							<span className={styles.failIcon}>
 								<FontAwesomeIcon icon={faTimesCircle} />
 							</span>

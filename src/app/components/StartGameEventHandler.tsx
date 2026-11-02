@@ -1,10 +1,12 @@
 import React from 'react';
 
-interface StartGameEventHandlerProps {
+interface StartGameEventHandlerProps
+{
 	avalon: any;
 }
 
-const StartGameEventHandler: React.FC<StartGameEventHandlerProps> = () => {
+const StartGameEventHandler: React.FC<StartGameEventHandlerProps> = () =>
+{
 	return null;
 };
 

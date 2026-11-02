@@ -2,10 +2,12 @@ import React, {useState, useEffect, useRef} from 'react';
 import StatsDisplay from './StatsDisplay';
 import styles from './Login.module.css';
 
-interface AvalonUser {
+interface AvalonUser
+{
 	name: string;
 	email: string;
-	stats: {
+	stats:
+	{
 		games?: number;
 		good?: number;
 		wins?: number;
@@ -14,24 +16,28 @@ interface AvalonUser {
 	};
 }
 
-interface GlobalStats {
+interface GlobalStats
+{
 	games: number;
 	good_wins: number;
 }
 
-interface AvalonApi {
+interface AvalonApi
+{
 	user?: AvalonUser;
 	globalStats?: GlobalStats;
 	createLobby: (name: string) => Promise<void>;
 	joinLobby: (name: string, lobby: string) => Promise<void>;
 }
 
-interface LoginProps {
+interface LoginProps
+{
 	avalon: AvalonApi;
 	disableAutoFocus?: boolean;
 }
 
-const Login: React.FC<LoginProps> = ({avalon, disableAutoFocus = false}) => {
+const Login: React.FC<LoginProps> = ({avalon, disableAutoFocus = false}) =>
+{
 	const [name, setName] = useState<string>(avalon.user ? avalon.user.name : '');
 	const [lobby, setLobby] = useState<string>('');
 	const [errorMessage, setErrorMessage] = useState<string>('');
@@ -43,24 +49,30 @@ const Login: React.FC<LoginProps> = ({avalon, disableAutoFocus = false}) => {
 	const nameTextFieldRef = useRef<HTMLInputElement>(null);
 	const lobbyTextFieldRef = useRef<HTMLInputElement>(null);
 
-	useEffect(() => {
+	useEffect(() =>
+	{
 		setInputWidth(nameTextFieldRef);
 		document.title = 'Avalon - ' + (name ? name : avalon.user?.email || '');
 	}, [name, avalon.user?.email]);
 
-	useEffect(() => {
+	useEffect(() =>
+	{
 		const textFieldRef = showLobbyInput ? lobbyTextFieldRef : nameTextFieldRef;
-		if (textFieldRef.current) {
-			if (!disableAutoFocus) {
+		if (textFieldRef.current)
+		{
+			if (!disableAutoFocus)
+			{
 				textFieldRef.current.focus();
 			}
 			setInputWidth(textFieldRef);
 		}
 	}, [showLobbyInput, disableAutoFocus]);
 
-	const setInputWidth = (fieldRef: React.RefObject<HTMLInputElement | null>) => {
+	const setInputWidth = (fieldRef: React.RefObject<HTMLInputElement | null>) =>
+	{
 		const size = 20;
-		if (fieldRef.current) {
+		if (fieldRef.current)
+		{
 			fieldRef.current.setAttribute('size', size.toString());
 		}
 	};
@@ -68,41 +80,51 @@ const Login: React.FC<LoginProps> = ({avalon, disableAutoFocus = false}) => {
 	const genericLogin = (
 		loadingStateSetter: React.Dispatch<React.SetStateAction<boolean>>,
 		loginPromise: Promise<void>,
-	) => {
+	) =>
+	{
 		loadingStateSetter(true);
 		loginPromise.catch((err: Error) => showErrorMessage(err.message)).finally(() => loadingStateSetter(false));
 	};
 
-	const createLobby = () => {
+	const createLobby = () =>
+	{
 		genericLogin(setIsCreatingLobby, avalon.createLobby(name));
 	};
 
-	const joinLobby = () => {
+	const joinLobby = () =>
+	{
 		genericLogin(setIsJoiningLobby, avalon.joinLobby(name, lobby));
 	};
 
-	const showErrorMessage = (errorMsg: string) => {
-		if (alertTimeoutTimer) {
+	const showErrorMessage = (errorMsg: string) =>
+	{
+		if (alertTimeoutTimer)
+		{
 			clearTimeout(alertTimeoutTimer);
 		}
 		setErrorMessage(errorMsg);
-		const timer = setTimeout(() => {
+		const timer = setTimeout(() =>
+		{
 			setAlertTimeoutTimer(null);
 			setErrorMessage('');
 		}, 5000);
 		setAlertTimeoutTimer(timer);
 	};
 
-	const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+	const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) =>
+	{
 		setName(event.target.value.toUpperCase());
 	};
 
-	const handleLobbyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+	const handleLobbyChange = (event: React.ChangeEvent<HTMLInputElement>) =>
+	{
 		setLobby(event.target.value.toUpperCase());
 	};
 
-	const handleLobbyKeyUp = (event: React.KeyboardEvent<HTMLInputElement>) => {
-		if (event.key === 'Enter') {
+	const handleLobbyKeyUp = (event: React.KeyboardEvent<HTMLInputElement>) =>
+	{
+		if (event.key === 'Enter')
+		{
 			joinLobby();
 		}
 	};
@@ -164,10 +186,7 @@ const Login: React.FC<LoginProps> = ({avalon, disableAutoFocus = false}) => {
 					</>
 				)}
 				<div className={styles.spacer}></div>
-				<StatsDisplay
-					stats={avalon.user?.stats || {}}
-					globalStats={avalon.globalStats}
-				/>
+				<StatsDisplay stats={avalon.user?.stats || {}} globalStats={avalon.globalStats} />
 			</div>
 		</div>
 	);

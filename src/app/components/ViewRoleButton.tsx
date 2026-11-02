@@ -6,9 +6,11 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faOldRepublic} from '@fortawesome/free-brands-svg-icons';
 import {faEmpire} from '@fortawesome/free-brands-svg-icons';
 
-interface User {
+interface User
+{
 	name: string;
-	stats: {
+	stats:
+	{
 		games?: number;
 		good?: number;
 		wins?: number;
@@ -17,8 +19,10 @@ interface User {
 	};
 }
 
-interface Role {
-	role: {
+interface Role
+{
+	role:
+	{
 		name: string;
 		team: string;
 		description: string;
@@ -27,16 +31,19 @@ interface Role {
 	sees: string[];
 }
 
-interface Lobby {
+interface Lobby
+{
 	role: Role;
 }
 
-interface GlobalStats {
+interface GlobalStats
+{
 	games: number;
 	good_wins: number;
 }
 
-interface AvalonProps {
+interface AvalonProps
+{
 	user: User;
 	lobby: Lobby;
 	globalStats: GlobalStats;
@@ -44,11 +51,13 @@ interface AvalonProps {
 	onEvent?: (callback: (event: string, ...args: any[]) => void) => () => void;
 }
 
-interface ViewRoleButtonProps {
+interface ViewRoleButtonProps
+{
 	avalon: AvalonProps;
 }
 
-function joinWithAnd(array: string[]): string {
+function joinWithAnd(array: string[]): string
+{
 	if (array.length === 0) return '';
 	if (array.length === 1) return array[0];
 	const arrCopy = array.slice(0);
@@ -56,18 +65,25 @@ function joinWithAnd(array: string[]): string {
 	return arrCopy.join(', ') + ' and ' + lastElement;
 }
 
-const ViewRoleButton: React.FC<ViewRoleButtonProps> = ({avalon}) => {
+const ViewRoleButton: React.FC<ViewRoleButtonProps> = ({avalon}) =>
+{
 	const [sheet, setSheet] = useState(false);
 
-	useEffect(() => {
-		if (!avalon.onEvent) {
+	useEffect(() =>
+	{
+		if (!avalon.onEvent)
+		{
 			return;
 		}
 
-		const unsubscribe = avalon.onEvent((event: string) => {
-			if (event === 'show-role') {
+		const unsubscribe = avalon.onEvent((event: string) =>
+		{
+			if (event === 'show-role')
+			{
 				setSheet(true);
-			} else if (event === 'GAME_ENDED') {
+			}
+			else if (event === 'GAME_ENDED')
+			{
 				setSheet(false);
 			}
 		});
@@ -75,22 +91,23 @@ const ViewRoleButton: React.FC<ViewRoleButtonProps> = ({avalon}) => {
 		return unsubscribe;
 	}, [avalon]);
 
-	const handleButtonClick = () => {
+	const handleButtonClick = () =>
+	{
 		setSheet(true);
 	};
 
-	const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
-		if (e.target === e.currentTarget) {
+	const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) =>
+	{
+		if (e.target === e.currentTarget)
+		{
 			setSheet(false);
 		}
 	};
 
-	if (!sheet) {
+	if (!sheet)
+	{
 		return (
-			<button
-				className={styles.activatorButton}
-				onClick={handleButtonClick}
-			>
+			<button className={styles.activatorButton} onClick={handleButtonClick}>
 				<PermIdentityIcon />
 				{avalon.user.name}
 			</button>
@@ -98,10 +115,7 @@ const ViewRoleButton: React.FC<ViewRoleButtonProps> = ({avalon}) => {
 	}
 
 	return (
-		<div
-			className={styles.overlay}
-			onClick={handleOverlayClick}
-		>
+		<div className={styles.overlay} onClick={handleOverlayClick}>
 			<div className={styles.bottomSheet}>
 				{!avalon.isGameInProgress ? (
 					<div className={styles.card}>
@@ -115,10 +129,7 @@ const ViewRoleButton: React.FC<ViewRoleButtonProps> = ({avalon}) => {
 						<div className={styles.cardText}>
 							<div className={styles.statsContent}>
 								<p className={styles.subheading}>Your Stats</p>
-								<StatsDisplay
-									stats={avalon.user.stats}
-									globalStats={avalon.globalStats}
-								/>
+								<StatsDisplay stats={avalon.user.stats} globalStats={avalon.globalStats} />
 							</div>
 						</div>
 					</div>
@@ -127,7 +138,14 @@ const ViewRoleButton: React.FC<ViewRoleButtonProps> = ({avalon}) => {
 						<div className={`${styles.cardTitle} ${styles.roleTitle}`}>
 							<span
 								className={styles.roleIcon}
-								style={avalon.lobby.role.role.team === 'evil' ? {color: 'red'} : undefined}
+								style={
+									avalon.lobby.role.role.team === 'evil'
+										?
+											{
+												color: 'red',
+											}
+										: undefined
+								}
 							>
 								<FontAwesomeIcon
 									icon={avalon.lobby.role.role.team === 'good' ? faOldRepublic : faEmpire}

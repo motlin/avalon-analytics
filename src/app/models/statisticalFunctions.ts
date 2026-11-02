@@ -11,7 +11,8 @@ import {cumulativeStdNormalProbability, probit} from 'simple-statistics';
 // Types
 // ============================================================================
 
-export interface WilsonScoreResult {
+export interface WilsonScoreResult
+{
 	/** Lower bound of the confidence interval */
 	lower: number;
 	/** Upper bound of the confidence interval */
@@ -39,10 +40,16 @@ export interface WilsonScoreResult {
  * @param confidence - Confidence level (default 0.95 for 95% CI)
  * @returns Confidence bounds {lower, upper, center}
  */
-export function wilsonScoreInterval(successes: number, trials: number, confidence = 0.95): WilsonScoreResult {
+export function wilsonScoreInterval(successes: number, trials: number, confidence = 0.95): WilsonScoreResult
+{
 	// Handle edge cases
-	if (trials === 0) {
-		return {lower: 0, upper: 1, center: 0.5};
+	if (trials === 0)
+	{
+		return {
+			lower: 0,
+			upper: 1,
+			center: 0.5,
+		};
 	}
 
 	// Observed proportion
@@ -95,9 +102,11 @@ export function empiricalBayesEstimate(
 	trials: number,
 	populationRate: number,
 	shrinkageStrength = 10,
-): number {
+): number
+{
 	// Handle edge case
-	if (trials === 0) {
+	if (trials === 0)
+	{
 		return populationRate;
 	}
 
@@ -124,17 +133,21 @@ export function empiricalBayesEstimate(
  * @param sampleSize - Number of opportunities (denominator)
  * @returns The z-score (positive = above average, negative = below average)
  */
-export function calculateZScore(observedRate: number, baselineRate: number, sampleSize: number): number {
+export function calculateZScore(observedRate: number, baselineRate: number, sampleSize: number): number
+{
 	// Handle edge cases
-	if (sampleSize === 0) {
+	if (sampleSize === 0)
+	{
 		return 0;
 	}
 
 	// Avoid division by zero when baseline is 0 or 1
-	if (baselineRate === 0 || baselineRate === 1) {
+	if (baselineRate === 0 || baselineRate === 1)
+	{
 		// If baseline is 0 and we observed any, or baseline is 1 and we didn't always fire,
 		// we can't compute a meaningful z-score with standard error
-		if (observedRate === baselineRate) {
+		if (observedRate === baselineRate)
+		{
 			return 0;
 		}
 		// Return a large z-score indicating significant deviation
@@ -165,9 +178,11 @@ export function calculateZScore(observedRate: number, baselineRate: number, samp
  * @param trials2 - Number of trials in group 2
  * @returns The z-score (positive if group 1 > group 2)
  */
-export function twoProportionZScore(successes1: number, trials1: number, successes2: number, trials2: number): number {
+export function twoProportionZScore(successes1: number, trials1: number, successes2: number, trials2: number): number
+{
 	// Handle edge cases
-	if (trials1 === 0 || trials2 === 0) {
+	if (trials1 === 0 || trials2 === 0)
+	{
 		return 0;
 	}
 
@@ -178,8 +193,10 @@ export function twoProportionZScore(successes1: number, trials1: number, success
 	const pooled = (successes1 + successes2) / (trials1 + trials2);
 
 	// Avoid division by zero
-	if (pooled === 0 || pooled === 1) {
-		if (p1 === p2) {
+	if (pooled === 0 || pooled === 1)
+	{
+		if (p1 === p2)
+		{
 			return 0;
 		}
 		return p1 > p2 ? Infinity : -Infinity;
@@ -204,9 +221,11 @@ export function twoProportionZScore(successes1: number, trials1: number, success
  * @param zScore - The z-score to convert
  * @returns Percentile rank from 0 to 100
  */
-export function zScoreToPercentile(zScore: number): number {
+export function zScoreToPercentile(zScore: number): number
+{
 	// Handle infinity cases
-	if (!Number.isFinite(zScore)) {
+	if (!Number.isFinite(zScore))
+	{
 		return zScore > 0 ? 100 : 0;
 	}
 
@@ -234,14 +253,17 @@ export function zScoreToPercentile(zScore: number): number {
  * @param zScore - The z-score from a two-proportion test
  * @returns Confidence percentage from 0 to 100
  */
-export function zScoreToConfidence(zScore: number): number {
+export function zScoreToConfidence(zScore: number): number
+{
 	// Handle edge cases
-	if (!Number.isFinite(zScore)) {
+	if (!Number.isFinite(zScore))
+	{
 		return 100;
 	}
 
 	const absZ = Math.abs(zScore);
-	if (absZ === 0) {
+	if (absZ === 0)
+	{
 		return 0;
 	}
 
