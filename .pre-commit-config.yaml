@@ -29,19 +29,13 @@ repos:
             language: system
             files: '(?i)(^|/)\.?justfile$|\.just$'
             types: [file]
-          - id: biome
-            name: biome
-            entry: pnpm exec biome format --write
+          - id: oxfmt
+            name: oxfmt-next-line
+            entry: oxfmt-next-line --no-error-on-unmatched-pattern
             language: system
-            types: [file]
-            files: \.(js|jsx|ts|tsx|mjs|cjs|json|json5)$
             exclude: "(package(-lock)?\\.json|worker-configuration\\.d\\.ts)"
-
-          - id: prettier
-            name: prettier
-            entry: pnpm exec prettier --write
-            language: system
-            types_or: [yaml, markdown, html]
+            # Show "Finished in Xms on N files" so every run proves formatting happened.
+            verbose: true
 
           - id: eslint
             name: eslint
