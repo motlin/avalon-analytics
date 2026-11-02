@@ -27,9 +27,8 @@
 		"types": "tsc",
 		"prepare": "vibe-rules install cursor",
 		"eslint:ci": "eslint . --format json --output-file eslint_report.json",
-		"format": "biome format --write . && prettier --write .",
-		"format:ci": "biome format . && prettier --check .",
-		"biome:ci": "biome format .",
+		"format": "oxfmt-next-line",
+		"format:ci": "oxfmt-next-line --check",
 		"typecheck:ci": "tsc --noEmit",
 		"test": "vitest",
 		"test:run": "vitest run",
@@ -69,7 +68,6 @@
 		"zod": "^4.4.3"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "2.4.15",
 		"@cloudflare/vite-plugin": "1.36.3",
 		"@cloudflare/vitest-pool-workers": "^0.16.3",
 		"@cloudflare/workers-types": "4.20260511.1",
@@ -95,7 +93,6 @@
 		"jiti": "^2.7.0",
 		"miniflare": "^4.20260507.1",
 		"playwright": "^1.59.1",
-		"prettier": "^3.8.3",
 		"prisma": "^7.8.0",
 		"storybook": "^10.3.6",
 		"tailwindcss": "^4.2.4",
