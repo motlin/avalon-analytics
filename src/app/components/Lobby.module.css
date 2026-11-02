@@ -1,6 +1,7 @@
 /* Lobby component styles */
 
-.container {
+.container
+{
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -12,7 +13,8 @@
 }
 
 /* Server shutdown card */
-.shutdownCard {
+.shutdownCard
+{
 	background-color: #b2ebf2;
 	border-radius: 4px;
 	box-shadow:
@@ -24,20 +26,23 @@
 	max-width: 600px;
 }
 
-.shutdownTitle {
+.shutdownTitle
+{
 	background-color: #26c6da;
 	padding: 16px;
 	border-radius: 4px 4px 0 0;
 }
 
-.shutdownTitle h3 {
+.shutdownTitle h3
+{
 	margin: 0;
 	font-size: 1.25rem;
 	font-weight: 500;
 	color: #333;
 }
 
-.shutdownText {
+.shutdownText
+{
 	padding: 16px;
 	color: #333;
 	font-size: 0.875rem;
@@ -45,7 +50,8 @@
 }
 
 /* Main layout */
-.mainLayout {
+.mainLayout
+{
 	display: flex;
 	align-items: flex-start;
 	justify-content: center;
@@ -55,23 +61,27 @@
 	margin-bottom: 24px;
 }
 
-.playersSection {
+.playersSection
+{
 	flex: 1;
 	min-width: 300px;
 	max-width: 500px;
 }
 
-.rolesSection {
+.rolesSection
+{
 	flex: 1;
 	min-width: 300px;
 	max-width: 500px;
 }
 
-.sectionContainer {
+.sectionContainer
+{
 	width: 100%;
 }
 
-.sectionTitle {
+.sectionTitle
+{
 	color: #b2ebf2;
 	font-size: 1rem;
 	font-weight: 400;
@@ -79,7 +89,8 @@
 	text-align: left;
 }
 
-.dragHint {
+.dragHint
+{
 	color: #b2ebf2;
 	font-size: 0.75rem;
 	margin: 8px 0 0 0;
@@ -88,7 +99,8 @@
 }
 
 /* Team info */
-.teamInfoLayout {
+.teamInfoLayout
+{
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -96,14 +108,16 @@
 	margin-bottom: 24px;
 }
 
-.teamInfo {
+.teamInfo
+{
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	min-height: 60px;
 }
 
-.teamInfoText {
+.teamInfoText
+{
 	color: #b2ebf2;
 	font-size: 1.25rem;
 	font-weight: 400;
@@ -112,13 +126,15 @@
 }
 
 /* Options section */
-.optionsSection {
+.optionsSection
+{
 	width: 100%;
 	max-width: 600px;
 	margin-bottom: 24px;
 }
 
-.optionsList {
+.optionsList
+{
 	background-color: #546e7a;
 	border-radius: 4px;
 	box-shadow:
@@ -128,7 +144,8 @@
 	overflow: hidden;
 }
 
-.optionItem {
+.optionItem
+{
 	background-color: white;
 	display: flex;
 	align-items: center;
@@ -136,29 +153,34 @@
 	border: none;
 }
 
-.checkboxContainer {
+.checkboxContainer
+{
 	flex: 0 0 auto;
 	margin-right: 16px;
 }
 
-.checkbox {
+.checkbox
+{
 	width: 18px;
 	height: 18px;
 	accent-color: #333;
 }
 
-.optionLabel {
+.optionLabel
+{
 	flex: 1;
 	font-size: 0.875rem;
 	color: #333;
 }
 
-.infoButton {
+.infoButton
+{
 	flex: 0 0 auto;
 	margin-left: 16px;
 }
 
-.infoBtn {
+.infoBtn
+{
 	background: transparent;
 	border: none;
 	cursor: pointer;
@@ -169,12 +191,14 @@
 	transition: background-color 0.3s ease;
 }
 
-.infoBtn:hover {
+.infoBtn:hover
+{
 	background-color: rgba(0, 0, 0, 0.04);
 }
 
 /* Dialog overlay and modal */
-.dialogOverlay {
+.dialogOverlay
+{
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -187,7 +211,8 @@
 	z-index: 1000;
 }
 
-.dialog {
+.dialog
+{
 	background-color: #b2ebf2;
 	border-radius: 4px;
 	box-shadow:
@@ -199,20 +224,23 @@
 	min-width: 280px;
 }
 
-.dialogTitle {
+.dialogTitle
+{
 	background-color: #26c6da;
 	padding: 16px;
 	border-radius: 4px 4px 0 0;
 }
 
-.dialogTitle h3 {
+.dialogTitle h3
+{
 	margin: 0;
 	font-size: 1.25rem;
 	font-weight: 500;
 	color: #333;
 }
 
-.dialogText {
+.dialogText
+{
 	padding: 16px;
 	color: #333;
 	font-size: 0.875rem;
@@ -220,7 +248,8 @@
 }
 
 /* Start game section */
-.startGameSection {
+.startGameSection
+{
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -229,7 +258,8 @@
 	padding-top: 8px;
 }
 
-.startButton {
+.startButton
+{
 	background-color: #1976d2;
 	color: white;
 	border: none;
@@ -253,7 +283,8 @@
 	min-height: 48px;
 }
 
-.startButton:hover {
+.startButton:hover
+{
 	background-color: #1565c0;
 	box-shadow:
 		0 3px 3px -2px rgba(0, 0, 0, 0.2),
@@ -262,18 +293,21 @@
 }
 
 .startButton:disabled,
-.startButtonLoading {
+.startButtonLoading
+{
 	opacity: 0.6;
 	cursor: not-allowed;
 	background-color: #1976d2;
 }
 
-.startButtonIcon {
+.startButtonIcon
+{
 	font-size: 1rem;
 	line-height: 1;
 }
 
-.cannotStartCard {
+.cannotStartCard
+{
 	background-color: #546e7a;
 	border-radius: 4px;
 	box-shadow:
@@ -285,7 +319,8 @@
 	width: 100%;
 }
 
-.cannotStartText {
+.cannotStartText
+{
 	color: white;
 	font-size: 0.875rem;
 	text-align: center;
@@ -293,7 +328,8 @@
 }
 
 /* Feedback section */
-.feedbackSection {
+.feedbackSection
+{
 	display: flex;
 	flex-direction: column;
 	align-items: flex-end;
@@ -301,12 +337,14 @@
 	padding-top: 48px;
 }
 
-.feedbackContainer {
+.feedbackContainer
+{
 	width: 100%;
 	max-width: 200px;
 }
 
-.feedbackButton {
+.feedbackButton
+{
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -330,66 +368,81 @@
 		0 1px 3px 0 rgba(0, 0, 0, 0.12);
 }
 
-.feedbackButton:hover {
+.feedbackButton:hover
+{
 	background-color: #d5d5d5;
 	text-decoration: none;
 	color: #333;
 }
 
-.feedbackIcon {
+.feedbackIcon
+{
 	font-size: 0.875rem;
 	line-height: 1;
 }
 
 /* Responsive design */
-@media (max-width: 768px) {
-	.container {
+@media (max-width: 768px)
+{
+	.container
+	{
 		padding: 8px;
 	}
 
-	.mainLayout {
+	.mainLayout
+	{
 		flex-direction: column;
 		gap: 16px;
 	}
 
 	.playersSection,
-	.rolesSection {
+	.rolesSection
+	{
 		max-width: 100%;
 	}
 
-	.teamInfoText {
+	.teamInfoText
+	{
 		font-size: 1.1rem;
 	}
 
-	.startButton {
+	.startButton
+	{
 		padding: 10px 20px;
 		font-size: 0.8rem;
 	}
 
-	.feedbackSection {
+	.feedbackSection
+	{
 		align-items: center;
 	}
 
-	.feedbackContainer {
+	.feedbackContainer
+	{
 		max-width: 100%;
 	}
 }
 
-@media (max-width: 480px) {
-	.dialog {
+@media (max-width: 480px)
+{
+	.dialog
+	{
 		margin: 16px;
 		width: calc(100% - 32px);
 	}
 
-	.sectionTitle {
+	.sectionTitle
+	{
 		font-size: 0.9rem;
 	}
 
-	.teamInfoText {
+	.teamInfoText
+	{
 		font-size: 1rem;
 	}
 
-	.optionItem {
+	.optionItem
+	{
 		padding: 8px 12px;
 	}
 }

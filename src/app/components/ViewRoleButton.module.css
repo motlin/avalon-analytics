@@ -1,5 +1,6 @@
 /* Activator button styling */
-.activatorButton {
+.activatorButton
+{
 	background-color: #ffffff;
 	border: none;
 	border-radius: 4px;
@@ -18,14 +19,16 @@
 	transition: box-shadow 0.28s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.activatorButton:hover {
+.activatorButton:hover
+{
 	box-shadow:
 		0 2px 4px -1px rgba(0, 0, 0, 0.2),
 		0 4px 5px 0 rgba(0, 0, 0, 0.14),
 		0 1px 10px 0 rgba(0, 0, 0, 0.12);
 }
 
-.activatorButton:focus {
+.activatorButton:focus
+{
 	outline: none;
 	box-shadow:
 		0 2px 4px -1px rgba(0, 0, 0, 0.2),
@@ -33,13 +36,15 @@
 		0 1px 10px 0 rgba(0, 0, 0, 0.12);
 }
 
-.activatorButton svg {
+.activatorButton svg
+{
 	margin-right: 8px;
 	font-size: 1rem;
 }
 
 /* Bottom sheet modal overlay */
-.overlay {
+.overlay
+{
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -53,33 +58,41 @@
 	animation: fadeIn 0.3s ease;
 }
 
-@keyframes fadeIn {
-	from {
+@keyframes fadeIn
+{
+	from
+	{
 		opacity: 0;
 	}
-	to {
+	to
+	{
 		opacity: 1;
 	}
 }
 
 /* Bottom sheet container */
-.bottomSheet {
+.bottomSheet
+{
 	width: 100%;
 	max-width: 600px;
 	animation: slideUp 0.3s ease;
 }
 
-@keyframes slideUp {
-	from {
+@keyframes slideUp
+{
+	from
+	{
 		transform: translateY(100%);
 	}
-	to {
+	to
+	{
 		transform: translateY(0);
 	}
 }
 
 /* Card styling - matches Vuetify cyan lighten-4 */
-.card {
+.card
+{
 	background-color: #b2dfdb; /* cyan lighten-4 */
 	border-radius: 4px 4px 0 0;
 	box-shadow:
@@ -90,52 +103,61 @@
 }
 
 /* Card title styling */
-.cardTitle {
+.cardTitle
+{
 	padding: 16px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 }
 
-.roleTitle {
+.roleTitle
+{
 	background-color: #80cbc4; /* cyan lighten-2 */
 	gap: 8px;
 }
 
-.titleContent {
+.titleContent
+{
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
 }
 
-.roleIcon {
+.roleIcon
+{
 	font-size: 1.5rem;
 	margin-right: 8px;
 }
 
-.roleName {
+.roleName
+{
 	font-size: 1.25rem;
 	font-weight: 500;
 	color: rgba(0, 0, 0, 0.87);
 }
 
 /* Card content styling */
-.cardText {
+.cardText
+{
 	padding: 16px;
 	color: rgba(0, 0, 0, 0.87);
 }
 
-.cardText p {
+.cardText p
+{
 	margin: 0 0 16px 0;
 	line-height: 1.5;
 }
 
-.cardText p:last-child {
+.cardText p:last-child
+{
 	margin-bottom: 0;
 }
 
-.statsContent {
+.statsContent
+{
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -143,15 +165,18 @@
 }
 
 /* Typography classes */
-.fontWeightBold {
+.fontWeightBold
+{
 	font-weight: 700;
 }
 
-.fontWeightMedium {
+.fontWeightMedium
+{
 	font-weight: 500;
 }
 
-.subheading {
+.subheading
+{
 	font-size: 1rem;
 	font-weight: 400;
 	margin: 0 0 16px 0;
@@ -159,13 +184,16 @@
 }
 
 /* Responsive adjustments */
-@media (max-width: 600px) {
-	.bottomSheet {
+@media (max-width: 600px)
+{
+	.bottomSheet
+	{
 		margin: 0;
 		border-radius: 0;
 	}
 
-	.card {
+	.card
+	{
 		border-radius: 0;
 	}
 }

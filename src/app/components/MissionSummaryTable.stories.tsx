@@ -2,13 +2,17 @@ import type {Meta, StoryObj} from '@storybook/react-vite';
 import MissionSummaryTable from './MissionSummaryTable';
 import {realGame, sampleGame} from '../test-data/realGameData';
 
-const meta: Meta<typeof MissionSummaryTable> = {
+const meta: Meta<typeof MissionSummaryTable> =
+{
 	title: 'Endgame/MissionSummaryTable',
 	component: MissionSummaryTable,
-	parameters: {
+	parameters:
+	{
 		layout: 'centered',
-		docs: {
-			description: {
+		docs:
+		{
+			description:
+			{
 				component: `
 The MissionSummaryTable provides a comprehensive overview of game history, showing all missions, proposals, votes, and outcomes in a structured table format. This is essential for analyzing gameplay patterns and making informed decisions.
 
@@ -45,8 +49,10 @@ When roles are revealed, the table becomes a powerful tool for understanding the
 			},
 		},
 	},
-	argTypes: {
-		game: {
+	argTypes:
+	{
+		game:
+		{
 			control: 'object',
 			description: 'The complete game object from Firebase',
 		},
@@ -57,17 +63,23 @@ When roles are revealed, the table becomes a powerful tool for understanding the
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const RealGameComplete: Story = {
-	args: {
+export const RealGameComplete: Story =
+{
+	args:
+	{
 		game: realGame,
 	},
 };
 
-export const RealGameNoRoles: Story = {
-	args: {
-		game: {
+export const RealGameNoRoles: Story =
+{
+	args:
+	{
+		game:
+		{
 			...realGame,
-			outcome: {
+			outcome:
+			{
 				...realGame.outcome!,
 				roles: undefined,
 			},
@@ -76,17 +88,23 @@ export const RealGameNoRoles: Story = {
 };
 
 // 6-player sample game from game-log-sample.json
-export const SampleGameComplete: Story = {
-	args: {
+export const SampleGameComplete: Story =
+{
+	args:
+	{
 		game: sampleGame,
 	},
 };
 
-export const SampleGameNoRoles: Story = {
-	args: {
-		game: {
+export const SampleGameNoRoles: Story =
+{
+	args:
+	{
+		game:
+		{
 			...sampleGame,
-			outcome: {
+			outcome:
+			{
 				...sampleGame.outcome!,
 				roles: undefined,
 			},
@@ -94,14 +112,19 @@ export const SampleGameNoRoles: Story = {
 	},
 };
 
-export const RealGameHiddenSpoilers: Story = {
-	args: {
+export const RealGameHiddenSpoilers: Story =
+{
+	args:
+	{
 		game: realGame,
 		showSpoilers: false,
 	},
-	parameters: {
-		docs: {
-			description: {
+	parameters:
+	{
+		docs:
+		{
+			description:
+			{
 				story: 'With showSpoilers=false, roles are hidden but mission votes and boundaries remain visible.',
 			},
 		},

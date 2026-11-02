@@ -14,7 +14,8 @@ import {setupFirestoreRestService} from '@/app/services/firestore-rest';
 
 export default defineApp([
 	setCommonHeaders(),
-	async () => {
+	async () =>
+	{
 		console.log('🔍 Worker env keys:', Object.keys(env));
 		// Note: setupDb() is NOT called here to avoid Prisma WASM loading issues
 		// It will be called lazily when db access is actually needed

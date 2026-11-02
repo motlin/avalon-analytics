@@ -33,7 +33,8 @@ const BATCH_SIZE = 1000;
 const MAX_RETRIES = 3;
 const INITIAL_RETRY_DELAY_MS = 1000;
 
-interface Args {
+interface Args
+{
 	dryRun: boolean;
 	local: boolean;
 	full: boolean;
@@ -41,7 +42,8 @@ interface Args {
 }
 
 // Role normalization
-const ROLE_ALIASES: Record<string, string> = {
+const ROLE_ALIASES: Record<string, string> =
+{
 	MERLIN: 'MERLIN',
 	PERCIVAL: 'PERCIVAL',
 	'LOYAL FOLLOWER': 'LOYAL FOLLOWER',
@@ -64,7 +66,8 @@ type OutcomeReason =
 	| 'Merlin assassinated'
 	| 'Failed to assassinate Merlin';
 
-interface RoleStats {
+interface RoleStats
+{
 	games: number;
 	wins: number;
 	losses: number;
@@ -75,7 +78,8 @@ interface RoleStats {
 	wasAssassinated: number;
 }
 
-interface YearlyStats {
+interface YearlyStats
+{
 	games: number;
 	wins: number;
 	goodGames: number;
@@ -84,28 +88,32 @@ interface YearlyStats {
 	evilWins: number;
 }
 
-interface LossReasons {
+interface LossReasons
+{
 	threeMissionFails: number;
 	threeMissionSuccessEvil: number;
 	fiveRejectedProposals: number;
 	merlinAssassinated: number;
 }
 
-interface MerlinStats {
+interface MerlinStats
+{
 	gamesPlayed: number;
 	wins: number;
 	timesAssassinated: number;
 	survivedAssassination: number;
 }
 
-interface AssassinStats {
+interface AssassinStats
+{
 	gamesPlayed: number;
 	wins: number;
 	successfulAssassinations: number;
 	failedAssassinations: number;
 }
 
-interface FullStats {
+interface FullStats
+{
 	name: string;
 	isMapped: boolean;
 	gamesPlayed: number;
@@ -122,7 +130,8 @@ interface FullStats {
 	evilTeammateStats: AssassinStats;
 }
 
-interface GamePlayer {
+interface GamePlayer
+{
 	name: string;
 	uid: string;
 }
@@ -131,17 +140,20 @@ interface GamePlayer {
 // Annotation Stats Accumulator Types
 // ============================================================================
 
-interface AlignmentBreakdown {
+interface AlignmentBreakdown
+{
 	fires: number;
 	opportunities: number;
 }
 
-interface RoleBreakdown {
+interface RoleBreakdown
+{
 	fires: number;
 	opportunities: number;
 }
 
-interface GameInstance {
+interface GameInstance
+{
 	firebaseKey: string;
 	fired: boolean;
 	role: string;
@@ -149,7 +161,8 @@ interface GameInstance {
 	proposalNumber?: number;
 }
 
-interface PredicateAnnotationStats {
+interface PredicateAnnotationStats
+{
 	fires: number;
 	opportunities: number;
 	byAlignment: Map<Alignment, AlignmentBreakdown>;
@@ -163,36 +176,47 @@ interface PredicateAnnotationStats {
  */
 type PersonAnnotationStatsAccumulator = Map<string, PredicateAnnotationStats>;
 
-interface GameOutcome {
+interface GameOutcome
+{
 	state: 'GOOD_WIN' | 'EVIL_WIN';
-	roles?: Array<{name: string; role: string; assassin?: boolean}>;
+	roles?: Array<
+	{
+		name: string;
+		role: string;
+		assassin?: boolean;
+	}>;
 	reason?: string;
 	message?: string;
 	assassinated?: string;
 }
 
-interface GameData {
+interface GameData
+{
 	id: string;
 	players: GamePlayer[];
 	outcome?: GameOutcome;
 	timeCreated: Date;
 }
 
-function normalizeRole(role: string | undefined): string | null {
+function normalizeRole(role: string | undefined): string | null
+{
 	if (!role) return null;
 	const upperRole = role.toUpperCase();
 	return ROLE_ALIASES[upperRole] ?? null;
 }
 
-function isEvilRole(role: string | null): boolean {
+function isEvilRole(role: string | null): boolean
+{
 	return role !== null && EVIL_ROLES.includes(role);
 }
 
-function getOutcomeReason(outcome: GameOutcome): OutcomeReason | null {
+function getOutcomeReason(outcome: GameOutcome): OutcomeReason | null
+{
 	const reason = outcome.reason ?? outcome.message;
 	if (!reason) return null;
 
-	const reasonMap: Record<string, OutcomeReason> = {
+	const reasonMap: Record<string, OutcomeReason> =
+	{
 		'Three successful missions': 'Three successful missions',
 		'Three failed missions': 'Three failed missions',
 		'Five rejected proposals': 'Five rejected proposals',
@@ -212,29 +236,38 @@ function getOutcomeReason(outcome: GameOutcome): OutcomeReason | null {
  * This function normalizes assassins to role="ASSASSIN" so all
  * downstream code can simply check the role.
  */
-function normalizeGameData(game: GameData): GameData {
-	if (!game.outcome?.roles) {
+function normalizeGameData(game: GameData): GameData
+{
+	if (!game.outcome?.roles)
+	{
 		return game;
 	}
 
-	const normalizedRoles = game.outcome.roles.map((roleData) => {
+	const normalizedRoles = game.outcome.roles.map((roleData) =>
+	{
 		const {assassin, ...rest} = roleData;
-		if (assassin === true || normalizeRole(roleData.role) === 'ASSASSIN') {
-			return {...rest, role: 'ASSASSIN'};
+		if (assassin === true || normalizeRole(roleData.role) === 'ASSASSIN')
+		{
+			return {
+				...rest,
+				role: 'ASSASSIN',
+			};
 		}
 		return rest;
 	});
 
 	return {
 		...game,
-		outcome: {
+		outcome:
+		{
 			...game.outcome,
 			roles: normalizedRoles,
 		},
 	};
 }
 
-function createEmptyStats(name: string, isMapped: boolean): FullStats {
+function createEmptyStats(name: string, isMapped: boolean): FullStats
+{
 	return {
 		name,
 		isMapped,
@@ -246,25 +279,29 @@ function createEmptyStats(name: string, isMapped: boolean): FullStats {
 		evilWins: 0,
 		roleStats: new Map(),
 		yearlyStats: new Map(),
-		lossReasons: {
+		lossReasons:
+		{
 			threeMissionFails: 0,
 			threeMissionSuccessEvil: 0,
 			fiveRejectedProposals: 0,
 			merlinAssassinated: 0,
 		},
-		merlinStats: {
+		merlinStats:
+		{
 			gamesPlayed: 0,
 			wins: 0,
 			timesAssassinated: 0,
 			survivedAssassination: 0,
 		},
-		assassinStats: {
+		assassinStats:
+		{
 			gamesPlayed: 0,
 			wins: 0,
 			successfulAssassinations: 0,
 			failedAssassinations: 0,
 		},
-		evilTeammateStats: {
+		evilTeammateStats:
+		{
 			gamesPlayed: 0,
 			wins: 0,
 			successfulAssassinations: 0,
@@ -273,7 +310,8 @@ function createEmptyStats(name: string, isMapped: boolean): FullStats {
 	};
 }
 
-function createEmptyRoleStats(): RoleStats {
+function createEmptyRoleStats(): RoleStats
+{
 	return {
 		games: 0,
 		wins: 0,
@@ -286,7 +324,8 @@ function createEmptyRoleStats(): RoleStats {
 	};
 }
 
-function createEmptyYearlyStats(): YearlyStats {
+function createEmptyYearlyStats(): YearlyStats
+{
 	return {
 		games: 0,
 		wins: 0,
@@ -297,20 +336,36 @@ function createEmptyYearlyStats(): YearlyStats {
 	};
 }
 
-function parseArgs(): Args {
+function parseArgs(): Args
+{
 	const args = process.argv.slice(2);
-	const result: Args = {dryRun: false, local: false, full: false, resumeFromBatch: null};
+	const result: Args =
+	{
+		dryRun: false,
+		local: false,
+		full: false,
+		resumeFromBatch: null,
+	};
 
-	for (const arg of args) {
-		if (arg === '--dry-run') {
+	for (const arg of args)
+	{
+		if (arg === '--dry-run')
+		{
 			result.dryRun = true;
-		} else if (arg === '--local') {
+		}
+		else if (arg === '--local')
+		{
 			result.local = true;
-		} else if (arg === '--full') {
+		}
+		else if (arg === '--full')
+		{
 			result.full = true;
-		} else if (arg.startsWith('--resume=')) {
+		}
+		else if (arg.startsWith('--resume='))
+		{
 			const batchNumber = parseInt(arg.substring('--resume='.length), 10);
-			if (isNaN(batchNumber) || batchNumber < 1) {
+			if (isNaN(batchNumber) || batchNumber < 1)
+			{
 				throw new Error(`Invalid --resume value: ${arg}. Must be a positive integer.`);
 			}
 			result.resumeFromBatch = batchNumber;
@@ -320,40 +375,62 @@ function parseArgs(): Args {
 	return result;
 }
 
-function sleep(milliseconds: number): Promise<void> {
+function sleep(milliseconds: number): Promise<void>
+{
 	return new Promise((resolve) => setTimeout(resolve, milliseconds));
 }
 
-function escapeSQL(str: string): string {
+function escapeSQL(str: string): string
+{
 	return str.replace(/'/g, "''");
 }
 
-function applyMigrations(local: boolean): void {
+function applyMigrations(local: boolean): void
+{
 	const locationFlag = local ? '--local' : '--remote';
 	console.log(`🔄 Applying pending migrations (${local ? 'local' : 'remote'})...`);
 
-	try {
-		const output = execSync(`npx wrangler d1 migrations apply ${DATABASE_NAME} ${locationFlag}`, {
-			encoding: 'utf-8',
-			stdio: ['pipe', 'pipe', 'pipe'],
-		});
+	try
+	{
+		const output = execSync(
+			`npx wrangler d1 migrations apply ${DATABASE_NAME} ${locationFlag}`,
+			{
+				encoding: 'utf-8',
+				stdio: ['pipe', 'pipe', 'pipe'],
+			},
+		);
 
-		if (output.includes('Migrations to be applied:')) {
+		if (output.includes('Migrations to be applied:'))
+		{
 			console.log(output);
-		} else {
+		}
+		else
+		{
 			console.log('✅ No pending migrations');
 		}
-	} catch (error) {
-		const errorOutput = (error as {stderr?: string}).stderr ?? '';
-		if (errorOutput.includes('No migrations to apply')) {
+	}
+	catch (error)
+	{
+		const errorOutput =
+			(
+				error as
+				{
+					stderr?: string;
+				}
+			).stderr ?? '';
+		if (errorOutput.includes('No migrations to apply'))
+		{
 			console.log('✅ No pending migrations');
-		} else {
+		}
+		else
+		{
 			throw error;
 		}
 	}
 }
 
-function executeQuery<T>(sql: string, local: boolean): T[] {
+function executeQuery<T>(sql: string, local: boolean): T[]
+{
 	const locationFlag = local ? '--local' : '--remote';
 
 	const escapedSql = sql.replace(/"/g, '\\"');
@@ -366,14 +443,17 @@ function executeQuery<T>(sql: string, local: boolean): T[] {
 	);
 
 	const jsonMatch = output.match(/\[[\s\S]*\]/);
-	if (!jsonMatch) {
+	if (!jsonMatch)
+	{
 		throw new Error(`No JSON found in wrangler output: ${output.substring(0, 200)}`);
 	}
 
 	const ResultSchema = z.array(
-		z.object({
-			results: z.array(z.unknown()),
-		}),
+		z.object(
+			{
+				results: z.array(z.unknown()),
+			},
+		),
 	);
 
 	const parsed = ResultSchema.parse(JSON.parse(jsonMatch[0]));
@@ -385,10 +465,12 @@ async function executeSQLBatchWithRetry(
 	dryRun: boolean,
 	local: boolean,
 	batchNumber: number,
-): Promise<void> {
+): Promise<void>
+{
 	const sql = statements.join('\n');
 
-	if (dryRun) {
+	if (dryRun)
+	{
 		console.log('Would execute SQL:');
 		console.log(sql.substring(0, 1000) + (sql.length > 1000 ? '...' : ''));
 		return;
@@ -400,16 +482,24 @@ async function executeSQLBatchWithRetry(
 	const locationFlag = local ? '--local' : '--remote';
 	let lastError: Error | null = null;
 
-	for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
-		try {
-			execSync(`npx wrangler d1 execute ${DATABASE_NAME} ${locationFlag} --yes --file="${tempFile}"`, {
-				stdio: 'inherit',
-			});
+	for (let attempt = 1; attempt <= MAX_RETRIES; attempt++)
+	{
+		try
+		{
+			execSync(
+				`npx wrangler d1 execute ${DATABASE_NAME} ${locationFlag} --yes --file="${tempFile}"`,
+				{
+					stdio: 'inherit',
+				},
+			);
 			fs.unlinkSync(tempFile);
 			return;
-		} catch (error) {
+		}
+		catch (error)
+		{
 			lastError = error as Error;
-			if (attempt < MAX_RETRIES) {
+			if (attempt < MAX_RETRIES)
+			{
 				const delayMs = INITIAL_RETRY_DELAY_MS * Math.pow(2, attempt - 1);
 				console.log(
 					`⚠️  Batch ${batchNumber} failed (attempt ${attempt}/${MAX_RETRIES}). Retrying in ${delayMs}ms...`,
@@ -420,9 +510,12 @@ async function executeSQLBatchWithRetry(
 	}
 
 	// Clean up temp file before throwing
-	try {
+	try
+	{
 		fs.unlinkSync(tempFile);
-	} catch {
+	}
+	catch
+	{
 		// Ignore cleanup errors
 	}
 
@@ -431,34 +524,42 @@ async function executeSQLBatchWithRetry(
 	);
 }
 
-async function getPersonMappings(local: boolean): Promise<{
+async function getPersonMappings(local: boolean): Promise<
+{
 	uidToPersonId: Map<string, string>;
 	personIdToName: Map<string, string>;
 	personIdToUids: Map<string, string[]>;
-}> {
+}>
+{
 	console.log('Fetching person mappings...');
 
-	const PersonUidSchema = z.object({
-		uid: z.string(),
-		personId: z.string(),
-	});
-	const PersonSchema = z.object({
-		id: z.string(),
-		name: z.string(),
-	});
+	const PersonUidSchema = z.object(
+		{
+			uid: z.string(),
+			personId: z.string(),
+		},
+	);
+	const PersonSchema = z.object(
+		{
+			id: z.string(),
+			name: z.string(),
+		},
+	);
 
 	const personUids = executeQuery<z.infer<typeof PersonUidSchema>>('SELECT uid, personId FROM PersonUid', local);
 	const persons = executeQuery<z.infer<typeof PersonSchema>>('SELECT id, name FROM Person', local);
 
 	const personIdToName = new Map<string, string>();
-	for (const person of persons) {
+	for (const person of persons)
+	{
 		personIdToName.set(person.id, person.name);
 	}
 
 	const uidToPersonId = new Map<string, string>();
 	const personIdToUids = new Map<string, string[]>();
 
-	for (const pu of personUids) {
+	for (const pu of personUids)
+	{
 		uidToPersonId.set(pu.uid, pu.personId);
 
 		const uids = personIdToUids.get(pu.personId) ?? [];
@@ -467,35 +568,50 @@ async function getPersonMappings(local: boolean): Promise<{
 	}
 
 	console.log(`Found ${personIdToName.size} people with ${uidToPersonId.size} UIDs`);
-	return {uidToPersonId, personIdToName, personIdToUids};
+	return {
+		uidToPersonId,
+		personIdToName,
+		personIdToUids,
+	};
 }
 
-async function getAllGames(local: boolean): Promise<GameData[]> {
+async function getAllGames(local: boolean): Promise<GameData[]>
+{
 	console.log('Fetching all games in batches...');
 
-	const RawGameSchema = z.object({
-		firebaseKey: z.string(),
-		gameJson: z.string(),
-		createdAt: z.string(),
-	});
+	const RawGameSchema = z.object(
+		{
+			firebaseKey: z.string(),
+			gameJson: z.string(),
+			createdAt: z.string(),
+		},
+	);
 
-	const countResult = executeQuery<{count: number}>('SELECT COUNT(*) as count FROM RawGameData', local);
+	const countResult = executeQuery<
+	{
+		count: number;
+	}>('SELECT COUNT(*) as count FROM RawGameData', local);
 	const totalCount = countResult[0]?.count ?? 0;
 	console.log(`Total games: ${totalCount}`);
 
 	const games: GameData[] = [];
 	const batchSize = 500;
 
-	for (let offset = 0; offset < totalCount; offset += batchSize) {
+	for (let offset = 0; offset < totalCount; offset += batchSize)
+	{
 		console.log(`Fetching games ${offset + 1}-${Math.min(offset + batchSize, totalCount)}...`);
 		const sql = `SELECT firebaseKey, gameJson, createdAt FROM RawGameData LIMIT ${batchSize} OFFSET ${offset}`;
 		const rawGames = executeQuery<z.infer<typeof RawGameSchema>>(sql, local);
 
-		for (const raw of rawGames) {
-			try {
+		for (const raw of rawGames)
+		{
+			try
+			{
 				const parsed = JSON.parse(raw.gameJson);
-				if (parsed.players && Array.isArray(parsed.players)) {
-					const game: GameData = {
+				if (parsed.players && Array.isArray(parsed.players))
+				{
+					const game: GameData =
+					{
 						id: raw.firebaseKey,
 						players: parsed.players,
 						outcome: parsed.outcome,
@@ -503,7 +619,9 @@ async function getAllGames(local: boolean): Promise<GameData[]> {
 					};
 					games.push(normalizeGameData(game));
 				}
-			} catch {
+			}
+			catch
+			{
 				// Skip invalid games
 			}
 		}
@@ -513,19 +631,23 @@ async function getAllGames(local: boolean): Promise<GameData[]> {
 	return games;
 }
 
-async function getLastStatsProcessedTime(local: boolean): Promise<Date> {
+async function getLastStatsProcessedTime(local: boolean): Promise<Date>
+{
 	console.log('Fetching last stats processed time...');
 
-	const StateSchema = z.object({
-		lastStatsProcessedTime: z.string().nullable(),
-	});
+	const StateSchema = z.object(
+		{
+			lastStatsProcessedTime: z.string().nullable(),
+		},
+	);
 
 	const result = executeQuery<z.infer<typeof StateSchema>>(
 		'SELECT lastStatsProcessedTime FROM GameIngestionState WHERE id = 1',
 		local,
 	);
 
-	if (result.length === 0 || !result[0]?.lastStatsProcessedTime) {
+	if (result.length === 0 || !result[0]?.lastStatsProcessedTime)
+	{
 		console.log('No previous stats processing time found, using Unix epoch');
 		return new Date('1970-01-01T00:00:00Z');
 	}
@@ -535,40 +657,49 @@ async function getLastStatsProcessedTime(local: boolean): Promise<Date> {
 	return lastTime;
 }
 
-async function getGamesSince(local: boolean, since: Date): Promise<GameData[]> {
+async function getGamesSince(local: boolean, since: Date): Promise<GameData[]>
+{
 	console.log(`Fetching games since ${since.toISOString()}...`);
 
-	const RawGameSchema = z.object({
-		firebaseKey: z.string(),
-		gameJson: z.string(),
-		createdAt: z.string(),
-	});
+	const RawGameSchema = z.object(
+		{
+			firebaseKey: z.string(),
+			gameJson: z.string(),
+			createdAt: z.string(),
+		},
+	);
 
 	const sinceISO = since.toISOString();
-	const countResult = executeQuery<{count: number}>(
-		`SELECT COUNT(*) as count FROM RawGameData WHERE createdAt > '${sinceISO}'`,
-		local,
-	);
+	const countResult = executeQuery<
+	{
+		count: number;
+	}>(`SELECT COUNT(*) as count FROM RawGameData WHERE createdAt > '${sinceISO}'`, local);
 	const totalCount = countResult[0]?.count ?? 0;
 	console.log(`New games since last run: ${totalCount}`);
 
-	if (totalCount === 0) {
+	if (totalCount === 0)
+	{
 		return [];
 	}
 
 	const games: GameData[] = [];
 	const batchSize = 500;
 
-	for (let offset = 0; offset < totalCount; offset += batchSize) {
+	for (let offset = 0; offset < totalCount; offset += batchSize)
+	{
 		console.log(`Fetching games ${offset + 1}-${Math.min(offset + batchSize, totalCount)}...`);
 		const sql = `SELECT firebaseKey, gameJson, createdAt FROM RawGameData WHERE createdAt > '${sinceISO}' ORDER BY createdAt ASC LIMIT ${batchSize} OFFSET ${offset}`;
 		const rawGames = executeQuery<z.infer<typeof RawGameSchema>>(sql, local);
 
-		for (const raw of rawGames) {
-			try {
+		for (const raw of rawGames)
+		{
+			try
+			{
 				const parsed = JSON.parse(raw.gameJson);
-				if (parsed.players && Array.isArray(parsed.players)) {
-					const game: GameData = {
+				if (parsed.players && Array.isArray(parsed.players))
+				{
+					const game: GameData =
+					{
 						id: raw.firebaseKey,
 						players: parsed.players,
 						outcome: parsed.outcome,
@@ -576,7 +707,9 @@ async function getGamesSince(local: boolean, since: Date): Promise<GameData[]> {
 					};
 					games.push(normalizeGameData(game));
 				}
-			} catch {
+			}
+			catch
+			{
 				// Skip invalid games
 			}
 		}
@@ -589,24 +722,36 @@ async function getGamesSince(local: boolean, since: Date): Promise<GameData[]> {
 function getAffectedUidsAndPersonIds(
 	games: GameData[],
 	uidToPersonId: Map<string, string>,
-): {affectedUids: Set<string>; affectedPersonIds: Set<string>} {
+):
+{
+	affectedUids: Set<string>;
+	affectedPersonIds: Set<string>;
+}
+{
 	const affectedUids = new Set<string>();
 	const affectedPersonIds = new Set<string>();
 
-	for (const game of games) {
-		for (const player of game.players) {
+	for (const game of games)
+	{
+		for (const player of game.players)
+		{
 			affectedUids.add(player.uid);
 			const personId = uidToPersonId.get(player.uid);
-			if (personId) {
+			if (personId)
+			{
 				affectedPersonIds.add(personId);
 			}
 		}
 	}
 
-	return {affectedUids, affectedPersonIds};
+	return {
+		affectedUids,
+		affectedPersonIds,
+	};
 }
 
-function processGameForStats(game: GameData, playerUid: string, stats: FullStats): void {
+function processGameForStats(game: GameData, playerUid: string, stats: FullStats): void
+{
 	if (!game.outcome) return;
 
 	const player = game.players.find((p) => p.uid === playerUid);
@@ -622,132 +767,181 @@ function processGameForStats(game: GameData, playerUid: string, stats: FullStats
 
 	// Overall stats
 	stats.gamesPlayed++;
-	if (playerWon) {
+	if (playerWon)
+	{
 		stats.wins++;
 	}
 
 	// Alignment stats
-	if (isEvil) {
+	if (isEvil)
+	{
 		stats.evilGames++;
-		if (playerWon) {
+		if (playerWon)
+		{
 			stats.evilWins++;
 		}
-	} else {
+	}
+	else
+	{
 		stats.goodGames++;
-		if (playerWon) {
+		if (playerWon)
+		{
 			stats.goodWins++;
 		}
 	}
 
-	if (normalizedRole) {
+	if (normalizedRole)
+	{
 		const roleForStats = normalizedRole;
 		let roleStats = stats.roleStats.get(roleForStats);
-		if (!roleStats) {
+		if (!roleStats)
+		{
 			roleStats = createEmptyRoleStats();
 			stats.roleStats.set(roleForStats, roleStats);
 		}
 
 		roleStats.games++;
-		if (playerWon) {
+		if (playerWon)
+		{
 			roleStats.wins++;
-		} else {
+		}
+		else
+		{
 			roleStats.losses++;
 		}
 
-		if (outcomeReason === 'Three failed missions') {
+		if (outcomeReason === 'Three failed missions')
+		{
 			roleStats.threeMissionFails++;
-		} else if (outcomeReason === 'Three successful missions' || outcomeReason === 'Failed to assassinate Merlin') {
+		}
+		else if (outcomeReason === 'Three successful missions' || outcomeReason === 'Failed to assassinate Merlin')
+		{
 			roleStats.threeMissionSuccesses++;
-		} else if (outcomeReason === 'Five rejected proposals') {
+		}
+		else if (outcomeReason === 'Five rejected proposals')
+		{
 			roleStats.fiveRejectedProposals++;
-		} else if (outcomeReason === 'Merlin assassinated') {
+		}
+		else if (outcomeReason === 'Merlin assassinated')
+		{
 			roleStats.merlinAssassinated++;
 		}
 
-		if (wasAssassinated) {
+		if (wasAssassinated)
+		{
 			roleStats.wasAssassinated++;
 		}
 	}
 
 	// Yearly stats
 	let yearlyStats = stats.yearlyStats.get(year);
-	if (!yearlyStats) {
+	if (!yearlyStats)
+	{
 		yearlyStats = createEmptyYearlyStats();
 		stats.yearlyStats.set(year, yearlyStats);
 	}
 
 	yearlyStats.games++;
 	if (playerWon) yearlyStats.wins++;
-	if (isEvil) {
+	if (isEvil)
+	{
 		yearlyStats.evilGames++;
 		if (playerWon) yearlyStats.evilWins++;
-	} else {
+	}
+	else
+	{
 		yearlyStats.goodGames++;
 		if (playerWon) yearlyStats.goodWins++;
 	}
 
 	// Loss reasons (only when player lost)
-	if (!playerWon) {
-		if (outcomeReason === 'Three failed missions') {
+	if (!playerWon)
+	{
+		if (outcomeReason === 'Three failed missions')
+		{
 			stats.lossReasons.threeMissionFails++;
-		} else if (outcomeReason === 'Three successful missions' || outcomeReason === 'Failed to assassinate Merlin') {
+		}
+		else if (outcomeReason === 'Three successful missions' || outcomeReason === 'Failed to assassinate Merlin')
+		{
 			stats.lossReasons.threeMissionSuccessEvil++;
-		} else if (outcomeReason === 'Five rejected proposals') {
+		}
+		else if (outcomeReason === 'Five rejected proposals')
+		{
 			stats.lossReasons.fiveRejectedProposals++;
-		} else if (outcomeReason === 'Merlin assassinated') {
+		}
+		else if (outcomeReason === 'Merlin assassinated')
+		{
 			stats.lossReasons.merlinAssassinated++;
 		}
 	}
 
 	// Merlin stats
-	if (normalizedRole === 'MERLIN') {
+	if (normalizedRole === 'MERLIN')
+	{
 		stats.merlinStats.gamesPlayed++;
-		if (playerWon) {
+		if (playerWon)
+		{
 			stats.merlinStats.wins++;
 			stats.merlinStats.survivedAssassination++;
-		} else if (wasAssassinated) {
+		}
+		else if (wasAssassinated)
+		{
 			stats.merlinStats.timesAssassinated++;
 		}
 	}
 
-	if (normalizedRole === 'ASSASSIN') {
+	if (normalizedRole === 'ASSASSIN')
+	{
 		stats.assassinStats.gamesPlayed++;
-		if (playerWon) {
+		if (playerWon)
+		{
 			stats.assassinStats.wins++;
 		}
-		if (outcomeReason === 'Merlin assassinated') {
+		if (outcomeReason === 'Merlin assassinated')
+		{
 			stats.assassinStats.successfulAssassinations++;
-		} else if (
+		}
+		else if (
 			game.outcome.state === 'GOOD_WIN' &&
 			game.outcome.assassinated &&
 			outcomeReason === 'Three successful missions'
-		) {
+		)
+		{
 			stats.assassinStats.failedAssassinations++;
 		}
-	} else if (isEvil) {
+	}
+	else if (isEvil)
+	{
 		stats.evilTeammateStats.gamesPlayed++;
-		if (playerWon) {
+		if (playerWon)
+		{
 			stats.evilTeammateStats.wins++;
 		}
-		if (outcomeReason === 'Merlin assassinated') {
+		if (outcomeReason === 'Merlin assassinated')
+		{
 			stats.evilTeammateStats.successfulAssassinations++;
-		} else if (
+		}
+		else if (
 			game.outcome.state === 'GOOD_WIN' &&
 			game.outcome.assassinated &&
 			outcomeReason === 'Three successful missions'
-		) {
+		)
+		{
 			stats.evilTeammateStats.failedAssassinations++;
 		}
 	}
 }
 
-function calculatePlayerStats(games: GameData[], uidToPersonId: Map<string, string>): Map<string, FullStats> {
+function calculatePlayerStats(games: GameData[], uidToPersonId: Map<string, string>): Map<string, FullStats>
+{
 	const statsMap = new Map<string, FullStats>();
 
 	// Index games by UID for faster lookup
 	const gamesByUid = new Map<string, GameData[]>();
-	for (const game of games) {
-		for (const player of game.players) {
+	for (const game of games)
+	{
+		for (const player of game.players)
+		{
 			const uid = player.uid;
 			const playerGames = gamesByUid.get(uid) ?? [];
 			playerGames.push(game);
@@ -756,12 +950,14 @@ function calculatePlayerStats(games: GameData[], uidToPersonId: Map<string, stri
 	}
 
 	// Calculate stats for each UID
-	for (const [uid, playerGames] of gamesByUid) {
+	for (const [uid, playerGames] of gamesByUid)
+	{
 		const isMapped = uidToPersonId.has(uid);
 		const firstName = playerGames[0]?.players.find((p) => p.uid === uid)?.name ?? uid;
 		const stats = createEmptyStats(firstName, isMapped);
 
-		for (const game of playerGames) {
+		for (const game of playerGames)
+		{
 			processGameForStats(game, uid, stats);
 		}
 
@@ -775,13 +971,16 @@ function calculatePersonStats(
 	games: GameData[],
 	personIdToUids: Map<string, string[]>,
 	personIdToName: Map<string, string>,
-): Map<string, FullStats> {
+): Map<string, FullStats>
+{
 	const statsMap = new Map<string, FullStats>();
 
 	// Index games by UID for faster lookup
 	const gamesByUid = new Map<string, GameData[]>();
-	for (const game of games) {
-		for (const player of game.players) {
+	for (const game of games)
+	{
+		for (const player of game.players)
+		{
 			const uid = player.uid;
 			const playerGames = gamesByUid.get(uid) ?? [];
 			playerGames.push(game);
@@ -790,16 +989,19 @@ function calculatePersonStats(
 	}
 
 	// Calculate stats for each person (aggregating all their UIDs)
-	for (const [personId, uids] of personIdToUids) {
+	for (const [personId, uids] of personIdToUids)
+	{
 		const name = personIdToName.get(personId) ?? personId;
 		const stats = createEmptyStats(name, true);
 
 		// Collect all unique games for this person
 		const seenGames = new Set<string>();
 
-		for (const uid of uids) {
+		for (const uid of uids)
+		{
 			const playerGames = gamesByUid.get(uid) ?? [];
-			for (const game of playerGames) {
+			for (const game of playerGames)
+			{
 				if (seenGames.has(game.id)) continue;
 				seenGames.add(game.id);
 				processGameForStats(game, uid, stats);
@@ -816,7 +1018,8 @@ function calculatePersonStats(
 // Annotation Stats Processing
 // ============================================================================
 
-function createEmptyPredicateAnnotationStats(): PredicateAnnotationStats {
+function createEmptyPredicateAnnotationStats(): PredicateAnnotationStats
+{
 	return {
 		fires: 0,
 		opportunities: 0,
@@ -830,21 +1033,27 @@ function createEmptyPredicateAnnotationStats(): PredicateAnnotationStats {
  * Parse raw game JSON into a Game object that can be used with analyzeGameForAnnotationStats.
  * Returns null if parsing fails or game is incomplete (no missions).
  */
-function parseGameForAnnotations(gameId: string, gameJson: string): Game | null {
-	try {
+function parseGameForAnnotations(gameId: string, gameJson: string): Game | null
+{
+	try
+	{
 		const parsed = JSON.parse(gameJson);
 		// Add the ID to the parsed object
 		parsed.id = gameId;
 		const result = GameSchema.safeParse(parsed);
-		if (!result.success) {
+		if (!result.success)
+		{
 			return null;
 		}
 		// Skip games without missions
-		if (result.data.missions.length === 0) {
+		if (result.data.missions.length === 0)
+		{
 			return null;
 		}
 		return result.data;
-	} catch {
+	}
+	catch
+	{
 		return null;
 	}
 }
@@ -854,19 +1063,26 @@ function parseGameForAnnotations(gameId: string, gameJson: string): Game | null 
  * Only processes games for mapped people (those with personIds).
  */
 function calculatePersonAnnotationStats(
-	rawGames: Array<{firebaseKey: string; gameJson: string}>,
+	rawGames: Array<
+	{
+		firebaseKey: string;
+		gameJson: string;
+	}>,
 	personIdToUids: Map<string, string[]>,
 	uidToPersonId: Map<string, string>,
-): Map<string, PersonAnnotationStatsAccumulator> {
+): Map<string, PersonAnnotationStatsAccumulator>
+{
 	const personStats = new Map<string, PersonAnnotationStatsAccumulator>();
 
 	// Initialize accumulators for each person
-	for (const personId of personIdToUids.keys()) {
+	for (const personId of personIdToUids.keys())
+	{
 		personStats.set(personId, new Map());
 	}
 
 	// Process each game
-	for (const rawGame of rawGames) {
+	for (const rawGame of rawGames)
+	{
 		const game = parseGameForAnnotations(rawGame.firebaseKey, rawGame.gameJson);
 		if (!game) continue;
 
@@ -874,22 +1090,26 @@ function calculatePersonAnnotationStats(
 		const gameStats = analyzeGameForAnnotationStats(game);
 
 		// Aggregate by person (map UID -> personId)
-		for (const [predicateName, playerMap] of gameStats) {
-			for (const [playerUid, stats] of playerMap) {
+		for (const [predicateName, playerMap] of gameStats)
+		{
+			for (const [playerUid, stats] of playerMap)
+			{
 				// Look up personId for this UID
 				const personId = uidToPersonId.get(playerUid);
 				if (!personId) continue;
 
 				// Get or create the person's accumulator
 				let personAccumulator = personStats.get(personId);
-				if (!personAccumulator) {
+				if (!personAccumulator)
+				{
 					personAccumulator = new Map();
 					personStats.set(personId, personAccumulator);
 				}
 
 				// Get or create the predicate stats
 				let predicateStats = personAccumulator.get(predicateName);
-				if (!predicateStats) {
+				if (!predicateStats)
+				{
 					predicateStats = createEmptyPredicateAnnotationStats();
 					personAccumulator.set(predicateName, predicateStats);
 				}
@@ -899,19 +1119,28 @@ function calculatePersonAnnotationStats(
 				predicateStats.opportunities += stats.opportunities;
 
 				// Track game instance (only if there are opportunities)
-				if (stats.opportunities > 0) {
-					predicateStats.gameInstances.push({
-						firebaseKey: rawGame.firebaseKey,
-						fired: stats.fires > 0,
-						role: stats.role || 'unknown',
-					});
+				if (stats.opportunities > 0)
+				{
+					predicateStats.gameInstances.push(
+						{
+							firebaseKey: rawGame.firebaseKey,
+							fired: stats.fires > 0,
+							role: stats.role || 'unknown',
+						},
+					);
 				}
 
 				// Accumulate by alignment
-				if (stats.alignment !== 'unknown') {
+				if (stats.alignment !== 'unknown')
+				{
 					let alignmentStats = predicateStats.byAlignment.get(stats.alignment);
-					if (!alignmentStats) {
-						alignmentStats = {fires: 0, opportunities: 0};
+					if (!alignmentStats)
+					{
+						alignmentStats =
+						{
+							fires: 0,
+							opportunities: 0,
+						};
 						predicateStats.byAlignment.set(stats.alignment, alignmentStats);
 					}
 					alignmentStats.fires += stats.fires;
@@ -919,12 +1148,19 @@ function calculatePersonAnnotationStats(
 				}
 
 				// Accumulate by role
-				if (stats.role) {
+				if (stats.role)
+				{
 					const normalizedRole = normalizeRole(stats.role);
-					if (normalizedRole) {
+					if (normalizedRole)
+					{
 						let roleStats = predicateStats.byRole.get(normalizedRole);
-						if (!roleStats) {
-							roleStats = {fires: 0, opportunities: 0};
+						if (!roleStats)
+						{
+							roleStats =
+							{
+								fires: 0,
+								opportunities: 0,
+							};
 							predicateStats.byRole.set(normalizedRole, roleStats);
 						}
 						roleStats.fires += stats.fires;
@@ -945,7 +1181,8 @@ function calculatePersonAnnotationStats(
 function buildPersonAnnotationInsertStatements(
 	statsMap: Map<string, PersonAnnotationStatsAccumulator>,
 	now: string,
-): string[] {
+): string[]
+{
 	// Collect statements by table to ensure parents are inserted before children
 	const deleteStatements: string[] = [];
 	const parentStatements: string[] = [];
@@ -959,8 +1196,10 @@ function buildPersonAnnotationInsertStatements(
 	deleteStatements.push('DELETE FROM PersonAnnotationAlignmentStats;');
 	deleteStatements.push('DELETE FROM PersonAnnotationStats;');
 
-	for (const [personId, predicateMap] of statsMap) {
-		for (const [predicateName, stats] of predicateMap) {
+	for (const [personId, predicateMap] of statsMap)
+	{
+		for (const [predicateName, stats] of predicateMap)
+		{
 			// Skip predicates with no opportunities (no data to store)
 			if (stats.opportunities === 0) continue;
 
@@ -973,7 +1212,8 @@ function buildPersonAnnotationInsertStatements(
 			);
 
 			// Insert alignment breakdown (child)
-			for (const [alignment, alignmentStats] of stats.byAlignment) {
+			for (const [alignment, alignmentStats] of stats.byAlignment)
+			{
 				if (alignmentStats.opportunities === 0) continue;
 				const alignmentId = crypto.randomUUID();
 				alignmentStatements.push(
@@ -982,7 +1222,8 @@ function buildPersonAnnotationInsertStatements(
 			}
 
 			// Insert role breakdown (child)
-			for (const [role, roleStats] of stats.byRole) {
+			for (const [role, roleStats] of stats.byRole)
+			{
 				if (roleStats.opportunities === 0) continue;
 				const roleId = crypto.randomUUID();
 				roleStatements.push(
@@ -991,7 +1232,8 @@ function buildPersonAnnotationInsertStatements(
 			}
 
 			// Insert game instances (child)
-			for (const gameInstance of stats.gameInstances) {
+			for (const gameInstance of stats.gameInstances)
+			{
 				const gameId = crypto.randomUUID();
 				gameStatements.push(
 					`INSERT INTO PersonAnnotationGame (id, annotationStatsId, firebaseKey, fired, role, createdAt) VALUES ('${gameId}', '${annotationId}', '${escapeSQL(gameInstance.firebaseKey)}', ${gameInstance.fired ? 1 : 0}, '${escapeSQL(gameInstance.role)}', '${now}');`,
@@ -1010,15 +1252,18 @@ function buildPersonAnnotationInsertStatements(
 function buildPersonAnnotationInsertStatementsWithoutDelete(
 	statsMap: Map<string, PersonAnnotationStatsAccumulator>,
 	now: string,
-): string[] {
+): string[]
+{
 	// Collect statements by table to ensure parents are inserted before children
 	const parentStatements: string[] = [];
 	const alignmentStatements: string[] = [];
 	const roleStatements: string[] = [];
 	const gameStatements: string[] = [];
 
-	for (const [personId, predicateMap] of statsMap) {
-		for (const [predicateName, stats] of predicateMap) {
+	for (const [personId, predicateMap] of statsMap)
+	{
+		for (const [predicateName, stats] of predicateMap)
+		{
 			if (stats.opportunities === 0) continue;
 
 			const annotationId = crypto.randomUUID();
@@ -1028,7 +1273,8 @@ function buildPersonAnnotationInsertStatementsWithoutDelete(
 				`INSERT OR REPLACE INTO PersonAnnotationStats (id, personId, predicateName, fires, opportunities, createdAt, updatedAt) VALUES ('${annotationId}', '${escapeSQL(personId)}', '${escapeSQL(predicateName)}', ${stats.fires}, ${stats.opportunities}, '${now}', '${now}');`,
 			);
 
-			for (const [alignment, alignmentStats] of stats.byAlignment) {
+			for (const [alignment, alignmentStats] of stats.byAlignment)
+			{
 				if (alignmentStats.opportunities === 0) continue;
 				const alignmentId = crypto.randomUUID();
 				alignmentStatements.push(
@@ -1036,7 +1282,8 @@ function buildPersonAnnotationInsertStatementsWithoutDelete(
 				);
 			}
 
-			for (const [role, roleStats] of stats.byRole) {
+			for (const [role, roleStats] of stats.byRole)
+			{
 				if (roleStats.opportunities === 0) continue;
 				const roleId = crypto.randomUUID();
 				roleStatements.push(
@@ -1044,7 +1291,8 @@ function buildPersonAnnotationInsertStatementsWithoutDelete(
 				);
 			}
 
-			for (const gameInstance of stats.gameInstances) {
+			for (const gameInstance of stats.gameInstances)
+			{
 				const gameId = crypto.randomUUID();
 				gameStatements.push(
 					`INSERT OR REPLACE INTO PersonAnnotationGame (id, annotationStatsId, firebaseKey, fired, role, createdAt) VALUES ('${gameId}', '${annotationId}', '${escapeSQL(gameInstance.firebaseKey)}', ${gameInstance.fired ? 1 : 0}, '${escapeSQL(gameInstance.role)}', '${now}');`,
@@ -1064,7 +1312,8 @@ function buildPersonAnnotationInsertStatementsWithoutDelete(
 function buildPersonAnnotationUpsertStatements(
 	statsMap: Map<string, PersonAnnotationStatsAccumulator>,
 	now: string,
-): string[] {
+): string[]
+{
 	// Collect statements by table to ensure parents are inserted before children
 	const deleteStatements: string[] = [];
 	const parentStatements: string[] = [];
@@ -1072,7 +1321,8 @@ function buildPersonAnnotationUpsertStatements(
 	const roleStatements: string[] = [];
 	const gameStatements: string[] = [];
 
-	for (const [personId, predicateMap] of statsMap) {
+	for (const [personId, predicateMap] of statsMap)
+	{
 		// Delete existing annotation data for this person (children first, then parent)
 		deleteStatements.push(
 			`DELETE FROM PersonAnnotationGame WHERE annotationStatsId IN (SELECT id FROM PersonAnnotationStats WHERE personId = '${escapeSQL(personId)}');`,
@@ -1085,7 +1335,8 @@ function buildPersonAnnotationUpsertStatements(
 		);
 		deleteStatements.push(`DELETE FROM PersonAnnotationStats WHERE personId = '${escapeSQL(personId)}';`);
 
-		for (const [predicateName, stats] of predicateMap) {
+		for (const [predicateName, stats] of predicateMap)
+		{
 			if (stats.opportunities === 0) continue;
 
 			const annotationId = crypto.randomUUID();
@@ -1094,7 +1345,8 @@ function buildPersonAnnotationUpsertStatements(
 				`INSERT INTO PersonAnnotationStats (id, personId, predicateName, fires, opportunities, createdAt, updatedAt) VALUES ('${annotationId}', '${escapeSQL(personId)}', '${escapeSQL(predicateName)}', ${stats.fires}, ${stats.opportunities}, '${now}', '${now}');`,
 			);
 
-			for (const [alignment, alignmentStats] of stats.byAlignment) {
+			for (const [alignment, alignmentStats] of stats.byAlignment)
+			{
 				if (alignmentStats.opportunities === 0) continue;
 				const alignmentId = crypto.randomUUID();
 				alignmentStatements.push(
@@ -1102,7 +1354,8 @@ function buildPersonAnnotationUpsertStatements(
 				);
 			}
 
-			for (const [role, roleStats] of stats.byRole) {
+			for (const [role, roleStats] of stats.byRole)
+			{
 				if (roleStats.opportunities === 0) continue;
 				const roleId = crypto.randomUUID();
 				roleStatements.push(
@@ -1110,7 +1363,8 @@ function buildPersonAnnotationUpsertStatements(
 				);
 			}
 
-			for (const gameInstance of stats.gameInstances) {
+			for (const gameInstance of stats.gameInstances)
+			{
 				const gameId = crypto.randomUUID();
 				gameStatements.push(
 					`INSERT INTO PersonAnnotationGame (id, annotationStatsId, firebaseKey, fired, role, createdAt) VALUES ('${gameId}', '${annotationId}', '${escapeSQL(gameInstance.firebaseKey)}', ${gameInstance.fired ? 1 : 0}, '${escapeSQL(gameInstance.role)}', '${now}');`,
@@ -1129,7 +1383,8 @@ function buildPersonAnnotationUpsertStatements(
 function buildGlobalAnnotationBaselineStatements(
 	personStatsMap: Map<string, PersonAnnotationStatsAccumulator>,
 	now: string,
-): string[] {
+): string[]
+{
 	const statements: string[] = [];
 
 	// Clear existing global baseline data
@@ -1147,15 +1402,25 @@ function buildGlobalAnnotationBaselineStatements(
 			evilFires: number;
 			evilOpportunities: number;
 			peopleWithData: Set<string>;
-			byRole: Map<string, {fires: number; opportunities: number}>;
+			byRole: Map<
+				string,
+				{
+					fires: number;
+					opportunities: number;
+				}
+			>;
 		}
 	>();
 
-	for (const [personId, predicateMap] of personStatsMap) {
-		for (const [predicateName, stats] of predicateMap) {
+	for (const [personId, predicateMap] of personStatsMap)
+	{
+		for (const [predicateName, stats] of predicateMap)
+		{
 			let global = globalStats.get(predicateName);
-			if (!global) {
-				global = {
+			if (!global)
+			{
+				global =
+				{
 					totalFires: 0,
 					totalOpportunities: 0,
 					goodFires: 0,
@@ -1169,7 +1434,8 @@ function buildGlobalAnnotationBaselineStatements(
 			}
 
 			// Track that this person has data for this predicate
-			if (stats.opportunities > 0) {
+			if (stats.opportunities > 0)
+			{
 				global.peopleWithData.add(personId);
 			}
 
@@ -1178,21 +1444,29 @@ function buildGlobalAnnotationBaselineStatements(
 
 			// Alignment breakdown
 			const goodStats = stats.byAlignment.get('good');
-			if (goodStats) {
+			if (goodStats)
+			{
 				global.goodFires += goodStats.fires;
 				global.goodOpportunities += goodStats.opportunities;
 			}
 			const evilStats = stats.byAlignment.get('evil');
-			if (evilStats) {
+			if (evilStats)
+			{
 				global.evilFires += evilStats.fires;
 				global.evilOpportunities += evilStats.opportunities;
 			}
 
 			// Role breakdown
-			for (const [role, roleStats] of stats.byRole) {
+			for (const [role, roleStats] of stats.byRole)
+			{
 				let globalRole = global.byRole.get(role);
-				if (!globalRole) {
-					globalRole = {fires: 0, opportunities: 0};
+				if (!globalRole)
+				{
+					globalRole =
+					{
+						fires: 0,
+						opportunities: 0,
+					};
 					global.byRole.set(role, globalRole);
 				}
 				globalRole.fires += roleStats.fires;
@@ -1202,7 +1476,8 @@ function buildGlobalAnnotationBaselineStatements(
 	}
 
 	// Insert global baselines
-	for (const [predicateName, stats] of globalStats) {
+	for (const [predicateName, stats] of globalStats)
+	{
 		if (stats.totalOpportunities === 0) continue;
 
 		statements.push(
@@ -1210,7 +1485,8 @@ function buildGlobalAnnotationBaselineStatements(
 		);
 
 		// Insert role baselines
-		for (const [role, roleStats] of stats.byRole) {
+		for (const [role, roleStats] of stats.byRole)
+		{
 			if (roleStats.opportunities === 0) continue;
 			const roleBaselineId = crypto.randomUUID();
 			statements.push(
@@ -1222,7 +1498,8 @@ function buildGlobalAnnotationBaselineStatements(
 	return statements;
 }
 
-function buildPlayerInsertStatements(statsMap: Map<string, FullStats>, now: string): string[] {
+function buildPlayerInsertStatements(statsMap: Map<string, FullStats>, now: string): string[]
+{
 	const statements: string[] = [];
 
 	// Clear existing data
@@ -1234,14 +1511,16 @@ function buildPlayerInsertStatements(statsMap: Map<string, FullStats>, now: stri
 	statements.push('DELETE FROM PlayerRoleStats;');
 	statements.push('DELETE FROM PlayerStats;');
 
-	for (const [uid, stats] of statsMap) {
+	for (const [uid, stats] of statsMap)
+	{
 		// Base stats
 		statements.push(
 			`INSERT INTO PlayerStats (uid, name, isMapped, gamesPlayed, wins, goodGames, goodWins, evilGames, evilWins, createdAt, updatedAt) VALUES ('${escapeSQL(uid)}', '${escapeSQL(stats.name)}', ${stats.isMapped ? 1 : 0}, ${stats.gamesPlayed}, ${stats.wins}, ${stats.goodGames}, ${stats.goodWins}, ${stats.evilGames}, ${stats.evilWins}, '${now}', '${now}');`,
 		);
 
 		// Role stats (for all roles, including ones with 0 games)
-		for (const role of ALL_ROLES) {
+		for (const role of ALL_ROLES)
+		{
 			const roleStats = stats.roleStats.get(role) ?? createEmptyRoleStats();
 			statements.push(
 				`INSERT INTO PlayerRoleStats (uid, role, games, wins, losses, threeMissionFails, threeMissionSuccesses, fiveRejectedProposals, merlinAssassinated, wasAssassinated) VALUES ('${escapeSQL(uid)}', '${role}', ${roleStats.games}, ${roleStats.wins}, ${roleStats.losses}, ${roleStats.threeMissionFails}, ${roleStats.threeMissionSuccesses}, ${roleStats.fiveRejectedProposals}, ${roleStats.merlinAssassinated}, ${roleStats.wasAssassinated});`,
@@ -1249,7 +1528,8 @@ function buildPlayerInsertStatements(statsMap: Map<string, FullStats>, now: stri
 		}
 
 		// Yearly stats
-		for (const [year, yearlyStats] of stats.yearlyStats) {
+		for (const [year, yearlyStats] of stats.yearlyStats)
+		{
 			statements.push(
 				`INSERT INTO PlayerYearlyStats (uid, year, games, wins, goodGames, goodWins, evilGames, evilWins) VALUES ('${escapeSQL(uid)}', ${year}, ${yearlyStats.games}, ${yearlyStats.wins}, ${yearlyStats.goodGames}, ${yearlyStats.goodWins}, ${yearlyStats.evilGames}, ${yearlyStats.evilWins});`,
 			);
@@ -1279,19 +1559,22 @@ function buildPlayerInsertStatements(statsMap: Map<string, FullStats>, now: stri
 	return statements;
 }
 
-function buildPlayerInsertStatementsWithoutDelete(statsMap: Map<string, FullStats>, now: string): string[] {
+function buildPlayerInsertStatementsWithoutDelete(statsMap: Map<string, FullStats>, now: string): string[]
+{
 	const statements: string[] = [];
 
 	// No DELETE statements - used when resuming after a failed batch
 
-	for (const [uid, stats] of statsMap) {
+	for (const [uid, stats] of statsMap)
+	{
 		// Base stats (use INSERT OR REPLACE to handle duplicates from previous run)
 		statements.push(
 			`INSERT OR REPLACE INTO PlayerStats (uid, name, isMapped, gamesPlayed, wins, goodGames, goodWins, evilGames, evilWins, createdAt, updatedAt) VALUES ('${escapeSQL(uid)}', '${escapeSQL(stats.name)}', ${stats.isMapped ? 1 : 0}, ${stats.gamesPlayed}, ${stats.wins}, ${stats.goodGames}, ${stats.goodWins}, ${stats.evilGames}, ${stats.evilWins}, '${now}', '${now}');`,
 		);
 
 		// Role stats (for all roles, including ones with 0 games)
-		for (const role of ALL_ROLES) {
+		for (const role of ALL_ROLES)
+		{
 			const roleStats = stats.roleStats.get(role) ?? createEmptyRoleStats();
 			statements.push(
 				`INSERT OR REPLACE INTO PlayerRoleStats (uid, role, games, wins, losses, threeMissionFails, threeMissionSuccesses, fiveRejectedProposals, merlinAssassinated, wasAssassinated) VALUES ('${escapeSQL(uid)}', '${role}', ${roleStats.games}, ${roleStats.wins}, ${roleStats.losses}, ${roleStats.threeMissionFails}, ${roleStats.threeMissionSuccesses}, ${roleStats.fiveRejectedProposals}, ${roleStats.merlinAssassinated}, ${roleStats.wasAssassinated});`,
@@ -1299,7 +1582,8 @@ function buildPlayerInsertStatementsWithoutDelete(statsMap: Map<string, FullStat
 		}
 
 		// Yearly stats
-		for (const [year, yearlyStats] of stats.yearlyStats) {
+		for (const [year, yearlyStats] of stats.yearlyStats)
+		{
 			statements.push(
 				`INSERT OR REPLACE INTO PlayerYearlyStats (uid, year, games, wins, goodGames, goodWins, evilGames, evilWins) VALUES ('${escapeSQL(uid)}', ${year}, ${yearlyStats.games}, ${yearlyStats.wins}, ${yearlyStats.goodGames}, ${yearlyStats.goodWins}, ${yearlyStats.evilGames}, ${yearlyStats.evilWins});`,
 			);
@@ -1324,10 +1608,12 @@ function buildPlayerInsertStatementsWithoutDelete(statsMap: Map<string, FullStat
 	return statements;
 }
 
-function buildPlayerUpsertStatements(statsMap: Map<string, FullStats>, now: string): string[] {
+function buildPlayerUpsertStatements(statsMap: Map<string, FullStats>, now: string): string[]
+{
 	const statements: string[] = [];
 
-	for (const [uid, stats] of statsMap) {
+	for (const [uid, stats] of statsMap)
+	{
 		// Delete existing related records for this UID before inserting new ones
 		// This ensures clean replacement for the affected players only
 		statements.push(`DELETE FROM PlayerEvilTeammateStats WHERE uid = '${escapeSQL(uid)}';`);
@@ -1344,7 +1630,8 @@ function buildPlayerUpsertStatements(statsMap: Map<string, FullStats>, now: stri
 		);
 
 		// Role stats (for all roles, including ones with 0 games)
-		for (const role of ALL_ROLES) {
+		for (const role of ALL_ROLES)
+		{
 			const roleStats = stats.roleStats.get(role) ?? createEmptyRoleStats();
 			statements.push(
 				`INSERT INTO PlayerRoleStats (uid, role, games, wins, losses, threeMissionFails, threeMissionSuccesses, fiveRejectedProposals, merlinAssassinated, wasAssassinated) VALUES ('${escapeSQL(uid)}', '${role}', ${roleStats.games}, ${roleStats.wins}, ${roleStats.losses}, ${roleStats.threeMissionFails}, ${roleStats.threeMissionSuccesses}, ${roleStats.fiveRejectedProposals}, ${roleStats.merlinAssassinated}, ${roleStats.wasAssassinated});`,
@@ -1352,7 +1639,8 @@ function buildPlayerUpsertStatements(statsMap: Map<string, FullStats>, now: stri
 		}
 
 		// Yearly stats
-		for (const [year, yearlyStats] of stats.yearlyStats) {
+		for (const [year, yearlyStats] of stats.yearlyStats)
+		{
 			statements.push(
 				`INSERT INTO PlayerYearlyStats (uid, year, games, wins, goodGames, goodWins, evilGames, evilWins) VALUES ('${escapeSQL(uid)}', ${year}, ${yearlyStats.games}, ${yearlyStats.wins}, ${yearlyStats.goodGames}, ${yearlyStats.goodWins}, ${yearlyStats.evilGames}, ${yearlyStats.evilWins});`,
 			);
@@ -1382,7 +1670,8 @@ function buildPlayerUpsertStatements(statsMap: Map<string, FullStats>, now: stri
 	return statements;
 }
 
-function buildPersonInsertStatements(statsMap: Map<string, FullStats>, now: string): string[] {
+function buildPersonInsertStatements(statsMap: Map<string, FullStats>, now: string): string[]
+{
 	const statements: string[] = [];
 
 	// Clear existing data
@@ -1394,14 +1683,16 @@ function buildPersonInsertStatements(statsMap: Map<string, FullStats>, now: stri
 	statements.push('DELETE FROM PersonRoleStats;');
 	statements.push('DELETE FROM PersonStats;');
 
-	for (const [personId, stats] of statsMap) {
+	for (const [personId, stats] of statsMap)
+	{
 		// Base stats
 		statements.push(
 			`INSERT INTO PersonStats (personId, gamesPlayed, wins, goodGames, goodWins, evilGames, evilWins, createdAt, updatedAt) VALUES ('${escapeSQL(personId)}', ${stats.gamesPlayed}, ${stats.wins}, ${stats.goodGames}, ${stats.goodWins}, ${stats.evilGames}, ${stats.evilWins}, '${now}', '${now}');`,
 		);
 
 		// Role stats
-		for (const role of ALL_ROLES) {
+		for (const role of ALL_ROLES)
+		{
 			const roleStats = stats.roleStats.get(role) ?? createEmptyRoleStats();
 			statements.push(
 				`INSERT INTO PersonRoleStats (personId, role, games, wins, losses, threeMissionFails, threeMissionSuccesses, fiveRejectedProposals, merlinAssassinated, wasAssassinated) VALUES ('${escapeSQL(personId)}', '${role}', ${roleStats.games}, ${roleStats.wins}, ${roleStats.losses}, ${roleStats.threeMissionFails}, ${roleStats.threeMissionSuccesses}, ${roleStats.fiveRejectedProposals}, ${roleStats.merlinAssassinated}, ${roleStats.wasAssassinated});`,
@@ -1409,7 +1700,8 @@ function buildPersonInsertStatements(statsMap: Map<string, FullStats>, now: stri
 		}
 
 		// Yearly stats
-		for (const [year, yearlyStats] of stats.yearlyStats) {
+		for (const [year, yearlyStats] of stats.yearlyStats)
+		{
 			statements.push(
 				`INSERT INTO PersonYearlyStats (personId, year, games, wins, goodGames, goodWins, evilGames, evilWins) VALUES ('${escapeSQL(personId)}', ${year}, ${yearlyStats.games}, ${yearlyStats.wins}, ${yearlyStats.goodGames}, ${yearlyStats.goodWins}, ${yearlyStats.evilGames}, ${yearlyStats.evilWins});`,
 			);
@@ -1439,19 +1731,22 @@ function buildPersonInsertStatements(statsMap: Map<string, FullStats>, now: stri
 	return statements;
 }
 
-function buildPersonInsertStatementsWithoutDelete(statsMap: Map<string, FullStats>, now: string): string[] {
+function buildPersonInsertStatementsWithoutDelete(statsMap: Map<string, FullStats>, now: string): string[]
+{
 	const statements: string[] = [];
 
 	// No DELETE statements - used when resuming after a failed batch
 
-	for (const [personId, stats] of statsMap) {
+	for (const [personId, stats] of statsMap)
+	{
 		// Base stats (use INSERT OR REPLACE to handle duplicates from previous run)
 		statements.push(
 			`INSERT OR REPLACE INTO PersonStats (personId, gamesPlayed, wins, goodGames, goodWins, evilGames, evilWins, createdAt, updatedAt) VALUES ('${escapeSQL(personId)}', ${stats.gamesPlayed}, ${stats.wins}, ${stats.goodGames}, ${stats.goodWins}, ${stats.evilGames}, ${stats.evilWins}, '${now}', '${now}');`,
 		);
 
 		// Role stats
-		for (const role of ALL_ROLES) {
+		for (const role of ALL_ROLES)
+		{
 			const roleStats = stats.roleStats.get(role) ?? createEmptyRoleStats();
 			statements.push(
 				`INSERT OR REPLACE INTO PersonRoleStats (personId, role, games, wins, losses, threeMissionFails, threeMissionSuccesses, fiveRejectedProposals, merlinAssassinated, wasAssassinated) VALUES ('${escapeSQL(personId)}', '${role}', ${roleStats.games}, ${roleStats.wins}, ${roleStats.losses}, ${roleStats.threeMissionFails}, ${roleStats.threeMissionSuccesses}, ${roleStats.fiveRejectedProposals}, ${roleStats.merlinAssassinated}, ${roleStats.wasAssassinated});`,
@@ -1459,7 +1754,8 @@ function buildPersonInsertStatementsWithoutDelete(statsMap: Map<string, FullStat
 		}
 
 		// Yearly stats
-		for (const [year, yearlyStats] of stats.yearlyStats) {
+		for (const [year, yearlyStats] of stats.yearlyStats)
+		{
 			statements.push(
 				`INSERT OR REPLACE INTO PersonYearlyStats (personId, year, games, wins, goodGames, goodWins, evilGames, evilWins) VALUES ('${escapeSQL(personId)}', ${year}, ${yearlyStats.games}, ${yearlyStats.wins}, ${yearlyStats.goodGames}, ${yearlyStats.goodWins}, ${yearlyStats.evilGames}, ${yearlyStats.evilWins});`,
 			);
@@ -1484,10 +1780,12 @@ function buildPersonInsertStatementsWithoutDelete(statsMap: Map<string, FullStat
 	return statements;
 }
 
-function buildPersonUpsertStatements(statsMap: Map<string, FullStats>, now: string): string[] {
+function buildPersonUpsertStatements(statsMap: Map<string, FullStats>, now: string): string[]
+{
 	const statements: string[] = [];
 
-	for (const [personId, stats] of statsMap) {
+	for (const [personId, stats] of statsMap)
+	{
 		// Delete existing related records for this person before inserting new ones
 		// This ensures clean replacement for the affected people only
 		statements.push(`DELETE FROM PersonAssassinStats WHERE personId = '${escapeSQL(personId)}';`);
@@ -1503,7 +1801,8 @@ function buildPersonUpsertStatements(statsMap: Map<string, FullStats>, now: stri
 		);
 
 		// Role stats
-		for (const role of ALL_ROLES) {
+		for (const role of ALL_ROLES)
+		{
 			const roleStats = stats.roleStats.get(role) ?? createEmptyRoleStats();
 			statements.push(
 				`INSERT INTO PersonRoleStats (personId, role, games, wins, losses, threeMissionFails, threeMissionSuccesses, fiveRejectedProposals, merlinAssassinated, wasAssassinated) VALUES ('${escapeSQL(personId)}', '${role}', ${roleStats.games}, ${roleStats.wins}, ${roleStats.losses}, ${roleStats.threeMissionFails}, ${roleStats.threeMissionSuccesses}, ${roleStats.fiveRejectedProposals}, ${roleStats.merlinAssassinated}, ${roleStats.wasAssassinated});`,
@@ -1511,7 +1810,8 @@ function buildPersonUpsertStatements(statsMap: Map<string, FullStats>, now: stri
 		}
 
 		// Yearly stats
-		for (const [year, yearlyStats] of stats.yearlyStats) {
+		for (const [year, yearlyStats] of stats.yearlyStats)
+		{
 			statements.push(
 				`INSERT INTO PersonYearlyStats (personId, year, games, wins, goodGames, goodWins, evilGames, evilWins) VALUES ('${escapeSQL(personId)}', ${year}, ${yearlyStats.games}, ${yearlyStats.wins}, ${yearlyStats.goodGames}, ${yearlyStats.goodWins}, ${yearlyStats.evilGames}, ${yearlyStats.evilWins});`,
 			);
@@ -1541,33 +1841,39 @@ function buildPersonUpsertStatements(statsMap: Map<string, FullStats>, now: stri
 	return statements;
 }
 
-function updateLastStatsProcessedTime(now: string): string {
+function updateLastStatsProcessedTime(now: string): string
+{
 	return `UPDATE GameIngestionState SET lastStatsProcessedTime = '${now}', updatedAt = '${now}' WHERE id = 1;`;
 }
 
-async function getAllGamesForUids(local: boolean, uids: Set<string>): Promise<GameData[]> {
-	if (uids.size === 0) {
+async function getAllGamesForUids(local: boolean, uids: Set<string>): Promise<GameData[]>
+{
+	if (uids.size === 0)
+	{
 		return [];
 	}
 
 	console.log(`Fetching all games for ${uids.size} affected UIDs...`);
 
-	const RawGameSchema = z.object({
-		firebaseKey: z.string(),
-		gameJson: z.string(),
-		createdAt: z.string(),
-	});
+	const RawGameSchema = z.object(
+		{
+			firebaseKey: z.string(),
+			gameJson: z.string(),
+			createdAt: z.string(),
+		},
+	);
 
 	// Use PlayerGame to find all games for the affected UIDs
 	const uidList = Array.from(uids)
 		.map((uid) => `'${escapeSQL(uid)}'`)
 		.join(',');
-	const gameKeysResult = executeQuery<{firebaseKey: string}>(
-		`SELECT DISTINCT firebaseKey FROM PlayerGame WHERE playerUid IN (${uidList})`,
-		local,
-	);
+	const gameKeysResult = executeQuery<
+	{
+		firebaseKey: string;
+	}>(`SELECT DISTINCT firebaseKey FROM PlayerGame WHERE playerUid IN (${uidList})`, local);
 
-	if (gameKeysResult.length === 0) {
+	if (gameKeysResult.length === 0)
+	{
 		console.log('No games found for affected UIDs');
 		return [];
 	}
@@ -1578,7 +1884,8 @@ async function getAllGamesForUids(local: boolean, uids: Set<string>): Promise<Ga
 	const batchSize = 500;
 	const totalCount = gameKeysResult.length;
 
-	for (let offset = 0; offset < totalCount; offset += batchSize) {
+	for (let offset = 0; offset < totalCount; offset += batchSize)
+	{
 		const batchKeys = gameKeysResult
 			.slice(offset, offset + batchSize)
 			.map((r) => `'${escapeSQL(r.firebaseKey)}'`)
@@ -1586,18 +1893,25 @@ async function getAllGamesForUids(local: boolean, uids: Set<string>): Promise<Ga
 		const sql = `SELECT firebaseKey, gameJson, createdAt FROM RawGameData WHERE firebaseKey IN (${batchKeys})`;
 		const rawGames = executeQuery<z.infer<typeof RawGameSchema>>(sql, local);
 
-		for (const raw of rawGames) {
-			try {
+		for (const raw of rawGames)
+		{
+			try
+			{
 				const parsed = JSON.parse(raw.gameJson);
-				if (parsed.players && Array.isArray(parsed.players)) {
-					games.push({
-						id: raw.firebaseKey,
-						players: parsed.players,
-						outcome: parsed.outcome,
-						timeCreated: new Date(raw.createdAt),
-					});
+				if (parsed.players && Array.isArray(parsed.players))
+				{
+					games.push(
+						{
+							id: raw.firebaseKey,
+							players: parsed.players,
+							outcome: parsed.outcome,
+							timeCreated: new Date(raw.createdAt),
+						},
+					);
 				}
-			} catch {
+			}
+			catch
+			{
 				// Skip invalid games
 			}
 		}
@@ -1611,21 +1925,38 @@ async function getAllGamesForUids(local: boolean, uids: Set<string>): Promise<Ga
  * Fetch all raw games for annotation processing.
  * Returns raw game data with firebaseKey and gameJson string.
  */
-async function getAllRawGames(local: boolean): Promise<Array<{firebaseKey: string; gameJson: string}>> {
+async function getAllRawGames(local: boolean): Promise<
+	Array<
+	{
+		firebaseKey: string;
+		gameJson: string;
+	}>
+>
+{
 	console.log('Fetching all raw games for annotation processing...');
 
-	const RawGameSchema = z.object({
-		firebaseKey: z.string(),
-		gameJson: z.string(),
-	});
+	const RawGameSchema = z.object(
+		{
+			firebaseKey: z.string(),
+			gameJson: z.string(),
+		},
+	);
 
-	const countResult = executeQuery<{count: number}>('SELECT COUNT(*) as count FROM RawGameData', local);
+	const countResult = executeQuery<
+	{
+		count: number;
+	}>('SELECT COUNT(*) as count FROM RawGameData', local);
 	const totalCount = countResult[0]?.count ?? 0;
 
-	const rawGames: Array<{firebaseKey: string; gameJson: string}> = [];
+	const rawGames: Array<
+	{
+		firebaseKey: string;
+		gameJson: string;
+	}> = [];
 	const batchSize = 500;
 
-	for (let offset = 0; offset < totalCount; offset += batchSize) {
+	for (let offset = 0; offset < totalCount; offset += batchSize)
+	{
 		console.log(`Fetching raw games ${offset + 1}-${Math.min(offset + batchSize, totalCount)}...`);
 		const sql = `SELECT firebaseKey, gameJson FROM RawGameData LIMIT ${batchSize} OFFSET ${offset}`;
 		const batch = executeQuery<z.infer<typeof RawGameSchema>>(sql, local);
@@ -1642,20 +1973,35 @@ async function getAllRawGames(local: boolean): Promise<Array<{firebaseKey: strin
 async function getRawGamesForKeys(
 	local: boolean,
 	firebaseKeys: string[],
-): Promise<Array<{firebaseKey: string; gameJson: string}>> {
-	if (firebaseKeys.length === 0) {
+): Promise<
+	Array<
+	{
+		firebaseKey: string;
+		gameJson: string;
+	}>
+>
+{
+	if (firebaseKeys.length === 0)
+	{
 		return [];
 	}
 
-	const RawGameSchema = z.object({
-		firebaseKey: z.string(),
-		gameJson: z.string(),
-	});
+	const RawGameSchema = z.object(
+		{
+			firebaseKey: z.string(),
+			gameJson: z.string(),
+		},
+	);
 
-	const rawGames: Array<{firebaseKey: string; gameJson: string}> = [];
+	const rawGames: Array<
+	{
+		firebaseKey: string;
+		gameJson: string;
+	}> = [];
 	const batchSize = 500;
 
-	for (let offset = 0; offset < firebaseKeys.length; offset += batchSize) {
+	for (let offset = 0; offset < firebaseKeys.length; offset += batchSize)
+	{
 		const batchKeys = firebaseKeys
 			.slice(offset, offset + batchSize)
 			.map((k) => `'${escapeSQL(k)}'`)
@@ -1668,7 +2014,8 @@ async function getRawGamesForKeys(
 	return rawGames;
 }
 
-async function runFullRecomputation(args: Args): Promise<void> {
+async function runFullRecomputation(args: Args): Promise<void>
+{
 	const isResuming = args.resumeFromBatch !== null;
 	console.log(
 		`Running FULL statistics recomputation${isResuming ? ` (resuming from batch ${args.resumeFromBatch})` : ''}...`,
@@ -1742,11 +2089,13 @@ async function runFullRecomputation(args: Args): Promise<void> {
 	const startBatch = args.resumeFromBatch ?? 1;
 	const startIndex = (startBatch - 1) * BATCH_SIZE;
 
-	if (isResuming) {
+	if (isResuming)
+	{
 		console.log(`⏩ Skipping batches 1-${startBatch - 1}, starting from batch ${startBatch}`);
 	}
 
-	for (let i = startIndex; i < allStatements.length; i += BATCH_SIZE) {
+	for (let i = startIndex; i < allStatements.length; i += BATCH_SIZE)
+	{
 		const batchNumber = Math.floor(i / BATCH_SIZE) + 1;
 		const batch = allStatements.slice(i, i + BATCH_SIZE);
 		console.log(`Executing batch ${batchNumber}/${totalBatches} (${batch.length} statements)...`);
@@ -1761,7 +2110,8 @@ async function runFullRecomputation(args: Args): Promise<void> {
 	console.log(`   ${annotationCount} annotation predicate entries`);
 }
 
-async function runIncrementalUpdate(args: Args): Promise<void> {
+async function runIncrementalUpdate(args: Args): Promise<void>
+{
 	console.log('Running INCREMENTAL statistics update...');
 	const startTime = Date.now();
 
@@ -1778,7 +2128,8 @@ async function runIncrementalUpdate(args: Args): Promise<void> {
 	const newGames = await getGamesSince(args.local, lastProcessedTime);
 	console.log(`⏱️  Fetched new games in ${Date.now() - gamesStart}ms`);
 
-	if (newGames.length === 0) {
+	if (newGames.length === 0)
+	{
 		console.log('\n✅ No new games to process - statistics are up to date');
 		return;
 	}
@@ -1800,9 +2151,11 @@ async function runIncrementalUpdate(args: Args): Promise<void> {
 	const playerStatsMap = calculatePlayerStats(allGamesForAffected, uidToPersonId);
 	// Filter to only include affected UIDs
 	const filteredPlayerStats = new Map<string, FullStats>();
-	for (const uid of affectedUids) {
+	for (const uid of affectedUids)
+	{
 		const stats = playerStatsMap.get(uid);
-		if (stats) {
+		if (stats)
+		{
 			filteredPlayerStats.set(uid, stats);
 		}
 	}
@@ -1813,9 +2166,11 @@ async function runIncrementalUpdate(args: Args): Promise<void> {
 	// Calculate person stats only for affected people
 	const personCalcStart = Date.now();
 	const filteredPersonIdToUids = new Map<string, string[]>();
-	for (const personId of affectedPersonIds) {
+	for (const personId of affectedPersonIds)
+	{
 		const uids = personIdToUids.get(personId);
-		if (uids) {
+		if (uids)
+		{
 			filteredPersonIdToUids.set(personId, uids);
 		}
 	}
@@ -1852,7 +2207,8 @@ async function runIncrementalUpdate(args: Args): Promise<void> {
 
 	// Execute in batches with retry logic
 	const execStart = Date.now();
-	for (let i = 0; i < allStatements.length; i += BATCH_SIZE) {
+	for (let i = 0; i < allStatements.length; i += BATCH_SIZE)
+	{
 		const batchNumber = Math.floor(i / BATCH_SIZE) + 1;
 		const batch = allStatements.slice(i, i + BATCH_SIZE);
 		console.log(`Executing batch ${batchNumber}/${totalBatches} (${batch.length} statements)...`);
@@ -1868,7 +2224,8 @@ async function runIncrementalUpdate(args: Args): Promise<void> {
 	console.log(`   ${annotationCount} annotation predicate entries updated`);
 }
 
-async function main() {
+async function main()
+{
 	const args = parseArgs();
 	const target = args.local ? 'local' : 'remote';
 	const mode = args.full ? 'full' : 'incremental';
@@ -1878,18 +2235,23 @@ async function main() {
 	);
 
 	// Resume only makes sense with --full mode
-	if (args.resumeFromBatch !== null && !args.full) {
+	if (args.resumeFromBatch !== null && !args.full)
+	{
 		throw new Error('--resume flag requires --full mode');
 	}
 
 	// Apply any pending migrations before writing to the database
-	if (!args.dryRun) {
+	if (!args.dryRun)
+	{
 		applyMigrations(args.local);
 	}
 
-	if (args.full) {
+	if (args.full)
+	{
 		await runFullRecomputation(args);
-	} else {
+	}
+	else
+	{
 		await runIncrementalUpdate(args);
 	}
 }

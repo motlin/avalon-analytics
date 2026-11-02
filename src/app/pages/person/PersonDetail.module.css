@@ -1,25 +1,30 @@
-.pageContainer {
+.pageContainer
+{
 	padding: 1rem;
 	max-width: 1200px;
 	margin: 0 auto;
 }
 
-.headerSection {
+.headerSection
+{
 	margin-bottom: 2rem;
 }
 
-.pageTitle {
+.pageTitle
+{
 	margin: 0 0 0.5rem 0;
 }
 
-.linkedAccounts {
+.linkedAccounts
+{
 	margin: 0;
 	color: hsl(var(--muted-foreground));
 	font-size: 0.875rem;
 }
 
 /* 📊 Overview Summary Grid */
-.summaryGrid {
+.summaryGrid
+{
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
 	gap: 1rem;
@@ -29,68 +34,80 @@
 	border-radius: 8px;
 }
 
-.summaryItem {
+.summaryItem
+{
 	text-align: center;
 }
 
-.summaryValue {
+.summaryValue
+{
 	font-size: 2rem;
 	font-weight: bold;
 }
 
-.summaryValueWins {
+.summaryValueWins
+{
 	font-size: 2rem;
 	font-weight: bold;
 	color: hsl(var(--good-color));
 }
 
-.summaryValueLosses {
+.summaryValueLosses
+{
 	font-size: 2rem;
 	font-weight: bold;
 	color: hsl(var(--evil-color));
 }
 
-.summaryValueRate {
+.summaryValueRate
+{
 	font-size: 2rem;
 	font-weight: bold;
 	color: hsl(var(--highlight-color));
 }
 
-.summaryLabel {
+.summaryLabel
+{
 	color: hsl(var(--muted-foreground));
 	font-size: 0.875rem;
 }
 
 /* 📋 Stats Grid Layout */
-.statsGrid {
+.statsGrid
+{
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
 	gap: 2rem;
 }
 
 /* 🎮 Game History Section */
-.gameHistorySection {
+.gameHistorySection
+{
 	margin-top: 2rem;
 }
 
-.gameHistoryHeader {
+.gameHistoryHeader
+{
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
 	margin-bottom: 1rem;
 }
 
-.gameHistoryTitle {
+.gameHistoryTitle
+{
 	margin: 0;
 }
 
-.gameHistoryCount {
+.gameHistoryCount
+{
 	color: hsl(var(--muted-foreground));
 	font-size: 0.875rem;
 }
 
 /* 🃏 Game Card */
-.gameCard {
+.gameCard
+{
 	border: 2px solid;
 	padding: 1rem;
 	margin-bottom: 1rem;
@@ -98,70 +115,83 @@
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.gameCardWin {
+.gameCardWin
+{
 	border-color: hsl(var(--good-color));
 	background-color: hsl(var(--win-background));
 }
 
-.gameCardLoss {
+.gameCardLoss
+{
 	border-color: hsl(var(--evil-color));
 	background-color: hsl(var(--loss-background));
 }
 
-.gameCardContent {
+.gameCardContent
+{
 	display: flex;
 	justify-content: space-between;
 	align-items: flex-start;
 }
 
-.gameCardMain {
+.gameCardMain
+{
 	flex: 1;
 }
 
-.gameCardTitle {
+.gameCardTitle
+{
 	margin: 0 0 0.5rem 0;
 }
 
-.gameCardLink {
+.gameCardLink
+{
 	text-decoration: none;
 	color: hsl(var(--highlight-color));
 }
 
-.gameCardDetails {
+.gameCardDetails
+{
 	display: flex;
 	flex-wrap: wrap;
 	gap: 1rem;
 	font-size: 0.9rem;
 }
 
-.gameCardDetail {
+.gameCardDetail
+{
 	display: flex;
 	align-items: center;
 	gap: 0.5rem;
 }
 
-.resultWin {
+.resultWin
+{
 	color: hsl(var(--good-color));
 	font-weight: bold;
 }
 
-.resultLoss {
+.resultLoss
+{
 	color: hsl(var(--evil-color));
 	font-weight: bold;
 }
 
-.roleGood {
+.roleGood
+{
 	color: hsl(var(--good-color));
 	font-weight: bold;
 }
 
-.roleEvil {
+.roleEvil
+{
 	color: hsl(var(--evil-color));
 	font-weight: bold;
 }
 
 /* ⚠️ Special Event Badges */
-.specialEventBadge {
+.specialEventBadge
+{
 	margin-top: 0.5rem;
 	padding: 0.5rem;
 	border: 1px solid;
@@ -169,25 +199,29 @@
 	font-size: 0.9rem;
 }
 
-.assassinatedBadge {
+.assassinatedBadge
+{
 	background-color: hsl(var(--warning-background));
 	border-color: hsl(var(--warning-border));
 }
 
-.survivedBadge {
+.survivedBadge
+{
 	background-color: hsl(var(--info-background));
 	border-color: hsl(var(--info-border));
 }
 
 /* 👥 Players List */
-.playersList {
+.playersList
+{
 	margin-top: 0.75rem;
 	font-size: 0.85rem;
 	color: hsl(var(--muted-foreground));
 }
 
 /* 📄 Pagination */
-.pagination {
+.pagination
+{
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -196,7 +230,8 @@
 	flex-wrap: wrap;
 }
 
-.paginationLink {
+.paginationLink
+{
 	padding: 0.5rem 1rem;
 	border: 1px solid hsl(var(--border));
 	border-radius: 4px;
@@ -204,30 +239,35 @@
 	color: hsl(var(--highlight-color));
 }
 
-.paginationNumber {
+.paginationNumber
+{
 	padding: 0.5rem 0.75rem;
 	border: 1px solid;
 	border-radius: 4px;
 	text-decoration: none;
 }
 
-.paginationNumberActive {
+.paginationNumberActive
+{
 	border-color: hsl(var(--highlight-color));
 	color: hsl(var(--primary-foreground));
 	background-color: hsl(var(--highlight-color));
 }
 
-.paginationNumberInactive {
+.paginationNumberInactive
+{
 	border-color: hsl(var(--border));
 	color: hsl(var(--highlight-color));
 	background-color: transparent;
 }
 
-.paginationEllipsis {
+.paginationEllipsis
+{
 	padding: 0 0.25rem;
 }
 
 /* 🚫 Error / Not Found States */
-.notFoundContainer {
+.notFoundContainer
+{
 	padding: 1rem;
 }

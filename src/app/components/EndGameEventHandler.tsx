@@ -5,20 +5,27 @@ import styles from './EndGameEventHandler.module.css';
 import type {AvalonApi} from './types';
 import type {Player} from '../models/game';
 
-interface EndGameEventHandlerProps {
+interface EndGameEventHandlerProps
+{
 	avalon: AvalonApi;
 }
 
-const EndGameEventHandler: React.FC<EndGameEventHandlerProps> = ({avalon}) => {
+const EndGameEventHandler: React.FC<EndGameEventHandlerProps> = ({avalon}) =>
+{
 	const [endGameDialog, setEndGameDialog] = useState(false);
 
-	useEffect(() => {
+	useEffect(() =>
+	{
 		if (!avalon.onEvent) return;
 
-		const unsubscribe = avalon.onEvent((event: string) => {
-			if (event === 'GAME_ENDED') {
+		const unsubscribe = avalon.onEvent((event: string) =>
+		{
+			if (event === 'GAME_ENDED')
+			{
 				setEndGameDialog(true);
-			} else if (event === 'GAME_STARTED') {
+			}
+			else if (event === 'GAME_STARTED')
+			{
 				setEndGameDialog(false);
 			}
 		});
@@ -26,14 +33,17 @@ const EndGameEventHandler: React.FC<EndGameEventHandlerProps> = ({avalon}) => {
 		return unsubscribe;
 	}, [avalon]);
 
-	const handleClose = () => {
+	const handleClose = () =>
+	{
 		setEndGameDialog(false);
 	};
 
-	const getTitle = () => {
+	const getTitle = () =>
+	{
 		if (!avalon.lobby.game?.outcome?.state) return '';
 
-		switch (avalon.lobby.game.outcome.state) {
+		switch (avalon.lobby.game.outcome.state)
+		{
 			case 'GOOD_WIN':
 				return 'Good wins!';
 			case 'EVIL_WIN':
@@ -45,11 +55,13 @@ const EndGameEventHandler: React.FC<EndGameEventHandlerProps> = ({avalon}) => {
 		}
 	};
 
-	if (!avalon.lobby.game?.outcome) {
+	if (!avalon.lobby.game?.outcome)
+	{
 		return null;
 	}
 
-	if (!endGameDialog) {
+	if (!endGameDialog)
+	{
 		return null;
 	}
 
@@ -74,9 +86,16 @@ const EndGameEventHandler: React.FC<EndGameEventHandlerProps> = ({avalon}) => {
 									{
 										...avalon.game,
 										players: avalon.game.players.map((p: string | Player) =>
-											typeof p === 'string' ? {uid: p, name: p} : p,
+											typeof p === 'string'
+												?
+													{
+														uid: p,
+														name: p,
+													}
+												: p,
 										),
-										outcome: {
+										outcome:
+										{
 											...avalon.lobby.game.outcome,
 											votes: avalon.game.missionVotes,
 										},
@@ -87,10 +106,7 @@ const EndGameEventHandler: React.FC<EndGameEventHandlerProps> = ({avalon}) => {
 						<Achievements avalon={avalon} />
 					</div>
 					<div className={styles.actions}>
-						<button
-							onClick={handleClose}
-							className={styles.button}
-						>
+						<button onClick={handleClose} className={styles.button}>
 							Close
 						</button>
 					</div>

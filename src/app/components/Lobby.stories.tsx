@@ -1,13 +1,17 @@
 import type {Meta, StoryObj} from '@storybook/react-vite';
 import Lobby from './Lobby';
 
-const meta: Meta<typeof Lobby> = {
+const meta: Meta<typeof Lobby> =
+{
 	title: 'Lobby/Lobby',
 	component: Lobby,
-	parameters: {
+	parameters:
+	{
 		layout: 'fullscreen',
-		docs: {
-			description: {
+		docs:
+		{
+			description:
+			{
 				component: `
 The Lobby component is the game setup interface where players gather before starting an Avalon game. It provides comprehensive game configuration options and player management features.
 
@@ -104,58 +108,87 @@ const sampleRoles = [
 	},
 ];
 
-const createMockAvalon = (overrides = {}) => {
-	const mockGame = {
+const createMockAvalon = (overrides = {}) =>
+{
+	const mockGame =
+	{
 		id: 'lobby-game-1',
 		timeCreated: new Date('2024-01-01'),
 		players: [
-			{uid: '1', name: 'CRAIGM'},
-			{uid: '2', name: 'ZEHUA'},
-			{uid: '3', name: 'VINAY'},
-			{uid: '4', name: 'LUKEE'},
-			{uid: '5', name: 'KEN'},
+			{
+				uid: '1',
+				name: 'CRAIGM',
+			},
+			{
+				uid: '2',
+				name: 'ZEHUA',
+			},
+			{
+				uid: '3',
+				name: 'VINAY',
+			},
+			{
+				uid: '4',
+				name: 'LUKEE',
+			},
+			{
+				uid: '5',
+				name: 'KEN',
+			},
 		],
 		missions: [],
 	};
 
 	return {
 		game: mockGame,
-		user: {
+		user:
+		{
 			name: 'CRAIGM',
-			stats: {
+			stats:
+			{
 				games: 5,
 			},
 		},
-		config: {
+		config:
+		{
 			roleMap: {},
 			playerList: ['CRAIGM', 'ZEHUA', 'VINAY', 'LUKEE', 'KEN'],
 			selectableRoles: sampleRoles,
-			sortList: (newList: string[]) => {
+			sortList: (newList: string[]) =>
+			{
 				console.log('Sorting player list:', newList);
 			},
 		},
-		lobby: {
+		lobby:
+		{
 			game: mockGame,
 			name: 'test-lobby-123',
-			admin: {
+			admin:
+			{
 				name: 'CRAIGM',
 			},
 		},
 		isAdmin: true,
 		isGameInProgress: false,
-		startGame: async (options: {inGameLog: boolean}) => {
+		startGame: async (options: {inGameLog: boolean}) =>
+		{
 			console.log('Starting game with options:', options);
-			return new Promise((resolve) => {
-				setTimeout(() => {
+			return new Promise((resolve) =>
+			{
+				setTimeout(() =>
+				{
 					console.log('Game started successfully');
 					resolve(undefined);
 				}, 2000);
 			});
 		},
-		kickPlayer: async (player: string): Promise<void> => {
+		kickPlayer: async (player: string): Promise<void> =>
+		{
 			console.log('Kicking player:', player);
-			return new Promise<void>((resolve) => {
-				setTimeout(() => {
+			return new Promise<void>((resolve) =>
+			{
+				setTimeout(() =>
+				{
 					console.log('Player kicked:', player);
 					resolve();
 				}, 1000);
@@ -165,131 +198,190 @@ const createMockAvalon = (overrides = {}) => {
 	};
 };
 
-export const ReadyToStart: Story = {
-	args: {
+export const ReadyToStart: Story =
+{
+	args:
+	{
 		avalon: createMockAvalon(),
 	},
 };
 
-export const NotEnoughPlayers: Story = {
-	args: {
-		avalon: createMockAvalon({
-			config: {
-				playerList: ['ALICE', 'BOB', 'CHARLIE'],
-				selectableRoles: sampleRoles,
-				sortList: (newList: string[]) => {
-					console.log('Sorting player list:', newList);
+export const NotEnoughPlayers: Story =
+{
+	args:
+	{
+		avalon: createMockAvalon(
+			{
+				config:
+				{
+					playerList: ['ALICE', 'BOB', 'CHARLIE'],
+					selectableRoles: sampleRoles,
+					sortList: (newList: string[]) =>
+					{
+						console.log('Sorting player list:', newList);
+					},
 				},
 			},
-		}),
+		),
 	},
 };
 
-export const TooManyPlayers: Story = {
-	args: {
-		avalon: createMockAvalon({
-			config: {
-				playerList: [
-					'ALICE',
-					'BOB',
-					'CHARLIE',
-					'DIANA',
-					'EVE',
-					'FRANK',
-					'GRACE',
-					'HENRY',
-					'IVY',
-					'JACK',
-					'KAREN',
-				],
-				selectableRoles: sampleRoles,
-				sortList: (newList: string[]) => {
-					console.log('Sorting player list:', newList);
+export const TooManyPlayers: Story =
+{
+	args:
+	{
+		avalon: createMockAvalon(
+			{
+				config:
+				{
+					playerList: [
+						'ALICE',
+						'BOB',
+						'CHARLIE',
+						'DIANA',
+						'EVE',
+						'FRANK',
+						'GRACE',
+						'HENRY',
+						'IVY',
+						'JACK',
+						'KAREN',
+					],
+					selectableRoles: sampleRoles,
+					sortList: (newList: string[]) =>
+					{
+						console.log('Sorting player list:', newList);
+					},
 				},
 			},
-		}),
+		),
 	},
 };
 
-export const NonAdminWaiting: Story = {
-	args: {
-		avalon: createMockAvalon({
-			user: {
-				name: 'ZEHUA',
-				stats: {
-					games: 3,
+export const NonAdminWaiting: Story =
+{
+	args:
+	{
+		avalon: createMockAvalon(
+			{
+				user:
+				{
+					name: 'ZEHUA',
+					stats:
+					{
+						games: 3,
+					},
 				},
+				isAdmin: false,
 			},
-			isAdmin: false,
-		}),
+		),
 	},
 };
 
-export const MaxPlayersReady: Story = {
-	args: {
-		avalon: createMockAvalon({
-			config: {
-				playerList: ['CRAIGM', 'ZEHUA', 'VINAY', 'LUKEE', 'KEN', 'ROB', 'JUSTIN', 'TIFANY', 'FLORA', 'JACK'],
-				selectableRoles: sampleRoles,
-				sortList: (newList: string[]) => {
-					console.log('Sorting player list:', newList);
+export const MaxPlayersReady: Story =
+{
+	args:
+	{
+		avalon: createMockAvalon(
+			{
+				config:
+				{
+					playerList: [
+						'CRAIGM',
+						'ZEHUA',
+						'VINAY',
+						'LUKEE',
+						'KEN',
+						'ROB',
+						'JUSTIN',
+						'TIFANY',
+						'FLORA',
+						'JACK',
+					],
+					selectableRoles: sampleRoles,
+					sortList: (newList: string[]) =>
+					{
+						console.log('Sorting player list:', newList);
+					},
 				},
 			},
-		}),
+		),
 	},
 };
 
-export const MinPlayersReady: Story = {
-	args: {
-		avalon: createMockAvalon({
-			config: {
-				playerList: ['CRAIGM', 'ZEHUA', 'VINAY', 'LUKEE', 'KEN'],
-				selectableRoles: sampleRoles,
-				sortList: (newList: string[]) => {
-					console.log('Sorting player list:', newList);
+export const MinPlayersReady: Story =
+{
+	args:
+	{
+		avalon: createMockAvalon(
+			{
+				config:
+				{
+					playerList: ['CRAIGM', 'ZEHUA', 'VINAY', 'LUKEE', 'KEN'],
+					selectableRoles: sampleRoles,
+					sortList: (newList: string[]) =>
+					{
+						console.log('Sorting player list:', newList);
+					},
 				},
 			},
-		}),
+		),
 	},
 };
 
-export const NewPlayerLobby: Story = {
-	args: {
-		avalon: createMockAvalon({
-			user: {
-				name: 'NEWBIE',
-				stats: {
-					games: 0,
+export const NewPlayerLobby: Story =
+{
+	args:
+	{
+		avalon: createMockAvalon(
+			{
+				user:
+				{
+					name: 'NEWBIE',
+					stats:
+					{
+						games: 0,
+					},
 				},
-			},
-			config: {
-				playerList: ['NEWBIE', 'CRAIGM', 'ZEHUA', 'VINAY', 'LUKEE', 'KEN'],
-				selectableRoles: sampleRoles,
-				sortList: (newList: string[]) => {
-					console.log('Sorting player list:', newList);
+				config:
+				{
+					playerList: ['NEWBIE', 'CRAIGM', 'ZEHUA', 'VINAY', 'LUKEE', 'KEN'],
+					selectableRoles: sampleRoles,
+					sortList: (newList: string[]) =>
+					{
+						console.log('Sorting player list:', newList);
+					},
 				},
-			},
-			lobby: {
-				name: 'beginner-friendly-lobby',
-				admin: {
-					name: 'CRAIGM',
+				lobby:
+				{
+					name: 'beginner-friendly-lobby',
+					admin:
+					{
+						name: 'CRAIGM',
+					},
 				},
+				isAdmin: false,
 			},
-			isAdmin: false,
-		}),
+		),
 	},
 };
 
-export const SevenPlayerGame: Story = {
-	args: {
-		avalon: createMockAvalon({
-			config: {
-				playerList: ['CRAIGM', 'ZEHUA', 'VINAY', 'LUKEE', 'KEN', 'ROB', 'JUSTIN'],
-				selectableRoles: sampleRoles,
-				sortList: (newList: string[]) => {
-					console.log('Sorting player list:', newList);
+export const SevenPlayerGame: Story =
+{
+	args:
+	{
+		avalon: createMockAvalon(
+			{
+				config:
+				{
+					playerList: ['CRAIGM', 'ZEHUA', 'VINAY', 'LUKEE', 'KEN', 'ROB', 'JUSTIN'],
+					selectableRoles: sampleRoles,
+					sortList: (newList: string[]) =>
+					{
+						console.log('Sorting player list:', newList);
+					},
 				},
 			},
-		}),
+		),
 	},
 };

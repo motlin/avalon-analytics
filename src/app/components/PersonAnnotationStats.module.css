@@ -1,19 +1,23 @@
-.container {
+.container
+{
 	margin-bottom: 2rem;
 }
 
-.title {
+.title
+{
 	margin: 0 0 1rem 0;
 	font-size: 1.25rem;
 	font-weight: 600;
 }
 
-.emptyMessage {
+.emptyMessage
+{
 	color: hsl(var(--muted-foreground));
 	font-style: italic;
 }
 
-.summary {
+.summary
+{
 	display: flex;
 	flex-wrap: wrap;
 	gap: 1rem;
@@ -24,53 +28,62 @@
 	font-size: 0.875rem;
 }
 
-.summaryItem {
+.summaryItem
+{
 	display: flex;
 	align-items: center;
 	gap: 0.25rem;
 }
 
-.popTellCount {
+.popTellCount
+{
 	color: hsl(220, 70%, 50%);
 	font-weight: 600;
 }
 
-.playerTellCount {
+.playerTellCount
+{
 	color: hsl(280, 60%, 50%);
 	font-weight: 600;
 }
 
-.tableWrapper {
+.tableWrapper
+{
 	overflow-x: auto;
 }
 
-.table {
+.table
+{
 	width: 100%;
 	border-collapse: collapse;
 	font-size: 0.875rem;
 }
 
 .table th,
-.table td {
+.table td
+{
 	padding: 0.5rem 0.75rem;
 	text-align: left;
 	border-bottom: 1px solid hsl(var(--border));
 }
 
-.headerBehavior {
+.headerBehavior
+{
 	font-weight: 600;
 	background-color: hsl(var(--muted));
 	text-align: left;
 }
 
-.headerNum {
+.headerNum
+{
 	font-weight: 600;
 	background-color: hsl(var(--muted));
 	text-align: center;
 	border-bottom: none;
 }
 
-.headerSubGood {
+.headerSubGood
+{
 	font-weight: 500;
 	background-color: hsl(var(--muted));
 	text-align: right;
@@ -78,7 +91,8 @@
 	color: hsl(142, 76%, 36%);
 }
 
-.headerSubEvil {
+.headerSubEvil
+{
 	font-weight: 500;
 	background-color: hsl(var(--muted));
 	text-align: right;
@@ -86,35 +100,41 @@
 	color: hsl(0, 72%, 51%);
 }
 
-.headerSub {
+.headerSub
+{
 	font-weight: 500;
 	background-color: hsl(var(--muted));
 	text-align: center;
 	font-size: 0.75rem;
 }
 
-.dataRow:hover {
+.dataRow:hover
+{
 	filter: brightness(0.95);
 }
 
-.behaviorCell {
+.behaviorCell
+{
 	display: flex;
 	align-items: center;
 	gap: 0.5rem;
 	font-weight: 500;
 }
 
-.predicateLink {
+.predicateLink
+{
 	color: inherit;
 	text-decoration: none;
 }
 
-.predicateLink:hover {
+.predicateLink:hover
+{
 	text-decoration: underline;
 	color: hsl(var(--primary));
 }
 
-.rarityDot {
+.rarityDot
+{
 	display: inline-block;
 	width: 0.5rem;
 	height: 0.5rem;
@@ -122,116 +142,137 @@
 	flex-shrink: 0;
 }
 
-.rateCell {
+.rateCell
+{
 	text-align: right;
 	font-variant-numeric: tabular-nums;
 }
 
-.rateValue {
+.rateValue
+{
 	font-weight: 600;
 }
 
-.sampleSize {
+.sampleSize
+{
 	margin-left: 0.5rem;
 	color: hsl(var(--muted-foreground));
 	font-size: 0.75rem;
 }
 
-.rawRate {
+.rawRate
+{
 	margin-left: 0.5rem;
 	color: hsl(var(--muted-foreground));
 	font-size: 0.75rem;
 }
 
-.tellNone {
+.tellNone
+{
 	text-align: center;
 	color: hsl(var(--muted-foreground));
 }
 
-.tellGoodStrong {
+.tellGoodStrong
+{
 	text-align: center;
 	color: hsl(142, 76%, 36%);
 	font-weight: 600;
 	background-color: rgba(34, 197, 94, 0.15);
 }
 
-.tellGoodWeak {
+.tellGoodWeak
+{
 	text-align: center;
 	color: hsl(142, 76%, 36%);
 }
 
-.tellEvilStrong {
+.tellEvilStrong
+{
 	text-align: center;
 	color: hsl(0, 72%, 51%);
 	font-weight: 600;
 	background-color: rgba(239, 68, 68, 0.15);
 }
 
-.tellEvilWeak {
+.tellEvilWeak
+{
 	text-align: center;
 	color: hsl(0, 72%, 51%);
 }
 
-.rateLinkGood {
+.rateLinkGood
+{
 	color: inherit;
 	text-decoration: none;
 }
 
-.rateLinkGood:hover {
+.rateLinkGood:hover
+{
 	color: hsl(142, 76%, 36%);
 	text-decoration: underline;
 }
 
-.rateLinkEvil {
+.rateLinkEvil
+{
 	color: inherit;
 	text-decoration: none;
 }
 
-.rateLinkEvil:hover {
+.rateLinkEvil:hover
+{
 	color: hsl(0, 72%, 51%);
 	text-decoration: underline;
 }
 
-.gamesLink {
+.gamesLink
+{
 	margin-left: 0.5rem;
 	color: hsl(var(--muted-foreground));
 	font-size: 0.75rem;
 	text-decoration: none;
 }
 
-.gamesLink:hover {
+.gamesLink:hover
+{
 	color: hsl(var(--primary));
 	text-decoration: underline;
 }
 
-.baselineCell {
+.baselineCell
+{
 	text-align: right;
 	font-variant-numeric: tabular-nums;
 }
 
-.baselineRate {
+.baselineRate
+{
 	color: hsl(var(--muted-foreground));
 }
 
-.confidenceCell {
+.confidenceCell
+{
 	text-align: right;
 	font-variant-numeric: tabular-nums;
 	color: hsl(var(--muted-foreground));
 	font-size: 0.75rem;
 }
 
-.rankCell {
+.rankCell
+{
 	text-align: right;
 	font-variant-numeric: tabular-nums;
 }
 
-.significanceMarker {
+.significanceMarker
+{
 	color: hsl(var(--foreground));
 	font-weight: 700;
 	margin-left: 0.25rem;
 }
 
-.legend {
+.legend
+{
 	display: flex;
 	flex-wrap: wrap;
 	gap: 1rem;
@@ -240,13 +281,15 @@
 	color: hsl(var(--muted-foreground));
 }
 
-.legendItem {
+.legendItem
+{
 	display: flex;
 	align-items: center;
 	gap: 0.25rem;
 }
 
-.legendSwatch {
+.legendSwatch
+{
 	display: inline-block;
 	width: 1rem;
 	height: 1rem;
@@ -254,7 +297,8 @@
 	border-radius: 0.125rem;
 }
 
-.legendLabelGood {
+.legendLabelGood
+{
 	color: hsl(142, 76%, 36%);
 	font-weight: 600;
 	background-color: rgba(34, 197, 94, 0.15);
@@ -262,7 +306,8 @@
 	border-radius: 0.125rem;
 }
 
-.legendLabelEvil {
+.legendLabelEvil
+{
 	color: hsl(0, 72%, 51%);
 	font-weight: 600;
 	background-color: rgba(239, 68, 68, 0.15);
@@ -270,7 +315,8 @@
 	border-radius: 0.125rem;
 }
 
-.legendLabelAbove {
+.legendLabelAbove
+{
 	color: hsl(0, 72%, 51%);
 	font-weight: 600;
 	background-color: rgba(239, 68, 68, 0.15);
@@ -278,7 +324,8 @@
 	border-radius: 0.125rem;
 }
 
-.legendLabelBelow {
+.legendLabelBelow
+{
 	color: hsl(142, 76%, 36%);
 	font-weight: 600;
 	background-color: rgba(34, 197, 94, 0.15);
@@ -286,64 +333,74 @@
 	border-radius: 0.125rem;
 }
 
-.roleSection {
+.roleSection
+{
 	margin-top: 2rem;
 	padding-top: 1.5rem;
 	border-top: 1px solid hsl(var(--border));
 }
 
-.roleTitle {
+.roleTitle
+{
 	margin: 0 0 0.5rem 0;
 	font-size: 1.1rem;
 	font-weight: 600;
 	color: hsl(220, 70%, 50%);
 }
 
-.goodOnlySection {
+.goodOnlySection
+{
 	margin-top: 2rem;
 	padding-top: 1.5rem;
 	border-top: 1px solid hsl(var(--border));
 }
 
-.goodOnlyTitle {
+.goodOnlyTitle
+{
 	margin: 0 0 0.5rem 0;
 	font-size: 1.1rem;
 	font-weight: 600;
 	color: hsl(142, 76%, 36%);
 }
 
-.evilOnlySection {
+.evilOnlySection
+{
 	margin-top: 2rem;
 	padding-top: 1.5rem;
 	border-top: 1px solid hsl(var(--border));
 }
 
-.evilOnlyTitle {
+.evilOnlyTitle
+{
 	margin: 0 0 0.5rem 0;
 	font-size: 1.1rem;
 	font-weight: 600;
 	color: hsl(0, 72%, 51%);
 }
 
-.alignmentRestrictedDescription {
+.alignmentRestrictedDescription
+{
 	margin: 0 0 1rem 0;
 	font-size: 0.875rem;
 	color: hsl(var(--muted-foreground));
 }
 
-.deviationNone {
+.deviationNone
+{
 	text-align: center;
 	color: hsl(var(--muted-foreground));
 }
 
-.deviationAbove {
+.deviationAbove
+{
 	text-align: center;
 	color: hsl(0, 72%, 51%);
 	font-weight: 600;
 	background-color: rgba(239, 68, 68, 0.15);
 }
 
-.deviationBelow {
+.deviationBelow
+{
 	text-align: center;
 	color: hsl(142, 76%, 36%);
 	font-weight: 600;

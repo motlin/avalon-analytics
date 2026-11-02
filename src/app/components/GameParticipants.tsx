@@ -4,12 +4,14 @@ import RoleList from './RoleList';
 import styles from './GameParticipants.module.css';
 import type {AvalonApi} from './types';
 
-interface GameParticipantsProps {
+interface GameParticipantsProps
+{
 	avalon: AvalonApi;
 	onSelectedPlayers: (players: string[]) => void;
 }
 
-const GameParticipants: React.FC<GameParticipantsProps> = ({avalon, onSelectedPlayers}) => {
+const GameParticipants: React.FC<GameParticipantsProps> = ({avalon, onSelectedPlayers}) =>
+{
 	const [activeTab, setActiveTab] = useState(0);
 
 	const tabs = ['Players', 'Roles'];
@@ -31,18 +33,8 @@ const GameParticipants: React.FC<GameParticipantsProps> = ({avalon, onSelectedPl
 			</div>
 
 			<div className={styles.tabContent}>
-				{activeTab === 0 && (
-					<GamePlayerList
-						avalon={avalon}
-						onSelectedPlayers={onSelectedPlayers}
-					/>
-				)}
-				{activeTab === 1 && (
-					<RoleList
-						roles={roles}
-						allowSelect={false}
-					/>
-				)}
+				{activeTab === 0 && <GamePlayerList avalon={avalon} onSelectedPlayers={onSelectedPlayers} />}
+				{activeTab === 1 && <RoleList roles={roles} allowSelect={false} />}
 			</div>
 		</div>
 	);

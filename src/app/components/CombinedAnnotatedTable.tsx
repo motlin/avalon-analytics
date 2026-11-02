@@ -7,17 +7,20 @@ import {annotateGame, formatRoleWithEmoji} from '../models/gameAnnotator';
 import {RARITY_CSS_COLORS, RARITY_ORDER} from '../models/predicateRarity';
 import styles from './CombinedAnnotatedTable.module.css';
 
-interface PersonMapping {
+interface PersonMapping
+{
 	personId: string;
 	personName: string;
 }
 
-interface CombinedAnnotatedTableProps {
+interface CombinedAnnotatedTableProps
+{
 	game: Game;
 	uidToPersonMap?: Map<string, PersonMapping>;
 }
 
-function toTitleCase(text: string): string {
+function toTitleCase(text: string): string
+{
 	return text
 		.toLowerCase()
 		.split(' ')
@@ -25,7 +28,8 @@ function toTitleCase(text: string): string {
 		.join(' ');
 }
 
-function stripPlayerPrefix(commentary: string, playerName: string): string {
+function stripPlayerPrefix(commentary: string, playerName: string): string
+{
 	const playerIndex = commentary.indexOf(playerName);
 	if (playerIndex === -1) return commentary;
 	const afterPlayerName = commentary.slice(playerIndex + playerName.length).trim();
@@ -33,11 +37,13 @@ function stripPlayerPrefix(commentary: string, playerName: string): string {
 	return afterPlayerName.charAt(0).toUpperCase() + afterPlayerName.slice(1);
 }
 
-export function CombinedAnnotatedTable({game, uidToPersonMap}: CombinedAnnotatedTableProps) {
+export function CombinedAnnotatedTable({game, uidToPersonMap}: CombinedAnnotatedTableProps)
+{
 	const annotatedGame = annotateGame(game);
 	const players = game.players;
 	const missionVotes = game.outcome?.votes?.reduce(
-		(acc, vote, index) => {
+		(acc, vote, index) =>
+		{
 			acc[index] = vote;
 			return acc;
 		},
@@ -49,7 +55,8 @@ export function CombinedAnnotatedTable({game, uidToPersonMap}: CombinedAnnotated
 			<div className={styles.tableWrapper}>
 				<table className={styles.table}>
 					<tbody>
-						{players.map((player, playerIndex) => {
+						{players.map((player, playerIndex) =>
+						{
 							const playerRole = game.outcome?.roles?.find((r) => r.name === player.name)?.role;
 
 							return (
@@ -58,9 +65,11 @@ export function CombinedAnnotatedTable({game, uidToPersonMap}: CombinedAnnotated
 									className={playerIndex % 2 === 0 ? styles.evenRow : styles.oddRow}
 								>
 									<td className={styles.playerName}>
-										{(() => {
+										{(() =>
+										{
 											const personMapping = uidToPersonMap?.get(player.uid);
-											if (personMapping) {
+											if (personMapping)
+											{
 												return (
 													<a
 														href={`/person/${personMapping.personId}`}
@@ -83,13 +92,15 @@ export function CombinedAnnotatedTable({game, uidToPersonMap}: CombinedAnnotated
 									{playerRole && (
 										<td className={styles.role}>{formatRoleWithEmoji(toTitleCase(playerRole))}</td>
 									)}
-									{annotatedGame.missions.flatMap((annotatedMission, missionIndex) => {
+									{annotatedGame.missions.flatMap((annotatedMission, missionIndex) =>
+									{
 										const mission = annotatedMission.mission;
 										const validProposals = annotatedMission.proposals.filter(
 											(p) => p.proposal.team.length > 0,
 										);
 
-										const proposalCells = validProposals.map((annotatedProposal) => {
+										const proposalCells = validProposals.map((annotatedProposal) =>
+										{
 											const proposal = annotatedProposal.proposal;
 											const proposalIndex = annotatedProposal.proposalNumber - 1;
 											const isProposer = proposal.proposer === player.name;
@@ -149,7 +160,8 @@ export function CombinedAnnotatedTable({game, uidToPersonMap}: CombinedAnnotated
 	);
 }
 
-interface CellContentProps {
+interface CellContentProps
+{
 	isProposer: boolean;
 	isOnTeam: boolean;
 	votedYes: boolean;
@@ -165,7 +177,8 @@ function CellContent({
 	isPending,
 	voteAnnotations,
 	proposalAnnotations,
-}: CellContentProps) {
+}: CellContentProps)
+{
 	const allAnnotations = [...proposalAnnotations, ...voteAnnotations];
 	const visibleAnnotations = allAnnotations
 		.filter((a) => !a.hidden)
@@ -176,25 +189,23 @@ function CellContent({
 	return (
 		<span
 			className={hasVisibleAnnotations ? `${styles.tooltipWrapper} ${styles.hasAnnotation}` : undefined}
-			style={dotColor ? ({'--annotation-dot-color': dotColor} as React.CSSProperties) : undefined}
+			style={
+				dotColor
+					? (
+						{
+							'--annotation-dot-color': dotColor,
+						} as React.CSSProperties)
+					: undefined
+			}
 		>
 			<span className="fa-layers fa-fw">
 				{isProposer && (
 					<span className={styles.proposerIcon}>
-						<FontAwesomeIcon
-							icon={faCircle}
-							color="yellow"
-							transform="grow-13"
-						/>
+						<FontAwesomeIcon icon={faCircle} color="yellow" transform="grow-13" />
 					</span>
 				)}
 				{isOnTeam && (
-					<FontAwesomeIcon
-						icon={faCircleRegular}
-						transform="grow-13"
-						className="fa-solid"
-						color="#629ec1"
-					/>
+					<FontAwesomeIcon icon={faCircleRegular} transform="grow-13" className="fa-solid" color="#629ec1" />
 				)}
 				{!isPending && (
 					<FontAwesomeIcon
@@ -207,14 +218,14 @@ function CellContent({
 			{hasVisibleAnnotations && (
 				<span className={styles.tooltip}>
 					{visibleAnnotations.map((annotation, index) => (
-						<span
-							key={index}
-							className={styles.tooltipLine}
-						>
+						<span key={index} className={styles.tooltipLine}>
 							{stripPlayerPrefix(annotation.commentary, annotation.playerName)}{' '}
 							<span
 								className={styles.tooltipPredicateName}
-								style={{color: RARITY_CSS_COLORS[annotation.rarity]}}
+								style={
+								{
+									color: RARITY_CSS_COLORS[annotation.rarity],
+								}}
 							>
 								({annotation.predicateName})
 							</span>
@@ -226,12 +237,14 @@ function CellContent({
 	);
 }
 
-interface MissionVoteIconProps {
+interface MissionVoteIconProps
+{
 	votedSuccess: boolean | undefined;
 	annotations: Annotation[];
 }
 
-function MissionVoteIcon({votedSuccess, annotations}: MissionVoteIconProps) {
+function MissionVoteIcon({votedSuccess, annotations}: MissionVoteIconProps)
+{
 	if (votedSuccess === undefined) return null;
 
 	const visibleAnnotations = annotations
@@ -243,7 +256,14 @@ function MissionVoteIcon({votedSuccess, annotations}: MissionVoteIconProps) {
 	return (
 		<span
 			className={hasVisibleAnnotations ? `${styles.tooltipWrapper} ${styles.hasAnnotation}` : undefined}
-			style={dotColor ? ({'--annotation-dot-color': dotColor} as React.CSSProperties) : undefined}
+			style={
+				dotColor
+					? (
+						{
+							'--annotation-dot-color': dotColor,
+						} as React.CSSProperties)
+					: undefined
+			}
 		>
 			<span className="fa-layers fa-fw">
 				<FontAwesomeIcon
@@ -255,14 +275,14 @@ function MissionVoteIcon({votedSuccess, annotations}: MissionVoteIconProps) {
 			{hasVisibleAnnotations && (
 				<span className={styles.tooltip}>
 					{visibleAnnotations.map((annotation, index) => (
-						<span
-							key={index}
-							className={styles.tooltipLine}
-						>
+						<span key={index} className={styles.tooltipLine}>
 							{stripPlayerPrefix(annotation.commentary, annotation.playerName)}{' '}
 							<span
 								className={styles.tooltipPredicateName}
-								style={{color: RARITY_CSS_COLORS[annotation.rarity]}}
+								style={
+								{
+									color: RARITY_CSS_COLORS[annotation.rarity],
+								}}
 							>
 								({annotation.predicateName})
 							</span>

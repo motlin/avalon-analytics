@@ -1,8 +1,10 @@
-.container {
+.container
+{
 	margin-bottom: 2rem;
 }
 
-.title {
+.title
+{
 	display: flex;
 	align-items: center;
 	gap: 0.5rem;
@@ -11,7 +13,8 @@
 	font-weight: 600;
 }
 
-.rarityDot {
+.rarityDot
+{
 	display: inline-block;
 	width: 0.75rem;
 	height: 0.75rem;
@@ -19,12 +22,14 @@
 	flex-shrink: 0;
 }
 
-.emptyMessage {
+.emptyMessage
+{
 	color: hsl(var(--muted-foreground));
 	font-style: italic;
 }
 
-.summary {
+.summary
+{
 	display: flex;
 	flex-wrap: wrap;
 	gap: 1rem;
@@ -35,95 +40,112 @@
 	font-size: 0.875rem;
 }
 
-.summaryItem {
+.summaryItem
+{
 	display: flex;
 	align-items: center;
 	gap: 0.25rem;
 }
 
-.tableWrapper {
+.tableWrapper
+{
 	overflow-x: auto;
 }
 
-.table {
+.table
+{
 	width: 100%;
 	border-collapse: collapse;
 	font-size: 0.875rem;
 }
 
 .table th,
-.table td {
+.table td
+{
 	padding: 0.5rem 0.75rem;
 	text-align: left;
 	border-bottom: 1px solid hsl(var(--border));
 }
 
-.headerRank {
+.headerRank
+{
 	font-weight: 600;
 	background-color: hsl(var(--muted));
 	text-align: center;
 	width: 3rem;
 }
 
-.headerName {
+.headerName
+{
 	font-weight: 600;
 	background-color: hsl(var(--muted));
 	text-align: left;
 }
 
-.headerNum {
+.headerNum
+{
 	font-weight: 600;
 	background-color: hsl(var(--muted));
 	text-align: right;
 }
 
-.dataRow:hover {
+.dataRow:hover
+{
 	filter: brightness(0.95);
 }
 
-.rankCell {
+.rankCell
+{
 	text-align: center;
 	font-weight: 600;
 	color: hsl(var(--muted-foreground));
 	font-variant-numeric: tabular-nums;
 }
 
-.nameCell {
+.nameCell
+{
 	font-weight: 500;
 }
 
-.personLink {
+.personLink
+{
 	color: hsl(var(--foreground));
 	text-decoration: none;
 }
 
-.personLink:hover {
+.personLink:hover
+{
 	text-decoration: underline;
 	color: hsl(var(--primary));
 }
 
-.rateCell {
+.rateCell
+{
 	text-align: right;
 	font-variant-numeric: tabular-nums;
 }
 
-.rateValue {
+.rateValue
+{
 	font-weight: 600;
 }
 
-.rawRate {
+.rawRate
+{
 	margin-left: 0.5rem;
 	color: hsl(var(--muted-foreground));
 	font-size: 0.75rem;
 }
 
-.significanceMarker {
+.significanceMarker
+{
 	color: hsl(var(--foreground));
 	font-weight: 700;
 	margin-left: 0.25rem;
 }
 
-.legend {
+.legend
+{
 	display: flex;
 	flex-wrap: wrap;
 	gap: 1rem;
@@ -132,13 +154,15 @@
 	color: hsl(var(--muted-foreground));
 }
 
-.legendItem {
+.legendItem
+{
 	display: flex;
 	align-items: center;
 	gap: 0.25rem;
 }
 
-.legendSwatch {
+.legendSwatch
+{
 	display: inline-block;
 	width: 1rem;
 	height: 1rem;

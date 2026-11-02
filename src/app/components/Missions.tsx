@@ -6,7 +6,8 @@ import {faCircle, faCheckCircle, faTimesCircle} from '@fortawesome/free-solid-sv
 import {faCircle as faCircleRegular} from '@fortawesome/free-regular-svg-icons';
 import type {AvalonData, Mission} from './types';
 
-function joinWithAnd(array: string[]): string {
+function joinWithAnd(array: string[]): string
+{
 	if (array.length === 0) return '';
 	if (array.length === 1) return array[0];
 	const arrCopy = array.slice(0);
@@ -14,26 +15,32 @@ function joinWithAnd(array: string[]): string {
 	return arrCopy.join(', ') + ' and ' + lastElement;
 }
 
-interface MissionsProps {
+interface MissionsProps
+{
 	avalon: AvalonData;
 }
 
-const Missions: React.FC<MissionsProps> = ({avalon}) => {
+const Missions: React.FC<MissionsProps> = ({avalon}) =>
+{
 	const [activeMissionTab, setActiveMissionTab] = useState(0);
 
-	const isFutureMission = (mission: Mission, idx: number): boolean => {
+	const isFutureMission = (mission: Mission, idx: number): boolean =>
+	{
 		return idx > 0 && avalon.game.missions[idx - 1].state === 'PENDING';
 	};
 
-	const classForMission = (mission: Mission): string => {
+	const classForMission = (mission: Mission): string =>
+	{
 		if (mission.state === 'FAIL') return styles.failMission;
 		if (mission.state === 'SUCCESS') return styles.successMission;
 		return styles.pendingMission;
 	};
 
-	useEffect(() => {
+	useEffect(() =>
+	{
 		const currentIdx = avalon.lobby.game.currentMissionIdx;
-		if (currentIdx !== undefined && currentIdx >= 0 && currentIdx < 5) {
+		if (currentIdx !== undefined && currentIdx >= 0 && currentIdx < 5)
+		{
 			setActiveMissionTab(currentIdx);
 		}
 	}, [avalon.lobby.game.currentMissionIdx]);
@@ -52,7 +59,8 @@ const Missions: React.FC<MissionsProps> = ({avalon}) => {
 								{mission.state === 'PENDING' ? (
 									<div className={styles.iconStack}>
 										<span
-											style={{
+											style={
+											{
 												color: isFutureMission(mission, idx) ? 'gray' : 'black',
 												fontSize: '2em',
 											}}
@@ -62,18 +70,33 @@ const Missions: React.FC<MissionsProps> = ({avalon}) => {
 										<span className={styles.teamSizeText}>{mission.teamSize}</span>
 									</div>
 								) : mission.state === 'FAIL' ? (
-									<span style={{color: 'red', fontSize: '2em'}}>
+									<span
+										style={
+										{
+											color: 'red',
+											fontSize: '2em',
+										}}
+									>
 										<FontAwesomeIcon icon={faTimesCircle} />
 									</span>
 								) : (
-									<span style={{color: 'green', fontSize: '2em'}}>
+									<span
+										style={
+										{
+											color: 'green',
+											fontSize: '2em',
+										}}
+									>
 										<FontAwesomeIcon icon={faCheckCircle} />
 									</span>
 								)}
 								{mission.failsRequired > 1 && (
 									<span
 										className={styles.failsRequiredIndicator}
-										style={{color: 'red'}}
+										style={
+										{
+											color: 'red',
+										}}
 									>
 										<FontAwesomeIcon icon={faCircle} />
 									</span>
@@ -125,11 +148,18 @@ const Missions: React.FC<MissionsProps> = ({avalon}) => {
 												{
 													...avalon.game,
 													players: avalon.game.players.map((p) =>
-														typeof p === 'string' ? {uid: p, name: p} : p,
+														typeof p === 'string'
+															?
+																{
+																	uid: p,
+																	name: p,
+																}
+															: p,
 													),
 													missions: [mission],
 													outcome: avalon.game.missionVotes
-														? {
+														?
+															{
 																state: 'IN_PROGRESS',
 																votes: [avalon.game.missionVotes[idx]],
 															}

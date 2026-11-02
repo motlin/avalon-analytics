@@ -1,5 +1,6 @@
 /* Card layout */
-.card {
+.card
+{
 	border-radius: 4px;
 	box-shadow:
 		0 2px 4px rgba(0, 0, 0, 0.12),
@@ -9,62 +10,75 @@
 	overflow: hidden;
 }
 
-.welcome {
+.welcome
+{
 	padding-top: 30px;
 	padding-bottom: 30px;
 	text-align: center;
 }
 
-.cyanLighten5 {
+.cyanLighten5
+{
 	background-color: #e0f2f1 !important;
 }
 
 /* Layout utilities */
-.layout {
+.layout
+{
 	display: flex;
 }
 
-.alignCenter {
+.alignCenter
+{
 	align-items: center;
 }
 
-.justifyCenter {
+.justifyCenter
+{
 	justify-content: center;
 }
 
-.alignEnd {
+.alignEnd
+{
 	align-items: flex-end;
 }
 
-.column {
+.column
+{
 	flex-direction: column;
 }
 
-.fillHeight {
+.fillHeight
+{
 	height: 100%;
 }
 
-.flex {
+.flex
+{
 	flex: 1;
 }
 
 /* Card content */
-.cardTitle {
+.cardTitle
+{
 	padding: 16px;
 	font-size: 20px;
 	font-weight: 500;
 }
 
-.cardText {
+.cardText
+{
 	padding: 16px;
 }
 
-.textCenter {
+.textCenter
+{
 	text-align: center;
 }
 
 /* Alert */
-.alert {
+.alert
+{
 	position: relative;
 	padding: 12px 16px;
 	margin-bottom: 16px;
@@ -72,49 +86,58 @@
 	border: thin solid transparent;
 }
 
-.alert.error {
+.alert.error
+{
 	background-color: #ffebee;
 	border-color: #f44336;
 	color: #c62828;
 }
 
 /* Welcome section */
-.welcomeSection {
+.welcomeSection
+{
 	text-align: center;
 }
 
-.textH3 {
+.textH3
+{
 	font-size: 2rem;
 	font-weight: 400;
 	line-height: 2.5rem;
 	letter-spacing: normal;
 }
 
-.fontWeightThin {
+.fontWeightThin
+{
 	font-weight: 100 !important;
 }
 
-.subheading {
+.subheading
+{
 	font-size: 1rem;
 	font-weight: 400;
 	line-height: 1.5rem;
 }
 
 /* Spacing utilities */
-.mt4 {
+.mt4
+{
 	margin-top: 24px !important;
 }
 
-.pt2 {
+.pt2
+{
 	padding-top: 8px !important;
 }
 
-.pt4 {
+.pt4
+{
 	padding-top: 24px !important;
 }
 
 /* Tabs */
-.tabs {
+.tabs
+{
 	display: flex;
 	position: relative;
 	border-bottom: 1px solid #e0e0e0;
@@ -123,7 +146,8 @@
 	width: 100%;
 }
 
-.tabsSlider {
+.tabsSlider
+{
 	position: absolute;
 	bottom: 0;
 	height: 2px;
@@ -131,7 +155,8 @@
 	transition: all 0.3s ease;
 }
 
-.tab {
+.tab
+{
 	flex: 1;
 	max-width: 264px;
 	height: 48px;
@@ -149,16 +174,19 @@
 	position: relative;
 }
 
-.tab:hover {
+.tab:hover
+{
 	color: rgba(0, 0, 0, 0.87);
 }
 
-.tabActive {
+.tabActive
+{
 	color: #1976d2 !important;
 }
 
 /* Tab content */
-.tabsItems {
+.tabsItems
+{
 	width: 100%;
 	padding: 24px;
 	display: flex;
@@ -167,7 +195,8 @@
 	min-height: 200px;
 }
 
-.tabItem {
+.tabItem
+{
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -177,7 +206,8 @@
 }
 
 /* Form elements */
-.textField {
+.textField
+{
 	width: 100%;
 	padding: 12px 0;
 	border: none;
@@ -188,19 +218,23 @@
 	transition: border-color 0.3s ease;
 }
 
-.textField:focus {
+.textField:focus
+{
 	border-bottom-color: #1976d2;
 }
 
-.textField::placeholder {
+.textField::placeholder
+{
 	color: rgba(0, 0, 0, 0.6);
 }
 
-.textFieldError {
+.textFieldError
+{
 	border-bottom-color: #f44336 !important;
 }
 
-.errorMessage {
+.errorMessage
+{
 	color: #f44336;
 	font-size: 12px;
 	margin-top: 4px;
@@ -208,7 +242,8 @@
 }
 
 /* Buttons */
-.btn {
+.btn
+{
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -229,72 +264,88 @@
 	letter-spacing: 0.0892857143em;
 }
 
-.btn:hover:not(:disabled) {
+.btn:hover:not(:disabled)
+{
 	background-color: #1565c0;
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-.btn:disabled {
+.btn:disabled
+{
 	opacity: 0.6;
 	cursor: not-allowed;
 }
 
-.btn.loading {
+.btn.loading
+{
 	animation: pulse 1.5s ease-in-out infinite;
 }
 
-.btn.small {
+.btn.small
+{
 	padding: 4px 8px;
 	font-size: 12px;
 	min-height: 28px;
 	text-transform: none;
 }
 
-.btn.greyLighten2 {
+.btn.greyLighten2
+{
 	background-color: #e0e0e0;
 	color: rgba(0, 0, 0, 0.87);
 }
 
-.btn.greyLighten2:hover {
+.btn.greyLighten2:hover
+{
 	background-color: #d5d5d5;
 }
 
 /* Color variants */
-.xs6 {
+.xs6
+{
 	max-width: 50%;
 }
 
-.md3 {
+.md3
+{
 	max-width: 25%;
 }
 
-.blueGreyLighten4 {
+.blueGreyLighten4
+{
 	background-color: #cfd8dc !important;
 }
 
 /* Icon */
-.icon {
+.icon
+{
 	font-size: 18px;
 	line-height: 1;
 }
 
-.icon.left {
+.icon.left
+{
 	margin-right: 4px;
 }
 
-.icon.small {
+.icon.small
+{
 	font-size: 14px;
 }
 
 /* Animations */
-@keyframes pulse {
-	0% {
+@keyframes pulse
+{
+	0%
+	{
 		opacity: 1;
 	}
-	50% {
+	50%
+	{
 		opacity: 0.7;
 	}
-	100% {
+	100%
+	{
 		opacity: 1;
 	}
 }

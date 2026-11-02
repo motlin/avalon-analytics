@@ -1,13 +1,17 @@
 import type {Meta, StoryObj} from '@storybook/react-vite';
 import LobbyPlayerList from './LobbyPlayerList';
 
-const meta: Meta<typeof LobbyPlayerList> = {
+const meta: Meta<typeof LobbyPlayerList> =
+{
 	title: 'Lobby/PlayerList',
 	component: LobbyPlayerList,
-	parameters: {
+	parameters:
+	{
 		layout: 'centered',
-		docs: {
-			description: {
+		docs:
+		{
+			description:
+			{
 				component: `LobbyPlayerList displays and manages players in a game lobby before the game starts.
 
 ## Features
@@ -42,10 +46,15 @@ function Lobby() {
 		},
 	},
 	tags: ['autodocs'],
-	argTypes: {
-		avalon: {
+	argTypes:
+	{
+		avalon:
+		{
 			description: 'Avalon API object containing lobby state, player list, and admin functions',
-			control: {type: 'object'},
+			control:
+			{
+				type: 'object',
+			},
 		},
 	},
 };
@@ -53,29 +62,50 @@ function Lobby() {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const createMockAvalon = (overrides = {}) => ({
-	config: {
+const createMockAvalon = (overrides = {}) => (
+{
+	config:
+	{
 		playerList: ['CRAIGM', 'ZEHUA', 'VINAY', 'LUKEE', 'KEN'],
-		sortList: (newList: string[]) => {
+		sortList: (newList: string[]) =>
+		{
 			console.log('Sorting list:', newList);
 		},
 		roleMap: {},
 	},
-	user: {
+	user:
+	{
 		name: 'CRAIGM',
 	},
-	game: {
+	game:
+	{
 		id: 'mock-game-id',
 		timeCreated: new Date('2025-01-01T00:00:00Z'),
 		players: [
-			{uid: 'uid-1', name: 'CRAIGM'},
-			{uid: 'uid-2', name: 'ZEHUA'},
-			{uid: 'uid-3', name: 'VINAY'},
-			{uid: 'uid-4', name: 'LUKEE'},
-			{uid: 'uid-5', name: 'KEN'},
+			{
+				uid: 'uid-1',
+				name: 'CRAIGM',
+			},
+			{
+				uid: 'uid-2',
+				name: 'ZEHUA',
+			},
+			{
+				uid: 'uid-3',
+				name: 'VINAY',
+			},
+			{
+				uid: 'uid-4',
+				name: 'LUKEE',
+			},
+			{
+				uid: 'uid-5',
+				name: 'KEN',
+			},
 		],
 		missions: [],
-		outcome: {
+		outcome:
+		{
 			state: 'IN_PROGRESS' as const,
 			message: '',
 			assassinated: undefined,
@@ -83,22 +113,41 @@ const createMockAvalon = (overrides = {}) => ({
 			votes: [],
 		},
 	},
-	lobby: {
-		admin: {
+	lobby:
+	{
+		admin:
+		{
 			name: 'CRAIGM',
 		},
-		game: {
+		game:
+		{
 			id: 'mock-game-id',
 			timeCreated: new Date('2025-01-01T00:00:00Z'),
 			players: [
-				{uid: 'uid-1', name: 'CRAIGM'},
-				{uid: 'uid-2', name: 'ZEHUA'},
-				{uid: 'uid-3', name: 'VINAY'},
-				{uid: 'uid-4', name: 'LUKEE'},
-				{uid: 'uid-5', name: 'KEN'},
+				{
+					uid: 'uid-1',
+					name: 'CRAIGM',
+				},
+				{
+					uid: 'uid-2',
+					name: 'ZEHUA',
+				},
+				{
+					uid: 'uid-3',
+					name: 'VINAY',
+				},
+				{
+					uid: 'uid-4',
+					name: 'LUKEE',
+				},
+				{
+					uid: 'uid-5',
+					name: 'KEN',
+				},
 			],
 			missions: [],
-			outcome: {
+			outcome:
+			{
 				state: 'IN_PROGRESS' as const,
 				message: '',
 				assassinated: undefined,
@@ -109,10 +158,13 @@ const createMockAvalon = (overrides = {}) => ({
 	},
 	isAdmin: true,
 	isGameInProgress: false,
-	kickPlayer: async (player: string): Promise<void> => {
+	kickPlayer: async (player: string): Promise<void> =>
+	{
 		console.log('Kicking player:', player);
-		return new Promise<void>((resolve) => {
-			setTimeout(() => {
+		return new Promise<void>((resolve) =>
+		{
+			setTimeout(() =>
+			{
 				console.log('Player kicked:', player);
 				resolve();
 			}, 1000);
@@ -121,93 +173,142 @@ const createMockAvalon = (overrides = {}) => ({
 	...overrides,
 });
 
-export const AdminCanDragAndKick: Story = {
-	args: {
+export const AdminCanDragAndKick: Story =
+{
+	args:
+	{
 		avalon: createMockAvalon(),
 	},
-	parameters: {
-		docs: {
-			description: {
+	parameters:
+	{
+		docs:
+		{
+			description:
+			{
 				story: 'Shows the full admin experience with drag-to-reorder and kick functionality. ALICE is the admin and can manage other players.',
 			},
 		},
 	},
 };
 
-export const NonAdminView: Story = {
-	args: {
-		avalon: createMockAvalon({
-			isAdmin: false,
-			user: {name: 'ZEHUA'},
-		}),
+export const NonAdminView: Story =
+{
+	args:
+	{
+		avalon: createMockAvalon(
+			{
+				isAdmin: false,
+				user:
+				{
+					name: 'ZEHUA',
+				},
+			},
+		),
 	},
-	parameters: {
-		docs: {
-			description: {
+	parameters:
+	{
+		docs:
+		{
+			description:
+			{
 				story: 'Non-admin view shows the player list without management controls. Players can see who is in the lobby but cannot reorder or kick.',
 			},
 		},
 	},
 };
 
-export const SinglePlayer: Story = {
-	args: {
-		avalon: createMockAvalon({
-			config: {
-				playerList: ['CRAIGM'],
-				sortList: (newList: string[]) => {
-					console.log('Sorting list:', newList);
+export const SinglePlayer: Story =
+{
+	args:
+	{
+		avalon: createMockAvalon(
+			{
+				config:
+				{
+					playerList: ['CRAIGM'],
+					sortList: (newList: string[]) =>
+					{
+						console.log('Sorting list:', newList);
+					},
 				},
 			},
-		}),
+		),
 	},
-	parameters: {
-		docs: {
-			description: {
+	parameters:
+	{
+		docs:
+		{
+			description:
+			{
 				story: 'Lobby with only one player (the admin). Shows how the component handles minimal state.',
 			},
 		},
 	},
 };
 
-export const AdminInMiddle: Story = {
-	args: {
-		avalon: createMockAvalon({
-			config: {
-				playerList: ['CRAIGM', 'ZEHUA', 'VINAY', 'LUKEE', 'KEN'],
-				sortList: (newList: string[]) => {
-					console.log('Sorting list:', newList);
+export const AdminInMiddle: Story =
+{
+	args:
+	{
+		avalon: createMockAvalon(
+			{
+				config:
+				{
+					playerList: ['CRAIGM', 'ZEHUA', 'VINAY', 'LUKEE', 'KEN'],
+					sortList: (newList: string[]) =>
+					{
+						console.log('Sorting list:', newList);
+					},
+				},
+				user:
+				{
+					name: 'VINAY',
+				},
+				lobby:
+				{
+					admin:
+					{
+						name: 'VINAY',
+					},
 				},
 			},
-			user: {name: 'VINAY'},
-			lobby: {
-				admin: {name: 'VINAY'},
-			},
-		}),
+		),
 	},
-	parameters: {
-		docs: {
-			description: {
+	parameters:
+	{
+		docs:
+		{
+			description:
+			{
 				story: 'Shows when the admin (CHARLIE) is not the first player in the list. The crown icon helps identify the admin regardless of position.',
 			},
 		},
 	},
 };
 
-export const EmptyLobby: Story = {
-	args: {
-		avalon: createMockAvalon({
-			config: {
-				playerList: [],
-				sortList: (newList: string[]) => {
-					console.log('Sorting list:', newList);
+export const EmptyLobby: Story =
+{
+	args:
+	{
+		avalon: createMockAvalon(
+			{
+				config:
+				{
+					playerList: [],
+					sortList: (newList: string[]) =>
+					{
+						console.log('Sorting list:', newList);
+					},
 				},
 			},
-		}),
+		),
 	},
-	parameters: {
-		docs: {
-			description: {
+	parameters:
+	{
+		docs:
+		{
+			description:
+			{
 				story: 'Edge case: empty lobby with no players. This state is unusual but the component handles it gracefully.',
 			},
 		},

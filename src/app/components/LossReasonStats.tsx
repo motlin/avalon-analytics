@@ -1,20 +1,24 @@
 import type {PersonStatistics} from '../models/player-statistics';
 import styles from './LossReasonStats.module.css';
 
-interface LossReasonStatsProps {
+interface LossReasonStatsProps
+{
 	stats: PersonStatistics;
 }
 
-function formatPercent(count: number, total: number): string {
+function formatPercent(count: number, total: number): string
+{
 	if (total === 0) return '-';
 	return `${((count / total) * 100).toFixed(0)}%`;
 }
 
-export function LossReasonStats({stats}: LossReasonStatsProps) {
+export function LossReasonStats({stats}: LossReasonStatsProps)
+{
 	const totalLosses = stats.totalLosses;
 	const {threeMissionFails, threeMissionSuccessEvil, fiveRejectedProposals, merlinAssassinated} = stats.lossReasons;
 
-	if (totalLosses === 0) {
+	if (totalLosses === 0)
+	{
 		return (
 			<div className={styles.container}>
 				<h3 className={styles.title}>Loss Breakdown</h3>
@@ -57,10 +61,7 @@ export function LossReasonStats({stats}: LossReasonStatsProps) {
 
 			<div className={styles.reasonsList}>
 				{reasons.map((reason) => (
-					<div
-						key={reason.label}
-						className={styles.reasonItem}
-					>
+					<div key={reason.label} className={styles.reasonItem}>
 						<div className={styles.reasonHeader}>
 							<span className={styles.reasonLabel}>{reason.label}</span>
 							<span className={styles.reasonCount}>
@@ -70,7 +71,8 @@ export function LossReasonStats({stats}: LossReasonStatsProps) {
 						<div className={styles.barContainer}>
 							<div
 								className={styles.bar}
-								style={{
+								style={
+								{
 									width: `${totalLosses > 0 ? (reason.count / totalLosses) * 100 : 0}%`,
 									backgroundColor: reason.color,
 								}}

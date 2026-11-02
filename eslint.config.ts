@@ -20,52 +20,76 @@ const config: Linter.Config[] = [
 	},
 	{
 		files: ['**/*.{js,mjs,cjs}'],
-		languageOptions: {
+		languageOptions:
+		{
 			ecmaVersion: 2020,
-			globals: {
+			globals:
+			{
 				...globals.browser,
 				...globals.node,
 			},
-			parserOptions: {
+			parserOptions:
+			{
 				ecmaVersion: 'latest',
 				sourceType: 'module',
 			},
 		},
-		rules: {
+		rules:
+		{
 			...js.configs.recommended.rules,
-			'no-unused-vars': ['error', {varsIgnorePattern: '^[A-Z_]'}],
+			'no-unused-vars': [
+				'error',
+				{
+					varsIgnorePattern: '^[A-Z_]',
+				},
+			],
 			'no-undef': 'error',
 		},
 	},
 	{
 		files: ['**/*.{ts,tsx}'],
-		languageOptions: {
+		languageOptions:
+		{
 			ecmaVersion: 2020,
-			globals: {
+			globals:
+			{
 				...globals.browser,
 				...globals.node,
 			},
 			parser: tsparser,
-			parserOptions: {
+			parserOptions:
+			{
 				ecmaVersion: 'latest',
-				ecmaFeatures: {jsx: true},
+				ecmaFeatures:
+				{
+					jsx: true,
+				},
 				sourceType: 'module',
 				project: './tsconfig.json',
 			},
 		},
-		plugins: {
+		plugins:
+		{
 			'@typescript-eslint': tseslint as any,
 		},
-		rules: {
+		rules:
+		{
 			...tseslint.configs.recommended.rules,
-			'@typescript-eslint/no-unused-vars': ['error', {varsIgnorePattern: '^[A-Z_]'}],
+			'@typescript-eslint/no-unused-vars': [
+				'error',
+				{
+					varsIgnorePattern: '^[A-Z_]',
+				},
+			],
 			'@typescript-eslint/no-explicit-any': 'off',
 		},
 	},
 	{
 		files: ['**/*.test.{js,ts,tsx}', '**/*.spec.{js,ts,tsx}'],
-		languageOptions: {
-			globals: {
+		languageOptions:
+		{
+			globals:
+			{
 				...globals.vitest,
 				vi: 'readonly',
 				expect: 'readonly',

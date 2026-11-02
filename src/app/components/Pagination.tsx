@@ -1,4 +1,5 @@
-interface PaginationProps {
+interface PaginationProps
+{
 	currentPage: number;
 	totalPages: number;
 	baseUrl: string;
@@ -16,22 +17,28 @@ export function Pagination({
 	hasPrevious,
 	nextPageToken,
 	previousPageUrl,
-}: PaginationProps) {
-	const buildNextUrl = () => {
+}: PaginationProps)
+{
+	const buildNextUrl = () =>
+	{
 		const url = new URL(baseUrl, typeof window !== 'undefined' ? window.location.origin : 'http://localhost');
 		url.searchParams.set('page', (currentPage + 1).toString());
-		if (nextPageToken) {
+		if (nextPageToken)
+		{
 			url.searchParams.set('pageToken', nextPageToken);
 		}
 		return url.pathname + url.search;
 	};
 
-	const buildPreviousUrl = () => {
-		if (previousPageUrl) {
+	const buildPreviousUrl = () =>
+	{
+		if (previousPageUrl)
+		{
 			return previousPageUrl;
 		}
 		const url = new URL(baseUrl, typeof window !== 'undefined' ? window.location.origin : 'http://localhost');
-		if (currentPage > 2) {
+		if (currentPage > 2)
+		{
 			url.searchParams.set('page', (currentPage - 1).toString());
 		}
 		return url.pathname + url.search;
@@ -71,7 +78,8 @@ export function Pagination({
 			`}</style>
 			<nav
 				aria-label="Games pagination"
-				style={{
+				style={
+				{
 					display: 'flex',
 					alignItems: 'center',
 					justifyContent: 'center',
@@ -80,10 +88,7 @@ export function Pagination({
 				}}
 			>
 				{hasPrevious ? (
-					<a
-						href={buildPreviousUrl()}
-						className="pagination-button"
-					>
+					<a href={buildPreviousUrl()} className="pagination-button">
 						← Previous
 					</a>
 				) : (
@@ -95,10 +100,7 @@ export function Pagination({
 				</span>
 
 				{hasNext ? (
-					<a
-						href={buildNextUrl()}
-						className="pagination-button"
-					>
+					<a href={buildNextUrl()} className="pagination-button">
 						Next →
 					</a>
 				) : (

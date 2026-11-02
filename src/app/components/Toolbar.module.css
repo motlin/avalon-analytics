@@ -1,4 +1,5 @@
-.toolbar {
+.toolbar
+{
 	display: flex;
 	align-items: center;
 	padding: 4px 16px;
@@ -9,33 +10,40 @@
 		0 1px 10px 0 rgba(0, 0, 0, 0.12);
 }
 
-.blueDarken1 {
+.blueDarken1
+{
 	background-color: #1976d2;
 	color: white;
 }
 
-.lobbyInfo {
+.lobbyInfo
+{
 	display: flex;
 	align-items: center;
 	gap: 8px;
 }
 
-.icon {
+.icon
+{
 	font-size: 24px;
 }
 
-.lobbyName {
+.lobbyName
+{
 	font-size: 16px;
 }
 
-.fontWeightBold {
+.fontWeightBold
+{
 	font-weight: 700;
 }
 
-.cyanTextLighten5 {
+.cyanTextLighten5
+{
 	color: #b2ebf2;
 }
 
-.spacer {
+.spacer
+{
 	flex: 1;
 }

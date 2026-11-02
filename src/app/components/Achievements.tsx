@@ -5,20 +5,25 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faTrophy} from '@fortawesome/free-solid-svg-icons';
 import type {AvalonApi} from './types';
 
-interface Badge {
+interface Badge
+{
 	title: string;
 	body: string;
 }
 
-interface AchievementsProps {
+interface AchievementsProps
+{
 	avalon: AvalonApi;
 }
 
-const Achievements: React.FC<AchievementsProps> = ({avalon}) => {
-	const getBadges = (): Badge[] => {
+const Achievements: React.FC<AchievementsProps> = ({avalon}) =>
+{
+	const getBadges = (): Badge[] =>
+	{
 		if (!avalon.lobby.game.outcome?.state || avalon.lobby.game.outcome.state === 'CANCELED') return [];
 
-		const gameWithPlayerNames = {
+		const gameWithPlayerNames =
+		{
 			...avalon.game,
 			players: (avalon.game.players as any[]).map((p: any) => (typeof p === 'string' ? p : p.name)),
 		};
@@ -29,7 +34,8 @@ const Achievements: React.FC<AchievementsProps> = ({avalon}) => {
 
 	const badges = getBadges();
 
-	if (!badges.length) {
+	if (!badges.length)
+	{
 		return null;
 	}
 
@@ -37,16 +43,16 @@ const Achievements: React.FC<AchievementsProps> = ({avalon}) => {
 		<div className={styles.container}>
 			<div className={styles.title}>Achievements</div>
 			{badges.map((badge) => (
-				<div
-					key={badge.title}
-					className={styles.badgeContainer}
-				>
+				<div key={badge.title} className={styles.badgeContainer}>
 					<div className={styles.card}>
 						<div className={styles.cardTitle}>
 							<FontAwesomeIcon
 								icon={faTrophy}
 								className={styles.trophyIcon}
-								style={{color: 'yellow'}}
+								style={
+								{
+									color: 'yellow',
+								}}
 							/>
 							<div className={styles.badgeTitle}>{badge.title}</div>
 						</div>

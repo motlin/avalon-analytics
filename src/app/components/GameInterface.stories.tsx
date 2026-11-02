@@ -1,13 +1,17 @@
 import type {Meta, StoryObj} from '@storybook/react-vite';
 import GameInterface from './GameInterface';
 
-const meta: Meta<typeof GameInterface> = {
+const meta: Meta<typeof GameInterface> =
+{
 	title: 'Gameplay/GameInterface',
 	component: GameInterface,
-	parameters: {
+	parameters:
+	{
 		layout: 'fullscreen',
-		docs: {
-			description: {
+		docs:
+		{
+			description:
+			{
 				component: `
 The GameInterface component is the main coordinator for the Avalon game interface. It orchestrates the three primary game areas:
 
@@ -34,12 +38,10 @@ The component receives the complete Avalon game state as props and passes the re
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const createMockAvalon = (
-	gamePhase: string = 'TEAM_PROPOSAL',
-	missionIdx: number = 0,
-	isAssassin: boolean = false,
-) => ({
-	game: {
+const createMockAvalon = (gamePhase: string = 'TEAM_PROPOSAL', missionIdx: number = 0, isAssassin: boolean = false) => (
+{
+	game:
+	{
 		missions: [
 			{
 				state: 'PENDING' as const,
@@ -95,12 +97,14 @@ const createMockAvalon = (
 		roles: ['MERLIN', 'PERCIVAL', 'LOYAL FOLLOWER', 'MORGANA', 'ASSASSIN'],
 		currentProposer: 'CRAIGM',
 		currentProposalIdx: 0,
-		currentProposal: {
+		currentProposal:
+		{
 			team: ['CRAIGM', 'ZEHUA'],
 			votes: [],
 			state: 'PENDING',
 		},
-		currentMission: {
+		currentMission:
+		{
 			teamSize: 2,
 			team: [],
 			votes: [],
@@ -109,11 +113,14 @@ const createMockAvalon = (
 			proposals: [],
 		},
 	},
-	user: {
+	user:
+	{
 		name: 'CRAIGM',
 	},
-	lobby: {
-		game: {
+	lobby:
+	{
+		game:
+		{
 			missions: [],
 			players: [],
 			id: '1',
@@ -121,41 +128,77 @@ const createMockAvalon = (
 			currentMissionIdx: missionIdx,
 			roles: ['MERLIN', 'PERCIVAL', 'LOYAL FOLLOWER', 'MORGANA', 'ASSASSIN'],
 		},
-		role: {
+		role:
+		{
 			assassin: isAssassin,
 		},
 	},
-	config: {
-		roleMap: {
-			MERLIN: {name: 'MERLIN', team: 'good' as const, description: 'Knows who the evil players are'},
-			PERCIVAL: {name: 'PERCIVAL', team: 'good' as const, description: 'Knows who Merlin and Morgana are'},
-			'LOYAL FOLLOWER': {name: 'LOYAL FOLLOWER', team: 'good' as const, description: 'A loyal servant of Arthur'},
-			MORGANA: {name: 'MORGANA', team: 'evil' as const, description: 'Appears as Merlin to Percival'},
-			ASSASSIN: {name: 'ASSASSIN', team: 'evil' as const, description: 'Can assassinate Merlin'},
+	config:
+	{
+		roleMap:
+		{
+			MERLIN:
+			{
+				name: 'MERLIN',
+				team: 'good' as const,
+				description: 'Knows who the evil players are',
+			},
+			PERCIVAL:
+			{
+				name: 'PERCIVAL',
+				team: 'good' as const,
+				description: 'Knows who Merlin and Morgana are',
+			},
+			'LOYAL FOLLOWER':
+			{
+				name: 'LOYAL FOLLOWER',
+				team: 'good' as const,
+				description: 'A loyal servant of Arthur',
+			},
+			MORGANA:
+			{
+				name: 'MORGANA',
+				team: 'evil' as const,
+				description: 'Appears as Merlin to Percival',
+			},
+			ASSASSIN:
+			{
+				name: 'ASSASSIN',
+				team: 'evil' as const,
+				description: 'Can assassinate Merlin',
+			},
 		},
 	},
 });
 
-export const TeamProposal: Story = {
-	args: {
+export const TeamProposal: Story =
+{
+	args:
+	{
 		avalon: createMockAvalon('TEAM_PROPOSAL', 0) as any,
 	},
 };
 
-export const ProposalVote: Story = {
-	args: {
+export const ProposalVote: Story =
+{
+	args:
+	{
 		avalon: createMockAvalon('PROPOSAL_VOTE', 0) as any,
 	},
 };
 
-export const MissionVote: Story = {
-	args: {
+export const MissionVote: Story =
+{
+	args:
+	{
 		avalon: createMockAvalon('MISSION_VOTE', 0) as any,
 	},
 };
 
-export const Assassination: Story = {
-	args: {
+export const Assassination: Story =
+{
+	args:
+	{
 		avalon: createMockAvalon('ASSASSINATION', 4, true) as any,
 	},
 };

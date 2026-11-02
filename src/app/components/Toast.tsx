@@ -3,7 +3,8 @@ import styles from './Toast.module.css';
 
 export type ToastType = 'success' | 'error' | 'warning' | 'info';
 
-export interface ToastProps {
+export interface ToastProps
+{
 	message: string;
 	type?: ToastType;
 	duration?: number;
@@ -21,20 +22,26 @@ const Toast: React.FC<ToastProps> = ({
 	visible = true,
 	position = 'top-center',
 	fullWidth = true,
-}) => {
+}) =>
+{
 	const [isVisible, setIsVisible] = useState<boolean>(visible);
 	const [isExiting, setIsExiting] = useState<boolean>(false);
 
-	useEffect(() => {
+	useEffect(() =>
+	{
 		setIsVisible(visible);
-		if (visible) {
+		if (visible)
+		{
 			setIsExiting(false);
 		}
 	}, [visible]);
 
-	useEffect(() => {
-		if (isVisible && duration > 0) {
-			const timer = setTimeout(() => {
+	useEffect(() =>
+	{
+		if (isVisible && duration > 0)
+		{
+			const timer = setTimeout(() =>
+			{
 				handleClose();
 			}, duration);
 
@@ -42,15 +49,18 @@ const Toast: React.FC<ToastProps> = ({
 		}
 	}, [isVisible, duration]);
 
-	const handleClose = () => {
+	const handleClose = () =>
+	{
 		setIsExiting(true);
-		setTimeout(() => {
+		setTimeout(() =>
+		{
 			setIsVisible(false);
 			onClose?.();
 		}, 300);
 	};
 
-	if (!isVisible && !isExiting) {
+	if (!isVisible && !isExiting)
+	{
 		return null;
 	}
 
@@ -74,11 +84,7 @@ const Toast: React.FC<ToastProps> = ({
 					{type === 'info' && 'ℹ'}
 				</span>
 				<span className={styles.message}>{message}</span>
-				<button
-					className={styles.closeButton}
-					onClick={handleClose}
-					aria-label="Close notification"
-				>
+				<button className={styles.closeButton} onClick={handleClose} aria-label="Close notification">
 					✕
 				</button>
 			</div>

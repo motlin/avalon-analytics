@@ -2,17 +2,20 @@ import React, {useState} from 'react';
 import styles from './TeamProposalAction.module.css';
 import type {AvalonApi} from './types';
 
-interface TeamProposalActionProps {
+interface TeamProposalActionProps
+{
 	avalon: AvalonApi;
 	playerList: string[];
 }
 
-const TeamProposalAction: React.FC<TeamProposalActionProps> = ({avalon, playerList}) => {
+const TeamProposalAction: React.FC<TeamProposalActionProps> = ({avalon, playerList}) =>
+{
 	const [isProposing, setIsProposing] = useState(false);
 
 	const isValidSelection = playerList.length === avalon.lobby.game.currentMission?.teamSize;
 
-	const proposeTeam = () => {
+	const proposeTeam = () =>
+	{
 		setIsProposing(true);
 		avalon.proposeTeam?.(playerList);
 	};

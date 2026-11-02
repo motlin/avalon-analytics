@@ -6,7 +6,8 @@
  */
 
 import type {Game, Mission, Proposal} from './game';
-import type {
+import type
+{
 	AnnotatedGame,
 	AnnotatedMission,
 	AnnotatedPlayerRow,
@@ -27,10 +28,12 @@ import {evaluateMissionVote} from './missionVotePredicates';
 // 🎯 Main Annotator
 // ============================================================================
 
-export function annotateGame(game: Game): AnnotatedGame {
+export function annotateGame(game: Game): AnnotatedGame
+{
 	const context = createGameContext(game);
 
-	const annotatedMissions: AnnotatedMission[] = game.missions.map((mission, missionIndex) => {
+	const annotatedMissions: AnnotatedMission[] = game.missions.map((mission, missionIndex) =>
+	{
 		return annotateMission(context, mission, missionIndex);
 	});
 
@@ -40,14 +43,17 @@ export function annotateGame(game: Game): AnnotatedGame {
 	};
 }
 
-function annotateMission(context: GameContext, mission: Mission, missionIndex: number): AnnotatedMission {
-	const missionContext: MissionContext = {
+function annotateMission(context: GameContext, mission: Mission, missionIndex: number): AnnotatedMission
+{
+	const missionContext: MissionContext =
+	{
 		...context,
 		mission,
 		missionNumber: missionIndex,
 	};
 
-	const annotatedProposals: AnnotatedProposal[] = mission.proposals.map((proposal, proposalIndex) => {
+	const annotatedProposals: AnnotatedProposal[] = mission.proposals.map((proposal, proposalIndex) =>
+	{
 		return annotateProposal(missionContext, proposal, proposalIndex);
 	});
 
@@ -64,12 +70,10 @@ function annotateMission(context: GameContext, mission: Mission, missionIndex: n
 	};
 }
 
-function annotateProposal(
-	missionContext: MissionContext,
-	proposal: Proposal,
-	proposalIndex: number,
-): AnnotatedProposal {
-	const context: ProposalContext = {
+function annotateProposal(missionContext: MissionContext, proposal: Proposal, proposalIndex: number): AnnotatedProposal
+{
+	const context: ProposalContext =
+	{
 		...missionContext,
 		proposal,
 		proposalNumber: proposalIndex,
@@ -91,7 +95,8 @@ function annotateProposal(
 	};
 }
 
-function buildPlayerRows(context: ProposalContext): AnnotatedPlayerRow[] {
+function buildPlayerRows(context: ProposalContext): AnnotatedPlayerRow[]
+{
 	const rows: AnnotatedPlayerRow[] = [];
 	const players = context.game.players;
 	// Hammer is determined by the FIRST proposal's leader, not the current one
@@ -101,10 +106,12 @@ function buildPlayerRows(context: ProposalContext): AnnotatedPlayerRow[] {
 	const hammerIndex = (firstLeaderIndex + 4) % players.length;
 	const hammerName = players[hammerIndex].name;
 
-	for (const player of players) {
+	for (const player of players)
+	{
 		const votedYes = context.proposal.votes.includes(player.name);
 
-		const voteContext: ProposalVoteContext = {
+		const voteContext: ProposalVoteContext =
+		{
 			...context,
 			voterName: player.name,
 			votedYes,
@@ -112,28 +119,33 @@ function buildPlayerRows(context: ProposalContext): AnnotatedPlayerRow[] {
 
 		const voteAnnotations = evaluateProposalVote(voteContext);
 
-		rows.push({
-			playerName: player.name,
-			playerRole: getPlayerRole(context, player.name),
-			isLeader: context.proposal.proposer === player.name,
-			isHammer: player.name === hammerName,
-			isOnTeam: context.proposal.team.includes(player.name),
-			votedYes,
-			voteAnnotations,
-		});
+		rows.push(
+			{
+				playerName: player.name,
+				playerRole: getPlayerRole(context, player.name),
+				isLeader: context.proposal.proposer === player.name,
+				isHammer: player.name === hammerName,
+				isOnTeam: context.proposal.team.includes(player.name),
+				votedYes,
+				voteAnnotations,
+			},
+		);
 	}
 
 	return rows;
 }
 
-function evaluateMissionVotes(context: MissionContext): Annotation[] {
+function evaluateMissionVotes(context: MissionContext): Annotation[]
+{
 	const annotations: Annotation[] = [];
 	const missionVotes = context.game.outcome?.votes?.[context.missionNumber];
 
 	if (!missionVotes) return annotations;
 
-	for (const [playerName, votedSuccess] of Object.entries(missionVotes)) {
-		const voteContext: MissionVoteContext = {
+	for (const [playerName, votedSuccess] of Object.entries(missionVotes))
+	{
+		const voteContext: MissionVoteContext =
+		{
 			...context,
 			voterName: playerName,
 			votedSuccess,
@@ -150,7 +162,8 @@ function evaluateMissionVotes(context: MissionContext): Annotation[] {
 // 📊 Summary Statistics
 // ============================================================================
 
-export interface GameStats {
+export interface GameStats
+{
 	totalAnnotations: number;
 	proposalAnnotations: number;
 	proposalVoteAnnotations: number;
@@ -159,8 +172,10 @@ export interface GameStats {
 	annotationsByPlayer: Map<string, number>;
 }
 
-export function getGameStats(annotatedGame: AnnotatedGame): GameStats {
-	const stats: GameStats = {
+export function getGameStats(annotatedGame: AnnotatedGame): GameStats
+{
+	const stats: GameStats =
+	{
 		totalAnnotations: 0,
 		proposalAnnotations: 0,
 		proposalVoteAnnotations: 0,
@@ -169,10 +184,13 @@ export function getGameStats(annotatedGame: AnnotatedGame): GameStats {
 		annotationsByPlayer: new Map(),
 	};
 
-	for (const mission of annotatedGame.missions) {
-		for (const proposal of mission.proposals) {
+	for (const mission of annotatedGame.missions)
+	{
+		for (const proposal of mission.proposals)
+		{
 			// Count proposal annotations
-			for (const annotation of proposal.annotations) {
+			for (const annotation of proposal.annotations)
+			{
 				stats.totalAnnotations++;
 				stats.proposalAnnotations++;
 				incrementMap(stats.annotationsByPredicate, annotation.predicateName);
@@ -180,8 +198,10 @@ export function getGameStats(annotatedGame: AnnotatedGame): GameStats {
 			}
 
 			// Count vote annotations
-			for (const row of proposal.playerRows) {
-				for (const annotation of row.voteAnnotations) {
+			for (const row of proposal.playerRows)
+			{
+				for (const annotation of row.voteAnnotations)
+				{
 					stats.totalAnnotations++;
 					stats.proposalVoteAnnotations++;
 					incrementMap(stats.annotationsByPredicate, annotation.predicateName);
@@ -191,7 +211,8 @@ export function getGameStats(annotatedGame: AnnotatedGame): GameStats {
 		}
 
 		// Count mission vote annotations
-		for (const annotation of mission.missionVoteAnnotations) {
+		for (const annotation of mission.missionVoteAnnotations)
+		{
 			stats.totalAnnotations++;
 			stats.missionVoteAnnotations++;
 			incrementMap(stats.annotationsByPredicate, annotation.predicateName);
@@ -202,7 +223,8 @@ export function getGameStats(annotatedGame: AnnotatedGame): GameStats {
 	return stats;
 }
 
-function incrementMap(map: Map<string, number>, key: string): void {
+function incrementMap(map: Map<string, number>, key: string): void
+{
 	map.set(key, (map.get(key) ?? 0) + 1);
 }
 
@@ -210,23 +232,27 @@ function incrementMap(map: Map<string, number>, key: string): void {
 // 🎨 Display Helpers
 // ============================================================================
 
-export function formatRoleWithEmoji(role: string | undefined): string {
+export function formatRoleWithEmoji(role: string | undefined): string
+{
 	if (!role) return '❓ Unknown';
 	return `${getRoleEmoji(role)} ${role}`;
 }
 
-export function formatTeamIndicator(isLeader: boolean, isOnTeam: boolean): string {
+export function formatTeamIndicator(isLeader: boolean, isOnTeam: boolean): string
+{
 	if (isLeader && isOnTeam) return '👑☑️';
 	if (isLeader) return '👑⬜';
 	if (isOnTeam) return '⬜☑️';
 	return '⬜⬜';
 }
 
-export function formatVoteIndicator(votedYes: boolean): string {
+export function formatVoteIndicator(votedYes: boolean): string
+{
 	return votedYes ? '✅' : '❌';
 }
 
-export function formatMissionOutcome(state: 'SUCCESS' | 'FAIL' | 'PENDING', failCount: number): string {
+export function formatMissionOutcome(state: 'SUCCESS' | 'FAIL' | 'PENDING', failCount: number): string
+{
 	if (state === 'PENDING') return 'Pending';
 	if (state === 'SUCCESS')
 		return failCount > 0 ? `Success (${failCount} fail${failCount > 1 ? 's' : ''})` : 'Success';
@@ -237,12 +263,19 @@ export function formatProposalOutcome(
 	state: 'APPROVED' | 'REJECTED' | 'PENDING',
 	yesVotes: number,
 	totalPlayers: number,
-): string {
+): string
+{
 	if (state === 'PENDING') return 'Pending';
 	return `${state === 'APPROVED' ? 'Approved' : 'Rejected'} with ${yesVotes}/${totalPlayers}`;
 }
 
-export function getTeamComposition(playerRows: AnnotatedPlayerRow[]): {good: number; evil: number; unknown: number} {
+export function getTeamComposition(playerRows: AnnotatedPlayerRow[]):
+{
+	good: number;
+	evil: number;
+	unknown: number;
+}
+{
 	const teamMembers = playerRows.filter((row) => row.isOnTeam);
 	return {
 		good: teamMembers.filter((row) => isGoodRole(row.playerRole)).length,

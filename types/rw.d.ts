@@ -1,7 +1,9 @@
-import { AppContext } from "../src/worker";
+import {AppContext} from '../src/worker';
 
-declare module "rwsdk/worker" {
-  interface DefaultAppContext extends AppContext {
-    userAgent?: string;
-  }
+declare module 'rwsdk/worker'
+{
+	interface DefaultAppContext extends AppContext
+	{
+		userAgent?: string;
+	}
 }

@@ -20,19 +20,29 @@ import {z} from 'zod';
 const DATABASE_NAME = 'avalon-analytics-juicy-tyrannosaurus';
 const BATCH_SIZE = 500;
 
-interface Args {
+interface Args
+{
 	dryRun: boolean;
 	local: boolean;
 }
 
-function parseArgs(): Args {
+function parseArgs(): Args
+{
 	const args = process.argv.slice(2);
-	const result: Args = {dryRun: false, local: false};
+	const result: Args =
+	{
+		dryRun: false,
+		local: false,
+	};
 
-	for (const arg of args) {
-		if (arg === '--dry-run') {
+	for (const arg of args)
+	{
+		if (arg === '--dry-run')
+		{
 			result.dryRun = true;
-		} else if (arg === '--local') {
+		}
+		else if (arg === '--local')
+		{
 			result.local = true;
 		}
 	}
@@ -40,23 +50,36 @@ function parseArgs(): Args {
 	return result;
 }
 
-function escapeSQL(str: string): string {
+function escapeSQL(str: string): string
+{
 	return str.replace(/'/g, "''");
 }
 
-function extractPlayerUids(gameJson: string): string[] {
-	try {
-		const game = JSON.parse(gameJson) as {players?: Array<{uid?: string}>};
-		if (!Array.isArray(game.players)) {
+function extractPlayerUids(gameJson: string): string[]
+{
+	try
+	{
+		const game = JSON.parse(gameJson) as
+		{
+			players?: Array<
+			{
+				uid?: string;
+			}>;
+		};
+		if (!Array.isArray(game.players))
+		{
 			return [];
 		}
 		return game.players.map((p) => p.uid).filter((uid): uid is string => typeof uid === 'string');
-	} catch {
+	}
+	catch
+	{
 		return [];
 	}
 }
 
-interface RawGame {
+interface RawGame
+{
 	firebaseKey: string;
 	gameJson: string;
 	createdAt: string;
@@ -64,7 +87,8 @@ interface RawGame {
 
 const PAGE_SIZE = 500;
 
-function getGamesBatch(local: boolean, offset: number): RawGame[] {
+function getGamesBatch(local: boolean, offset: number): RawGame[]
+{
 	const locationFlag = local ? '--local' : '--remote';
 	const sql = `SELECT firebaseKey, gameJson, createdAt FROM RawGameData ORDER BY firebaseKey LIMIT ${PAGE_SIZE} OFFSET ${offset}`;
 
@@ -79,42 +103,51 @@ function getGamesBatch(local: boolean, offset: number): RawGame[] {
 
 	// Extract JSON from output (wrangler adds console text before the JSON)
 	const jsonStart = output.indexOf('[');
-	if (jsonStart === -1) {
+	if (jsonStart === -1)
+	{
 		throw new Error('No JSON array found in wrangler output');
 	}
 	const jsonOutput = output.slice(jsonStart);
 
 	const QueryResultSchema = z.array(
-		z.object({
-			results: z.array(
-				z.object({
-					firebaseKey: z.string(),
-					gameJson: z.string(),
-					createdAt: z.string(),
-				}),
-			),
-		}),
+		z.object(
+			{
+				results: z.array(
+					z.object(
+						{
+							firebaseKey: z.string(),
+							gameJson: z.string(),
+							createdAt: z.string(),
+						},
+					),
+				),
+			},
+		),
 	);
 
 	const parsed = QueryResultSchema.parse(JSON.parse(jsonOutput));
 	const games: RawGame[] = [];
-	for (const result of parsed) {
+	for (const result of parsed)
+	{
 		games.push(...result.results);
 	}
 
 	return games;
 }
 
-function* getAllGames(local: boolean): Generator<RawGame[], void, unknown> {
+function* getAllGames(local: boolean): Generator<RawGame[], void, unknown>
+{
 	const target = local ? 'local' : 'remote';
 	console.log(`Fetching games from RawGameData (${target}) in batches of ${PAGE_SIZE}...`);
 
 	let offset = 0;
 	let totalFetched = 0;
 
-	while (true) {
+	while (true)
+	{
 		const games = getGamesBatch(local, offset);
-		if (games.length === 0) {
+		if (games.length === 0)
+		{
 			break;
 		}
 
@@ -123,7 +156,8 @@ function* getAllGames(local: boolean): Generator<RawGame[], void, unknown> {
 
 		yield games;
 
-		if (games.length < PAGE_SIZE) {
+		if (games.length < PAGE_SIZE)
+		{
 			break;
 		}
 		offset += PAGE_SIZE;
@@ -132,10 +166,12 @@ function* getAllGames(local: boolean): Generator<RawGame[], void, unknown> {
 	console.log(`Total: ${totalFetched} games fetched`);
 }
 
-function executeSQLBatch(statements: string[], dryRun: boolean, local: boolean): void {
+function executeSQLBatch(statements: string[], dryRun: boolean, local: boolean): void
+{
 	const sql = statements.join('\n');
 
-	if (dryRun) {
+	if (dryRun)
+	{
 		console.log(`Would execute ${statements.length} SQL statements`);
 		return;
 	}
@@ -145,15 +181,19 @@ function executeSQLBatch(statements: string[], dryRun: boolean, local: boolean):
 
 	const locationFlag = local ? '--local' : '--remote';
 
-	execSync(`npx wrangler d1 execute ${DATABASE_NAME} ${locationFlag} --yes --file="${tempFile}"`, {
-		encoding: 'utf-8',
-		stdio: ['pipe', 'pipe', 'pipe'],
-	});
+	execSync(
+		`npx wrangler d1 execute ${DATABASE_NAME} ${locationFlag} --yes --file="${tempFile}"`,
+		{
+			encoding: 'utf-8',
+			stdio: ['pipe', 'pipe', 'pipe'],
+		},
+	);
 
 	fs.unlinkSync(tempFile);
 }
 
-async function main(): Promise<void> {
+async function main(): Promise<void>
+{
 	const args = parseArgs();
 	const target = args.local ? 'local' : 'remote';
 
@@ -163,18 +203,22 @@ async function main(): Promise<void> {
 	let batchStatements: string[] = [];
 	let batchNumber = 0;
 
-	for (const gameBatch of getAllGames(args.local)) {
-		for (const game of gameBatch) {
+	for (const gameBatch of getAllGames(args.local))
+	{
+		for (const game of gameBatch)
+		{
 			const playerUids = extractPlayerUids(game.gameJson);
 
-			for (const uid of playerUids) {
+			for (const uid of playerUids)
+			{
 				const id = crypto.randomUUID();
 				batchStatements.push(
 					`INSERT OR IGNORE INTO "PlayerGame" ("id", "playerUid", "firebaseKey", "createdAt") VALUES ('${escapeSQL(id)}', '${escapeSQL(uid)}', '${escapeSQL(game.firebaseKey)}', '${game.createdAt}');`,
 				);
 				totalStatements++;
 
-				if (batchStatements.length >= BATCH_SIZE) {
+				if (batchStatements.length >= BATCH_SIZE)
+				{
 					batchNumber++;
 					console.log(`Executing insert batch ${batchNumber} (${batchStatements.length} statements)...`);
 					executeSQLBatch(batchStatements, args.dryRun, args.local);
@@ -184,7 +228,8 @@ async function main(): Promise<void> {
 		}
 	}
 
-	if (batchStatements.length > 0) {
+	if (batchStatements.length > 0)
+	{
 		batchNumber++;
 		console.log(`Executing insert batch ${batchNumber} (${batchStatements.length} statements)...`);
 		executeSQLBatch(batchStatements, args.dryRun, args.local);
@@ -193,7 +238,8 @@ async function main(): Promise<void> {
 	console.log(`\n✅ Backfill complete: ${totalStatements} PlayerGame records${args.dryRun ? ' (dry run)' : ''}`);
 }
 
-main().catch((error) => {
+main().catch((error) =>
+{
 	console.error('Error:', error);
 	process.exit(1);
 });

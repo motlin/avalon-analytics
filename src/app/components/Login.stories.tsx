@@ -1,13 +1,17 @@
 import type {Meta, StoryObj} from '@storybook/react-vite';
 import Login from './Login';
 
-const meta: Meta<typeof Login> = {
+const meta: Meta<typeof Login> =
+{
 	title: 'Authentication/Login',
 	component: Login,
-	parameters: {
+	parameters:
+	{
 		layout: 'fullscreen',
-		docs: {
-			description: {
+		docs:
+		{
+			description:
+			{
 				component: `The Login component provides the main entry point for users to join or create game lobbies.
 
 ## Features
@@ -33,18 +37,22 @@ The component gracefully handles:
 		},
 	},
 	tags: ['autodocs', 'test'],
-	argTypes: {
-		avalon: {
+	argTypes:
+	{
+		avalon:
+		{
 			control: 'object',
 			description: 'Avalon API object containing user data, stats, and methods for lobby operations',
 		},
-		disableAutoFocus: {
+		disableAutoFocus:
+		{
 			control: 'boolean',
 			description: 'Disable auto-focus on the name input field',
 			defaultValue: true,
 		},
 	},
-	args: {
+	args:
+	{
 		disableAutoFocus: true,
 	},
 };
@@ -52,11 +60,14 @@ The component gracefully handles:
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const mockAvalonApi = {
-	user: {
+const mockAvalonApi =
+{
+	user:
+	{
 		name: 'TESTUSER',
 		email: 'test@example.com',
-		stats: {
+		stats:
+		{
 			games: 25,
 			good: 15,
 			wins: 18,
@@ -64,86 +75,115 @@ const mockAvalonApi = {
 			playtimeSeconds: 3600,
 		},
 	},
-	globalStats: {
+	globalStats:
+	{
 		games: 5000,
 		good_wins: 2750,
 	},
-	createLobby: async (name: string): Promise<void> => {
+	createLobby: async (name: string): Promise<void> =>
+	{
 		console.log('Create lobby called with name:', name);
 		return new Promise<void>((resolve) => setTimeout(resolve, 1000));
 	},
-	joinLobby: async (name: string, lobby: string): Promise<void> => {
+	joinLobby: async (name: string, lobby: string): Promise<void> =>
+	{
 		console.log('Join lobby called with name:', name, 'lobby:', lobby);
 		return new Promise<void>((resolve) => setTimeout(resolve, 1000));
 	},
 };
 
-const mockAvalonApiError = {
+const mockAvalonApiError =
+{
 	...mockAvalonApi,
-	createLobby: async (): Promise<void> => {
+	createLobby: async (): Promise<void> =>
+	{
 		throw new Error('Failed to create lobby');
 	},
-	joinLobby: async (): Promise<void> => {
+	joinLobby: async (): Promise<void> =>
+	{
 		throw new Error('Lobby not found');
 	},
 };
 
-export const WithUser: Story = {
-	args: {
+export const WithUser: Story =
+{
+	args:
+	{
 		avalon: mockAvalonApi,
 	},
-	parameters: {
-		docs: {
-			description: {
+	parameters:
+	{
+		docs:
+		{
+			description:
+			{
 				story: 'Shows the login screen for an authenticated user with their stats and ability to create/join lobbies.',
 			},
 		},
 	},
 };
 
-export const WithoutUser: Story = {
-	args: {
-		avalon: {
+export const WithoutUser: Story =
+{
+	args:
+	{
+		avalon:
+		{
 			...mockAvalonApi,
 			user: undefined,
 		},
 	},
-	parameters: {
-		docs: {
-			description: {
+	parameters:
+	{
+		docs:
+		{
+			description:
+			{
 				story: "Shows the login screen for an unauthenticated user. They can still join or create lobbies but won't see personal stats.",
 			},
 		},
 	},
 };
 
-export const EmptyStats: Story = {
-	args: {
-		avalon: {
+export const EmptyStats: Story =
+{
+	args:
+	{
+		avalon:
+		{
 			...mockAvalonApi,
-			user: {
+			user:
+			{
 				...mockAvalonApi.user,
 				stats: {},
 			},
 			globalStats: undefined,
 		},
 	},
-	parameters: {
-		docs: {
-			description: {
+	parameters:
+	{
+		docs:
+		{
+			description:
+			{
 				story: 'Shows the component when user stats are not available. This might happen for new users or when stats fail to load.',
 			},
 		},
 	},
 };
 
-export const ErrorScenario: Story = {
-	args: {
+export const ErrorScenario: Story =
+{
+	args:
+	{
 		avalon: mockAvalonApiError,
 	},
-	parameters: {
-		docs: {
-			description: {
+	parameters:
+	{
+		docs:
+		{
+			description:
+			{
 				story: 'Demonstrates error handling when lobby operations fail. Try creating or joining a lobby to see error messages.',
 			},
 		},

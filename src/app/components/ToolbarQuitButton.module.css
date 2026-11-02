@@ -1,4 +1,5 @@
-.quitButton {
+.quitButton
+{
 	display: inline-flex;
 	align-items: center;
 	gap: 8px;
@@ -15,32 +16,38 @@
 	justify-content: center;
 }
 
-.quitButton:hover:not(:disabled) {
+.quitButton:hover:not(:disabled)
+{
 	background-color: #d32f2f;
 	transform: translateY(-1px);
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-.quitButton:active:not(:disabled) {
+.quitButton:active:not(:disabled)
+{
 	transform: translateY(0);
 	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
-.quitButton:disabled {
+.quitButton:disabled
+{
 	opacity: 0.6;
 	cursor: not-allowed;
 }
 
-.loading {
+.loading
+{
 	animation: pulse 1.5s ease-in-out infinite;
 }
 
-.icon {
+.icon
+{
 	font-size: 16px;
 	line-height: 1;
 }
 
-.overlay {
+.overlay
+{
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -53,13 +60,15 @@
 	z-index: 1000;
 }
 
-.dialog {
+.dialog
+{
 	max-width: 450px;
 	width: 90%;
 	margin: 0 auto;
 }
 
-.card {
+.card
+{
 	background-color: #b2dfdb;
 	border-radius: 4px;
 	box-shadow:
@@ -69,44 +78,52 @@
 	overflow: hidden;
 }
 
-.title {
+.title
+{
 	background-color: #80cbc4;
 	padding: 16px;
 }
 
-.title h3 {
+.title h3
+{
 	margin: 0;
 	font-size: 1.25rem;
 	font-weight: 500;
 	color: rgba(0, 0, 0, 0.87);
 }
 
-.content {
+.content
+{
 	padding: 16px;
 	color: rgba(0, 0, 0, 0.87);
 }
 
-.content p {
+.content p
+{
 	margin: 0 0 16px 0;
 }
 
-.content p:last-child {
+.content p:last-child
+{
 	margin-bottom: 0;
 }
 
-.divider {
+.divider
+{
 	height: 1px;
 	background-color: rgba(0, 0, 0, 0.12);
 }
 
-.actions {
+.actions
+{
 	padding: 8px;
 	display: flex;
 	justify-content: flex-end;
 	gap: 8px;
 }
 
-.primaryButton {
+.primaryButton
+{
 	background-color: transparent;
 	border: none;
 	color: #1976d2;
@@ -119,16 +136,19 @@
 	transition: background-color 0.2s ease;
 }
 
-.primaryButton:hover {
+.primaryButton:hover
+{
 	background-color: rgba(25, 118, 210, 0.08);
 }
 
-.primaryButton:focus {
+.primaryButton:focus
+{
 	background-color: rgba(25, 118, 210, 0.12);
 	outline: none;
 }
 
-.secondaryButton {
+.secondaryButton
+{
 	background-color: transparent;
 	border: none;
 	color: #757575;
@@ -141,23 +161,29 @@
 	transition: background-color 0.2s ease;
 }
 
-.secondaryButton:hover {
+.secondaryButton:hover
+{
 	background-color: rgba(117, 117, 117, 0.08);
 }
 
-.secondaryButton:focus {
+.secondaryButton:focus
+{
 	background-color: rgba(117, 117, 117, 0.12);
 	outline: none;
 }
 
-@keyframes pulse {
-	0% {
+@keyframes pulse
+{
+	0%
+	{
 		opacity: 1;
 	}
-	50% {
+	50%
+	{
 		opacity: 0.7;
 	}
-	100% {
+	100%
+	{
 		opacity: 1;
 	}
 }

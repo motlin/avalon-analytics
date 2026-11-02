@@ -21,43 +21,58 @@ import JSON5 from 'json5';
 const DATABASE_NAME = 'avalon-analytics-juicy-tyrannosaurus';
 const CONFIG_PATH = '/Users/craig/projects/avalon-log-scraper/avalon-dropwizard-application/config.json5';
 
-interface PersonConfig {
+interface PersonConfig
+{
 	fullName: string;
 	uuids: string[];
-	dateRanges?: Array<{
+	dateRanges?: Array<
+	{
 		startDate?: string;
 		endDate?: string;
 	}>;
 }
 
-interface Args {
+interface Args
+{
 	dryRun: boolean;
 	local: boolean;
 }
 
-function loadPeopleFromConfig(): PersonConfig[] {
-	if (!fs.existsSync(CONFIG_PATH)) {
+function loadPeopleFromConfig(): PersonConfig[]
+{
+	if (!fs.existsSync(CONFIG_PATH))
+	{
 		throw new Error(`Config file not found: ${CONFIG_PATH}`);
 	}
 
 	const content = fs.readFileSync(CONFIG_PATH, 'utf-8');
 	const config = JSON5.parse(content);
 
-	if (!config.people?.people || !Array.isArray(config.people.people)) {
+	if (!config.people?.people || !Array.isArray(config.people.people))
+	{
 		throw new Error('Invalid config: expected people.people array');
 	}
 
 	return config.people.people as PersonConfig[];
 }
 
-function parseArgs(): Args {
+function parseArgs(): Args
+{
 	const args = process.argv.slice(2);
-	const result: Args = {dryRun: false, local: false};
+	const result: Args =
+	{
+		dryRun: false,
+		local: false,
+	};
 
-	for (const arg of args) {
-		if (arg === '--dry-run') {
+	for (const arg of args)
+	{
+		if (arg === '--dry-run')
+		{
 			result.dryRun = true;
-		} else if (arg === '--local') {
+		}
+		else if (arg === '--local')
+		{
 			result.local = true;
 		}
 	}
@@ -65,11 +80,13 @@ function parseArgs(): Args {
 	return result;
 }
 
-function escapeSQL(str: string): string {
+function escapeSQL(str: string): string
+{
 	return str.replace(/'/g, "''");
 }
 
-function executeQuery<T>(sql: string, local: boolean): T[] {
+function executeQuery<T>(sql: string, local: boolean): T[]
+{
 	const locationFlag = local ? '--local' : '--remote';
 	const escapedSql = sql.replace(/"/g, '\\"');
 	const output = execSync(
@@ -81,24 +98,29 @@ function executeQuery<T>(sql: string, local: boolean): T[] {
 	);
 
 	const jsonMatch = output.match(/\[[\s\S]*\]/);
-	if (!jsonMatch) {
+	if (!jsonMatch)
+	{
 		throw new Error(`No JSON found in wrangler output: ${output.substring(0, 200)}`);
 	}
 
 	const ResultSchema = z.array(
-		z.object({
-			results: z.array(z.unknown()),
-		}),
+		z.object(
+			{
+				results: z.array(z.unknown()),
+			},
+		),
 	);
 
 	const parsed = ResultSchema.parse(JSON.parse(jsonMatch[0]));
 	return parsed.flatMap((r) => r.results) as T[];
 }
 
-function executeSQLBatch(statements: string[], dryRun: boolean, local: boolean): void {
+function executeSQLBatch(statements: string[], dryRun: boolean, local: boolean): void
+{
 	const sql = statements.join('\n');
 
-	if (dryRun) {
+	if (dryRun)
+	{
 		console.log('Would execute SQL:');
 		console.log(sql.substring(0, 2000) + (sql.length > 2000 ? '...' : ''));
 		return;
@@ -108,23 +130,29 @@ function executeSQLBatch(statements: string[], dryRun: boolean, local: boolean):
 	fs.writeFileSync(tempFile, sql);
 
 	const locationFlag = local ? '--local' : '--remote';
-	execSync(`npx wrangler d1 execute ${DATABASE_NAME} ${locationFlag} --yes --file="${tempFile}"`, {
-		stdio: 'inherit',
-	});
+	execSync(
+		`npx wrangler d1 execute ${DATABASE_NAME} ${locationFlag} --yes --file="${tempFile}"`,
+		{
+			stdio: 'inherit',
+		},
+	);
 	fs.unlinkSync(tempFile);
 }
 
-interface ExistingPerson {
+interface ExistingPerson
+{
 	id: string;
 	name: string;
 }
 
-interface ExistingPersonUid {
+interface ExistingPersonUid
+{
 	uid: string;
 	personId: string;
 }
 
-async function main() {
+async function main()
+{
 	const args = parseArgs();
 	console.log(`Running with: local=${args.local}, dryRun=${args.dryRun}`);
 
@@ -136,7 +164,8 @@ async function main() {
 	const existingUids = executeQuery<ExistingPersonUid>('SELECT uid, personId FROM PersonUid', args.local);
 
 	const personByName = new Map<string, ExistingPerson>();
-	for (const p of existingPersons) {
+	for (const p of existingPersons)
+	{
 		personByName.set(p.name, p);
 	}
 
@@ -145,13 +174,16 @@ async function main() {
 	const statements: string[] = [];
 	const now = new Date().toISOString();
 
-	for (const person of people) {
+	for (const person of people)
+	{
 		const existingPerson = personByName.get(person.fullName);
 
-		if (existingPerson) {
+		if (existingPerson)
+		{
 			// Person exists, add any new UIDs
 			const newUids = person.uuids.filter((uid) => !uidSet.has(uid));
-			for (const uid of newUids) {
+			for (const uid of newUids)
+			{
 				const id = randomUUID();
 				statements.push(
 					`INSERT INTO PersonUid (id, uid, personId, createdAt) VALUES ('${id}', '${escapeSQL(uid)}', '${existingPerson.id}', '${now}');`,
@@ -159,7 +191,9 @@ async function main() {
 				uidSet.add(uid);
 				console.log(`Will add UID ${uid} to ${person.fullName}`);
 			}
-		} else {
+		}
+		else
+		{
 			// Create new person
 			const personId = randomUUID();
 			statements.push(
@@ -167,8 +201,10 @@ async function main() {
 			);
 
 			// Add all UIDs
-			for (const uid of person.uuids) {
-				if (!uidSet.has(uid)) {
+			for (const uid of person.uuids)
+			{
+				if (!uidSet.has(uid))
+				{
 					const uidId = randomUUID();
 					statements.push(
 						`INSERT INTO PersonUid (id, uid, personId, createdAt) VALUES ('${uidId}', '${escapeSQL(uid)}', '${personId}', '${now}');`,
@@ -178,8 +214,10 @@ async function main() {
 			}
 
 			// Add date ranges
-			if (person.dateRanges) {
-				for (const dr of person.dateRanges) {
+			if (person.dateRanges)
+			{
+				for (const dr of person.dateRanges)
+				{
 					const drId = randomUUID();
 					const startDate = dr.startDate || '';
 					const endDate = dr.endDate ? `'${dr.endDate}'` : 'NULL';
@@ -196,7 +234,8 @@ async function main() {
 		}
 	}
 
-	if (statements.length === 0) {
+	if (statements.length === 0)
+	{
 		console.log('No changes needed - all people already exist');
 		return;
 	}

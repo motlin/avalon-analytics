@@ -136,7 +136,8 @@
 			"numFails": 0
 		}
 	],
-	"outcome": {
+	"outcome":
+	{
 		"state": "GOOD_WIN",
 		"message": "Three successful missions",
 		"assassinated": "ROB",
@@ -259,19 +260,24 @@
 			"uid": "xZLkr6BbEXZjxfe0RIMHL7QbnEZ2"
 		}
 	],
-	"options": {
+	"options":
+	{
 		"inGameLog": false
 	},
-	"timeCreated": {
+	"timeCreated":
+	{
 		"__datatype__": "timestamp",
-		"value": {
+		"value":
+		{
 			"_seconds": 1752695665,
 			"_nanoseconds": 962000000
 		}
 	},
-	"timeFinished": {
+	"timeFinished":
+	{
 		"__datatype__": "timestamp",
-		"value": {
+		"value":
+		{
 			"_seconds": 1752697887,
 			"_nanoseconds": 749000000
 		}

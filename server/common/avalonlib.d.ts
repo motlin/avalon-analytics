@@ -1,4 +1,5 @@
-export interface Role {
+export interface Role
+{
 	name: string;
 	team: 'good' | 'evil';
 	sees?: string[];

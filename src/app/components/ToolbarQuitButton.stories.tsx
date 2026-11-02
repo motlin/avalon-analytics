@@ -1,13 +1,17 @@
 import type {Meta, StoryObj} from '@storybook/react-vite';
 import ToolbarQuitButton from './ToolbarQuitButton';
 
-const meta: Meta<typeof ToolbarQuitButton> = {
+const meta: Meta<typeof ToolbarQuitButton> =
+{
 	title: 'UI/ToolbarQuitButton',
 	component: ToolbarQuitButton,
-	parameters: {
+	parameters:
+	{
 		layout: 'centered',
-		docs: {
-			description: {
+		docs:
+		{
+			description:
+			{
 				component: `ToolbarQuitButton provides a context-sensitive exit option for leaving lobbies or canceling games.
 
 ## Features
@@ -38,10 +42,15 @@ function Toolbar() {
 		},
 	},
 	tags: ['autodocs'],
-	argTypes: {
-		avalon: {
+	argTypes:
+	{
+		avalon:
+		{
 			description: 'Avalon API object with game state and exit methods',
-			control: {type: 'object'},
+			control:
+			{
+				type: 'object',
+			},
 		},
 	},
 };
@@ -49,48 +58,64 @@ function Toolbar() {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const mockAvalonLobby = {
+const mockAvalonLobby =
+{
 	isGameInProgress: false,
-	cancelGame: () => {
+	cancelGame: () =>
+	{
 		console.log('Cancel game called');
 		return Promise.resolve();
 	},
-	leaveLobby: () => {
+	leaveLobby: () =>
+	{
 		console.log('Leave lobby called');
 	},
 };
 
-const mockAvalonGame = {
+const mockAvalonGame =
+{
 	isGameInProgress: true,
-	cancelGame: () => {
+	cancelGame: () =>
+	{
 		console.log('Cancel game called');
 		return Promise.resolve();
 	},
-	leaveLobby: () => {
+	leaveLobby: () =>
+	{
 		console.log('Leave lobby called');
 	},
 };
 
-export const LeaveLobby: Story = {
-	args: {
+export const LeaveLobby: Story =
+{
+	args:
+	{
 		avalon: mockAvalonLobby,
 	},
-	parameters: {
-		docs: {
-			description: {
+	parameters:
+	{
+		docs:
+		{
+			description:
+			{
 				story: 'Button in lobby state. Click to leave the lobby and return to the main menu.',
 			},
 		},
 	},
 };
 
-export const CancelGame: Story = {
-	args: {
+export const CancelGame: Story =
+{
+	args:
+	{
 		avalon: mockAvalonGame,
 	},
-	parameters: {
-		docs: {
-			description: {
+	parameters:
+	{
+		docs:
+		{
+			description:
+			{
 				story: 'Button during active game. Click to cancel the game for all players and return everyone to the lobby.',
 			},
 		},

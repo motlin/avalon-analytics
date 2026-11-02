@@ -1,18 +1,22 @@
 import type {PersonStatistics} from '../models/player-statistics';
 import styles from './YearlyStatsTable.module.css';
 
-interface YearlyStatsTableProps {
+interface YearlyStatsTableProps
+{
 	stats: PersonStatistics;
 }
 
-function formatRate(value: number): string {
+function formatRate(value: number): string
+{
 	return `${value.toFixed(0)}%`;
 }
 
-export function YearlyStatsTable({stats}: YearlyStatsTableProps) {
+export function YearlyStatsTable({stats}: YearlyStatsTableProps)
+{
 	const {yearlyStats} = stats;
 
-	if (yearlyStats.length <= 1) {
+	if (yearlyStats.length <= 1)
+	{
 		return null;
 	}
 
@@ -36,10 +40,7 @@ export function YearlyStatsTable({stats}: YearlyStatsTableProps) {
 					</thead>
 					<tbody>
 						{yearlyStats.map((year) => (
-							<tr
-								key={year.year}
-								className={styles.dataRow}
-							>
+							<tr key={year.year} className={styles.dataRow}>
 								<td className={styles.yearCell}>{year.year}</td>
 								<td className={styles.numCell}>{year.games}</td>
 								<td className={styles.numCell}>{year.wins}</td>

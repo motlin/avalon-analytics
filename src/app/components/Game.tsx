@@ -5,14 +5,17 @@ import ActionPane from './ActionPane';
 import styles from './Game.module.css';
 import type {AvalonApi} from './types';
 
-interface GameProps {
+interface GameProps
+{
 	avalon: AvalonApi;
 }
 
-const Game: React.FC<GameProps> = ({avalon}) => {
+const Game: React.FC<GameProps> = ({avalon}) =>
+{
 	const [selectedPlayers, setSelectedPlayers] = useState<string[]>([]);
 
-	const updateSelectedPlayers = (newList: string[]) => {
+	const updateSelectedPlayers = (newList: string[]) =>
+	{
 		setSelectedPlayers(newList);
 	};
 
@@ -22,16 +25,10 @@ const Game: React.FC<GameProps> = ({avalon}) => {
 				<Missions avalon={avalon} />
 			</div>
 			<div className={styles.container}>
-				<GameParticipants
-					avalon={avalon}
-					onSelectedPlayers={updateSelectedPlayers}
-				/>
+				<GameParticipants avalon={avalon} onSelectedPlayers={updateSelectedPlayers} />
 			</div>
 			<div className={styles.container}>
-				<ActionPane
-					avalon={avalon}
-					selectedPlayers={selectedPlayers}
-				/>
+				<ActionPane avalon={avalon} selectedPlayers={selectedPlayers} />
 			</div>
 		</div>
 	);

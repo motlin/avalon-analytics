@@ -1,13 +1,17 @@
 import type {Meta, StoryObj} from '@storybook/react-vite';
 import TeamProposalAction from './TeamProposalAction';
 
-const meta: Meta<typeof TeamProposalAction> = {
+const meta: Meta<typeof TeamProposalAction> =
+{
 	title: 'Gameplay/TeamProposalAction',
 	component: TeamProposalAction,
-	parameters: {
+	parameters:
+	{
 		layout: 'centered',
-		docs: {
-			description: {
+		docs:
+		{
+			description:
+			{
 				component: `
 The TeamProposalAction component allows the current proposer to select team members for a mission. This is a critical game mechanic where strategy and deduction come into play.
 
@@ -41,14 +45,21 @@ Team selection is crucial in Avalon:
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const mockGame = {
+const mockGame =
+{
 	id: 'proposal-game-1',
 	timeCreated: new Date('2024-01-01'),
-	players: [{uid: '1', name: 'CRAIGM'}],
+	players: [
+		{
+			uid: '1',
+			name: 'CRAIGM',
+		},
+	],
 	missions: [],
 	currentProposalIdx: 0,
 	currentProposer: 'CRAIGM',
-	currentMission: {
+	currentMission:
+	{
 		teamSize: 3,
 		failsRequired: 1,
 		proposals: [],
@@ -58,65 +69,85 @@ const mockGame = {
 	},
 };
 
-const mockAvalon = {
+const mockAvalon =
+{
 	game: mockGame,
-	user: {
+	user:
+	{
 		name: 'CRAIGM',
 	},
-	config: {
+	config:
+	{
 		roleMap: {},
 	},
-	lobby: {
+	lobby:
+	{
 		game: mockGame,
 	},
-	proposeTeam: (playerList: string[]) => {
+	proposeTeam: (playerList: string[]) =>
+	{
 		console.log('Proposing team:', playerList);
 	},
 };
 
-const mockAvalonAsSpectator = {
+const mockAvalonAsSpectator =
+{
 	...mockAvalon,
-	user: {
+	user:
+	{
 		name: 'ZEHUA',
 	},
 };
 
-export const AsProposer: Story = {
-	args: {
+export const AsProposer: Story =
+{
+	args:
+	{
 		avalon: mockAvalon,
 		playerList: ['CRAIGM', 'ZEHUA', 'VINAY'],
 	},
 };
 
-export const AsProposerInvalidSelection: Story = {
-	args: {
+export const AsProposerInvalidSelection: Story =
+{
+	args:
+	{
 		avalon: mockAvalon,
 		playerList: ['CRAIGM', 'ZEHUA'],
 	},
 };
 
-export const AsProposerEmptySelection: Story = {
-	args: {
+export const AsProposerEmptySelection: Story =
+{
+	args:
+	{
 		avalon: mockAvalon,
 		playerList: [],
 	},
 };
 
-export const AsSpectator: Story = {
-	args: {
+export const AsSpectator: Story =
+{
+	args:
+	{
 		avalon: mockAvalonAsSpectator,
 		playerList: [],
 	},
 };
 
-export const LaterProposal: Story = {
-	args: {
-		avalon: {
+export const LaterProposal: Story =
+{
+	args:
+	{
+		avalon:
+		{
 			...mockAvalon,
-			game: {
+			game:
+			{
 				...mockAvalon.game,
 				currentProposalIdx: 3,
-				currentMission: {
+				currentMission:
+				{
 					teamSize: 4,
 					failsRequired: 2,
 					proposals: [],
@@ -125,11 +156,14 @@ export const LaterProposal: Story = {
 					votes: [],
 				},
 			},
-			lobby: {
-				game: {
+			lobby:
+			{
+				game:
+				{
 					...mockAvalon.game,
 					currentProposalIdx: 3,
-					currentMission: {
+					currentMission:
+					{
 						teamSize: 4,
 						failsRequired: 2,
 						proposals: [],
@@ -144,11 +178,15 @@ export const LaterProposal: Story = {
 	},
 };
 
-export const Interactive: Story = {
-	args: {
-		avalon: {
+export const Interactive: Story =
+{
+	args:
+	{
+		avalon:
+		{
 			...mockAvalon,
-			proposeTeam: (playerList: string[]) => {
+			proposeTeam: (playerList: string[]) =>
+			{
 				alert(`Proposing team: ${playerList.join(', ')}`);
 			},
 		},

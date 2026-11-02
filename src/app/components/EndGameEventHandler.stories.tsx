@@ -1,10 +1,12 @@
 import type {Meta, StoryObj} from '@storybook/react-vite';
 import EndGameEventHandler from './EndGameEventHandler';
 
-const meta: Meta<typeof EndGameEventHandler> = {
+const meta: Meta<typeof EndGameEventHandler> =
+{
 	title: 'Endgame/EndGameEventHandler',
 	component: EndGameEventHandler,
-	parameters: {
+	parameters:
+	{
 		layout: 'fullscreen',
 	},
 };
@@ -12,22 +14,40 @@ const meta: Meta<typeof EndGameEventHandler> = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const createMockAvalon = (gameOutcome: 'GOOD_WIN' | 'EVIL_WIN' | 'CANCELED', assassinated?: string) => {
+const createMockAvalon = (gameOutcome: 'GOOD_WIN' | 'EVIL_WIN' | 'CANCELED', assassinated?: string) =>
+{
 	const eventListeners: Array<(event: string) => void> = [];
 
 	return {
-		user: {
+		user:
+		{
 			name: 'CRAIGM',
 		},
-		game: {
+		game:
+		{
 			id: 'mock-game-id',
 			timeCreated: new Date('2025-01-01T00:00:00Z'),
 			players: [
-				{uid: 'uid-1', name: 'CRAIGM'},
-				{uid: 'uid-2', name: 'ZEHUA'},
-				{uid: 'uid-3', name: 'VINAY'},
-				{uid: 'uid-4', name: 'LUKEE'},
-				{uid: 'uid-5', name: 'KEN'},
+				{
+					uid: 'uid-1',
+					name: 'CRAIGM',
+				},
+				{
+					uid: 'uid-2',
+					name: 'ZEHUA',
+				},
+				{
+					uid: 'uid-3',
+					name: 'VINAY',
+				},
+				{
+					uid: 'uid-4',
+					name: 'LUKEE',
+				},
+				{
+					uid: 'uid-5',
+					name: 'KEN',
+				},
 			],
 			missions: [
 				{
@@ -65,7 +85,8 @@ const createMockAvalon = (gameOutcome: 'GOOD_WIN' | 'EVIL_WIN' | 'CANCELED', ass
 					numFails: 0,
 				},
 			],
-			outcome: {
+			outcome:
+			{
 				state: gameOutcome,
 				message:
 					gameOutcome === 'GOOD_WIN'
@@ -75,31 +96,81 @@ const createMockAvalon = (gameOutcome: 'GOOD_WIN' | 'EVIL_WIN' | 'CANCELED', ass
 							: 'The game has been canceled.',
 				assassinated,
 				roles: [
-					{name: 'CRAIGM', role: 'MERLIN', assassin: false},
-					{name: 'ZEHUA', role: 'PERCIVAL', assassin: false},
-					{name: 'VINAY', role: 'LOYAL FOLLOWER', assassin: false},
-					{name: 'LUKEE', role: 'MORGANA', assassin: false},
-					{name: 'KEN', role: 'ASSASSIN', assassin: true},
+					{
+						name: 'CRAIGM',
+						role: 'MERLIN',
+						assassin: false,
+					},
+					{
+						name: 'ZEHUA',
+						role: 'PERCIVAL',
+						assassin: false,
+					},
+					{
+						name: 'VINAY',
+						role: 'LOYAL FOLLOWER',
+						assassin: false,
+					},
+					{
+						name: 'LUKEE',
+						role: 'MORGANA',
+						assassin: false,
+					},
+					{
+						name: 'KEN',
+						role: 'ASSASSIN',
+						assassin: true,
+					},
 				],
 				votes: [
-					{CRAIGM: true, ZEHUA: true, VINAY: false, LUKEE: false, KEN: false},
-					{CRAIGM: false, ZEHUA: true, VINAY: false, LUKEE: false, KEN: false},
+					{
+						CRAIGM: true,
+						ZEHUA: true,
+						VINAY: false,
+						LUKEE: false,
+						KEN: false,
+					},
+					{
+						CRAIGM: false,
+						ZEHUA: true,
+						VINAY: false,
+						LUKEE: false,
+						KEN: false,
+					},
 				],
 			},
 		},
-		lobby: {
-			game: {
+		lobby:
+		{
+			game:
+			{
 				id: 'mock-game-id',
 				timeCreated: new Date('2025-01-01T00:00:00Z'),
 				players: [
-					{uid: 'uid-1', name: 'CRAIGM'},
-					{uid: 'uid-2', name: 'ZEHUA'},
-					{uid: 'uid-3', name: 'VINAY'},
-					{uid: 'uid-4', name: 'LUKEE'},
-					{uid: 'uid-5', name: 'KEN'},
+					{
+						uid: 'uid-1',
+						name: 'CRAIGM',
+					},
+					{
+						uid: 'uid-2',
+						name: 'ZEHUA',
+					},
+					{
+						uid: 'uid-3',
+						name: 'VINAY',
+					},
+					{
+						uid: 'uid-4',
+						name: 'LUKEE',
+					},
+					{
+						uid: 'uid-5',
+						name: 'KEN',
+					},
 				],
 				missions: [],
-				outcome: {
+				outcome:
+				{
 					state: gameOutcome,
 					message: '',
 					assassinated: undefined,
@@ -108,110 +179,178 @@ const createMockAvalon = (gameOutcome: 'GOOD_WIN' | 'EVIL_WIN' | 'CANCELED', ass
 				},
 			},
 		},
-		config: {
+		config:
+		{
 			roles: [
-				{name: 'MERLIN'},
-				{name: 'PERCIVAL'},
-				{name: 'LOYAL FOLLOWER'},
-				{name: 'MORGANA'},
-				{name: 'ASSASSIN'},
+				{
+					name: 'MERLIN',
+				},
+				{
+					name: 'PERCIVAL',
+				},
+				{
+					name: 'LOYAL FOLLOWER',
+				},
+				{
+					name: 'MORGANA',
+				},
+				{
+					name: 'ASSASSIN',
+				},
 			],
-			roleMap: {
-				MERLIN: {name: 'MERLIN', team: 'good' as const, description: 'Knows the evil players'},
-				PERCIVAL: {name: 'PERCIVAL', team: 'good' as const, description: 'Knows Merlin and Morgana'},
-				'LOYAL FOLLOWER': {
+			roleMap:
+			{
+				MERLIN:
+				{
+					name: 'MERLIN',
+					team: 'good' as const,
+					description: 'Knows the evil players',
+				},
+				PERCIVAL:
+				{
+					name: 'PERCIVAL',
+					team: 'good' as const,
+					description: 'Knows Merlin and Morgana',
+				},
+				'LOYAL FOLLOWER':
+				{
 					name: 'LOYAL FOLLOWER',
 					team: 'good' as const,
 					description: 'Loyal to good',
 				},
-				MORGANA: {name: 'MORGANA', team: 'evil' as const, description: 'Appears as Merlin'},
-				ASSASSIN: {name: 'ASSASSIN', team: 'evil' as const, description: 'Can assassinate Merlin'},
+				MORGANA:
+				{
+					name: 'MORGANA',
+					team: 'evil' as const,
+					description: 'Appears as Merlin',
+				},
+				ASSASSIN:
+				{
+					name: 'ASSASSIN',
+					team: 'evil' as const,
+					description: 'Can assassinate Merlin',
+				},
 			},
 		},
-		onEvent: (callback: (event: string) => void) => {
+		onEvent: (callback: (event: string) => void) =>
+		{
 			eventListeners.push(callback);
 
 			// Automatically trigger GAME_ENDED event
-			setTimeout(() => {
+			setTimeout(() =>
+			{
 				eventListeners.forEach((listener) => listener('GAME_ENDED'));
 			}, 100);
 
-			return () => {
+			return () =>
+			{
 				const index = eventListeners.indexOf(callback);
-				if (index > -1) {
+				if (index > -1)
+				{
 					eventListeners.splice(index, 1);
 				}
 			};
 		},
-		triggerEvent: (event: string) => {
+		triggerEvent: (event: string) =>
+		{
 			eventListeners.forEach((listener) => listener(event));
 		},
 	};
 };
 
-export const GoodWins: Story = {
-	args: {
+export const GoodWins: Story =
+{
+	args:
+	{
 		avalon: createMockAvalon('GOOD_WIN'),
 	},
-	parameters: {
-		docs: {
-			description: {
+	parameters:
+	{
+		docs:
+		{
+			description:
+			{
 				story: 'Shows the end game dialog when good wins the game.',
 			},
 		},
 	},
 };
 
-export const EvilWins: Story = {
-	args: {
+export const EvilWins: Story =
+{
+	args:
+	{
 		avalon: createMockAvalon('EVIL_WIN'),
 	},
-	parameters: {
-		docs: {
-			description: {
+	parameters:
+	{
+		docs:
+		{
+			description:
+			{
 				story: 'Shows the end game dialog when evil wins the game.',
 			},
 		},
 	},
 };
 
-export const EvilWinsWithAssassination: Story = {
-	args: {
+export const EvilWinsWithAssassination: Story =
+{
+	args:
+	{
 		avalon: createMockAvalon('EVIL_WIN', 'CRAIGM'),
 	},
-	parameters: {
-		docs: {
-			description: {
+	parameters:
+	{
+		docs:
+		{
+			description:
+			{
 				story: 'Shows the end game dialog when evil wins by assassinating Merlin.',
 			},
 		},
 	},
 };
 
-export const GameCanceled: Story = {
-	args: {
+export const GameCanceled: Story =
+{
+	args:
+	{
 		avalon: createMockAvalon('CANCELED'),
 	},
-	parameters: {
-		docs: {
-			description: {
+	parameters:
+	{
+		docs:
+		{
+			description:
+			{
 				story: 'Shows the end game dialog when the game is canceled.',
 			},
 		},
 	},
 };
 
-export const InteractiveControls: Story = {
-	render: () => {
+export const InteractiveControls: Story =
+{
+	render: () =>
+	{
 		const mockAvalon = createMockAvalon('GOOD_WIN', 'CRAIGM');
 
 		return (
 			<div>
-				<div style={{marginBottom: '16px'}}>
+				<div
+					style={
+					{
+						marginBottom: '16px',
+					}}
+				>
 					<button onClick={() => mockAvalon.triggerEvent('GAME_ENDED')}>Show End Game Dialog</button>
 					<button
 						onClick={() => mockAvalon.triggerEvent('GAME_STARTED')}
-						style={{marginLeft: '8px'}}
+						style={
+						{
+							marginLeft: '8px',
+						}}
 					>
 						Hide Dialog (Game Started)
 					</button>
@@ -220,9 +359,12 @@ export const InteractiveControls: Story = {
 			</div>
 		);
 	},
-	parameters: {
-		docs: {
-			description: {
+	parameters:
+	{
+		docs:
+		{
+			description:
+			{
 				story: 'Interactive controls to show and hide the end game dialog.',
 			},
 		},

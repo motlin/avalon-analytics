@@ -5,12 +5,14 @@ import {faHammer, faCrown, faVoteYea, faEllipsisH} from '@fortawesome/free-solid
 import {faThumbsUp, faThumbsDown, faCircle as faCircleRegular} from '@fortawesome/free-regular-svg-icons';
 import type {AvalonApi} from './types';
 
-interface GamePlayerListProps {
+interface GamePlayerListProps
+{
 	avalon: AvalonApi;
 	onSelectedPlayers: (players: string[]) => void;
 }
 
-function joinWithAnd(array: string[]): string {
+function joinWithAnd(array: string[]): string
+{
 	if (array.length === 0) return '';
 	if (array.length === 1) return array[0];
 	const arrCopy = array.slice(0);
@@ -18,35 +20,42 @@ function joinWithAnd(array: string[]): string {
 	return arrCopy.join(', ') + ' and ' + lastElement;
 }
 
-export default function GamePlayerList({avalon, onSelectedPlayers}: GamePlayerListProps) {
+export default function GamePlayerList({avalon, onSelectedPlayers}: GamePlayerListProps)
+{
 	const [selectedPlayers, setSelectedPlayers] = useState<string[]>([]);
 
 	const crownColor = (avalon.game.currentProposalIdx ?? 0) < 4 ? '#fcfc00' : '#cc0808';
 
-	const enableCheckboxes = (name: string): boolean => {
+	const enableCheckboxes = (name: string): boolean =>
+	{
 		return (
 			(avalon.game.phase === 'TEAM_PROPOSAL' && avalon.game.currentProposer === avalon.user?.name) ||
 			(avalon.game.phase === 'ASSASSINATION' && avalon.lobby?.role?.assassin && name !== avalon.user?.name)
 		);
 	};
 
-	const selectedForMission = (name: string): boolean => {
+	const selectedForMission = (name: string): boolean =>
+	{
 		return (
 			(avalon.game.phase === 'PROPOSAL_VOTE' || avalon.game.phase === 'MISSION_VOTE') &&
 			(avalon.game.currentProposal?.team?.includes(name) ?? false)
 		);
 	};
 
-	const hasVoted = (name: string): boolean => {
+	const hasVoted = (name: string): boolean =>
+	{
 		return avalon.game.phase === 'PROPOSAL_VOTE' && (avalon.game.currentProposal?.votes?.includes(name) ?? false);
 	};
 
-	const waitingOnVote = (name: string): boolean => {
+	const waitingOnVote = (name: string): boolean =>
+	{
 		return avalon.game.phase === 'PROPOSAL_VOTE' && !avalon.game.currentProposal?.votes?.includes(name);
 	};
 
-	const wasOnLastTeamProposed = (name: string): boolean => {
-		switch (avalon.game.phase) {
+	const wasOnLastTeamProposed = (name: string): boolean =>
+	{
+		switch (avalon.game.phase)
+		{
 			case 'TEAM_PROPOSAL':
 			case 'ASSASSINATION':
 				return avalon.game.lastProposal?.team?.includes(name) ?? false;
@@ -59,37 +68,54 @@ export default function GamePlayerList({avalon, onSelectedPlayers}: GamePlayerLi
 		}
 	};
 
-	const approvedProposal = (name: string): boolean => {
-		if (avalon.game.phase === 'TEAM_PROPOSAL' || avalon.game.phase === 'ASSASSINATION') {
+	const approvedProposal = (name: string): boolean =>
+	{
+		if (avalon.game.phase === 'TEAM_PROPOSAL' || avalon.game.phase === 'ASSASSINATION')
+		{
 			return avalon.game.lastProposal?.votes?.includes(name) ?? false;
-		} else if (avalon.game.phase === 'MISSION_VOTE') {
+		}
+		else if (avalon.game.phase === 'MISSION_VOTE')
+		{
 			return avalon.game.currentProposal?.votes?.includes(name) ?? false;
 		}
 		return false;
 	};
 
-	const rejectedProposal = (name: string): boolean => {
-		if (avalon.game.phase === 'TEAM_PROPOSAL' || avalon.game.phase === 'ASSASSINATION') {
+	const rejectedProposal = (name: string): boolean =>
+	{
+		if (avalon.game.phase === 'TEAM_PROPOSAL' || avalon.game.phase === 'ASSASSINATION')
+		{
 			return !(avalon.game.lastProposal?.votes?.includes(name) ?? true);
-		} else if (avalon.game.phase === 'MISSION_VOTE') {
+		}
+		else if (avalon.game.phase === 'MISSION_VOTE')
+		{
 			return !(avalon.game.currentProposal?.votes?.includes(name) ?? true);
 		}
 		return false;
 	};
 
-	const tooltipText = (name: string): string | null => {
+	const tooltipText = (name: string): string | null =>
+	{
 		const states: string[] = [];
-		if (wasOnLastTeamProposed(name)) {
+		if (wasOnLastTeamProposed(name))
+		{
 			states.push('was on the last proposed team');
 		}
 
-		if (waitingOnVote(name)) {
+		if (waitingOnVote(name))
+		{
 			states.push('is currently voting on the proposal');
-		} else if (hasVoted(name)) {
+		}
+		else if (hasVoted(name))
+		{
 			states.push('has submitted a vote for the proposed team');
-		} else if (approvedProposal(name)) {
+		}
+		else if (approvedProposal(name))
+		{
 			states.push('approved the last team');
-		} else if (rejectedProposal(name)) {
+		}
+		else if (rejectedProposal(name))
+		{
 			states.push('rejected the last team');
 		}
 
@@ -98,21 +124,28 @@ export default function GamePlayerList({avalon, onSelectedPlayers}: GamePlayerLi
 		return name + ' ' + joinWithAnd(states);
 	};
 
-	const handleCheckboxChange = (playerName: string, checked: boolean) => {
-		setSelectedPlayers((prev) => {
+	const handleCheckboxChange = (playerName: string, checked: boolean) =>
+	{
+		setSelectedPlayers((prev) =>
+		{
 			let newSelection: string[];
-			if (checked) {
+			if (checked)
+			{
 				newSelection = [...prev, playerName];
-			} else {
+			}
+			else
+			{
 				newSelection = prev.filter((p) => p !== playerName);
 			}
 
 			let maxSelected = 1;
-			if (avalon.game.phase === 'TEAM_PROPOSAL') {
+			if (avalon.game.phase === 'TEAM_PROPOSAL')
+			{
 				maxSelected = avalon.game.currentMission?.teamSize ?? 1;
 			}
 
-			if (newSelection.length > maxSelected) {
+			if (newSelection.length > maxSelected)
+			{
 				newSelection.shift();
 			}
 
@@ -120,23 +153,23 @@ export default function GamePlayerList({avalon, onSelectedPlayers}: GamePlayerLi
 		});
 	};
 
-	useEffect(() => {
+	useEffect(() =>
+	{
 		onSelectedPlayers(selectedPlayers);
 	}, [selectedPlayers, onSelectedPlayers]);
 
-	useEffect(() => {
+	useEffect(() =>
+	{
 		setSelectedPlayers([]);
 	}, [avalon.game.phase]);
 
 	return (
 		<div className={styles.playerList}>
-			{avalon.game.players.map((player) => {
+			{avalon.game.players.map((player) =>
+			{
 				const playerName = typeof player === 'string' ? player : player.name;
 				return (
-					<div
-						key={typeof player === 'string' ? player : player.uid}
-						className={styles.playerItem}
-					>
+					<div key={typeof player === 'string' ? player : player.uid} className={styles.playerItem}>
 						<div className={styles.checkboxColumn}>
 							{enableCheckboxes(playerName) && (
 								<input
@@ -158,18 +191,15 @@ export default function GamePlayerList({avalon, onSelectedPlayers}: GamePlayerLi
 
 						<div className={styles.statusColumn}>
 							{avalon.game.currentProposer === playerName && (
-								<div
-									className={styles.crown}
-									title={`${playerName} is proposing the next team`}
-								>
+								<div className={styles.crown} title={`${playerName} is proposing the next team`}>
 									<span className="fa-layers fa-fw">
-										<FontAwesomeIcon
-											icon={faCrown}
-											color={crownColor}
-										/>
+										<FontAwesomeIcon icon={faCrown} color={crownColor} />
 										<span
 											className="fa-layers-text"
-											style={{fontSize: '0.5em'}}
+											style={
+											{
+												fontSize: '0.5em',
+											}}
 										>
 											{(avalon.game.currentProposalIdx ?? 0) + 1}
 										</span>
@@ -185,10 +215,7 @@ export default function GamePlayerList({avalon, onSelectedPlayers}: GamePlayerLi
 
 						<div className={styles.iconColumn}>
 							{tooltipText(playerName) && (
-								<div
-									className={styles.statusIcons}
-									title={tooltipText(playerName) || ''}
-								>
+								<div className={styles.statusIcons} title={tooltipText(playerName) || ''}>
 									<span className="fa-layers fa-fw">
 										{wasOnLastTeamProposed(playerName) && (
 											<FontAwesomeIcon
@@ -198,17 +225,10 @@ export default function GamePlayerList({avalon, onSelectedPlayers}: GamePlayerLi
 											/>
 										)}
 										{waitingOnVote(playerName) && (
-											<FontAwesomeIcon
-												icon={faEllipsisH}
-												color="#4c4c4c"
-											/>
+											<FontAwesomeIcon icon={faEllipsisH} color="#4c4c4c" />
 										)}
 										{hasVoted(playerName) && !waitingOnVote(playerName) && (
-											<FontAwesomeIcon
-												icon={faVoteYea}
-												transform="up-1"
-												color="#4c4c4c"
-											/>
+											<FontAwesomeIcon icon={faVoteYea} transform="up-1" color="#4c4c4c" />
 										)}
 										{approvedProposal(playerName) &&
 											!hasVoted(playerName) &&

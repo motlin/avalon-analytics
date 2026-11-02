@@ -1,84 +1,101 @@
-.container {
+.container
+{
 	margin-bottom: 2rem;
 }
 
-.title {
+.title
+{
 	margin: 0 0 1rem 0;
 	font-size: 1.25rem;
 	font-weight: 600;
 }
 
-.tableWrapper {
+.tableWrapper
+{
 	overflow-x: auto;
 }
 
-.table {
+.table
+{
 	width: 100%;
 	border-collapse: collapse;
 	font-size: 0.875rem;
 }
 
 .table th,
-.table td {
+.table td
+{
 	padding: 0.5rem 0.75rem;
 	text-align: left;
 	border-bottom: 1px solid hsl(var(--border));
 }
 
-.headerRole {
+.headerRole
+{
 	font-weight: 600;
 	background-color: hsl(var(--muted));
 	text-align: left;
 }
 
-.headerNum {
+.headerNum
+{
 	font-weight: 600;
 	background-color: hsl(var(--muted));
 	text-align: right;
 }
 
-.sectionHeader td {
+.sectionHeader td
+{
 	font-weight: 600;
 	padding-top: 1rem;
 	padding-bottom: 0.5rem;
 	border-bottom: none;
 }
 
-.sectionGood {
+.sectionGood
+{
 	color: hsl(var(--good-color));
 }
 
-.sectionEvil {
+.sectionEvil
+{
 	color: hsl(var(--evil-color));
 }
 
-.dataRow:hover {
+.dataRow:hover
+{
 	background-color: hsl(var(--accent));
 }
 
-.roleCell {
+.roleCell
+{
 	font-weight: 500;
 }
 
-.numCell {
+.numCell
+{
 	text-align: right;
 	font-variant-numeric: tabular-nums;
 }
 
-.subtotalRow {
+.subtotalRow
+{
 	background-color: hsl(var(--accent));
 	font-weight: 500;
 }
 
-.subtotalRow td {
+.subtotalRow td
+{
 	border-top: 1px solid hsl(var(--border));
 }
 
-.totalRow {
+.totalRow
+{
 	background-color: hsl(var(--win-background));
 	font-weight: 600;
 }
 
-.totalRow td {
+.totalRow td
+{
 	border-top: 2px solid hsl(var(--good-color));
 }

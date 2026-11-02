@@ -1,4 +1,5 @@
-import {
+import
+{
 	db,
 	type PlayerStats as DbPlayerStats,
 	type PlayerRoleStats as DbPlayerRoleStats,
@@ -56,21 +57,61 @@ export const ALL_ROLES: RoleName[] = [
 /**
  * Role display information
  */
-export const ROLE_INFO: Record<RoleName, {displayName: string; team: 'good' | 'evil'}> = {
-	MERLIN: {displayName: 'Merlin', team: 'good'},
-	PERCIVAL: {displayName: 'Percival', team: 'good'},
-	'LOYAL FOLLOWER': {displayName: 'Loyal Follower', team: 'good'},
-	MORDRED: {displayName: 'Mordred', team: 'evil'},
-	MORGANA: {displayName: 'Morgana', team: 'evil'},
-	OBERON: {displayName: 'Oberon', team: 'evil'},
-	'EVIL MINION': {displayName: 'Evil Minion', team: 'evil'},
-	ASSASSIN: {displayName: 'Assassin', team: 'evil'},
+export const ROLE_INFO: Record<
+	RoleName,
+	{
+		displayName: string;
+		team: 'good' | 'evil';
+	}
+> =
+{
+	MERLIN:
+	{
+		displayName: 'Merlin',
+		team: 'good',
+	},
+	PERCIVAL:
+	{
+		displayName: 'Percival',
+		team: 'good',
+	},
+	'LOYAL FOLLOWER':
+	{
+		displayName: 'Loyal Follower',
+		team: 'good',
+	},
+	MORDRED:
+	{
+		displayName: 'Mordred',
+		team: 'evil',
+	},
+	MORGANA:
+	{
+		displayName: 'Morgana',
+		team: 'evil',
+	},
+	OBERON:
+	{
+		displayName: 'Oberon',
+		team: 'evil',
+	},
+	'EVIL MINION':
+	{
+		displayName: 'Evil Minion',
+		team: 'evil',
+	},
+	ASSASSIN:
+	{
+		displayName: 'Assassin',
+		team: 'evil',
+	},
 };
 
 /**
  * Statistics for a specific role
  */
-export interface RoleStats {
+export interface RoleStats
+{
 	games: number;
 	wins: number;
 	losses: number;
@@ -85,7 +126,8 @@ export interface RoleStats {
 /**
  * Statistics broken down by year
  */
-export interface YearStats {
+export interface YearStats
+{
 	year: number;
 	games: number;
 	wins: number;
@@ -102,7 +144,8 @@ export interface YearStats {
 /**
  * Comprehensive statistics for a person (aggregated across all their UIDs)
  */
-export interface PersonStatistics {
+export interface PersonStatistics
+{
 	primaryUid: string;
 	personName: string;
 
@@ -126,7 +169,8 @@ export interface PersonStatistics {
 	roleStats: Record<RoleName, RoleStats>;
 
 	// Loss reason breakdown
-	lossReasons: {
+	lossReasons:
+	{
 		threeMissionFails: number;
 		threeMissionSuccessEvil: number;
 		fiveRejectedProposals: number;
@@ -134,7 +178,8 @@ export interface PersonStatistics {
 	};
 
 	// Special Merlin stats
-	merlinStats: {
+	merlinStats:
+	{
 		gamesPlayed: number;
 		wins: number;
 		timesAssassinated: number;
@@ -142,7 +187,8 @@ export interface PersonStatistics {
 	};
 
 	// Special Assassin stats
-	assassinStats: {
+	assassinStats:
+	{
 		gamesPlayed: number;
 		wins: number;
 		successfulAssassinations: number;
@@ -150,7 +196,8 @@ export interface PersonStatistics {
 	};
 
 	// Evil teammate stats (non-assassin evil roles)
-	evilTeammateStats: {
+	evilTeammateStats:
+	{
 		gamesPlayed: number;
 		wins: number;
 		successfulAssassinations: number;
@@ -164,7 +211,8 @@ export interface PersonStatistics {
 /**
  * Initialize empty role stats
  */
-function createEmptyRoleStats(): RoleStats {
+function createEmptyRoleStats(): RoleStats
+{
 	return {
 		games: 0,
 		wins: 0,
@@ -181,7 +229,8 @@ function createEmptyRoleStats(): RoleStats {
 /**
  * Full PlayerStats record with all related tables included
  */
-type PlayerStatsWithRelations = DbPlayerStats & {
+type PlayerStatsWithRelations = DbPlayerStats &
+{
 	roleStats: DbPlayerRoleStats[];
 	yearlyStats: DbPlayerYearlyStats[];
 	lossReasons: DbPlayerLossReasons | null;
@@ -193,7 +242,8 @@ type PlayerStatsWithRelations = DbPlayerStats & {
 /**
  * Full PersonStats record with all related tables included
  */
-type PersonStatsWithRelations = DbPersonStats & {
+type PersonStatsWithRelations = DbPersonStats &
+{
 	roleStats: DbPersonRoleStats[];
 	yearlyStats: DbPersonYearlyStats[];
 	lossReasons: DbPersonLossReasons | null;
@@ -208,14 +258,16 @@ type PersonStatsWithRelations = DbPersonStats & {
 function transformDbStatsToPersonStatistics(
 	dbStats: PlayerStatsWithRelations | PersonStatsWithRelations,
 	primaryId: string,
-): PersonStatistics {
+): PersonStatistics
+{
 	const totalGames = dbStats.gamesPlayed;
 	const totalWins = dbStats.wins;
 	const totalLosses = totalGames - totalWins;
 	const goodLosses = dbStats.goodGames - dbStats.goodWins;
 	const evilLosses = dbStats.evilGames - dbStats.evilWins;
 
-	const roleStats: Record<RoleName, RoleStats> = {
+	const roleStats: Record<RoleName, RoleStats> =
+	{
 		MERLIN: createEmptyRoleStats(),
 		PERCIVAL: createEmptyRoleStats(),
 		'LOYAL FOLLOWER': createEmptyRoleStats(),
@@ -226,10 +278,13 @@ function transformDbStatsToPersonStatistics(
 		ASSASSIN: createEmptyRoleStats(),
 	};
 
-	for (const rs of dbStats.roleStats) {
+	for (const rs of dbStats.roleStats)
+	{
 		const roleName = rs.role as RoleName;
-		if (roleName in roleStats) {
-			roleStats[roleName] = {
+		if (roleName in roleStats)
+		{
+			roleStats[roleName] =
+			{
 				games: rs.games,
 				wins: rs.wins,
 				losses: rs.losses,
@@ -244,7 +299,8 @@ function transformDbStatsToPersonStatistics(
 	}
 
 	const yearlyStats: YearStats[] = dbStats.yearlyStats
-		.map((ys) => ({
+		.map((ys) => (
+		{
 			year: ys.year,
 			games: ys.games,
 			wins: ys.wins,
@@ -275,25 +331,29 @@ function transformDbStatsToPersonStatistics(
 		evilLosses,
 		evilWinRate: dbStats.evilGames > 0 ? (dbStats.evilWins / dbStats.evilGames) * 100 : 0,
 		roleStats,
-		lossReasons: {
+		lossReasons:
+		{
 			threeMissionFails: dbStats.lossReasons?.threeMissionFails ?? 0,
 			threeMissionSuccessEvil: dbStats.lossReasons?.threeMissionSuccessEvil ?? 0,
 			fiveRejectedProposals: dbStats.lossReasons?.fiveRejectedProposals ?? 0,
 			merlinAssassinated: dbStats.lossReasons?.merlinAssassinated ?? 0,
 		},
-		merlinStats: {
+		merlinStats:
+		{
 			gamesPlayed: dbStats.merlinStats?.gamesPlayed ?? 0,
 			wins: dbStats.merlinStats?.wins ?? 0,
 			timesAssassinated: dbStats.merlinStats?.timesAssassinated ?? 0,
 			survivedAssassination: dbStats.merlinStats?.survivedAssassination ?? 0,
 		},
-		assassinStats: {
+		assassinStats:
+		{
 			gamesPlayed: dbStats.assassinStats?.gamesPlayed ?? 0,
 			wins: dbStats.assassinStats?.wins ?? 0,
 			successfulAssassinations: dbStats.assassinStats?.successfulAssassinations ?? 0,
 			failedAssassinations: dbStats.assassinStats?.failedAssassinations ?? 0,
 		},
-		evilTeammateStats: {
+		evilTeammateStats:
+		{
 			gamesPlayed: dbStats.evilTeammateStats?.gamesPlayed ?? 0,
 			wins: dbStats.evilTeammateStats?.wins ?? 0,
 			successfulAssassinations: dbStats.evilTeammateStats?.successfulAssassinations ?? 0,
@@ -306,20 +366,28 @@ function transformDbStatsToPersonStatistics(
 /**
  * Load pre-computed statistics for a single UID from the database
  */
-export async function loadPlayerStatsFromDb(uid: string): Promise<PersonStatistics | null> {
-	const dbStats = await db.playerStats.findUnique({
-		where: {uid},
-		include: {
-			roleStats: true,
-			yearlyStats: true,
-			lossReasons: true,
-			merlinStats: true,
-			assassinStats: true,
-			evilTeammateStats: true,
+export async function loadPlayerStatsFromDb(uid: string): Promise<PersonStatistics | null>
+{
+	const dbStats = await db.playerStats.findUnique(
+		{
+			where:
+			{
+				uid,
+			},
+			include:
+			{
+				roleStats: true,
+				yearlyStats: true,
+				lossReasons: true,
+				merlinStats: true,
+				assassinStats: true,
+				evilTeammateStats: true,
+			},
 		},
-	});
+	);
 
-	if (!dbStats) {
+	if (!dbStats)
+	{
 		return null;
 	}
 
@@ -329,20 +397,28 @@ export async function loadPlayerStatsFromDb(uid: string): Promise<PersonStatisti
 /**
  * Load pre-computed statistics for a person from the database
  */
-export async function loadPersonStatsFromDb(personId: string): Promise<PersonStatistics | null> {
-	const dbStats = await db.personStats.findUnique({
-		where: {personId},
-		include: {
-			roleStats: true,
-			yearlyStats: true,
-			lossReasons: true,
-			merlinStats: true,
-			assassinStats: true,
-			evilTeammateStats: true,
+export async function loadPersonStatsFromDb(personId: string): Promise<PersonStatistics | null>
+{
+	const dbStats = await db.personStats.findUnique(
+		{
+			where:
+			{
+				personId,
+			},
+			include:
+			{
+				roleStats: true,
+				yearlyStats: true,
+				lossReasons: true,
+				merlinStats: true,
+				assassinStats: true,
+				evilTeammateStats: true,
+			},
 		},
-	});
+	);
 
-	if (!dbStats) {
+	if (!dbStats)
+	{
 		return null;
 	}
 

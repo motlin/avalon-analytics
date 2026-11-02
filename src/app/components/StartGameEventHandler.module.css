@@ -1,4 +1,5 @@
-.overlay {
+.overlay
+{
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -11,13 +12,15 @@
 	z-index: 1000;
 }
 
-.dialog {
+.dialog
+{
 	max-width: 450px;
 	width: 90%;
 	margin: 0 auto;
 }
 
-.card {
+.card
+{
 	background-color: #b2dfdb;
 	border-radius: 4px;
 	box-shadow:
@@ -27,44 +30,52 @@
 	overflow: hidden;
 }
 
-.title {
+.title
+{
 	background-color: #80cbc4;
 	padding: 16px;
 }
 
-.title h3 {
+.title h3
+{
 	margin: 0;
 	font-size: 1.25rem;
 	font-weight: 500;
 	color: rgba(0, 0, 0, 0.87);
 }
 
-.content {
+.content
+{
 	padding: 16px;
 	color: rgba(0, 0, 0, 0.87);
 }
 
-.content p {
+.content p
+{
 	margin: 0 0 16px 0;
 }
 
-.content p:last-child {
+.content p:last-child
+{
 	margin-bottom: 0;
 }
 
-.divider {
+.divider
+{
 	height: 1px;
 	background-color: rgba(0, 0, 0, 0.12);
 }
 
-.actions {
+.actions
+{
 	padding: 8px;
 	display: flex;
 	justify-content: flex-end;
 	gap: 8px;
 }
 
-.button {
+.button
+{
 	background-color: transparent;
 	border: none;
 	color: #1976d2;
@@ -77,11 +88,13 @@
 	transition: background-color 0.2s ease;
 }
 
-.button:hover {
+.button:hover
+{
 	background-color: rgba(25, 118, 210, 0.08);
 }
 
-.button:focus {
+.button:focus
+{
 	background-color: rgba(25, 118, 210, 0.12);
 	outline: none;
 }

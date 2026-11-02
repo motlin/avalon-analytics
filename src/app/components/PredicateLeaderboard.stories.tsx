@@ -2,13 +2,17 @@ import type {Meta, StoryObj} from '@storybook/react-vite';
 import type {PredicateLeaderboardEntry} from './PredicateLeaderboard';
 import {PredicateLeaderboard} from './PredicateLeaderboard';
 
-const meta: Meta<typeof PredicateLeaderboard> = {
+const meta: Meta<typeof PredicateLeaderboard> =
+{
 	title: 'Statistics/PredicateLeaderboard',
 	component: PredicateLeaderboard,
-	parameters: {
+	parameters:
+	{
 		layout: 'padded',
-		docs: {
-			description: {
+		docs:
+		{
+			description:
+			{
 				component: `PredicateLeaderboard displays all mapped players ranked by their rate for a specific predicate behavior.
 
 ## Features
@@ -41,21 +45,32 @@ function PredicatePage({predicate}: {predicate: PredicateData}) {
 		},
 	},
 	tags: ['autodocs'],
-	argTypes: {
-		predicateName: {
+	argTypes:
+	{
+		predicateName:
+		{
 			control: 'text',
 			description: 'The predicate being displayed',
 		},
-		rarity: {
+		rarity:
+		{
 			control: 'select',
 			options: ['legendary', 'epic', 'rare', 'uncommon', 'common'],
 			description: 'Rarity tier of the predicate',
 		},
-		baselineRate: {
-			control: {type: 'number', min: 0, max: 1, step: 0.01},
+		baselineRate:
+		{
+			control:
+			{
+				type: 'number',
+				min: 0,
+				max: 1,
+				step: 0.01,
+			},
 			description: 'Population baseline rate',
 		},
-		entries: {
+		entries:
+		{
 			control: 'object',
 			description: 'List of people ranked by smoothed rate',
 		},
@@ -138,16 +153,21 @@ const significantDeviationsEntries: PredicateLeaderboardEntry[] = [
 	},
 ];
 
-export const SignificantDeviations: Story = {
-	args: {
+export const SignificantDeviations: Story =
+{
+	args:
+	{
 		predicateName: 'Percival excluded Merlin despite knowing who Merlin is',
 		rarity: 'legendary',
 		baselineRate: 0.22,
 		entries: significantDeviationsEntries,
 	},
-	parameters: {
-		docs: {
-			description: {
+	parameters:
+	{
+		docs:
+		{
+			description:
+			{
 				story: 'A legendary predicate leaderboard showing players with significant behavioral deviations. Alice and Bob show significantly higher rates (red backgrounds), while Frank shows significantly lower rate (green background).',
 			},
 		},
@@ -216,16 +236,21 @@ const averageBehaviorEntries: PredicateLeaderboardEntry[] = [
 	},
 ];
 
-export const AverageBehavior: Story = {
-	args: {
+export const AverageBehavior: Story =
+{
+	args:
+	{
 		predicateName: 'Approved when they are the next leader',
 		rarity: 'common',
 		baselineRate: 0.31,
 		entries: averageBehaviorEntries,
 	},
-	parameters: {
-		docs: {
-			description: {
+	parameters:
+	{
+		docs:
+		{
+			description:
+			{
 				story: 'A common predicate leaderboard where all players behave similarly to the population baseline. White backgrounds indicate no significant deviations.',
 			},
 		},
@@ -272,16 +297,21 @@ const limitedDataEntries: PredicateLeaderboardEntry[] = [
 	},
 ];
 
-export const LimitedData: Story = {
-	args: {
+export const LimitedData: Story =
+{
+	args:
+	{
 		predicateName: 'Copied the team from a failed mission',
 		rarity: 'legendary',
 		baselineRate: 0.19,
 		entries: limitedDataEntries,
 	},
-	parameters: {
-		docs: {
-			description: {
+	parameters:
+	{
+		docs:
+		{
+			description:
+			{
 				story: 'A legendary predicate with limited opportunity data. Few opportunities per player means the smoothed rates are heavily shrunk toward the baseline.',
 			},
 		},
@@ -427,16 +457,21 @@ const manyPlayersEntries: PredicateLeaderboardEntry[] = [
 	},
 ];
 
-export const ManyPlayers: Story = {
-	args: {
+export const ManyPlayers: Story =
+{
+	args:
+	{
 		predicateName: 'Protest voted on the 5th proposal',
 		rarity: 'epic',
 		baselineRate: 0.32,
 		entries: manyPlayersEntries,
 	},
-	parameters: {
-		docs: {
-			description: {
+	parameters:
+	{
+		docs:
+		{
+			description:
+			{
 				story: 'An epic predicate leaderboard with many players, demonstrating the full range of behavioral variation from significantly above baseline (top) to significantly below (bottom).',
 			},
 		},
@@ -446,16 +481,21 @@ export const ManyPlayers: Story = {
 /**
  * Empty leaderboard with no data.
  */
-export const NoData: Story = {
-	args: {
+export const NoData: Story =
+{
+	args:
+	{
 		predicateName: 'Rare unseen behavior',
 		rarity: 'legendary',
 		baselineRate: 0.0,
 		entries: [],
 	},
-	parameters: {
-		docs: {
-			description: {
+	parameters:
+	{
+		docs:
+		{
+			description:
+			{
 				story: 'Handles the case where no players have data for this predicate. This may occur for very rare predicates that have never been observed.',
 			},
 		},

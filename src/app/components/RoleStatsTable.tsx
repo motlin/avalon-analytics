@@ -2,15 +2,18 @@ import type {PersonStatistics, RoleName} from '../models/player-statistics';
 import {ROLE_INFO} from '../models/player-statistics';
 import styles from './RoleStatsTable.module.css';
 
-interface RoleStatsTableProps {
+interface RoleStatsTableProps
+{
 	stats: PersonStatistics;
 }
 
-function formatRate(value: number): string {
+function formatRate(value: number): string
+{
 	return `${value.toFixed(0)}%`;
 }
 
-export function RoleStatsTable({stats}: RoleStatsTableProps) {
+export function RoleStatsTable({stats}: RoleStatsTableProps)
+{
 	const goodRoles: RoleName[] = ['MERLIN', 'PERCIVAL', 'LOYAL FOLLOWER'];
 	const evilRoles: RoleName[] = ['MORDRED', 'MORGANA', 'OBERON', 'EVIL MINION', 'ASSASSIN'];
 
@@ -32,21 +35,16 @@ export function RoleStatsTable({stats}: RoleStatsTableProps) {
 					<tbody>
 						{/* Good roles section */}
 						<tr className={styles.sectionHeader}>
-							<td
-								colSpan={5}
-								className={styles.sectionGood}
-							>
+							<td colSpan={5} className={styles.sectionGood}>
 								Good Team
 							</td>
 						</tr>
-						{goodRoles.map((role) => {
+						{goodRoles.map((role) =>
+						{
 							const roleStats = stats.roleStats[role];
 							if (roleStats.games === 0) return null;
 							return (
-								<tr
-									key={role}
-									className={styles.dataRow}
-								>
+								<tr key={role} className={styles.dataRow}>
 									<td className={styles.roleCell}>{ROLE_INFO[role].displayName}</td>
 									<td className={styles.numCell}>{roleStats.games}</td>
 									<td className={styles.numCell}>{roleStats.wins}</td>
@@ -65,21 +63,16 @@ export function RoleStatsTable({stats}: RoleStatsTableProps) {
 
 						{/* Evil roles section */}
 						<tr className={styles.sectionHeader}>
-							<td
-								colSpan={5}
-								className={styles.sectionEvil}
-							>
+							<td colSpan={5} className={styles.sectionEvil}>
 								Evil Team
 							</td>
 						</tr>
-						{evilRoles.map((role) => {
+						{evilRoles.map((role) =>
+						{
 							const roleStats = stats.roleStats[role];
 							if (roleStats.games === 0) return null;
 							return (
-								<tr
-									key={role}
-									className={styles.dataRow}
-								>
+								<tr key={role} className={styles.dataRow}>
 									<td className={styles.roleCell}>{ROLE_INFO[role].displayName}</td>
 									<td className={styles.numCell}>{roleStats.games}</td>
 									<td className={styles.numCell}>{roleStats.wins}</td>

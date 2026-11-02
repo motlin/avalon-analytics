@@ -2,13 +2,17 @@ import type {Meta, StoryObj} from '@storybook/react-vite';
 import {useState} from 'react';
 import ViewRoleButton from './ViewRoleButton';
 
-const meta: Meta<typeof ViewRoleButton> = {
+const meta: Meta<typeof ViewRoleButton> =
+{
 	title: 'UI/ViewRoleButton',
 	component: ViewRoleButton,
-	parameters: {
+	parameters:
+	{
 		layout: 'centered',
-		docs: {
-			description: {
+		docs:
+		{
+			description:
+			{
 				component: `
 The ViewRoleButton component provides a toggleable interface for players to view their secret role information during gameplay. This is essential for checking your identity and understanding what information you have access to.
 
@@ -39,8 +43,10 @@ The component automatically hides role information when:
 		},
 	},
 	tags: ['autodocs'],
-	argTypes: {
-		avalon: {
+	argTypes:
+	{
+		avalon:
+		{
 			control: 'object',
 			description: 'Avalon game state object',
 		},
@@ -50,13 +56,16 @@ The component automatically hides role information when:
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const createMockAvalon = (isGameInProgress: boolean = false, roleData: any = {}, initialEvents: string[] = []) => {
+const createMockAvalon = (isGameInProgress: boolean = false, roleData: any = {}, initialEvents: string[] = []) =>
+{
 	let eventCallback: ((event: string, ...args: any[]) => void) | null = null;
 
 	return {
-		user: {
+		user:
+		{
 			name: 'CRAIGM',
-			stats: {
+			stats:
+			{
 				games: 42,
 				good: 25,
 				wins: 28,
@@ -64,9 +73,12 @@ const createMockAvalon = (isGameInProgress: boolean = false, roleData: any = {},
 				playtimeSeconds: 9000, // 2.5 hours
 			},
 		},
-		lobby: {
-			role: {
-				role: {
+		lobby:
+		{
+			role:
+			{
+				role:
+				{
 					name: roleData.name || 'Loyal Servant of Arthur',
 					team: roleData.team || 'good',
 					description:
@@ -77,117 +89,165 @@ const createMockAvalon = (isGameInProgress: boolean = false, roleData: any = {},
 				sees: roleData.sees || [],
 			},
 		},
-		globalStats: {
+		globalStats:
+		{
 			games: 15000,
 			good_wins: 8200,
 		},
 		isGameInProgress,
-		onEvent: (callback: (event: string, ...args: any[]) => void) => {
+		onEvent: (callback: (event: string, ...args: any[]) => void) =>
+		{
 			eventCallback = callback;
 
 			// Simulate initial events
-			setTimeout(() => {
-				initialEvents.forEach((event) => {
-					if (eventCallback) {
+			setTimeout(() =>
+			{
+				initialEvents.forEach((event) =>
+				{
+					if (eventCallback)
+					{
 						eventCallback(event);
 					}
 				});
 			}, 100);
 
-			return () => {
+			return () =>
+			{
 				eventCallback = null;
 			};
 		},
-		triggerEvent: (event: string, ...args: any[]) => {
-			if (eventCallback) {
+		triggerEvent: (event: string, ...args: any[]) =>
+		{
+			if (eventCallback)
+			{
 				eventCallback(event, ...args);
 			}
 		},
 	};
 };
 
-export const PreGameStats: Story = {
-	args: {
+export const PreGameStats: Story =
+{
+	args:
+	{
 		avalon: createMockAvalon(false),
 	},
 };
 
-export const GoodRole: Story = {
-	args: {
-		avalon: createMockAvalon(true, {
-			name: 'PERCIVAL',
-			team: 'good',
-			description: 'You are Percival. You see Merlin and Morgana, but you do not know which is which.',
-			sees: ['MERLIN', 'MORGANA'],
-		}),
-	},
-};
-
-export const EvilRole: Story = {
-	args: {
-		avalon: createMockAvalon(true, {
-			name: 'MORGANA',
-			team: 'evil',
-			description:
-				'You are Morgana. You appear as Merlin to Percival. You must help the evil team fail 3 missions.',
-			sees: ['MORDRED', 'ASSASSIN'],
-		}),
-	},
-};
-
-export const AssassinRole: Story = {
-	args: {
-		avalon: createMockAvalon(true, {
-			name: 'ASSASSIN',
-			team: 'evil',
-			description: 'You are the Assassin. You must help the evil team fail 3 missions.',
-			assassin: true,
-			sees: ['MORGANA', 'MORDRED'],
-		}),
-	},
-};
-
-export const MerlinRole: Story = {
-	args: {
-		avalon: createMockAvalon(true, {
-			name: 'MERLIN',
-			team: 'good',
-			description:
-				'You are Merlin. You see all evil players except Mordred. You must help the good team succeed on 3 missions, but stay hidden from the Assassin.',
-			sees: ['MORGANA', 'ASSASSIN'],
-		}),
-	},
-};
-
-export const RoleSeesNoOne: Story = {
-	args: {
-		avalon: createMockAvalon(true, {
-			name: 'LOYAL FOLLOWER',
-			team: 'good',
-			description: 'You are a loyal servant of Arthur. You must help the good team succeed on 3 missions.',
-			sees: [],
-		}),
-	},
-};
-
-export const InteractiveExample: Story = {
-	render: () => {
-		const [mockAvalon] = useState(() =>
-			createMockAvalon(true, {
+export const GoodRole: Story =
+{
+	args:
+	{
+		avalon: createMockAvalon(
+			true,
+			{
 				name: 'PERCIVAL',
 				team: 'good',
 				description: 'You are Percival. You see Merlin and Morgana, but you do not know which is which.',
 				sees: ['MERLIN', 'MORGANA'],
-			}),
+			},
+		),
+	},
+};
+
+export const EvilRole: Story =
+{
+	args:
+	{
+		avalon: createMockAvalon(
+			true,
+			{
+				name: 'MORGANA',
+				team: 'evil',
+				description:
+					'You are Morgana. You appear as Merlin to Percival. You must help the evil team fail 3 missions.',
+				sees: ['MORDRED', 'ASSASSIN'],
+			},
+		),
+	},
+};
+
+export const AssassinRole: Story =
+{
+	args:
+	{
+		avalon: createMockAvalon(
+			true,
+			{
+				name: 'ASSASSIN',
+				team: 'evil',
+				description: 'You are the Assassin. You must help the evil team fail 3 missions.',
+				assassin: true,
+				sees: ['MORGANA', 'MORDRED'],
+			},
+		),
+	},
+};
+
+export const MerlinRole: Story =
+{
+	args:
+	{
+		avalon: createMockAvalon(
+			true,
+			{
+				name: 'MERLIN',
+				team: 'good',
+				description:
+					'You are Merlin. You see all evil players except Mordred. You must help the good team succeed on 3 missions, but stay hidden from the Assassin.',
+				sees: ['MORGANA', 'ASSASSIN'],
+			},
+		),
+	},
+};
+
+export const RoleSeesNoOne: Story =
+{
+	args:
+	{
+		avalon: createMockAvalon(
+			true,
+			{
+				name: 'LOYAL FOLLOWER',
+				team: 'good',
+				description: 'You are a loyal servant of Arthur. You must help the good team succeed on 3 missions.',
+				sees: [],
+			},
+		),
+	},
+};
+
+export const InteractiveExample: Story =
+{
+	render: () =>
+	{
+		const [mockAvalon] = useState(() =>
+			createMockAvalon(
+				true,
+				{
+					name: 'PERCIVAL',
+					team: 'good',
+					description: 'You are Percival. You see Merlin and Morgana, but you do not know which is which.',
+					sees: ['MERLIN', 'MORGANA'],
+				},
+			),
 		);
 
 		return (
 			<div>
-				<div style={{marginBottom: '16px'}}>
+				<div
+					style={
+					{
+						marginBottom: '16px',
+					}}
+				>
 					<button onClick={() => mockAvalon.triggerEvent('show-role')}>Show Role Modal</button>
 					<button
 						onClick={() => mockAvalon.triggerEvent('GAME_ENDED')}
-						style={{marginLeft: '8px'}}
+						style={
+						{
+							marginLeft: '8px',
+						}}
 					>
 						Close Modal (Game Ended)
 					</button>

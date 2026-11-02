@@ -1,41 +1,49 @@
-.container {
+.container
+{
 	background-color: #b2ebf2; /* cyan lighten-4 */
 	min-height: 100vh;
 }
 
-.header {
+.header
+{
 	background-color: #80deea; /* cyan lighten-2 */
 	padding: 16px 30px;
 	text-align: center;
 }
 
-.header h1 {
+.header h1
+{
 	margin: 0;
 	font-size: 1.5rem;
 	font-weight: bold;
 }
 
-.subtitle {
+.subtitle
+{
 	margin: 8px 0 0 0;
 	font-size: 0.9rem;
 	color: #455a64;
 }
 
-.content {
+.content
+{
 	padding: 16px;
 	max-width: 900px;
 	margin: 0 auto;
 }
 
-.noPlayers {
+.noPlayers
+{
 	text-align: center;
 }
 
-.tableWrapper {
+.tableWrapper
+{
 	overflow-x: auto;
 }
 
-.table {
+.table
+{
 	width: 100%;
 	border-collapse: collapse;
 	background-color: #fff;
@@ -47,11 +55,13 @@
 	overflow: hidden;
 }
 
-.table thead {
+.table thead
+{
 	background-color: #4dd0e1; /* cyan lighten-1 */
 }
 
-.table th {
+.table th
+{
 	padding: 12px 8px;
 	text-align: left;
 	font-weight: bold;
@@ -59,39 +69,47 @@
 	border-bottom: 2px solid #00acc1;
 }
 
-.table td {
+.table td
+{
 	padding: 10px 8px;
 	border-bottom: 1px solid #e0e0e0;
 	font-size: 0.875rem;
 }
 
-.table tbody tr:hover {
+.table tbody tr:hover
+{
 	background-color: #e0f7fa;
 }
 
-.table tbody tr:last-child td {
+.table tbody tr:last-child td
+{
 	border-bottom: none;
 }
 
-.nameColumn {
+.nameColumn
+{
 	min-width: 120px;
 }
 
-.numberColumn {
+.numberColumn
+{
 	text-align: center !important;
 	min-width: 60px;
 }
 
-.playerLink {
+.playerLink
+{
 	color: #0066cc;
 	text-decoration: none;
 }
 
-.playerLink:hover {
+.playerLink:hover
+{
 	text-decoration: underline;
 }
 
-.pagination {
+.pagination
+{
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -100,7 +118,8 @@
 	flex-wrap: wrap;
 }
 
-.pageLink {
+.pageLink
+{
 	padding: 0.5rem 0.75rem;
 	border: 1px solid #ddd;
 	border-radius: 4px;
@@ -109,20 +128,24 @@
 	background-color: #fff;
 }
 
-.pageLink:hover {
+.pageLink:hover
+{
 	background-color: #e0f7fa;
 }
 
-.currentPage {
+.currentPage
+{
 	color: #fff;
 	background-color: #00acc1;
 	border-color: #00acc1;
 }
 
-.currentPage:hover {
+.currentPage:hover
+{
 	background-color: #00acc1;
 }
 
-.ellipsis {
+.ellipsis
+{
 	padding: 0 0.25rem;
 }

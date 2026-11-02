@@ -1,13 +1,17 @@
 import type {Meta, StoryObj} from '@storybook/react-vite';
 import RoleList from './RoleList';
 
-const meta: Meta<typeof RoleList> = {
+const meta: Meta<typeof RoleList> =
+{
 	title: 'Lobby/RoleList',
 	component: RoleList,
-	parameters: {
+	parameters:
+	{
 		layout: 'centered',
-		docs: {
-			description: {
+		docs:
+		{
+			description:
+			{
 				component: `
 The RoleList component displays all available roles in Avalon with their team affiliations and abilities. It can function as both a reference guide and an interactive selection interface.
 
@@ -40,8 +44,10 @@ The RoleList component displays all available roles in Avalon with their team af
 			},
 		},
 	},
-	argTypes: {
-		allowSelect: {
+	argTypes:
+	{
+		allowSelect:
+		{
 			control: 'boolean',
 			description: 'Allow selecting roles with checkboxes',
 		},
@@ -98,29 +104,37 @@ const sampleRoles = [
 	},
 ];
 
-export const Default: Story = {
-	args: {
+export const Default: Story =
+{
+	args:
+	{
 		roles: sampleRoles,
 		allowSelect: false,
 	},
 };
 
-export const WithSelection: Story = {
-	args: {
+export const WithSelection: Story =
+{
+	args:
+	{
 		roles: sampleRoles,
 		allowSelect: true,
 	},
 };
 
-export const OnlyGoodRoles: Story = {
-	args: {
+export const OnlyGoodRoles: Story =
+{
+	args:
+	{
 		roles: sampleRoles.filter((role) => role.team === 'good'),
 		allowSelect: false,
 	},
 };
 
-export const OnlyEvilRoles: Story = {
-	args: {
+export const OnlyEvilRoles: Story =
+{
+	args:
+	{
 		roles: sampleRoles.filter((role) => role.team === 'evil'),
 		allowSelect: true,
 	},

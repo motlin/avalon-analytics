@@ -14,7 +14,8 @@ const SIGNIFICANCE_THRESHOLD = 1.96;
 /** Shrinkage strength for empirical Bayes estimation */
 const SHRINKAGE_STRENGTH = 10;
 
-interface RawPredicateAnnotationStat {
+interface RawPredicateAnnotationStat
+{
 	personId: string;
 	fires: number;
 	opportunities: number;
@@ -23,17 +24,25 @@ interface RawPredicateAnnotationStat {
 /**
  * Loads all PersonAnnotationStats for a given predicate from the database.
  */
-async function loadPredicateAnnotationStats(predicateName: string): Promise<RawPredicateAnnotationStat[]> {
-	const stats = await db.personAnnotationStats.findMany({
-		where: {predicateName},
-		select: {
-			personId: true,
-			fires: true,
-			opportunities: true,
+async function loadPredicateAnnotationStats(predicateName: string): Promise<RawPredicateAnnotationStat[]>
+{
+	const stats = await db.personAnnotationStats.findMany(
+		{
+			where:
+			{
+				predicateName,
+			},
+			select:
+			{
+				personId: true,
+				fires: true,
+				opportunities: true,
+			},
 		},
-	});
+	);
 
-	return stats.map((stat) => ({
+	return stats.map((stat) => (
+	{
 		personId: stat.personId,
 		fires: stat.fires,
 		opportunities: stat.opportunities,
@@ -48,22 +57,26 @@ function computeLeaderboardEntries(
 	rawStats: RawPredicateAnnotationStat[],
 	baseline: PredicateBaseline | undefined,
 	personNames: Map<string, string>,
-): PredicateLeaderboardEntry[] {
+): PredicateLeaderboardEntry[]
+{
 	const entries: PredicateLeaderboardEntry[] = [];
 
 	// Get baseline rate
 	const baselineRate =
 		baseline && baseline.totalOpportunities > 0 ? baseline.totalFires / baseline.totalOpportunities : 0;
 
-	for (const raw of rawStats) {
+	for (const raw of rawStats)
+	{
 		// Skip entries with no opportunities
-		if (raw.opportunities === 0) {
+		if (raw.opportunities === 0)
+		{
 			continue;
 		}
 
 		// Get person name (skip if not found)
 		const personName = personNames.get(raw.personId);
-		if (!personName) {
+		if (!personName)
+		{
 			continue;
 		}
 
@@ -74,17 +87,19 @@ function computeLeaderboardEntries(
 		const percentileRank = zScoreToPercentile(zScore);
 		const isSignificant = Math.abs(zScore) > SIGNIFICANCE_THRESHOLD && Number.isFinite(zScore);
 
-		entries.push({
-			personId: raw.personId,
-			personName,
-			fires: raw.fires,
-			opportunities: raw.opportunities,
-			rawRate,
-			smoothedRate,
-			zScore,
-			percentileRank,
-			isSignificant,
-		});
+		entries.push(
+			{
+				personId: raw.personId,
+				personName,
+				fires: raw.fires,
+				opportunities: raw.opportunities,
+				rawRate,
+				smoothedRate,
+				zScore,
+				percentileRank,
+				isSignificant,
+			},
+		);
 	}
 
 	// Sort by smoothed rate (highest first)
@@ -96,7 +111,8 @@ function computeLeaderboardEntries(
 /**
  * Formats predicate name for display (removes common suffixes and adds spaces).
  */
-function formatPredicateName(name: string): string {
+function formatPredicateName(name: string): string
+{
 	return name
 		.replace(/ProposalVotePredicate$/, '')
 		.replace(/ProposalPredicate$/, '')
@@ -109,7 +125,8 @@ function formatPredicateName(name: string): string {
  * Predicate detail page that displays a leaderboard of all players ranked by their rate for a specific predicate.
  * Route: /predicate/:predicateName
  */
-export async function PredicateDetail({params}: RequestInfo) {
+export async function PredicateDetail({params}: RequestInfo)
+{
 	const predicateName = decodeURIComponent(params.predicateName);
 
 	let error: string | null = null;
@@ -117,7 +134,8 @@ export async function PredicateDetail({params}: RequestInfo) {
 	let baselineRate = 0;
 	let rarity: Rarity = 'common';
 
-	try {
+	try
+	{
 		await setupDb(env);
 
 		// Get person info for name lookup
@@ -125,7 +143,8 @@ export async function PredicateDetail({params}: RequestInfo) {
 		await personService.initialize();
 		const allPeople = await personService.getAllPeople();
 		const personNames = new Map<string, string>();
-		for (const person of allPeople) {
+		for (const person of allPeople)
+		{
 			personNames.set(person.id, person.name);
 		}
 
@@ -138,7 +157,8 @@ export async function PredicateDetail({params}: RequestInfo) {
 		// Find baseline for this predicate
 		const baseline = baselines.find((b) => b.predicateName === predicateName);
 
-		if (baseline && baseline.totalOpportunities > 0) {
+		if (baseline && baseline.totalOpportunities > 0)
+		{
 			baselineRate = baseline.totalFires / baseline.totalOpportunities;
 		}
 
@@ -147,25 +167,66 @@ export async function PredicateDetail({params}: RequestInfo) {
 
 		// Compute leaderboard entries
 		entries = computeLeaderboardEntries(rawStats, baseline, personNames);
-	} catch (err) {
+	}
+	catch (err)
+	{
 		error = err instanceof Error ? err.message : 'Failed to load predicate statistics';
 	}
 
-	if (error) {
+	if (error)
+	{
 		return <div>Error: {error}</div>;
 	}
 
 	const displayName = formatPredicateName(predicateName);
 
 	return (
-		<div style={{padding: '1rem', maxWidth: '1200px', margin: '0 auto'}}>
+		<div
+			style={
+			{
+				padding: '1rem',
+				maxWidth: '1200px',
+				margin: '0 auto',
+			}}
+		>
 			<Breadcrumb
-				items={[{label: 'Home', href: '/'}, {label: 'Predicates', href: '/predicates'}, {label: displayName}]}
+				items={[
+					{
+						label: 'Home',
+						href: '/',
+					},
+					{
+						label: 'Predicates',
+						href: '/predicates',
+					},
+					{
+						label: displayName,
+					},
+				]}
 			/>
 
-			<div style={{marginBottom: '2rem'}}>
-				<h1 style={{margin: '0 0 0.5rem 0'}}>{displayName}</h1>
-				<p style={{margin: 0, color: '#666', fontSize: '0.875rem'}}>
+			<div
+				style={
+				{
+					marginBottom: '2rem',
+				}}
+			>
+				<h1
+					style={
+					{
+						margin: '0 0 0.5rem 0',
+					}}
+				>
+					{displayName}
+				</h1>
+				<p
+					style={
+					{
+						margin: 0,
+						color: '#666',
+						fontSize: '0.875rem',
+					}}
+				>
 					Leaderboard showing all players ranked by their rate for this behavior
 				</p>
 			</div>

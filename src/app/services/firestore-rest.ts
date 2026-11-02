@@ -1,37 +1,49 @@
 import {type Game, GameSchema, type Stats, StatsSchema} from '../models/game';
 import {getLocalCacheService} from './local-cache';
 
-interface FirestoreValue {
+interface FirestoreValue
+{
 	stringValue?: string;
 	integerValue?: string;
 	doubleValue?: number;
 	booleanValue?: boolean;
 	timestampValue?: string;
-	arrayValue?: {values: FirestoreValue[]};
-	mapValue?: {fields: Record<string, FirestoreValue>};
+	arrayValue?:
+	{
+		values: FirestoreValue[];
+	};
+	mapValue?:
+	{
+		fields: Record<string, FirestoreValue>;
+	};
 }
 
-interface FirestoreDocument {
+interface FirestoreDocument
+{
 	name: string;
 	fields: Record<string, FirestoreValue>;
 	createTime: string;
 	updateTime: string;
 }
 
-export class FirestoreRestService {
+export class FirestoreRestService
+{
 	private projectId: string;
 	private apiKey: string;
 	private baseUrl: string;
 
-	constructor(env: any) {
-		if (!env) {
+	constructor(env: any)
+	{
+		if (!env)
+		{
 			throw new Error('Environment object is required');
 		}
 
 		this.projectId = env.FIREBASE_PROJECT_ID;
 		this.apiKey = env.FIREBASE_API_KEY;
 
-		if (!this.projectId || !this.apiKey) {
+		if (!this.projectId || !this.apiKey)
+		{
 			throw new Error(
 				'Missing required Firebase configuration: FIREBASE_PROJECT_ID and FIREBASE_API_KEY must be set',
 			);
@@ -41,24 +53,29 @@ export class FirestoreRestService {
 		this.baseUrl = `https://firestore.googleapis.com/v1/projects/${this.projectId}/databases/(default)/documents`;
 	}
 
-	private convertFirestoreValue(value: FirestoreValue): any {
+	private convertFirestoreValue(value: FirestoreValue): any
+	{
 		if (value.stringValue !== undefined) return value.stringValue;
 		if (value.integerValue !== undefined) return parseInt(value.integerValue);
 		if (value.doubleValue !== undefined) return value.doubleValue;
 		if (value.booleanValue !== undefined) return value.booleanValue;
-		if (value.timestampValue !== undefined) {
+		if (value.timestampValue !== undefined)
+		{
 			const date = new Date(value.timestampValue);
 			return {
 				_seconds: Math.floor(date.getTime() / 1000),
 				_nanoseconds: (date.getTime() % 1000) * 1000000,
 			};
 		}
-		if (value.arrayValue) {
+		if (value.arrayValue)
+		{
 			return value.arrayValue.values?.map((v) => this.convertFirestoreValue(v)) || [];
 		}
-		if (value.mapValue) {
+		if (value.mapValue)
+		{
 			const result: Record<string, any> = {};
-			for (const [key, val] of Object.entries(value.mapValue.fields || {})) {
+			for (const [key, val] of Object.entries(value.mapValue.fields || {}))
+			{
 				result[key] = this.convertFirestoreValue(val);
 			}
 			return result;
@@ -66,54 +83,75 @@ export class FirestoreRestService {
 		return null;
 	}
 
-	private convertDocumentToObject(doc: FirestoreDocument): Record<string, any> {
+	private convertDocumentToObject(doc: FirestoreDocument): Record<string, any>
+	{
 		const result: Record<string, any> = {};
 		const docId = doc.name.split('/').pop() || '';
 		result.id = docId;
 
-		for (const [key, value] of Object.entries(doc.fields || {})) {
+		for (const [key, value] of Object.entries(doc.fields || {}))
+		{
 			result[key] = this.convertFirestoreValue(value);
 		}
 
 		return result;
 	}
 
-	private validateGame(data: Record<string, any>): Game | null {
-		try {
+	private validateGame(data: Record<string, any>): Game | null
+	{
+		try
+		{
 			return GameSchema.parse(data);
-		} catch (error) {
+		}
+		catch (error)
+		{
 			console.error(`Failed to validate game ${data.id}:`, error);
 			return null;
 		}
 	}
 
-	async getGameLogs(limitCount = 50, pageToken?: string): Promise<{games: Game[]; nextPageToken?: string}> {
+	async getGameLogs(
+		limitCount = 50,
+		pageToken?: string,
+	): Promise<
+	{
+		games: Game[];
+		nextPageToken?: string;
+	}>
+	{
 		let url = `${this.baseUrl}/logs?pageSize=${limitCount}&orderBy=timeCreated desc&key=${this.apiKey}`;
 
-		if (pageToken) {
+		if (pageToken)
+		{
 			url += `&pageToken=${encodeURIComponent(pageToken)}`;
 		}
 
-		try {
+		try
+		{
 			const response = await fetch(url);
-			if (!response.ok) {
+			if (!response.ok)
+			{
 				const errorText = await response.text();
 				console.error('Firestore API error response:', errorText);
 				throw new Error(`Firestore API error: ${response.status}`);
 			}
 
-			const data = (await response.json()) as {
+			const data = (await response.json()) as
+			{
 				documents?: FirestoreDocument[];
 				nextPageToken?: string;
 			};
 			const games: Game[] = [];
 			const localCache = getLocalCacheService();
 
-			if (data.documents) {
-				for (const doc of data.documents) {
+			if (data.documents)
+			{
+				for (const doc of data.documents)
+				{
 					const gameData = this.convertDocumentToObject(doc);
 					const game = this.validateGame(gameData);
-					if (game) {
+					if (game)
+					{
 						games.push(game);
 						localCache.cacheGame(game);
 					}
@@ -124,18 +162,23 @@ export class FirestoreRestService {
 				games,
 				nextPageToken: data.nextPageToken,
 			};
-		} catch (error) {
+		}
+		catch (error)
+		{
 			console.error('Failed to fetch game logs:', error);
 			throw error;
 		}
 	}
 
-	async getGameLogById(gameId: string): Promise<Game | null> {
+	async getGameLogById(gameId: string): Promise<Game | null>
+	{
 		const localCache = getLocalCacheService();
 
-		if (localCache.hasGameCached(gameId)) {
+		if (localCache.hasGameCached(gameId))
+		{
 			const cachedGame = localCache.getCachedGame(gameId);
-			if (cachedGame) {
+			if (cachedGame)
+			{
 				console.log(`Using cached game for ${gameId}`);
 				return cachedGame;
 			}
@@ -143,12 +186,15 @@ export class FirestoreRestService {
 
 		const url = `${this.baseUrl}/logs/${gameId}?key=${this.apiKey}`;
 
-		try {
+		try
+		{
 			const response = await fetch(url);
-			if (response.status === 404) {
+			if (response.status === 404)
+			{
 				return null;
 			}
-			if (!response.ok) {
+			if (!response.ok)
+			{
 				throw new Error(`Firestore API error: ${response.status}`);
 			}
 
@@ -156,73 +202,94 @@ export class FirestoreRestService {
 			const gameData = this.convertDocumentToObject(doc);
 			const game = this.validateGame(gameData);
 
-			if (game) {
+			if (game)
+			{
 				localCache.cacheGame(game);
 			}
 
 			return game;
-		} catch (error) {
+		}
+		catch (error)
+		{
 			console.error('Failed to fetch game by ID:', error);
 			throw error;
 		}
 	}
 
-	async getGamesByPlayerUid(uid: string, limitCount = 50): Promise<Game[]> {
+	async getGamesByPlayerUid(uid: string, limitCount = 50): Promise<Game[]>
+	{
 		let url = `${this.baseUrl}/logs?pageSize=${limitCount}&orderBy=timeCreated desc&key=${this.apiKey}`;
 
-		try {
+		try
+		{
 			const response = await fetch(url);
-			if (!response.ok) {
+			if (!response.ok)
+			{
 				const errorText = await response.text();
 				console.error('Firestore API error response:', errorText);
 				throw new Error(`Firestore API error: ${response.status}`);
 			}
 
-			const data = (await response.json()) as {
+			const data = (await response.json()) as
+			{
 				documents?: FirestoreDocument[];
 				nextPageToken?: string;
 			};
 			const games: Game[] = [];
 
-			if (data.documents) {
-				for (const doc of data.documents) {
+			if (data.documents)
+			{
+				for (const doc of data.documents)
+				{
 					const gameData = this.convertDocumentToObject(doc);
 					const game = this.validateGame(gameData);
-					if (game && game.players.some((player) => player.uid === uid)) {
+					if (game && game.players.some((player) => player.uid === uid))
+					{
 						games.push(game);
 					}
 				}
 			}
 
 			return games;
-		} catch (error) {
+		}
+		catch (error)
+		{
 			console.error('Failed to fetch games by player UID:', error);
 			throw error;
 		}
 	}
 
-	async getStats(): Promise<Stats | null> {
+	async getStats(): Promise<Stats | null>
+	{
 		const url = `${this.baseUrl}/stats/global?key=${this.apiKey}`;
 
-		try {
+		try
+		{
 			const response = await fetch(url);
-			if (response.status === 404) {
+			if (response.status === 404)
+			{
 				return null;
 			}
-			if (!response.ok) {
+			if (!response.ok)
+			{
 				throw new Error(`Firestore API error: ${response.status}`);
 			}
 
 			const doc = (await response.json()) as FirestoreDocument;
 			const statsData = this.convertDocumentToObject(doc);
 
-			try {
+			try
+			{
 				return StatsSchema.parse(statsData);
-			} catch (error) {
+			}
+			catch (error)
+			{
 				console.error('Failed to validate stats:', error);
 				return null;
 			}
-		} catch (error) {
+		}
+		catch (error)
+		{
 			console.error('Failed to fetch stats:', error);
 			throw error;
 		}
@@ -231,12 +298,15 @@ export class FirestoreRestService {
 
 let firestoreRestService: FirestoreRestService;
 
-export function setupFirestoreRestService(env: any) {
+export function setupFirestoreRestService(env: any)
+{
 	firestoreRestService = new FirestoreRestService(env);
 }
 
-export function getFirestoreRestService(): FirestoreRestService {
-	if (!firestoreRestService) {
+export function getFirestoreRestService(): FirestoreRestService
+{
+	if (!firestoreRestService)
+	{
 		throw new Error('FirestoreRestService not initialized. Call setupFirestoreRestService(env) first.');
 	}
 	return firestoreRestService;

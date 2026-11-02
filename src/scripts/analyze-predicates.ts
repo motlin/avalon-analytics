@@ -12,29 +12,34 @@ import * as path from 'node:path';
 import type {Game} from '../app/models/game';
 import {annotateGame, getGameStats} from '../app/models/gameAnnotator';
 
-interface PredicateStats {
+interface PredicateStats
+{
 	name: string;
 	count: number;
 	gamesWithPredicate: number;
 }
 
-function analyzeGames(logsDir: string): Map<string, PredicateStats> {
+function analyzeGames(logsDir: string): Map<string, PredicateStats>
+{
 	const predicateStats = new Map<string, PredicateStats>();
 	const files = fs.readdirSync(logsDir);
 
 	let processedCount = 0;
 	let errorCount = 0;
 
-	for (const file of files) {
+	for (const file of files)
+	{
 		if (file.startsWith('.')) continue;
 
 		const filePath = path.join(logsDir, file);
-		try {
+		try
+		{
 			const content = fs.readFileSync(filePath, 'utf-8');
 			const game = JSON.parse(content) as Game;
 
 			// Skip games without outcome (incomplete games)
-			if (!game.outcome?.roles) {
+			if (!game.outcome?.roles)
+			{
 				continue;
 			}
 
@@ -44,36 +49,49 @@ function analyzeGames(logsDir: string): Map<string, PredicateStats> {
 			// Track which predicates fired in this game
 			const predicatesInThisGame = new Set<string>();
 
-			for (const [predicateName, count] of gameStats.annotationsByPredicate) {
+			for (const [predicateName, count] of gameStats.annotationsByPredicate)
+			{
 				predicatesInThisGame.add(predicateName);
 
 				const existing = predicateStats.get(predicateName);
-				if (existing) {
+				if (existing)
+				{
 					existing.count += count;
-				} else {
-					predicateStats.set(predicateName, {
-						name: predicateName,
-						count,
-						gamesWithPredicate: 0,
-					});
+				}
+				else
+				{
+					predicateStats.set(
+						predicateName,
+						{
+							name: predicateName,
+							count,
+							gamesWithPredicate: 0,
+						},
+					);
 				}
 			}
 
 			// Increment games count for each predicate that fired
-			for (const predicateName of predicatesInThisGame) {
+			for (const predicateName of predicatesInThisGame)
+			{
 				const stats = predicateStats.get(predicateName);
-				if (stats) {
+				if (stats)
+				{
 					stats.gamesWithPredicate++;
 				}
 			}
 
 			processedCount++;
-			if (processedCount % 1000 === 0) {
+			if (processedCount % 1000 === 0)
+			{
 				console.error(`Processed ${processedCount} games...`);
 			}
-		} catch (error) {
+		}
+		catch (error)
+		{
 			errorCount++;
-			if (errorCount <= 5) {
+			if (errorCount <= 5)
+			{
 				console.error(`Error processing ${file}:`, error);
 			}
 		}
@@ -83,10 +101,12 @@ function analyzeGames(logsDir: string): Map<string, PredicateStats> {
 	return predicateStats;
 }
 
-function main() {
+function main()
+{
 	const logsDir = process.argv[2] || '/Users/craig/projects/avalonlogs/logs';
 
-	if (!fs.existsSync(logsDir)) {
+	if (!fs.existsSync(logsDir))
+	{
 		console.error(`Logs directory not found: ${logsDir}`);
 		process.exit(1);
 	}
@@ -103,7 +123,8 @@ function main() {
 	console.log('Count\tGames\tPredicate Name');
 	console.log('-----\t-----\t--------------');
 
-	for (const stat of sorted) {
+	for (const stat of sorted)
+	{
 		console.log(`${stat.count}\t${stat.gamesWithPredicate}\t${stat.name}`);
 	}
 
@@ -117,25 +138,31 @@ function main() {
 	);
 	const missionVotePredicates = sorted.filter((s) => s.name.includes('MissionVotePredicate'));
 
-	if (proposalVotePredicates.length > 0) {
+	if (proposalVotePredicates.length > 0)
+	{
 		console.log('// PROPOSAL_VOTE_PREDICATES (by rarity):');
-		for (const stat of proposalVotePredicates) {
+		for (const stat of proposalVotePredicates)
+		{
 			const shortName = stat.name.replace('ProposalVotePredicate', '');
 			console.log(`//   ${shortName}Predicate, // ${stat.count} fires in ${stat.gamesWithPredicate} games`);
 		}
 	}
 
-	if (proposalPredicates.length > 0) {
+	if (proposalPredicates.length > 0)
+	{
 		console.log('\n// PROPOSAL_PREDICATES (by rarity):');
-		for (const stat of proposalPredicates) {
+		for (const stat of proposalPredicates)
+		{
 			const shortName = stat.name.replace('ProposalPredicate', '');
 			console.log(`//   ${shortName}Predicate, // ${stat.count} fires in ${stat.gamesWithPredicate} games`);
 		}
 	}
 
-	if (missionVotePredicates.length > 0) {
+	if (missionVotePredicates.length > 0)
+	{
 		console.log('\n// MISSION_VOTE_PREDICATES (by rarity):');
-		for (const stat of missionVotePredicates) {
+		for (const stat of missionVotePredicates)
+		{
 			const shortName = stat.name.replace('MissionVotePredicate', '');
 			console.log(`//   ${shortName}Predicate, // ${stat.count} fires in ${stat.gamesWithPredicate} games`);
 		}

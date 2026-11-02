@@ -7,7 +7,8 @@ import {PersonAnnotationStats} from '../../components/PersonAnnotationStats';
 import {RoleStatsTable} from '../../components/RoleStatsTable';
 import {SpecialRoleStats} from '../../components/SpecialRoleStats';
 import {YearlyStatsTable} from '../../components/YearlyStatsTable';
-import {
+import
+{
 	type PersonAnnotationProfile,
 	computePersonAnnotationProfile,
 	loadGlobalAnnotationBaselines,
@@ -28,7 +29,8 @@ const GAMES_PER_PAGE = 20;
  * Query parameters:
  * - page: Page number for game history (default: 1)
  */
-export async function PersonDetail({params, request}: RequestInfo) {
+export async function PersonDetail({params, request}: RequestInfo)
+{
 	const personId = params.personId;
 	const url = new URL(request.url);
 	const pageParam = url.searchParams.get('page');
@@ -41,7 +43,8 @@ export async function PersonDetail({params, request}: RequestInfo) {
 	let stats: PersonStatistics | null = null;
 	let annotationProfile: PersonAnnotationProfile | null = null;
 
-	try {
+	try
+	{
 		await setupDb(env);
 
 		// Get person info and their UIDs from the service
@@ -51,11 +54,24 @@ export async function PersonDetail({params, request}: RequestInfo) {
 		const allPeople = await personService.getAllPeople();
 		const person = allPeople.find((p) => p.id === personId);
 
-		if (!person) {
+		if (!person)
+		{
 			return (
 				<div className={styles.notFoundContainer}>
 					<Breadcrumb
-						items={[{label: 'Home', href: '/'}, {label: 'Players', href: '/players'}, {label: 'Not Found'}]}
+						items={[
+							{
+								label: 'Home',
+								href: '/',
+							},
+							{
+								label: 'Players',
+								href: '/players',
+							},
+							{
+								label: 'Not Found',
+							},
+						]}
 					/>
 					<h1>Person Not Found</h1>
 					<p>No person found with ID: {personId}</p>
@@ -75,13 +91,20 @@ export async function PersonDetail({params, request}: RequestInfo) {
 			loadGlobalAnnotationBaselines(db),
 		]);
 
-		if (rawAnnotationStats.length > 0) {
+		if (rawAnnotationStats.length > 0)
+		{
 			annotationProfile = computePersonAnnotationProfile(rawAnnotationStats, baselines);
 		}
 
 		// Fetch games for game history section
 		const uidPlaceholders = personUids.map(() => '?').join(', ');
-		const rawGames = await db.$queryRawUnsafe<Array<{firebaseKey: string; gameJson: string}>>(
+		const rawGames = await db.$queryRawUnsafe<
+			Array<
+			{
+				firebaseKey: string;
+				gameJson: string;
+			}>
+		>(
 			`SELECT DISTINCT r.firebaseKey, r.gameJson
 			 FROM RawGameData r
 			 INNER JOIN PlayerGame pg ON r.firebaseKey = pg.firebaseKey
@@ -89,28 +112,46 @@ export async function PersonDetail({params, request}: RequestInfo) {
 			...personUids,
 		);
 
-		for (const rawGame of rawGames) {
+		for (const rawGame of rawGames)
+		{
 			const gameData = typeof rawGame.gameJson === 'string' ? JSON.parse(rawGame.gameJson) : rawGame.gameJson;
 			const parsed = GameSchema.safeParse(gameData);
-			if (parsed.success) {
+			if (parsed.success)
+			{
 				games.push(parsed.data);
 			}
 		}
 
 		games.sort((a, b) => b.timeCreated.getTime() - a.timeCreated.getTime());
-	} catch (err) {
+	}
+	catch (err)
+	{
 		error = err instanceof Error ? err.message : 'Failed to load games for person';
 	}
 
-	if (error) {
+	if (error)
+	{
 		return <div>Error: {error}</div>;
 	}
 
-	if (!stats || games.length === 0) {
+	if (!stats || games.length === 0)
+	{
 		return (
 			<div className={styles.notFoundContainer}>
 				<Breadcrumb
-					items={[{label: 'Home', href: '/'}, {label: 'Players', href: '/players'}, {label: 'Not Found'}]}
+					items={[
+						{
+							label: 'Home',
+							href: '/',
+						},
+						{
+							label: 'Players',
+							href: '/players',
+						},
+						{
+							label: 'Not Found',
+						},
+					]}
 				/>
 				<h1>Person Not Found</h1>
 				<p>No statistics found for person with ID: {personId}</p>
@@ -124,7 +165,19 @@ export async function PersonDetail({params, request}: RequestInfo) {
 	return (
 		<div className={styles.pageContainer}>
 			<Breadcrumb
-				items={[{label: 'Home', href: '/'}, {label: 'Players', href: '/players'}, {label: personName!}]}
+				items={[
+					{
+						label: 'Home',
+						href: '/',
+					},
+					{
+						label: 'Players',
+						href: '/players',
+					},
+					{
+						label: personName!,
+					},
+				]}
 			/>
 
 			{/* Header Section */}
@@ -167,12 +220,7 @@ export async function PersonDetail({params, request}: RequestInfo) {
 			<YearlyStatsTable stats={stats} />
 
 			{/* Annotation Statistics Section */}
-			{annotationProfile && (
-				<PersonAnnotationStats
-					profile={annotationProfile}
-					personId={personId}
-				/>
-			)}
+			{annotationProfile && <PersonAnnotationStats profile={annotationProfile} personId={personId} />}
 
 			{/* Game History Section */}
 			<GameHistorySection
@@ -186,7 +234,8 @@ export async function PersonDetail({params, request}: RequestInfo) {
 	);
 }
 
-interface GameHistorySectionProps {
+interface GameHistorySectionProps
+{
 	games: Game[];
 	playerUids: string[];
 	personId: string;
@@ -194,7 +243,8 @@ interface GameHistorySectionProps {
 	gamesPerPage: number;
 }
 
-function GameHistorySection({games, playerUids, personId, currentPage, gamesPerPage}: GameHistorySectionProps) {
+function GameHistorySection({games, playerUids, personId, currentPage, gamesPerPage}: GameHistorySectionProps)
+{
 	const totalGames = games.length;
 	const totalPages = Math.ceil(totalGames / gamesPerPage);
 	const startIndex = (currentPage - 1) * gamesPerPage;
@@ -211,7 +261,8 @@ function GameHistorySection({games, playerUids, personId, currentPage, gamesPerP
 				</span>
 			</div>
 
-			{paginatedGames.map((game) => {
+			{paginatedGames.map((game) =>
+			{
 				const playerInGame = game.players.find((p) => uidSet.has(p.uid));
 				const playerRole = game.outcome?.roles?.find(
 					(r: {name: string; role: string}) => r.name === playerInGame?.name,
@@ -228,11 +279,16 @@ function GameHistorySection({games, playerUids, personId, currentPage, gamesPerP
 				const wasAssassinated = game.outcome?.assassinated === playerInGame?.name;
 				const wasMerlin = normalizedRole === 'MERLIN';
 
-				const getOutcomeDescription = () => {
+				const getOutcomeDescription = () =>
+				{
 					if (!game.outcome) return null;
 
 					const outcomeReason = game.outcome.reason || game.outcome.message;
-					const reasons: {[key: string]: string} = {
+					const reasons:
+					{
+						[key: string]: string;
+					} =
+					{
 						'Three successful missions': '3 missions succeeded',
 						'Three failed missions': '3 missions failed',
 						'Five rejected proposals': '5 proposals rejected',
@@ -246,17 +302,11 @@ function GameHistorySection({games, playerUids, personId, currentPage, gamesPerP
 				const gameCardClasses = `${styles.gameCard} ${playerWon ? styles.gameCardWin : styles.gameCardLoss}`;
 
 				return (
-					<div
-						key={game.id}
-						className={gameCardClasses}
-					>
+					<div key={game.id} className={gameCardClasses}>
 						<div className={styles.gameCardContent}>
 							<div className={styles.gameCardMain}>
 								<h3 className={styles.gameCardTitle}>
-									<a
-										href={`/game/${game.id}`}
-										className={styles.gameCardLink}
-									>
+									<a href={`/game/${game.id}`} className={styles.gameCardLink}>
 										<LocalTimestamp isoString={game.timeCreated.toISOString()} />
 									</a>
 								</h3>
@@ -316,20 +366,24 @@ function GameHistorySection({games, playerUids, personId, currentPage, gamesPerP
 			{totalPages > 1 && (
 				<div className={styles.pagination}>
 					{currentPage > 1 && (
-						<a
-							href={`/person/${personId}?page=${currentPage - 1}`}
-							className={styles.paginationLink}
-						>
+						<a href={`/person/${personId}?page=${currentPage - 1}`} className={styles.paginationLink}>
 							← Previous
 						</a>
 					)}
 
-					{Array.from({length: totalPages}, (_, i) => i + 1)
-						.filter((page) => {
+					{Array.from(
+						{
+							length: totalPages,
+						},
+						(_, i) => i + 1,
+					)
+						.filter((page) =>
+						{
 							// Show first, last, current, and pages near current
 							return page === 1 || page === totalPages || Math.abs(page - currentPage) <= 2;
 						})
-						.map((page, index, filtered) => {
+						.map((page, index, filtered) =>
+						{
 							const showEllipsis = index > 0 && page - filtered[index - 1] > 1;
 							const numberClasses = `${styles.paginationNumber} ${
 								page === currentPage ? styles.paginationNumberActive : styles.paginationNumberInactive
@@ -337,10 +391,7 @@ function GameHistorySection({games, playerUids, personId, currentPage, gamesPerP
 							return (
 								<span key={page}>
 									{showEllipsis && <span className={styles.paginationEllipsis}>…</span>}
-									<a
-										href={`/person/${personId}?page=${page}`}
-										className={numberClasses}
-									>
+									<a href={`/person/${personId}?page=${page}`} className={numberClasses}>
 										{page}
 									</a>
 								</span>
@@ -348,10 +399,7 @@ function GameHistorySection({games, playerUids, personId, currentPage, gamesPerP
 						})}
 
 					{currentPage < totalPages && (
-						<a
-							href={`/person/${personId}?page=${currentPage + 1}`}
-							className={styles.paginationLink}
-						>
+						<a href={`/person/${personId}?page=${currentPage + 1}`} className={styles.paginationLink}>
 							Next →
 						</a>
 					)}

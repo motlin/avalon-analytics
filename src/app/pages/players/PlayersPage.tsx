@@ -4,7 +4,8 @@ import {Breadcrumb} from '../../components/Breadcrumb';
 import {db, setupDb} from '@/db';
 import styles from './PlayersPage.module.css';
 
-interface PlayerStatsRow {
+interface PlayerStatsRow
+{
 	uid: string;
 	name: string;
 	isMapped: boolean;
@@ -18,13 +19,15 @@ interface PlayerStatsRow {
 
 const PLAYERS_PER_PAGE = 100;
 
-function formatWinRate(wins: number, games: number): string {
+function formatWinRate(wins: number, games: number): string
+{
 	if (games === 0) return '-';
 	const rate = (wins / games) * 100;
 	return `${rate.toFixed(0)}%`;
 }
 
-export async function PlayersPage({request}: RequestInfo) {
+export async function PlayersPage({request}: RequestInfo)
+{
 	const url = new URL(request.url);
 	const pageParam = url.searchParams.get('page');
 	const currentPage = Math.max(1, parseInt(pageParam || '1', 10) || 1);
@@ -34,7 +37,8 @@ export async function PlayersPage({request}: RequestInfo) {
 	let totalGames = 0;
 	let error: string | null = null;
 
-	try {
+	try
+	{
 		await setupDb(env);
 
 		// Get counts first (these are fast aggregate queries)
@@ -44,13 +48,19 @@ export async function PlayersPage({request}: RequestInfo) {
 
 		// Fetch paginated stats from PlayerStats table
 		const skip = (currentPage - 1) * PLAYERS_PER_PAGE;
-		const stats = await db.playerStats.findMany({
-			orderBy: {gamesPlayed: 'desc'},
-			skip,
-			take: PLAYERS_PER_PAGE,
-		});
+		const stats = await db.playerStats.findMany(
+			{
+				orderBy:
+				{
+					gamesPlayed: 'desc',
+				},
+				skip,
+				take: PLAYERS_PER_PAGE,
+			},
+		);
 
-		playerStats = stats.map((s) => ({
+		playerStats = stats.map((s) => (
+		{
 			uid: s.uid,
 			name: s.name,
 			isMapped: s.isMapped,
@@ -61,11 +71,14 @@ export async function PlayersPage({request}: RequestInfo) {
 			evilGames: s.evilGames,
 			evilWins: s.evilWins,
 		}));
-	} catch (err) {
+	}
+	catch (err)
+	{
 		error = err instanceof Error ? err.message : 'Failed to load player stats';
 	}
 
-	if (error) {
+	if (error)
+	{
 		return <div>Error: {error}</div>;
 	}
 
@@ -74,7 +87,17 @@ export async function PlayersPage({request}: RequestInfo) {
 
 	return (
 		<div className={styles.container}>
-			<Breadcrumb items={[{label: 'Home', href: '/'}, {label: 'Players'}]} />
+			<Breadcrumb
+				items={[
+					{
+						label: 'Home',
+						href: '/',
+					},
+					{
+						label: 'Players',
+					},
+				]}
+			/>
 			<div className={styles.header}>
 				<h1>Players</h1>
 				<p className={styles.subtitle}>
@@ -104,10 +127,7 @@ export async function PlayersPage({request}: RequestInfo) {
 								{playerStats.map((player) => (
 									<tr key={player.uid}>
 										<td className={styles.nameColumn}>
-											<a
-												href={`/players/${player.uid}`}
-												className={styles.playerLink}
-											>
+											<a href={`/players/${player.uid}`} className={styles.playerLink}>
 												{player.name}
 											</a>
 										</td>
@@ -138,16 +158,19 @@ export async function PlayersPage({request}: RequestInfo) {
 				{totalPages > 1 && (
 					<div className={styles.pagination}>
 						{currentPage > 1 && (
-							<a
-								href={`/players?page=${currentPage - 1}`}
-								className={styles.pageLink}
-							>
+							<a href={`/players?page=${currentPage - 1}`} className={styles.pageLink}>
 								← Previous
 							</a>
 						)}
-						{Array.from({length: totalPages}, (_, i) => i + 1)
+						{Array.from(
+							{
+								length: totalPages,
+							},
+							(_, i) => i + 1,
+						)
 							.filter((page) => page === 1 || page === totalPages || Math.abs(page - currentPage) <= 2)
-							.map((page, index, filtered) => {
+							.map((page, index, filtered) =>
+							{
 								const showEllipsis = index > 0 && page - filtered[index - 1] > 1;
 								return (
 									<span key={page}>
@@ -162,10 +185,7 @@ export async function PlayersPage({request}: RequestInfo) {
 								);
 							})}
 						{currentPage < totalPages && (
-							<a
-								href={`/players?page=${currentPage + 1}`}
-								className={styles.pageLink}
-							>
+							<a href={`/players?page=${currentPage + 1}`} className={styles.pageLink}>
 								Next →
 							</a>
 						)}
