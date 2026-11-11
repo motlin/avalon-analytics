@@ -95,7 +95,7 @@
 		"playwright": "^1.59.1",
 		"prisma": "^7.8.0",
 		"storybook": "^10.3.6",
-		"tailwindcss": "^4.2.4",
+		"tailwindcss": "^4.3.5",
 		"tsx": "^4.21.0",
 		"typescript": "^6.0.3",
 		"vibe-rules": "^0.3.91",
