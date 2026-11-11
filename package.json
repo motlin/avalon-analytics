@@ -94,7 +94,7 @@
 		"miniflare": "^4.20260507.1",
 		"playwright": "^1.59.1",
 		"prisma": "^7.8.0",
-		"storybook": "^10.3.6",
+		"storybook": "^10.6.6",
 		"tailwindcss": "^4.2.4",
 		"tsx": "^4.21.0",
 		"typescript": "^6.0.3",
