@@ -52,7 +52,7 @@
 		"@prisma/adapter-d1": "^7.8.0",
 		"@prisma/client": "^7.8.0",
 		"@simplewebauthn/browser": "^13.3.0",
-		"@simplewebauthn/server": "^13.3.0",
+		"@simplewebauthn/server": "^14.1.0",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
 		"firebase": "^12.13.0",
