@@ -55,7 +55,7 @@
 		"@simplewebauthn/server": "^13.3.0",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
-		"firebase": "^12.13.0",
+		"firebase": "^13.2.0",
 		"json5": "^2.2.3",
 		"lucide-react": "^1.14.0",
 		"markdown-to-jsx": "^9.8.0",
